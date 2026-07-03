@@ -12,6 +12,7 @@ namespace ElonaKeys
 		private static Action<Point> onDir;
 		private static bool allowSelf;
 		private static float started;
+		private static bool waitRelease;
 
 		private const float Timeout = 15f;
 
@@ -22,6 +23,7 @@ namespace ElonaKeys
 			onDir = action;
 			allowSelf = self;
 			started = Time.unscaledTime;
+			waitRelease = EInput.axis != Vector2.zero; // don't fire on a still-held movement key
 			Msg.SayRaw(prompt);
 		}
 
@@ -64,6 +66,16 @@ namespace ElonaKeys
 				return true;
 			}
 			Vector2 axis = EInput.axis;
+			if (waitRelease)
+			{
+				if (axis == Vector2.zero)
+				{
+					waitRelease = false;
+				}
+				EInput.axis = Vector2.zero;
+				HighlightNeighbors();
+				return true;
+			}
 			if (axis != Vector2.zero)
 			{
 				Point p = EClass.pc.pos.Copy();
@@ -72,9 +84,38 @@ namespace ElonaKeys
 				Fire(p);
 				return true;
 			}
-			// still waiting; block movement this frame
+			// still waiting; block movement this frame, show where you can aim
 			EInput.axis = Vector2.zero;
+			HighlightNeighbors();
 			return true;
+		}
+
+		private static void HighlightNeighbors()
+		{
+			try
+			{
+				for (int dz = -1; dz <= 1; dz++)
+				{
+					for (int dx = -1; dx <= 1; dx++)
+					{
+						if (dx == 0 && dz == 0 && !allowSelf)
+						{
+							continue;
+						}
+						Point p = EClass.pc.pos.Copy();
+						p.x += dx;
+						p.z += dz;
+						if (p.IsValid)
+						{
+							p.SetHighlight(8);
+						}
+					}
+				}
+			}
+			catch
+			{
+				// cosmetic only
+			}
 		}
 
 		private static void Fire(Point p)

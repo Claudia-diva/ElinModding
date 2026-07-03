@@ -28,6 +28,7 @@ namespace ElonaKeys
 		private static readonly List<MenuRow> pageRows = new List<MenuRow>();
 		private static int page;
 		private static int sel;
+		private static int openFrame;
 		private static Action refreshSource; // optional: rebuilds `all` after an action
 
 		public static bool Alive => layer != null && (bool)layer;
@@ -44,6 +45,7 @@ namespace ElonaKeys
 			refreshSource = _refreshSource;
 			page = 0;
 			sel = 0;
+			openFrame = Time.frameCount;
 			layer = EClass.ui.AddLayer<LayerList>();
 			layer.SetSize(640f);
 			layer.SetList2(pageRows, RowText, delegate(MenuRow r, ItemGeneral b)
@@ -80,7 +82,9 @@ namespace ElonaKeys
 		{
 			if ((bool)b.button1.keyText)
 			{
-				b.button1.keyText.text = ""; // letters live inside the label instead
+				// letters live inside the label; kill the key-chip visual entirely
+				b.button1.keyText.text = "";
+				b.button1.keyText.SetActive(enable: false);
 			}
 			if (r.icon != null)
 			{
@@ -164,6 +168,29 @@ namespace ElonaKeys
 				caption += "  (" + (page + 1) + "/" + PageCount + ")  ◄ ►";
 			}
 			layer.windows[0].SetCaption(caption);
+			ShowSelTooltip();
+		}
+
+		// keep the item stat card visible for the keyboard-selected row
+		private static void ShowSelTooltip()
+		{
+			try
+			{
+				TooltipManager.Instance.HideTooltips(immediate: true);
+				if (sel < 0 || sel >= pageRows.Count || pageRows[sel].icon == null || layer.list.buttons == null || sel >= layer.list.buttons.Count)
+				{
+					return;
+				}
+				ItemGeneral item = layer.list.buttons[sel].component as ItemGeneral;
+				if ((bool)item)
+				{
+					item.button1.ShowTooltipForced(ignoreWhenRightClick: false);
+				}
+			}
+			catch
+			{
+				// cosmetic only
+			}
 		}
 
 		// ---------- keyboard, driven from MenuExtras.OnUpdate ----------
@@ -171,6 +198,11 @@ namespace ElonaKeys
 		public static void HandleKeys()
 		{
 			if (!Alive)
+			{
+				return;
+			}
+			// never react to the same keystroke that opened this menu
+			if (Time.frameCount - openFrame < 2 || EInput.waitReleaseAnyKey)
 			{
 				return;
 			}

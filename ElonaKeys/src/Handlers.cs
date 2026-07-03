@@ -392,19 +392,36 @@ namespace ElonaKeys
 			}
 		}
 
+		// Convert a tile's ActPlan into our keyboard menu. Single action runs
+		// immediately, Elona style.
+		private static void PlanMenu(string title, Point p, string emptyMsg)
+		{
+			ActPlan plan = BuildPlan(p);
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (ActPlan.Item i in plan.list)
+			{
+				ActPlan.Item item = i;
+				rows.Add(new MenuRow
+				{
+					label = item.GetTextContext(plan.HasMultipleTargets).Replace("\n", " "),
+					icon = item.tc as Thing,
+					act = delegate
+					{
+						if (item.Perform())
+						{
+							EClass.player.EndTurn();
+						}
+					}
+				});
+			}
+			RunRows(title, rows, emptyMsg);
+		}
+
 		// Classic 's': everything you could do on your own tile (search spots,
-		// harvest, dig treasure, gather...) as a menu.
+		// harvest, dig treasure, gather...) as a keyboard menu.
 		public static void SearchHere()
 		{
-			ActPlan plan = BuildPlan(pc.pos.Copy());
-			if (!plan.HasAct)
-			{
-				Msg.SayRaw("There is nothing to do here.");
-			}
-			else
-			{
-				plan.ShowContextMenu();
-			}
+			PlanMenu("Actions here", pc.pos.Copy(), "There is nothing to do here.");
 		}
 
 		// Classic 'o': containers and crafting kits, in inventory and nearby.
@@ -614,15 +631,7 @@ namespace ElonaKeys
 		{
 			DirPrompt.Ask("Interact with which direction? (press the wait key for yourself)", self: true, delegate(Point p)
 			{
-				ActPlan plan = BuildPlan(p);
-				if (!plan.HasAct)
-				{
-					Msg.SayRaw("There is nothing to interact with.");
-				}
-				else
-				{
-					plan.ShowContextMenu();
-				}
+				PlanMenu("Interact", p, "There is nothing to interact with.");
 			});
 		}
 
