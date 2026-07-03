@@ -8,17 +8,85 @@ namespace ElonaKeys
 	{
 		private static Chara pc => EClass.pc;
 
-		// ---------- helpers ----------
+		private const string Letters = "abcdefghijklmnopqrstuvwxyz";
 
-		private static void SelectItem(string prompt, Func<Thing, bool> filter, Action<Thing> onSelect, string emptyMsg)
+		private class Row
 		{
-			List<Thing> matches = pc.things.List((Thing t) => Safe(filter, t), onlyAccessible: true);
-			if (matches.Count == 0)
+			public string label;
+			public Thing icon;
+			public Action act;
+		}
+
+		// ---------- Elona-style scrollable list menu ----------
+
+		private static void ShowMenu(string title, List<Row> rows)
+		{
+			LayerList layer = EClass.ui.AddLayer<LayerList>();
+			layer.SetSize(560f);
+			layer.windows[0].SetCaption(title);
+			int index = 0;
+			layer.SetList2(rows, (Row r) => r.label, delegate(Row r, ItemGeneral b)
+			{
+				try
+				{
+					r.act();
+				}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogError("ElonaKeys action failed: " + ex);
+				}
+			}, delegate(Row r, ItemGeneral b)
+			{
+				if (r.icon != null)
+				{
+					b.card = r.icon;
+					b.button1.icon.transform.parent.SetActive(enable: true);
+					r.icon.SetImage(b.button1.icon);
+				}
+				if ((bool)b.button1.keyText && index < Letters.Length)
+				{
+					b.button1.keyText.text = Letters[index].ToString();
+				}
+				index++;
+			});
+		}
+
+		// Menu over inventory items matching a filter; optional extra rows on top
+		// (e.g. "Drink from the well"). reopen=true rebuilds the menu after each
+		// action so you can equip/drop several things in a row, like Elona.
+		private static void ItemMenu(string title, Func<Thing, bool> filter, Action<Thing> onSelect, string emptyMsg, bool reopen = false, Func<Thing, string> label = null, List<Row> extraRows = null)
+		{
+			List<Thing> things = pc.things.List((Thing t) => Safe(filter, t), onlyAccessible: true);
+			List<Row> rows = new List<Row>();
+			if (extraRows != null)
+			{
+				rows.AddRange(extraRows);
+			}
+			foreach (Thing thing in things)
+			{
+				Thing t = thing;
+				rows.Add(new Row
+				{
+					label = (label != null) ? label(t) : t.Name,
+					icon = t,
+					act = delegate
+					{
+						onSelect(t);
+						if (reopen)
+						{
+							ItemMenu(title, filter, onSelect, emptyMsg, reopen, label);
+						}
+					}
+				});
+			}
+			if (rows.Count == 0)
 			{
 				Msg.SayRaw(emptyMsg);
-				return;
 			}
-			LayerDragGrid.Create(new InvOwnerSelectItem(prompt, filter, onSelect));
+			else
+			{
+				ShowMenu(title, rows);
+			}
 		}
 
 		private static bool Safe(Func<Thing, bool> filter, Thing t)
@@ -33,7 +101,7 @@ namespace ElonaKeys
 			}
 		}
 
-		// Enumerate the player's tile and the 8 neighbors.
+		// Player tile + 8 neighbors.
 		private static IEnumerable<Point> Nearby()
 		{
 			for (int dz = -1; dz <= 1; dz++)
@@ -51,78 +119,97 @@ namespace ElonaKeys
 			}
 		}
 
-		private static List<(Thing thing, T trait)> FindNearby<T>(Func<T, bool> valid = null) where T : Trait
+		private static ActPlan BuildPlan(Point p)
 		{
-			List<(Thing, T)> found = new List<(Thing, T)>();
+			ActPlan plan = new ActPlan
+			{
+				input = ActInput.AllAction
+			};
+			PointTarget target = new PointTarget
+			{
+				mouse = false
+			};
+			target.Update(p);
+			plan._Update(target);
+			return plan;
+		}
+
+		// Rows for every act with the given DynamicAct id on nearby tiles
+		// (e.g. "actDrink" finds wells and fountains through the game's own logic).
+		private static List<Row> TileActRows(string actId, string labelPrefix)
+		{
+			List<Row> rows = new List<Row>();
 			foreach (Point p in Nearby())
 			{
-				foreach (Thing t in p.Things)
+				foreach (ActPlan.Item i in BuildPlan(p).list)
 				{
-					if (t.trait is T tr && (valid == null || valid(tr)))
+					if ((i.act as DynamicAct)?.id == actId)
 					{
-						found.Add((t, tr));
+						ActPlan.Item item = i;
+						rows.Add(new Row
+						{
+							label = labelPrefix + (item.tc?.Name ?? ""),
+							icon = item.tc as Thing,
+							act = delegate
+							{
+								if (item.Perform())
+								{
+									EClass.player.EndTurn();
+								}
+							}
+						});
 					}
 				}
 			}
-			return found;
+			return rows;
 		}
 
-		private static void PerformAt<T>(List<(Thing thing, T trait)> found, string emptyMsg, string prompt, Action<T> action) where T : Trait
+		private static void RunRows(string title, List<Row> rows, string emptyMsg)
 		{
-			if (found.Count == 0)
+			if (rows.Count == 0)
 			{
 				Msg.SayRaw(emptyMsg);
 			}
-			else if (found.Count == 1)
+			else if (rows.Count == 1)
 			{
-				action(found[0].trait);
+				rows[0].act();
 			}
 			else
 			{
-				DirPrompt.Ask(prompt, self: true, delegate(Point p)
-				{
-					foreach ((Thing thing, T trait) pair in found)
-					{
-						if (pair.thing.pos.Equals(p))
-						{
-							action(pair.trait);
-							return;
-						}
-					}
-					Msg.SayRaw(emptyMsg);
-				});
+				ShowMenu(title, rows);
 			}
 		}
 
-		// ---------- item actions (inventory selection) ----------
+		// ---------- item keys ----------
 
 		public static void Eat()
 		{
-			SelectItem("Eat what?", (Thing t) => t.trait.CanEat(pc) && !t.isEquipped,
+			ItemMenu("Eat what?", (Thing t) => t.trait.CanEat(pc) && !t.isEquipped,
 				delegate(Thing t) { t.DoAct(new AI_Eat { cook = false, target = t }); },
 				"You have nothing to eat.");
 		}
 
 		public static void Quaff()
 		{
-			SelectItem("Quaff which potion?", (Thing t) => t.trait.CanDrink(pc),
+			ItemMenu("Quaff what?", (Thing t) => t.trait.CanDrink(pc),
 				delegate(Thing t) { t.DoAct(new AI_Drink { target = t }); },
-				"You have nothing to drink.");
+				"You have nothing to drink.",
+				reopen: false, label: null, extraRows: TileActRows("actDrink", "Drink: "));
 		}
 
 		public static void ReadItem()
 		{
-			SelectItem("Read what?", (Thing t) => t.trait.CanRead(pc),
+			ItemMenu("Read what?", (Thing t) => t.trait.CanRead(pc),
 				delegate(Thing t) { t.DoAct(new AI_Read { target = t }); },
 				"You have nothing to read.");
 		}
 
 		public static void Zap()
 		{
-			SelectItem("Zap which rod?", (Thing t) => t.trait is TraitRod,
+			ItemMenu("Zap which rod?", (Thing t) => t.trait is TraitRod,
 				delegate(Thing t)
 				{
-					DirPrompt.Ask("Zap in which direction? (press wait key for yourself)", self: true, delegate(Point p)
+					DirPrompt.Ask("Zap in which direction? (press the wait key to zap yourself)", self: true, delegate(Point p)
 					{
 						ActZap act = new ActZap { trait = (TraitRod)t.trait };
 						if (act.Perform(pc, null, p))
@@ -136,59 +223,66 @@ namespace ElonaKeys
 
 		public static void Drop()
 		{
-			SelectItem("Drop what?", (Thing t) => !t.isEquipped,
+			ItemMenu("Drop what?", (Thing t) => !t.isEquipped,
 				delegate(Thing t) { pc.DropThing(t); },
-				"You have nothing to drop.");
+				"You have nothing to drop.",
+				reopen: true);
 		}
 
 		public static void Wear()
 		{
-			SelectItem("Wear or wield what?", (Thing t) => t.IsEquipmentOrRanged && !t.isEquipped,
+			ItemMenu("Wear or wield what?", (Thing t) => t.IsEquipmentOrRanged,
 				delegate(Thing t)
 				{
-					if (!pc.TryEquip(t))
+					if (t.isEquipped)
+					{
+						pc.body.Unequip(t);
+					}
+					else if (!pc.TryEquip(t))
 					{
 						Msg.SayRaw("You cannot equip that.");
 					}
 				},
-				"You have nothing to equip.");
+				"You have nothing to equip.",
+				reopen: true,
+				label: (Thing t) => t.isEquipped ? (t.Name + " <size=12>(equipped)</size>") : t.Name);
 		}
 
-		public static void Hold()
+		public static void Tool()
 		{
-			SelectItem("Hold what in your hands?", (Thing t) => t.trait.CanBeHeld && !t.isEquipped,
-				delegate(Thing t) { pc.HoldCard(t); },
-				"You have nothing you can hold.");
-		}
-
-		public static void Use()
-		{
-			SelectItem("Use what?", (Thing t) => t.trait.CanUse(pc),
+			ItemMenu("Use what?", (Thing t) => t.trait.CanUse(pc),
 				delegate(Thing t) { t.trait.OnUse(pc); },
 				"You have nothing usable.");
 		}
 
+		public static void Hold()
+		{
+			ItemMenu("Hold what in your hands?", (Thing t) => t.trait.CanBeHeld && !t.isEquipped,
+				delegate(Thing t) { pc.HoldCard(t); },
+				"You have nothing you can hold.");
+		}
+
 		public static void Throw()
 		{
-			SelectItem("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld,
+			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld,
 				delegate(Thing t)
 				{
 					if (pc.enemy != null && pc.CanSee(pc.enemy) && !pc.enemy.isDead)
 					{
-						ActThrow.Throw(pc, pc.enemy.pos, t.Thing);
+						ActThrow.Throw(pc, pc.enemy.pos, t);
 						EClass.player.EndTurn();
 						return;
 					}
 					DirPrompt.Ask("Throw in which direction?", self: false, delegate(Point p)
 					{
-						ActThrow.Throw(pc, p, t.Thing);
+						ActThrow.Throw(pc, p, t);
 						EClass.player.EndTurn();
 					});
 				},
 				"You have nothing to throw.");
 		}
 
-		// ---------- world actions ----------
+		// ---------- world keys ----------
 
 		public static void Get()
 		{
@@ -213,29 +307,87 @@ namespace ElonaKeys
 
 		public static void Open()
 		{
-			var doors = FindNearby<TraitDoor>((TraitDoor d) => !d.IsOpen() && d.owner.IsInstalled);
-			PerformAt(doors, "There is nothing to open nearby.", "Open which direction?", delegate(TraitDoor d)
+			List<Row> rows = new List<Row>();
+			foreach (Point p in Nearby())
 			{
-				if (d.owner.c_lockLv > 0)
+				foreach (Thing t in p.Things)
 				{
-					pc.SetAIImmediate(new AI_OpenLock { target = d.owner.Thing });
-					return;
+					if (!t.IsInstalled)
+					{
+						continue;
+					}
+					Thing target = t;
+					if (t.trait.CanOpenContainer)
+					{
+						rows.Add(new Row
+						{
+							label = "Open: " + t.Name,
+							icon = t,
+							act = delegate
+							{
+								if (target.c_lockLv > 0)
+								{
+									pc.SetAIImmediate(new AI_OpenLock { target = target });
+								}
+								else
+								{
+									(target.trait as TraitContainer)?.TryOpen();
+								}
+							}
+						});
+					}
+					else if (t.trait is TraitDoor door && !door.IsOpen())
+					{
+						TraitDoor d = door;
+						rows.Add(new Row
+						{
+							label = "Open: " + t.Name,
+							icon = t,
+							act = delegate
+							{
+								if (d.owner.c_lockLv > 0)
+								{
+									pc.SetAIImmediate(new AI_OpenLock { target = d.owner.Thing });
+								}
+								else
+								{
+									pc.Say("openDoor", pc, d.owner);
+									d.ToggleDoor();
+									EClass.player.EndTurn();
+								}
+							}
+						});
+					}
 				}
-				pc.Say("openDoor", pc, d.owner);
-				d.ToggleDoor();
-				EClass.player.EndTurn();
-			});
+			}
+			RunRows("Open what?", rows, "There is nothing to open nearby.");
 		}
 
 		public static void Close()
 		{
-			var doors = FindNearby<TraitDoor>((TraitDoor d) => d.IsOpen() && d.CanClose() && d.owner.IsInstalled);
-			PerformAt(doors, "There is nothing to close nearby.", "Close which direction?", delegate(TraitDoor d)
+			List<Row> rows = new List<Row>();
+			foreach (Point p in Nearby())
 			{
-				pc.Say("close", pc, d.owner);
-				d.ToggleDoor();
-				EClass.player.EndTurn();
-			});
+				foreach (Thing t in p.Things)
+				{
+					if (t.IsInstalled && t.trait is TraitDoor door && door.IsOpen() && door.CanClose())
+					{
+						TraitDoor d = door;
+						rows.Add(new Row
+						{
+							label = "Close: " + t.Name,
+							icon = t,
+							act = delegate
+							{
+								pc.Say("close", pc, d.owner);
+								d.ToggleDoor();
+								EClass.player.EndTurn();
+							}
+						});
+					}
+				}
+			}
+			RunRows("Close what?", rows, "There is nothing to close nearby.");
 		}
 
 		public static void Bash()
@@ -254,6 +406,19 @@ namespace ElonaKeys
 			});
 		}
 
+		public static void Dig()
+		{
+			DirPrompt.Ask("Dig in which direction?", self: false, delegate(Point p)
+			{
+				if (!p.HasBlock || !TaskMine.CanMine(p, pc))
+				{
+					Msg.SayRaw("You cannot dig there.");
+					return;
+				}
+				pc.SetAIImmediate(new TaskMine { pos = p.Copy() });
+			});
+		}
+
 		public static void Pray()
 		{
 			if (ActPray.TryPray(pc))
@@ -264,84 +429,61 @@ namespace ElonaKeys
 
 		public static void Offer()
 		{
-			var altars = FindNearby<TraitAltar>();
-			PerformAt(altars, "There is no altar nearby.", "Offer at which altar?", delegate(TraitAltar a)
+			List<Row> rows = new List<Row>();
+			foreach (Point p in Nearby())
 			{
-				LayerDragGrid.CreateOffering(a);
-			});
+				foreach (Thing t in p.Things)
+				{
+					if (t.IsInstalled && t.trait is TraitAltar altar)
+					{
+						TraitAltar a = altar;
+						rows.Add(new Row
+						{
+							label = "Offer at: " + t.Name,
+							icon = t,
+							act = delegate { LayerDragGrid.CreateOffering(a); }
+						});
+					}
+				}
+			}
+			RunRows("Offer where?", rows, "There is no altar nearby.");
+		}
+
+		public static void Give()
+		{
+			List<Row> rows = new List<Row>();
+			foreach (Point p in Nearby())
+			{
+				foreach (Chara c in p.Charas)
+				{
+					if (c != pc)
+					{
+						Chara target = c;
+						rows.Add(new Row
+						{
+							label = "Give to: " + c.Name,
+							act = delegate { LayerDragGrid.CreateGive(target); }
+						});
+					}
+				}
+			}
+			RunRows("Give to whom?", rows, "There is nobody here to give things to.");
 		}
 
 		public static void Interact()
 		{
-			DirPrompt.Ask("Interact with which direction? (press wait key for yourself)", self: true, delegate(Point p)
+			DirPrompt.Ask("Interact with which direction? (press the wait key for yourself)", self: true, delegate(Point p)
 			{
-				ShowActionsAt(p);
-			});
-		}
-
-		private static void ShowActionsAt(Point p)
-		{
-			ActPlan plan = new ActPlan
-			{
-				input = ActInput.AllAction
-			};
-			PointTarget target = new PointTarget
-			{
-				mouse = false
-			};
-			target.Update(p);
-			plan._Update(target);
-			if (!plan.HasAct)
-			{
-				Msg.SayRaw("There is nothing to interact with.");
-			}
-			else
-			{
-				plan.ShowContextMenu();
-			}
-		}
-
-		public static void StairsDown()
-		{
-			UseStairs(down: true);
-		}
-
-		public static void StairsUp()
-		{
-			UseStairs(down: false);
-		}
-
-		private static void UseStairs(bool down)
-		{
-			if (EClass._zone.IsRegion)
-			{
-				if (down)
+				ActPlan plan = BuildPlan(p);
+				if (!plan.HasAct)
 				{
-					EClass.player.EnterLocalZone();
+					Msg.SayRaw("There is nothing to interact with.");
 				}
 				else
 				{
-					Msg.SayRaw("There are no stairs here.");
+					plan.ShowContextMenu();
 				}
-				return;
-			}
-			TraitNewZone zone = down ? (TraitNewZone)pc.pos.FindThing<TraitStairsDown>() : pc.pos.FindThing<TraitStairsUp>();
-			if (zone == null)
-			{
-				// teleporters, dungeon exits, zone gates and the like
-				zone = pc.pos.FindThing<TraitNewZone>();
-			}
-			if (zone == null)
-			{
-				Msg.SayRaw(down ? "There are no stairs going down here." : "There are no stairs going up here.");
-				return;
-			}
-			if ((EClass._zone.RegenerateOnEnter || EClass._zone.IsInstance) && !zone.CanUseInTempDungeon)
-			{
-				Msg.Say("badidea");
-				return;
-			}
-			zone.MoveZone();
+			});
 		}
 
 		// ---------- simple toggles ----------

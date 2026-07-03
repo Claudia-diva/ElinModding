@@ -28,6 +28,25 @@ namespace ElonaKeys
 			return Input.GetKeyDown(key);
 		}
 
+		// Accepts a comma-separated list of binds: "g, keypad0".
+		public static System.Collections.Generic.List<Keybind> ParseList(string csv)
+		{
+			var list = new System.Collections.Generic.List<Keybind>();
+			if (string.IsNullOrWhiteSpace(csv))
+			{
+				return list;
+			}
+			foreach (string part in csv.Split(','))
+			{
+				Keybind b = Parse(part);
+				if (!b.IsEmpty)
+				{
+					list.Add(b);
+				}
+			}
+			return list;
+		}
+
 		// Accepts "e", "shift+t", "period", "shift+comma", "none".
 		public static Keybind Parse(string s)
 		{

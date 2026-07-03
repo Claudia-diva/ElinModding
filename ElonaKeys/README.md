@@ -1,46 +1,51 @@
 # Elona Keys
 
-Classic Elona keybinds for [Elin](https://store.steampowered.com/app/2135150/Elin/). Play with the keyboard instead of dragging the mouse around.
+Classic Elona keybinds for [Elin](https://store.steampowered.com/app/2135150/Elin/). Play with the keyboard instead of dragging the mouse around. Item keys open scrollable Elona-style menus with letter hotkeys.
 
 ## Default keys
 
+Faithful to the [classic Elona key list](https://elona.fandom.com/wiki/Controls), minus what Elin already covers natively.
+
 | Key | Action |
 |-----|--------|
-| e | Eat (pick food from inventory) |
-| q | Quaff a potion |
-| r | Read a book or scroll |
-| z | Zap a rod (then pick a direction, wait key = self) |
-| Shift+Z | Cast (opens the ability/spell list) |
-| g | Get everything on your tile |
-| d | Drop an item |
-| w | Wear / wield equipment |
-| t | Hold an item in your hands (tools) |
-| u | Use an item |
-| o | Open an adjacent door (starts lockpicking if locked) |
-| c | Close an adjacent door |
-| b | Bash (pick a direction) |
+| g / numpad 0 | Get everything on your tile |
+| d | Drop menu (stays open to drop several) |
+| e | Eat menu |
+| q | Quaff menu, includes nearby wells and fountains |
+| r | Read menu |
+| Z | Zap a rod, then pick a direction (wait key = self) |
+| v | Cast (opens spell/ability list) |
+| w | Wear/wield menu; click equipped items to remove them |
+| t | Use an item |
+| T | Throw (at your target, or pick a direction) |
 | f | Fire ranged weapon (native action) |
-| Shift+T | Throw an item (at your target, or pick a direction) |
+| b | Bash a direction |
+| D | Dig/mine a wall in a direction |
+| o | Open a container or door (starts lockpicking if locked) |
+| C | Close a door |
 | p | Pray |
-| Shift+O | Offer at an adjacent altar |
+| O | Offer at an adjacent altar |
+| G | Give items to an adjacent character |
 | i | Interact menu for a direction (talk, give, trade...) |
-| x | Examine inventory |
-| Shift+. (>) | Descend stairs / enter zone on the world map |
-| Shift+, (<) | Ascend stairs |
+| Shift+X | Inventory |
 
-Movement stays on the numpad / arrow keys as in vanilla Elin. Item selection uses the game's native pick-an-item UI (the same one used for offerings); valid items are highlighted, click one to act. Escape or right-click cancels a direction prompt.
+Movement stays on the numpad / arrow keys as in vanilla Elin. Character sheet, journal, log and help already have native Elin keys. In menus, click an entry or press its letter. Escape or right-click cancels a direction prompt.
 
-The game's own keybinds always win: if Elin's options map a key to something, that mapping is used and the mod bind is ignored. Rebind either side to resolve conflicts.
+Not covered yet: Dip (B) and ammo switching (A) have no clean Elin equivalent.
 
-## Rebinding
+## Conflicts and rebinding
 
-Edit `BepInEx/config/elin.elonakeys.cfg` (created after first launch). Format: `e`, `shift+t`, `period`, `none` to unbind. Key names follow Unity's KeyCode enum.
+By default the mod's keys win over Elin's own bindings when they clash (classic `q` quaff beats the native empty-hand key). Set `OverrideGameKeys = false` in the config to flip that, or rebind either side.
+
+Edit `BepInEx/config/elin.elonakeys.cfg` (created after first launch). Format: `e`, `shift+t`, `period`, comma-separated alternatives (`g, keypad0`), `none` to unbind. Key names follow Unity's KeyCode enum.
+
+An in-game summary lives in the Mod Help panel (ESC menu) if you have Mod Help installed.
 
 ## Install
 
 Requires BepInEx and the Package Chainloader (`PackageLoader.dll`), which most Elin DLL-mod setups already have.
 
-1. Run `build.ps1` (builds and copies to `Elin/Package/Mod_ElonaKeys`), or copy `ElonaKeys.dll` + `package.xml` there yourself.
+1. Run `build.ps1` (builds and copies to `Elin/Package/Mod_ElonaKeys`), or copy `ElonaKeys.dll` + the contents of `package/` there yourself.
 2. Enable "Elona Keys" in the in-game mod list and restart.
 
 ## Build

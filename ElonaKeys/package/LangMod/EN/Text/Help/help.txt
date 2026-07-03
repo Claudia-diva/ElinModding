@@ -1,0 +1,54 @@
+$About
+{topic|Elona Keys}
+Classic Elona keybinds for Elin. Play with the keyboard instead of dragging the mouse around.
+
+Item keys open a scrollable menu of matching items. Click an entry or press its letter to act. Directional actions ask "which direction?"; answer with a movement key, the wait key for yourself, or Escape to cancel.
+
+{pair|Config|BepInEx/config/elin.elonakeys.cfg}
+Every key is rebindable. Format: e, shift+t, period, comma-separated alternatives, or none to unbind.
+
+By default these keys take priority over Elin's own bindings when they clash (OverrideGameKeys=true in the config). Set it to false to let the game's keys win instead.
+
+$Keys
+{topic|Item Keys}
+{pair|g / numpad 0|Get everything on your tile}
+{pair|d|Drop menu (stays open)}
+{pair|e|Eat menu}
+{pair|q|Quaff menu, includes nearby wells and fountains}
+{pair|r|Read menu}
+{pair|Z|Zap a rod, then a direction}
+{pair|w|Wear/wield menu, click equipped items to remove}
+{pair|t|Use an item}
+{pair|T|Throw an item}
+{pair|shift+x|Inventory}
+
+{topic|Action Keys}
+{pair|v|Cast (spell/ability list)}
+{pair|i|Interact with a direction (talk, give, trade...)}
+{pair|f|Fire ranged weapon}
+{pair|b|Bash a direction}
+{pair|D|Dig/mine a wall}
+{pair|o|Open a container or door (lockpicks if locked)}
+{pair|C|Close a door}
+{pair|p|Pray}
+{pair|O|Offer at an adjacent altar}
+{pair|G|Give items to an adjacent character}
+
+{topic|Not included}
+・ Dip (B) and ammo switch (A) have no clean Elin equivalent yet.
+・ Character sheet, journal, log and help already have native Elin keys.
+・ Search (s) is not bound; Elin's own Search is a map text-search widget.
+
+$Changelog
+{topic|1.1.0}
+・ Item selection now uses a scrollable Elona-style menu with letter hotkeys instead of the drag grid.
+・ Wear menu toggles equip/unequip and stays open; favorited gear works.
+・ Classic-faithful defaults from the Elona wiki: Zap=Z, Cast=v, Close=C, Dig=D added, Give=G added.
+・ Quaff lists nearby wells and fountains.
+・ Open handles containers (with lockpicking) in addition to doors.
+・ Mod keys now take priority over conflicting game keys (configurable).
+・ Removed the redundant stair keys.
+・ Added this help panel.
+
+{topic|1.0.0}
+・ First release.

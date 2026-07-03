@@ -15,6 +15,6 @@ if (-not $NoInstall) {
     $dest = Join-Path $ElinDir "Package\Mod_ElonaKeys"
     New-Item -ItemType Directory -Force $dest | Out-Null
     Copy-Item "$root\bin\Release\ElonaKeys.dll" $dest -Force
-    Copy-Item "$root\package\package.xml" $dest -Force
+    Copy-Item "$root\package\*" $dest -Recurse -Force
     Write-Host "Installed to $dest"
 }
