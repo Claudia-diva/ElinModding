@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.2.1";
+		public const string Version = "1.3.0";
 
 		internal static ManualLogSource Log;
 
@@ -44,15 +44,21 @@ namespace ElonaKeys
 		private static ConfigEntry<bool> debugLog;
 		private static ConfigEntry<bool> menuCategories;
 		private static ConfigEntry<int> categoryThreshold;
+		private static ConfigEntry<int> menuPageSize;
 		private static ConfigEntry<string> nameDisplay;
 		private static ConfigEntry<string> activateHotkeys;
+		private static ConfigEntry<bool> shiftDirTool;
+		private static ConfigEntry<string> suppressNativeKeys;
 
 		internal static bool OverrideGameKeys => overrideGameKeys.Value;
 		internal static bool DebugLog => debugLog.Value;
 		internal static bool MenuCategories => menuCategories.Value;
 		internal static int CategoryThreshold => categoryThreshold.Value;
+		internal static int MenuPageSize => menuPageSize.Value;
 		internal static string NameDisplay => nameDisplay.Value;
 		internal static string ActivateHotkeys => activateHotkeys.Value;
+		internal static bool ShiftDirTool => shiftDirTool.Value;
+		internal static List<Keybind> SuppressBinds { get; private set; } = new List<Keybind>();
 
 		private void Awake()
 		{
@@ -67,6 +73,12 @@ namespace ElonaKeys
 				"Item count above which the category menu kicks in.");
 			nameDisplay = Config.Bind("Menus", "NameDisplay", "pingpong",
 				"How long item names are displayed in menus: truncate, pingpong (scroll back and forth), or wrap.");
+			menuPageSize = Config.Bind("Menus", "MenuPageSize", 15,
+				"Rows per menu page. Multiple pages are switched with the left/right arrow keys.");
+			shiftDirTool = Config.Bind("General", "ShiftDirTool", true,
+				"While holding a tool, shift+direction uses it on the adjacent tile (mine, chop, till...) like drag-right-click.");
+			suppressNativeKeys = Config.Bind("General", "SuppressNativeKeys", "",
+				"Comma-separated keys to swallow entirely so the game never sees them (e.g. 'z' if the native examine-target key annoys you).");
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
 				"Digit keys activate Extra-hotbar slots assigned via the menus (hover an item/spell and press 0-9, shift+0-9 for slots 11-20). Activation mode: off, shift (shift+1..0 fires slots 1-10), plain (1..0 fires slots 1-10 and REPLACES the native toolbelt digits; shift+1..0 fires slots 11-20). F1-F8 always work natively for the first slots.");
 
@@ -91,6 +103,9 @@ namespace ElonaKeys
 			Def("Offer", "shift+o", Handlers.Offer, "Offer a sacrifice at an adjacent altar.");
 			Def("Give", "shift+g", Handlers.Give, "Give items to an adjacent character.");
 			Def("Interact", "i", Handlers.Interact, "Interaction menu for a direction (talk, give, trade...).");
+			Def("Search", "s", Handlers.SearchHere, "Do things on your own tile: search spots, harvest, dig treasure...");
+			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
+			Def("Party", "shift+q", Handlers.Party, "Party member character sheets and inventories.");
 			Def("ExamineInventory", "shift+x", Handlers.ExamineInventory, "Open/close your inventory.");
 			Def("Hold", "none", Handlers.Hold, "Hold any item in your hands (Elin-specific, unbound by default).");
 			DefNative("Fire", "f", EAction.Fire, "Fire your ranged weapon (native Fire action).");
@@ -126,6 +141,7 @@ namespace ElonaKeys
 					entries.Add(new Entry { name = name, binds = binds, run = run, action = action });
 				}
 			}
+			SuppressBinds = Keybind.ParseList(suppressNativeKeys.Value);
 		}
 
 		internal static Entry FindPressed()

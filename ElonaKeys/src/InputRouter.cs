@@ -43,6 +43,21 @@ namespace ElonaKeys
 			{
 				return;
 			}
+			// swallow keys the user asked us to hide from the game entirely
+			foreach (Keybind sb in Plugin.SuppressBinds)
+			{
+				if (sb.IsDown())
+				{
+					EInput.action = EAction.None;
+					EInput.Consume();
+					return;
+				}
+			}
+			// shift+direction with a held tool = use it on the adjacent tile
+			if (ShiftDirTool())
+			{
+				return;
+			}
 			// what did the user press?
 			Plugin.Entry entry = Plugin.FindPressed();
 			int digitSlot = -1;
@@ -118,6 +133,48 @@ namespace ElonaKeys
 				Plugin.Log?.LogError("ElonaKeys handler '" + entry.name + "' failed: " + ex);
 			}
 			EInput.Consume();
+		}
+
+		// While holding a tool, shift+direction applies it to the adjacent tile
+		// (same act the drag-right-click designation would use). Returns true when
+		// it consumed the axis this frame.
+		private static bool ShiftDirTool()
+		{
+			if (!Plugin.ShiftDirTool || !EInput.isShiftDown || EInput.axis == Vector2.zero)
+			{
+				return false;
+			}
+			Thing held = EClass.pc.held as Thing;
+			if (held == null || !(held.trait is TraitTool))
+			{
+				return false;
+			}
+			if (!(EClass.scene.actionMode is AM_Adv) || EClass.ui.BlockActions || !EClass.pc.currentZone.IsActiveZone)
+			{
+				return false;
+			}
+			Point p = EClass.pc.pos.Copy();
+			p.x += (int)EInput.axis.x;
+			p.z += (int)EInput.axis.y;
+			if (!p.IsValid)
+			{
+				return false;
+			}
+			ActPlan plan = Handlers.BuildPlan(p, ActInput.RightMouse);
+			if (!plan.HasAct || plan.list[0].act is ActMelee)
+			{
+				return false; // nothing tool-ish there: let shift+move stay running
+			}
+			EInput.axis = Vector2.zero; // no walking into it
+			if (EClass.pc.HasNoGoal)
+			{
+				bool performed = plan.GetAction()();
+				if (performed && plan.WillEndTurn)
+				{
+					EClass.player.EndTurn();
+				}
+			}
+			return true;
 		}
 
 		// slot 0-19 to fire, or -1

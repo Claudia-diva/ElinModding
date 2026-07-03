@@ -33,7 +33,7 @@ namespace ElonaKeys
 			currentMenu = layer;
 		}
 
-		public static bool MenuOpen => currentMenu != null && currentMenu;
+		public static bool MenuOpen => MenuSystem.Alive || (currentMenu != null && currentMenu);
 
 		// digit index 0-9 where key "1" = 0 ... "0" = 9; -1 if none pressed this frame
 		public static int GetDigitDown()
@@ -57,6 +57,7 @@ namespace ElonaKeys
 				{
 					return;
 				}
+				MenuSystem.HandleKeys();
 				UpdateExamineKey();
 				UpdateAssignKey();
 			}
@@ -88,7 +89,7 @@ namespace ElonaKeys
 			{
 				return t;
 			}
-			return null;
+			return MenuSystem.SelectedThing(); // keyboard selection fallback
 		}
 
 		// ---------- 0-9 hotbar assignment ----------
