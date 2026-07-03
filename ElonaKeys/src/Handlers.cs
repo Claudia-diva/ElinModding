@@ -619,12 +619,30 @@ namespace ElonaKeys
 						rows.Add(new MenuRow
 						{
 							label = "Give to: " + c.Name,
-							act = delegate { LayerDragGrid.CreateGive(target); }
+							act = delegate { GiveTo(target); }
 						});
 					}
 				}
 			}
 			RunRows("Give to whom?", rows, "There is nobody here to give things to.");
+		}
+
+		private static void GiveTo(Chara c)
+		{
+			ItemMenu("Give what to " + c.Name + "? (one per pick from stacks)",
+				(Thing t) => !t.trait.CanOnlyCarry && !t.isEquipped && !t.c_isImportant,
+				delegate(Thing t)
+				{
+					if (!c.CanAcceptGift(pc, t))
+					{
+						Msg.SayRaw(c.Name + " cannot take that.");
+						return;
+					}
+					Thing give = (t.Num > 1) ? t.Split(1) : t;
+					pc.GiveGift(c, give);
+				},
+				"You have nothing you can give.",
+				refresh: true);
 		}
 
 		public static void Interact()
