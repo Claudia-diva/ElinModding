@@ -12,12 +12,13 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.1.0";
+		public const string Version = "1.2.0";
 
 		internal static ManualLogSource Log;
 
-		private struct Entry
+		public class Entry
 		{
+			public string name;
 			public List<Keybind> binds;
 			public Action run;       // custom handler
 			public EAction action;   // or native EAction passthrough
@@ -36,15 +37,39 @@ namespace ElonaKeys
 		}
 
 		private static readonly List<Entry> entries = new List<Entry>();
-		private static readonly List<(ConfigEntry<string> cfg, Action run, EAction action)> defs =
-			new List<(ConfigEntry<string>, Action, EAction)>();
+		private static readonly List<(ConfigEntry<string> cfg, string name, Action run, EAction action)> defs =
+			new List<(ConfigEntry<string>, string, Action, EAction)>();
+
 		private static ConfigEntry<bool> overrideGameKeys;
+		private static ConfigEntry<bool> debugLog;
+		private static ConfigEntry<bool> menuCategories;
+		private static ConfigEntry<int> categoryThreshold;
+		private static ConfigEntry<string> nameDisplay;
+		private static ConfigEntry<string> activateHotkeys;
+
+		internal static bool OverrideGameKeys => overrideGameKeys.Value;
+		internal static bool DebugLog => debugLog.Value;
+		internal static bool MenuCategories => menuCategories.Value;
+		internal static int CategoryThreshold => categoryThreshold.Value;
+		internal static string NameDisplay => nameDisplay.Value;
+		internal static string ActivateHotkeys => activateHotkeys.Value;
 
 		private void Awake()
 		{
 			Log = Logger;
 			overrideGameKeys = Config.Bind("General", "OverrideGameKeys", true,
-				"If true, keys bound below take priority over Elin's own keybinds on conflict (e.g. classic 'q' quaff beats the native empty-hand key). If false, the game's binding wins and the mod key is ignored.");
+				"If true, keys bound below take priority over Elin's own keybinds on conflict. If false, the game's binding wins and the mod key is ignored.");
+			debugLog = Config.Bind("General", "DebugLog", false,
+				"Log why key presses are ignored (for troubleshooting 'keys stopped working').");
+			menuCategories = Config.Bind("Menus", "CategoryFilter", true,
+				"When an item menu would list more than CategoryThreshold items, show a category menu first.");
+			categoryThreshold = Config.Bind("Menus", "CategoryThreshold", 25,
+				"Item count above which the category menu kicks in.");
+			nameDisplay = Config.Bind("Menus", "NameDisplay", "pingpong",
+				"How long item names are displayed in menus: truncate, pingpong (scroll back and forth), or wrap.");
+			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
+				"Digit keys activate Extra-hotbar slots assigned via the menus (hover an item/spell and press 0-9, shift+0-9 for slots 11-20). Activation mode: off, shift (shift+1..0 fires slots 1-10), plain (1..0 fires slots 1-10 and REPLACES the native toolbelt digits; shift+1..0 fires slots 11-20). F1-F8 always work natively for the first slots.");
+
 			// Defaults follow classic Elona (elona.fandom.com/wiki/Controls).
 			Def("Get", "g, keypad0", Handlers.Get, "Pick up everything on the tile you are standing on.");
 			Def("Drop", "d", Handlers.Drop, "Drop items via menu (stays open to drop several).");
@@ -52,20 +77,22 @@ namespace ElonaKeys
 			Def("Quaff", "q", Handlers.Quaff, "Drink a potion, or from an adjacent well/fountain.");
 			Def("Read", "r", Handlers.ReadItem, "Read a book, scroll or scrap.");
 			Def("Zap", "shift+z", Handlers.Zap, "Zap a rod, then pick a direction (wait key = yourself).");
-			Def("Cast", "v", Handlers.Cast, "Open the spell/ability list.");
+			Def("Cast", "v", Handlers.Cast, "Open the spell/ability list. Hover a spell and press 0-9 to hotkey it.");
 			Def("Wear", "w", Handlers.Wear, "Equip menu; click to wear/wield, click equipped items to remove.");
-			Def("Tool", "t", Handlers.Tool, "Use a usable item from your inventory.");
+			Def("Tool", "t", Handlers.HoldTool, "Pick a tool from your inventory and hold it in your hands.");
+			Def("Use", "u", Handlers.Use, "Use a usable item from your inventory.");
+			Def("Blend", "shift+b", Handlers.Blend, "Dip/blend: pick a potion or liquid, then mix items into it.");
 			Def("Throw", "shift+t", Handlers.Throw, "Throw an item at your target, or pick a direction.");
 			Def("Bash", "b", Handlers.Bash, "Bash in a chosen direction.");
-			Def("Dig", "shift+d", Handlers.Dig, "Mine the wall in a chosen direction.");
-			Def("Open", "o", Handlers.Open, "Open an adjacent container or door (picks locks if locked).");
-			Def("Close", "shift+c", Handlers.Close, "Close an adjacent door.");
+			Def("Dig", "shift+d", Handlers.Dig, "Mine a wall in a chosen direction (auto-holds your digging tool).");
+			Def("Open", "o", Handlers.Open, "Open containers and crafting kits in your inventory, or nearby ones.");
+			Def("Close", "shift+c", Handlers.DoorToggle, "Open or close a door in a chosen direction.");
 			Def("Pray", "p", Handlers.Pray, "Pray to your god.");
 			Def("Offer", "shift+o", Handlers.Offer, "Offer a sacrifice at an adjacent altar.");
 			Def("Give", "shift+g", Handlers.Give, "Give items to an adjacent character.");
 			Def("Interact", "i", Handlers.Interact, "Interaction menu for a direction (talk, give, trade...).");
 			Def("ExamineInventory", "shift+x", Handlers.ExamineInventory, "Open/close your inventory.");
-			Def("Hold", "none", Handlers.Hold, "Hold an item in your hands (Elin-specific, unbound by default).");
+			Def("Hold", "none", Handlers.Hold, "Hold any item in your hands (Elin-specific, unbound by default).");
 			DefNative("Fire", "f", EAction.Fire, "Fire your ranged weapon (native Fire action).");
 			Rebuild();
 			Config.SettingChanged += delegate { Rebuild(); };
@@ -73,89 +100,44 @@ namespace ElonaKeys
 			Log.LogInfo("ElonaKeys " + Version + " loaded, " + entries.Count + " binds active.");
 		}
 
+		private void Update()
+		{
+			MenuExtras.OnUpdate();
+		}
+
 		private void Def(string name, string def, Action run, string desc)
 		{
-			defs.Add((Config.Bind("Keys", name, def, desc + " Format: 'e', 'shift+t', 'period', comma-separated alternatives, 'none' to unbind."), run, EAction.None));
+			defs.Add((Config.Bind("Keys", name, def, desc + " Format: 'e', 'shift+t', 'period', comma-separated alternatives, 'none' to unbind."), name, run, EAction.None));
 		}
 
 		private void DefNative(string name, string def, EAction action, string desc)
 		{
-			defs.Add((Config.Bind("Keys", name, def, desc + " Format: 'e', 'shift+t', 'none' to unbind."), null, action));
+			defs.Add((Config.Bind("Keys", name, def, desc + " Format: 'e', 'shift+t', 'none' to unbind."), name, null, action));
 		}
 
 		private static void Rebuild()
 		{
 			entries.Clear();
-			foreach ((ConfigEntry<string> cfg, Action run, EAction action) in defs)
+			foreach ((ConfigEntry<string> cfg, string name, Action run, EAction action) in defs)
 			{
 				List<Keybind> binds = Keybind.ParseList(cfg.Value);
 				if (binds.Count > 0)
 				{
-					entries.Add(new Entry { binds = binds, run = run, action = action });
+					entries.Add(new Entry { name = name, binds = binds, run = run, action = action });
 				}
 			}
 		}
 
-		// Called each frame from the AM_Adv._OnUpdateInput prefix, i.e. exactly when
-		// the game itself polls gameplay keys (game started, active zone, no modal UI).
-		internal static void HandleBinds()
+		internal static Entry FindPressed()
 		{
-			if (DirPrompt.Active || EInput.isInputFieldActive || EClass.ui.BlockInput)
-			{
-				return;
-			}
-			if (EInput.IsConsumed || EInput.isCtrlDown || EInput.isAltDown)
-			{
-				return;
-			}
-			EAction current = EInput.action;
-			// Without override, the game's own (rebindable) keys win; ShowGrid is the
-			// hardcoded 'g' fallback and is always overridable.
-			if (!overrideGameKeys.Value && current != EAction.None && current != EAction.ShowGrid)
-			{
-				return;
-			}
 			foreach (Entry e in entries)
 			{
-				if (!e.IsDown())
+				if (e.IsDown())
 				{
-					continue;
+					return e;
 				}
-				if (e.action != EAction.None)
-				{
-					EInput.action = e.action; // native passthrough, game handles it after us
-					return;
-				}
-				EInput.action = EAction.None; // suppress whatever the game mapped to this key
-				try
-				{
-					e.run();
-				}
-				catch (Exception ex)
-				{
-					Log?.LogError("ElonaKeys handler failed: " + ex);
-				}
-				EInput.Consume();
-				return;
 			}
-		}
-	}
-
-	[HarmonyPatch(typeof(AM_Adv), "_OnUpdateInput")]
-	internal static class Patch_AdvInput
-	{
-		private static void Prefix()
-		{
-			Plugin.HandleBinds();
-		}
-	}
-
-	[HarmonyPatch(typeof(ActionMode), "InputMovement")]
-	internal static class Patch_InputMovement
-	{
-		private static bool Prefix()
-		{
-			return !DirPrompt.Handle();
+			return null;
 		}
 	}
 }

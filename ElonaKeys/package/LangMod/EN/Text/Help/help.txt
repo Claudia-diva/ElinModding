@@ -2,12 +2,12 @@ $About
 {topic|Elona Keys}
 Classic Elona keybinds for Elin. Play with the keyboard instead of dragging the mouse around.
 
-Item keys open a scrollable menu of matching items. Click an entry or press its letter to act. Directional actions ask "which direction?"; answer with a movement key, the wait key for yourself, or Escape to cancel.
+Item keys open a scrollable menu: click an entry or press its letter. Hover an entry and press x to examine it. Hover an entry (or a spell in the spell list) and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20). Directional actions ask "which direction?"; answer with a movement key, the wait key for yourself, or Escape to cancel.
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
-Every key is rebindable. Format: e, shift+t, period, comma-separated alternatives, or none to unbind.
+Every key is rebindable. Long-name display (pingpong/truncate/wrap), category filtering for big menus, and hotkey activation mode are configurable too.
 
-By default these keys take priority over Elin's own bindings when they clash (OverrideGameKeys=true in the config). Set it to false to let the game's keys win instead.
+By default these keys take priority over Elin's own bindings when they clash (OverrideGameKeys=true). Set it to false to let the game's keys win instead.
 
 $Keys
 {topic|Item Keys}
@@ -18,37 +18,52 @@ $Keys
 {pair|r|Read menu}
 {pair|Z|Zap a rod, then a direction}
 {pair|w|Wear/wield menu, click equipped items to remove}
-{pair|t|Use an item}
+{pair|t|Hold a tool in your hands}
+{pair|u|Use an item}
+{pair|B|Dip/blend: pick a liquid, then mix items into it}
 {pair|T|Throw an item}
 {pair|shift+x|Inventory}
 
 {topic|Action Keys}
-{pair|v|Cast (spell/ability list)}
+{pair|v|Cast (spell/ability list; hover + 0-9 to hotkey)}
 {pair|i|Interact with a direction (talk, give, trade...)}
 {pair|f|Fire ranged weapon}
 {pair|b|Bash a direction}
-{pair|D|Dig/mine a wall}
-{pair|o|Open a container or door (lockpicks if locked)}
-{pair|C|Close a door}
+{pair|D|Dig/mine a wall (auto-holds your digging tool)}
+{pair|o|Open containers and crafting kits, yours or nearby}
+{pair|C|Open or close a door in a chosen direction}
 {pair|p|Pray}
 {pair|O|Offer at an adjacent altar}
 {pair|G|Give items to an adjacent character}
 
+{topic|Hotkeys}
+{pair|hover + 0-9|Assign item/spell to Extra hotbar slot 1-10}
+{pair|hover + shift 0-9|Assign to slot 11-20}
+{pair|shift + 0-9|Activate slot 1-10 (default mode)}
+{pair|F1-F8|Activate slots natively}
+Set ActivateHotkeys=plain in the config to fire slots with bare digits instead of the toolbelt.
+
 {topic|Not included}
-・ Dip (B) and ammo switch (A) have no clean Elin equivalent yet.
-・ Character sheet, journal, log and help already have native Elin keys.
+・ Ammo switch (A) has no clean Elin equivalent yet.
+・ Character sheet (c), journal (j), log and help already have native Elin keys.
 ・ Search (s) is not bound; Elin's own Search is a map text-search widget.
 
 $Changelog
+{topic|1.2.0}
+・ Input hook moved earlier in the frame: mod keys now reliably suppress conflicting native menus (b no longer flips the spell list, shift+c no longer opens the character sheet).
+・ Menus: item icons fixed, rich stat tooltips on hover, x examines the hovered item, letter hotkeys kept.
+・ Long names: pingpong scrolling by default, or truncate/wrap via config.
+・ Big menus can show a category filter first (configurable threshold).
+・ Hotkey assignment: hover an item or spell and press 0-9 (shift for 11-20); activate with shift+digits or F1-F8.
+・ o reworked: containers and crafting kits in your inventory plus nearby ones.
+・ C opens AND closes doors, always asks for a direction.
+・ B = dip/blend menu.
+・ Dig auto-holds a digging tool; t holds tools.
+・ Equipping uses the body slot logic directly: favorited gear and gear inside bags now equip fine.
+・ Debug logging option for diagnosing dead keys.
+
 {topic|1.1.0}
-・ Item selection now uses a scrollable Elona-style menu with letter hotkeys instead of the drag grid.
-・ Wear menu toggles equip/unequip and stays open; favorited gear works.
-・ Classic-faithful defaults from the Elona wiki: Zap=Z, Cast=v, Close=C, Dig=D added, Give=G added.
-・ Quaff lists nearby wells and fountains.
-・ Open handles containers (with lockpicking) in addition to doors.
-・ Mod keys now take priority over conflicting game keys (configurable).
-・ Removed the redundant stair keys.
-・ Added this help panel.
+・ Scrollable Elona-style menus, classic-faithful defaults, Mod Help pages.
 
 {topic|1.0.0}
 ・ First release.

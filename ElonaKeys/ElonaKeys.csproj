@@ -24,6 +24,8 @@
     <Reference Include="UnityEngine"><HintPath>$(Managed)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.InputLegacyModule"><HintPath>$(Managed)\UnityEngine.InputLegacyModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.TextRenderingModule"><HintPath>$(Managed)\UnityEngine.TextRenderingModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Plugins.Sound"><HintPath>$(Managed)\Plugins.Sound.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.UI"><HintPath>$(Managed)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="BepInEx.Core"><HintPath>$(BepCore)\BepInEx.Core.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="BepInEx.Unity"><HintPath>$(BepCore)\BepInEx.Unity.dll</HintPath><Private>false</Private></Reference>

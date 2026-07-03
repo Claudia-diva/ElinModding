@@ -14,24 +14,28 @@ Faithful to the [classic Elona key list](https://elona.fandom.com/wiki/Controls)
 | q | Quaff menu, includes nearby wells and fountains |
 | r | Read menu |
 | Z | Zap a rod, then pick a direction (wait key = self) |
-| v | Cast (opens spell/ability list) |
+| v | Cast (opens spell/ability list; hover a spell + 0-9 to hotkey it) |
 | w | Wear/wield menu; click equipped items to remove them |
-| t | Use an item |
+| t | Hold a tool in your hands |
+| u | Use an item |
+| B | Dip/blend: pick a liquid, then mix items into it |
 | T | Throw (at your target, or pick a direction) |
 | f | Fire ranged weapon (native action) |
 | b | Bash a direction |
-| D | Dig/mine a wall in a direction |
-| o | Open a container or door (starts lockpicking if locked) |
-| C | Close a door |
+| D | Dig/mine a wall (auto-holds your digging tool) |
+| o | Open containers and crafting kits, in your inventory or nearby |
+| C | Open or close a door in a chosen direction |
 | p | Pray |
 | O | Offer at an adjacent altar |
 | G | Give items to an adjacent character |
 | i | Interact menu for a direction (talk, give, trade...) |
 | Shift+X | Inventory |
 
-Movement stays on the numpad / arrow keys as in vanilla Elin. Character sheet, journal, log and help already have native Elin keys. In menus, click an entry or press its letter. Escape or right-click cancels a direction prompt.
+Movement stays on the numpad / arrow keys as in vanilla Elin. Character sheet, journal, log and help already have native Elin keys. Escape or right-click cancels a direction prompt.
 
-Not covered yet: Dip (B) and ammo switching (A) have no clean Elin equivalent.
+In menus: click an entry or press its letter; hover + `x` examines the item; hover + `0-9` assigns it to an Extra-hotbar hotkey slot (shift+digit for slots 11-20). Fire hotkeys with `shift+0-9` (default), `F1-F8` (native), or bare digits with `ActivateHotkeys=plain`. Long names ping-pong scroll by default (`NameDisplay` = pingpong/truncate/wrap). Menus over 25 items show a category filter first (`CategoryFilter`, `CategoryThreshold`).
+
+Not covered yet: ammo switching (A) has no clean Elin equivalent.
 
 ## Conflicts and rebinding
 
