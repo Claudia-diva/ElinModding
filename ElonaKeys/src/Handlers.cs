@@ -311,21 +311,50 @@ namespace ElonaKeys
 		public static void Throw()
 		{
 			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld,
-				delegate(Thing t)
+				delegate(Thing t) { ThrowTargetMenu(t); },
+				"You have nothing to throw.");
+		}
+
+		// Elona-style target pick: visible characters by distance, or a direction.
+		private static void ThrowTargetMenu(Thing t)
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			List<Chara> targets = new List<Chara>();
+			foreach (Chara c in EClass._map.charas)
+			{
+				if (c != pc && !c.isDead && pc.CanSee(c) && pc.pos.Distance(c.pos) <= 8)
 				{
-					if (pc.enemy != null && pc.CanSee(pc.enemy) && !pc.enemy.isDead)
+					targets.Add(c);
+				}
+			}
+			targets.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
+			foreach (Chara chara in targets)
+			{
+				Chara c = chara;
+				string tag = pc.IsHostile(c) ? " <color=#ff8080>(hostile)</color>" : "";
+				rows.Add(new MenuRow
+				{
+					label = "Throw at " + c.Name + " (" + pc.pos.Distance(c.pos) + ")" + tag,
+					act = delegate
 					{
-						ActThrow.Throw(pc, pc.enemy.pos, t);
+						ActThrow.Throw(pc, c.pos, t);
 						EClass.player.EndTurn();
-						return;
 					}
+				});
+			}
+			rows.Add(new MenuRow
+			{
+				label = "Pick a direction...",
+				act = delegate
+				{
 					DirPrompt.Ask("Throw in which direction?", self: false, delegate(Point p)
 					{
 						ActThrow.Throw(pc, p, t);
 						EClass.player.EndTurn();
 					});
-				},
-				"You have nothing to throw.");
+				}
+			});
+			MenuSystem.Show("Throw " + t.Name + " at?", rows);
 		}
 
 		// Classic 'A': load compatible ammo into your ranged weapon.

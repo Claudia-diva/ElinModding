@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.4.0 - 2026-07-03
+
+- Throw offers a target list (visible characters sorted by distance, hostiles marked) before the direction fallback.
+- Give reworked into a pure keyboard flow using the game's gift logic (refusals, affinity, cursed handling); one per pick from stacks.
+- Fixed ping-pong name scrollers stacking up on pooled menu rows (jitter over time).
+- Docs synced everywhere: README, in-game Mod Help ($About/$Keys/$Changelog), this file.
+
+## 1.3.2 - 2026-07-03
+
+- Key-chip badges deactivated entirely; selection letters live inside row labels.
+- Item stat tooltip follows the keyboard cursor (ShowTooltipForced on selection).
+- s and i open keyboard menus built from the tile's ActPlan instead of the mouse context popup.
+- Direction prompts: tile highlights, held-movement-key release guard.
+- Menus ignore the keystroke that opened them (no more instant self-selection like 'd' dropping row d).
+- Repaired stale user config (OverrideGameKeys, Close/Zap/ExamineInventory binds).
+
+## 1.3.1 - 2026-07-03
+
+- Fixed abandoned direction prompts silently disabling all mod keys (now processed centrally with timeout and modal bail-out).
+- Ability/spell hotbar placeholders excluded from all item menus (TraitAbility is a TraitTool subclass).
+- Letters merged into row labels; cursor-based selection.
+
 ## 1.3.0 - 2026-07-03
 
 - New menu system: fixed rows per page (MenuPageSize, default 15) so everything fits on screen, left/right arrows switch pages, up/down + Enter navigate and act, letters per page, icon-letter-name layout with the icon leftmost.

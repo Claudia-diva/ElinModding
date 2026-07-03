@@ -179,6 +179,18 @@ namespace ElonaKeys
 
 		public static void ApplyNameDisplay(UIText text, float maxWidth)
 		{
+			// rows are pooled and rebuilt on every page/selection change: never let
+			// two scrollers fight over the same text component
+			for (int i = scrollers.Count - 1; i >= 0; i--)
+			{
+				if (scrollers[i].text == text)
+				{
+					Vector2 pos = text.rectTransform.anchoredPosition;
+					pos.x = scrollers[i].baseX;
+					text.rectTransform.anchoredPosition = pos;
+					scrollers.RemoveAt(i);
+				}
+			}
 			string mode = Plugin.NameDisplay;
 			if (mode == "wrap")
 			{

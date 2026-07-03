@@ -1,63 +1,75 @@
 # Elona Keys
 
-Classic Elona keybinds for [Elin](https://store.steampowered.com/app/2135150/Elin/). Play with the keyboard instead of dragging the mouse around. Item keys open scrollable Elona-style menus with letter hotkeys.
+Classic Elona keybinds for [Elin](https://store.steampowered.com/app/2135150/Elin/). Play with the keyboard; the mouse becomes optional.
+
+Feature list and changelog are also available in-game via the **Mod Help** panel (ESC menu), and in [CHANGELOG.md](CHANGELOG.md).
+
+## The menu system
+
+Every item key opens a paginated Elona-style window:
+
+- `►` cursor moves with **up/down**, **Enter** acts, **a-o letters** act directly, mouse click also works
+- **left/right** (or PgUp/PgDn) switch pages; everything always fits on screen
+- the selected item's full stat card shows automatically; **x** opens the examine window
+- select/hover an item or spell and press **0-9** to bind it to a hotkey (shift+digit = slots 11-20)
+- long names ping-pong scroll (`NameDisplay` config: pingpong/truncate/wrap)
+- menus over `CategoryThreshold` items show a category filter first
+
+Directional actions highlight the neighboring tiles and wait for a movement key; the wait key targets yourself, Escape or a click cancels.
 
 ## Default keys
 
-Faithful to the [classic Elona key list](https://elona.fandom.com/wiki/Controls), minus what Elin already covers natively.
-
 | Key | Action |
 |-----|--------|
-| g / numpad 0 | Get everything on your tile |
-| d | Drop menu (stays open to drop several) |
-| e | Eat menu |
-| q | Quaff menu, includes nearby wells and fountains |
-| r | Read menu |
-| Z | Zap a rod, then pick a direction (wait key = self) |
-| v | Cast (opens spell/ability list; hover a spell + 0-9 to hotkey it) |
-| w | Wear/wield menu; click equipped items to remove them |
-| t | Hold a tool in your hands |
+| g / numpad 0 | Get everything pickable on your tile |
+| d | Drop menu (stays open; whole stacks) |
+| e / q / r | Eat / Quaff / Read menus (quaff includes wells) |
+| Z | Zap a rod, then a direction (wait = self) |
+| v | Cast: spell list, hotkeyable with digits |
+| w | Wear/wield; picking an equipped item removes it |
+| t | Hold a tool |
 | u | Use an item |
-| B | Dip/blend: pick a liquid, then mix items into it |
-| T | Throw (at your target, or pick a direction) |
-| f | Fire ranged weapon (native action) |
+| B | Dip/blend liquids with items |
+| T | Throw: pick item, then target list or direction |
+| Shift+A | Load compatible ammo into your ranged weapon |
+| f | Fire (native action) |
 | b | Bash a direction |
-| D | Dig/mine a wall (auto-holds your digging tool) |
-| o | Open containers and crafting kits, in your inventory or nearby |
+| D | Dig a wall (auto-holds your digging tool) |
+| o | Open containers/crafting kits, yours or nearby |
 | C | Open or close a door in a chosen direction |
-| p | Pray |
-| O | Offer at an adjacent altar |
-| G | Give items to an adjacent character |
-| i | Interact menu for a direction (talk, give, trade...) |
+| s | Actions on your own tile (search, harvest, dig treasure) |
+| i | Interact with a direction (talk, trade, everything) |
+| p / O | Pray / Offer at an altar |
+| G | Give to an adjacent character (one per pick) |
+| Shift+Q | Party member sheets and inventories |
 | Shift+X | Inventory |
+| Shift+0-9 | Fire hotkey slots 1-10 (also F1-F8 natively) |
+| Shift+move | Use held tool on the adjacent tile |
 
-Movement stays on the numpad / arrow keys as in vanilla Elin. Character sheet, journal, log and help already have native Elin keys. Escape or right-click cancels a direction prompt.
+Movement stays on numpad/arrows/WASD as in vanilla. Character sheet (c), journal (j), log and help remain on Elin's own keys.
 
-In menus: click an entry or press its letter; hover + `x` examines the item; hover + `0-9` assigns it to an Extra-hotbar hotkey slot (shift+digit for slots 11-20). Fire hotkeys with `shift+0-9` (default), `F1-F8` (native), or bare digits with `ActivateHotkeys=plain`. Long names ping-pong scroll by default (`NameDisplay` = pingpong/truncate/wrap). Menus over 25 items show a category filter first (`CategoryFilter`, `CategoryThreshold`).
+## Config (`BepInEx/config/elin.elonakeys.cfg`)
 
-Not covered yet: ammo switching (A) has no clean Elin equivalent.
+- Every key rebindable: `e`, `shift+t`, `period`, comma-separated alternatives, `none`.
+- `OverrideGameKeys` (default **true**): mod keys beat native Elin bindings on clash. If keys ever behave "native", check this first.
+- `SuppressNativeKeys`: swallow game keys entirely (e.g. `z`).
+- `ActivateHotkeys`: off / shift / plain digit firing; `ShiftDirTool`; `MenuPageSize`; `DebugLog` (explains every ignored keypress in `BepInEx/LogOutput.log`).
 
-## Conflicts and rebinding
+## Deliberate differences from classic Elona
 
-By default the mod's keys win over Elin's own bindings when they clash (classic `q` quaff beats the native empty-hand key). Set `OverrideGameKeys = false` in the config to flip that, or rebind either side.
+- No quantity prompts (Elin has no native number picker): drop = whole stack, give = one per pick.
+- No Rest key (Elin rests via beds / native Meditate).
+- No target/look keys; throwing offers a target list instead.
+- Dip uses Elin's blend system, ammo switching uses Elin's reload.
 
-Edit `BepInEx/config/elin.elonakeys.cfg` (created after first launch). Format: `e`, `shift+t`, `period`, comma-separated alternatives (`g, keypad0`), `none` to unbind. Key names follow Unity's KeyCode enum.
+## Install / Build
 
-An in-game summary lives in the Mod Help panel (ESC menu) if you have Mod Help installed.
-
-## Install
-
-Requires BepInEx and the Package Chainloader (`PackageLoader.dll`), which most Elin DLL-mod setups already have.
-
-1. Run `build.ps1` (builds and copies to `Elin/Package/Mod_ElonaKeys`), or copy `ElonaKeys.dll` + the contents of `package/` there yourself.
-2. Enable "Elona Keys" in the in-game mod list and restart.
-
-## Build
+Requires BepInEx + Package Chainloader (standard Elin DLL-mod setup).
 
 ```
-./build.ps1                # build + install
-./build.ps1 -NoInstall     # build only
+./build.ps1                # build + install to Elin/Package/Mod_ElonaKeys
+./build.ps1 -NoInstall
 ./build.ps1 -ElinDir "D:\Games\Elin"
 ```
 
-Needs the .NET SDK. References are resolved from the game folder, no NuGet packages.
+Needs the .NET SDK; references resolve from the game folder, no NuGet. Enable "Elona Keys" in the in-game mod list after installing.
