@@ -5,11 +5,11 @@ using UnityEngine;
 namespace ElonaKeys
 {
 	// The Elona-style menu window: paginated, fully keyboard-navigable.
-	// - fixed rows per page (MenuPageSize config), so everything fits on screen
+	// - fixed rows per page (MenuPageSize config), everything fits on screen
 	// - left/right (or PageUp/Down) switch pages
-	// - up/down move the selection, Enter activates it
-	// - a..z letter per row, click also works
-	// - row layout: [icon] [letter] [name], rich tooltip, x to examine
+	// - up/down move the ► cursor, Enter activates it
+	// - a..o letter per row (typed letter activates), click also works
+	// - row text carries the letter itself ("a) bread") so nothing can overlap
 	public class MenuRow
 	{
 		public string label;
@@ -32,7 +32,8 @@ namespace ElonaKeys
 
 		public static bool Alive => layer != null && (bool)layer;
 
-		private static int PageSize => Mathf.Max(5, Plugin.MenuPageSize);
+		// max 20 rows so x (examine) and z stay free as letters
+		private static int PageSize => Mathf.Clamp(Plugin.MenuPageSize, 5, 20);
 
 		private static int PageCount => Mathf.Max(1, (all.Count + PageSize - 1) / PageSize);
 
@@ -45,13 +46,10 @@ namespace ElonaKeys
 			sel = 0;
 			layer = EClass.ui.AddLayer<LayerList>();
 			layer.SetSize(640f);
-			layer.SetList2(pageRows, (MenuRow r) => r.label, delegate(MenuRow r, ItemGeneral b)
+			layer.SetList2(pageRows, RowText, delegate(MenuRow r, ItemGeneral b)
 			{
 				Activate(r);
-			}, delegate(MenuRow r, ItemGeneral b)
-			{
-				BuildRow(r, b, pageRows.IndexOf(r));
-			}, autoClose: false);
+			}, BuildRow, autoClose: false);
 			ApplyPage();
 			MenuExtras.RegisterMenu(layer);
 		}
@@ -63,6 +61,46 @@ namespace ElonaKeys
 				layer.Close();
 			}
 			layer = null;
+		}
+
+		public static void SetRows(List<MenuRow> rows)
+		{
+			all = rows;
+		}
+
+		private static string RowText(MenuRow r)
+		{
+			int i = pageRows.IndexOf(r);
+			string cursor = (i == sel) ? "► " : "   ";
+			string letter = (i >= 0 && i < Letters.Length) ? (Letters[i] + ")  ") : "";
+			return cursor + letter + r.label;
+		}
+
+		private static void BuildRow(MenuRow r, ItemGeneral b)
+		{
+			if ((bool)b.button1.keyText)
+			{
+				b.button1.keyText.text = ""; // letters live inside the label instead
+			}
+			if (r.icon != null)
+			{
+				b.card = r.icon;
+				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
+				iconParent.SetActive(enable: true);
+				iconParent.anchoredPosition = new Vector2(24f, 0f);
+				r.icon.SetImage(b.button1.icon);
+				b.button1.mainText.rectTransform.anchoredPosition = new Vector2(52f, 0f);
+				Thing tip = r.icon;
+				b.button1.SetTooltip("note", delegate(UITooltip tt)
+				{
+					tip.WriteNote(tt.note);
+				});
+			}
+			else
+			{
+				b.button1.mainText.rectTransform.anchoredPosition = new Vector2(30f, 0f);
+			}
+			MenuExtras.ApplyNameDisplay(b.button1.mainText, 480f);
 		}
 
 		// Called after an action on a refreshable menu (drop/wear): rebuild rows
@@ -85,11 +123,6 @@ namespace ElonaKeys
 			}
 		}
 
-		public static void SetRows(List<MenuRow> rows)
-		{
-			all = rows;
-		}
-
 		private static void Activate(MenuRow r)
 		{
 			try
@@ -110,31 +143,6 @@ namespace ElonaKeys
 			}
 		}
 
-		private static void BuildRow(MenuRow r, ItemGeneral b, int index)
-		{
-			// [icon @24] [letter @52] [name @72]
-			if (r.icon != null)
-			{
-				b.card = r.icon;
-				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
-				iconParent.SetActive(enable: true);
-				iconParent.anchoredPosition = new Vector2(24f, 0f);
-				r.icon.SetImage(b.button1.icon);
-				Thing tip = r.icon;
-				b.button1.SetTooltip("note", delegate(UITooltip tt)
-				{
-					tip.WriteNote(tt.note);
-				});
-			}
-			if ((bool)b.button1.keyText)
-			{
-				b.button1.keyText.text = (index < Letters.Length) ? Letters[index].ToString() : "";
-				(b.button1.keyText.transform as RectTransform).anchoredPosition = new Vector2(52f, 0f);
-			}
-			b.button1.mainText.rectTransform.anchoredPosition = new Vector2(72f, 0f);
-			MenuExtras.ApplyNameDisplay(b.button1.mainText, 470f);
-		}
-
 		private static void ApplyPage()
 		{
 			if (!Alive)
@@ -147,6 +155,7 @@ namespace ElonaKeys
 			{
 				pageRows.Add(all[i]);
 			}
+			sel = Mathf.Clamp(sel, 0, Mathf.Max(0, pageRows.Count - 1));
 			layer.list.List();
 			layer.RefreshSize();
 			string caption = title;
@@ -155,11 +164,9 @@ namespace ElonaKeys
 				caption += "  (" + (page + 1) + "/" + PageCount + ")  ◄ ►";
 			}
 			layer.windows[0].SetCaption(caption);
-			sel = Mathf.Clamp(sel, 0, pageRows.Count - 1);
-			HighlightSel();
 		}
 
-		// ---------- keyboard navigation, driven from MenuExtras.OnUpdate ----------
+		// ---------- keyboard, driven from MenuExtras.OnUpdate ----------
 
 		public static void HandleKeys()
 		{
@@ -175,8 +182,9 @@ namespace ElonaKeys
 					sel = 0;
 					ApplyPage();
 				}
+				return;
 			}
-			else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.PageUp))
+			if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.PageUp))
 			{
 				if (PageCount > 1)
 				{
@@ -184,47 +192,37 @@ namespace ElonaKeys
 					sel = 0;
 					ApplyPage();
 				}
+				return;
 			}
-			else if (Input.GetKeyDown(KeyCode.DownArrow))
+			if (Input.GetKeyDown(KeyCode.DownArrow))
 			{
 				sel = (sel + 1) % Mathf.Max(1, pageRows.Count);
-				HighlightSel();
+				ApplyPage();
+				return;
 			}
-			else if (Input.GetKeyDown(KeyCode.UpArrow))
+			if (Input.GetKeyDown(KeyCode.UpArrow))
 			{
 				sel = (sel - 1 + Mathf.Max(1, pageRows.Count)) % Mathf.Max(1, pageRows.Count);
-				HighlightSel();
+				ApplyPage();
+				return;
 			}
-			else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
 			{
 				if (sel >= 0 && sel < pageRows.Count)
 				{
 					Activate(pageRows[sel]);
 				}
-			}
-		}
-
-		private static void HighlightSel()
-		{
-			if (!Alive || layer.list.buttons == null)
-			{
 				return;
 			}
-			for (int i = 0; i < layer.list.buttons.Count; i++)
+			// typed letter selects the row (lowercase only; capitals stay free)
+			string typed = Input.inputString;
+			if (!string.IsNullOrEmpty(typed) && !EInput.isShiftDown && !EInput.isCtrlDown && !EInput.isAltDown)
 			{
-				ItemGeneral item = layer.list.buttons[i].component as ItemGeneral;
-				if (!item)
+				char c = typed[0];
+				int index = Letters.IndexOf(c);
+				if (index >= 0 && index < pageRows.Count)
 				{
-					continue;
-				}
-				if (i == sel)
-				{
-					EInput.Select(item.button1.gameObject);
-					item.button1.DoHighlightTransition();
-				}
-				else
-				{
-					item.button1.DoNormalTransition();
+					Activate(pageRows[index]);
 				}
 			}
 		}

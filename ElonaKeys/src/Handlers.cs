@@ -47,7 +47,9 @@ namespace ElonaKeys
 
 		private static List<Thing> Matching(Func<Thing, bool> filter, string category)
 		{
-			List<Thing> things = pc.things.List((Thing t) => Safe(filter, t), onlyAccessible: true);
+			// TraitAbility things are hotbar spell placeholders (TraitAbility :
+			// TraitCatalyst : TraitTool), not real inventory items: never list them.
+			List<Thing> things = pc.things.List((Thing t) => !(t.trait is TraitAbility) && Safe(filter, t), onlyAccessible: true);
 			if (!string.IsNullOrEmpty(category))
 			{
 				things.RemoveAll((Thing t) => CategoryName(t) != category);
@@ -280,7 +282,7 @@ namespace ElonaKeys
 
 		public static void HoldTool()
 		{
-			ItemMenu("Hold which tool?", (Thing t) => t.trait is TraitTool && !t.isEquipped,
+			ItemMenu("Hold which tool?", (Thing t) => t.trait is TraitTool && !(t.trait is TraitCatalyst) && !t.isEquipped,
 				delegate(Thing t) { pc.HoldCard(t); },
 				"You have no tools.");
 		}

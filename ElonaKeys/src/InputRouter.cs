@@ -35,9 +35,13 @@ namespace ElonaKeys
 
 		private static void Process()
 		{
-			if (DirPrompt.Active || EClass.core == null || !EClass.core.IsGameStarted || EClass.pc == null || EClass.ui == null || EClass.scene == null)
+			if (EClass.core == null || !EClass.core.IsGameStarted || EClass.pc == null || EClass.ui == null || EClass.scene == null)
 			{
 				return;
+			}
+			if (DirPrompt.Handle())
+			{
+				return; // direction prompt is eating input this frame
 			}
 			if (EInput.isInputFieldActive || EInput.isCtrlDown || EInput.isAltDown)
 			{
@@ -229,7 +233,7 @@ namespace ElonaKeys
 	{
 		private static bool Prefix()
 		{
-			return !DirPrompt.Handle();
+			return !DirPrompt.Active; // no walking while a direction prompt waits
 		}
 	}
 }
