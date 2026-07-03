@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Meta>
+  <title>Elona Keys</title>
+  <id>elin.elonakeys</id>
+  <author>lIllIIlI</author>
+  <builtin>false</builtin>
+  <loadPriority>100</loadPriority>
+  <version>1.0.0</version>
+  <description>Classic Elona keybinds for Elin. Play with the keyboard instead of the mouse: e to eat, q to quaff, r to read, z to zap, g to get, d to drop, w to wear, o/c to open and close doors, p to pray, i to interact and more. All keys rebindable in BepInEx/config/elin.elonakeys.cfg.</description>
+</Meta>
