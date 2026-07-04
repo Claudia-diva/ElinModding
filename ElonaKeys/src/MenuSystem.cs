@@ -327,6 +327,28 @@ namespace ElonaKeys
 			{
 				return;
 			}
+			// another window (the examine card, etc.) sits ON TOP of our menu:
+			// route Shift/x to it and leave the menu underneath alone
+			Layer top = (EClass.ui != null) ? EClass.ui.TopLayer : null;
+			if (top != null && (object)top != (object)layer)
+			{
+				if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift) || Input.GetKeyDown(KeyCode.X))
+				{
+					top.Close();
+				}
+				shiftHeld = false;
+				return;
+			}
+			// x examines the hovered/selected row (press again to close)
+			if (Input.GetKeyDown(KeyCode.X) && !EInput.isCtrlDown && !EInput.isAltDown)
+			{
+				Thing t = MenuExtras.HoveredThing() ?? SelectedThing();
+				if (t != null)
+				{
+					EClass.ui.AddLayerDontCloseOthers<LayerInfo>().SetThing(t);
+				}
+				return;
+			}
 			// Shift alone = back/close, like Elona. Fires on release so that
 			// shift+digit (hotkey assignment) still works inside menus.
 			if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))

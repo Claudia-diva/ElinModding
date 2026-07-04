@@ -18,6 +18,21 @@ namespace ElonaKeys
 			return ((float)w / 1000f).ToString("0.0") + "s";
 		}
 
+		// Full name plus whatever extra detail the game appends (charges, level...)
+		private static string DetailName(Thing t)
+		{
+			string extra;
+			try
+			{
+				extra = t.GetExtraName();
+			}
+			catch
+			{
+				extra = "";
+			}
+			return string.IsNullOrEmpty(extra) ? t.Name : (t.Name + " " + extra);
+		}
+
 		private static void ItemMenu(string title, Func<Thing, bool> filter, Action<Thing> onSelect, string emptyMsg, bool refresh = false, Func<Thing, string> label = null, List<MenuRow> extraRows = null, string category = null, Func<Thing, int> amount = null, Action<Thing, int> onAmount = null)
 		{
 			List<Thing> things = Matching(filter, category);
@@ -67,7 +82,7 @@ namespace ElonaKeys
 				Thing t = thing;
 				rows.Add(new MenuRow
 				{
-					label = (label != null) ? label(t) : t.Name,
+					label = (label != null) ? label(t) : DetailName(t),
 					icon = t,
 					rightText = WeightText(t.ChildrenAndSelfWeight),
 					sortWeight = t.ChildrenAndSelfWeight,
@@ -313,7 +328,7 @@ namespace ElonaKeys
 				Thing eq = slot.thing;
 				rows.Add(new MenuRow
 				{
-					label = slotName + ":  " + ((eq != null) ? eq.Name : "-"),
+					label = slotName + ":  " + ((eq != null) ? DetailName(eq) : "-"),
 					icon = eq,
 					rightText = (eq != null) ? WeightText(eq.ChildrenAndSelfWeight) : "-",
 					sortWeight = (eq != null) ? eq.ChildrenAndSelfWeight : 0,

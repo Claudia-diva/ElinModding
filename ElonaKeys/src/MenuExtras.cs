@@ -59,7 +59,6 @@ namespace ElonaKeys
 				}
 				MenuSystem.HandleKeys();
 				PopupNav.OnUpdate();
-				UpdateExamineKey();
 				UpdateAssignKey();
 			}
 			catch (Exception ex)
@@ -68,29 +67,15 @@ namespace ElonaKeys
 			}
 		}
 
-		// ---------- x to examine ----------
-
-		private static void UpdateExamineKey()
-		{
-			if (!MenuOpen || !Input.GetKeyDown(KeyCode.X) || EInput.isCtrlDown || EInput.isAltDown)
-			{
-				return;
-			}
-			Thing t = HoveredThing();
-			if (t != null)
-			{
-				EClass.ui.AddLayerDontCloseOthers<LayerInfo>().SetThing(t);
-			}
-		}
-
-		private static Thing HoveredThing()
+		// mouse-hovered menu row, if any (x-examine and hotkey assignment)
+		public static Thing HoveredThing()
 		{
 			ItemGeneral item = InputModuleEX.GetComponentOf<ItemGeneral>();
 			if ((bool)item && item.card is Thing t)
 			{
 				return t;
 			}
-			return MenuSystem.SelectedThing(); // keyboard selection fallback
+			return null;
 		}
 
 		// ---------- 0-9 hotbar assignment ----------
@@ -107,7 +92,7 @@ namespace ElonaKeys
 			string what = null;
 			if (MenuOpen)
 			{
-				Thing t = HoveredThing();
+				Thing t = HoveredThing() ?? MenuSystem.SelectedThing();
 				if (t != null)
 				{
 					hotItem = new HotItemThing { thing = t };
