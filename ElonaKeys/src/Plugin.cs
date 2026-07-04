@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.7.0";
+		public const string Version = "1.7.1";
 
 		internal static ManualLogSource Log;
 
@@ -54,6 +54,7 @@ namespace ElonaKeys
 		private static ConfigEntry<string> wheelAction;
 		private static ConfigEntry<string> wheelEtc;
 		private static ConfigEntry<string> wheelItems;
+		private static ConfigEntry<string> wheelMisc;
 
 		internal static bool OverrideGameKeys => overrideGameKeys.Value;
 		internal static bool DebugLog => debugLog.Value;
@@ -68,6 +69,7 @@ namespace ElonaKeys
 		internal static string WheelAction => wheelAction.Value;
 		internal static string WheelEtc => wheelEtc.Value;
 		internal static string WheelItems => wheelItems.Value;
+		internal static string WheelMisc => wheelMisc.Value;
 		internal static List<Keybind> SuppressBinds { get; private set; } = new List<Keybind>();
 
 		private void Awake()
@@ -91,14 +93,16 @@ namespace ElonaKeys
 				"Comma-separated keys hidden from the game entirely (use when a native Elin key annoys you and you don't want either binding).");
 			wheelStyle = Config.Bind("Menus", "WheelStyle", "radial",
 				"z action wheel style: radial (classic Elona circles) or list (window).");
-			wheelInfo = Config.Bind("Menus", "WheelInfo", "Help,Chara,Journal,Log,Equip,Inventory,Party",
-				"Verbs on the Info ring. Available: Eat, Quaff, Read, Zap, Cast, Equip, Tool, Use, Blend, Throw, Ammo, Get, Drop, Open, Door, Bash, Dig, Search, Interact, Pray, Offer, Give, Party, Inventory, Help, Chara, Journal, Log, Fire.");
+			wheelInfo = Config.Bind("Menus", "WheelInfo", "Help,Chara,Journal,Log,Equip,Inventory",
+				"Verbs on the Info ring (max 6; east/west are ring links). Available: Eat, Quaff, Read, Zap, Cast, Equip, Tool, Use, Blend, Throw, Ammo, Get, Drop, Open, Door, Bash, Dig, Search, Interact, Pray, Offer, Give, Party, Inventory, Help, Chara, Journal, Log, Fire.");
 			wheelAction = Config.Bind("Menus", "WheelAction", "Cast,Fire,Get,Search,Ammo,Use",
-				"Verbs on the Action ring (same verb list as WheelInfo).");
-			wheelEtc = Config.Bind("Menus", "WheelEtc", "Pray,Interact,Dig,Bash,Offer,Give,Door,Open",
-				"Verbs on the Etc ring (same verb list as WheelInfo).");
-			wheelItems = Config.Bind("Menus", "WheelItems", "Eat,Quaff,Read,Zap,Drop,Throw,Tool,Blend",
-				"Verbs on the Items ring (same verb list as WheelInfo).");
+				"Verbs on the Action ring (max 6, same verb list as WheelInfo).");
+			wheelEtc = Config.Bind("Menus", "WheelEtc", "Pray,Interact,Dig,Bash,Offer,Give",
+				"Verbs on the Etc ring (max 6, same verb list as WheelInfo).");
+			wheelItems = Config.Bind("Menus", "WheelItems", "Eat,Quaff,Read,Zap,Drop,Throw",
+				"Verbs on the Items ring (max 6, same verb list as WheelInfo).");
+			wheelMisc = Config.Bind("Menus", "WheelMisc", "Tool,Blend,Door,Open,Party",
+				"Verbs on the Misc ring (max 6, same verb list as WheelInfo). Leave empty to remove the ring.");
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
 				"Digit keys activate Extra-hotbar slots assigned via the menus (hover an item/spell and press 0-9, shift+0-9 for slots 11-20). Activation mode: off, shift (shift+1..0 fires slots 1-10), plain (1..0 fires slots 1-10 and REPLACES the native toolbelt digits; shift+1..0 fires slots 11-20). F1-F8 always work natively for the first slots.");
 

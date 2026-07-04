@@ -920,6 +920,7 @@ namespace ElonaKeys
 			AddRing("Action", Plugin.WheelAction);
 			AddRing("Etc", Plugin.WheelEtc);
 			AddRing("Items", Plugin.WheelItems);
+			AddRing("Misc", Plugin.WheelMisc);
 			if (rings.Count == 0)
 			{
 				RadialWheel.Ring all = new RadialWheel.Ring { name = "Actions" };

@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 namespace ElonaKeys
 {
-	// Classic Elona z-circles: several rings of verbs. Left/right switches ring
-	// (remembered between opens), up/down rotates the selection, Enter (or click)
-	// activates, z/Escape closes. Input is fenced in InputRouter while open.
+	// Classic Elona z-circles, faithful edition: 8 compass slots per ring,
+	// pressing a DIRECTION instantly triggers that slot. East/west slots are the
+	// links to the neighboring rings (so "right" walks you through the circles,
+	// and the current ring is remembered between opens). z/Escape/right-click
+	// closes; clicking a diamond also works.
 	public class RadialWheel : MonoBehaviour
 	{
 		public class Ring
@@ -16,19 +18,35 @@ namespace ElonaKeys
 			public List<(string label, Action act)> items = new List<(string, Action)>();
 		}
 
+		private class Slot
+		{
+			public string label;
+			public Action act;      // verb, or null
+			public int link;        // -1 prev ring, +1 next ring, 0 none
+			public Text text;
+		}
+
 		private static RadialWheel instance;
 		private static int ringIndex; // remembered across opens, like Elona
 
 		public static bool Active => instance != null && instance;
 
+		// compass order: N, NE, E, SE, S, SW, W, NW
+		private static readonly Vector2[] dirs =
+		{
+			new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(1f, 0f), new Vector2(1f, -1f),
+			new Vector2(0f, -1f), new Vector2(-1f, -1f), new Vector2(-1f, 0f), new Vector2(-1f, 1f)
+		};
+		private const int SlotE = 2;
+		private const int SlotW = 6;
+		private static readonly int[] verbSlots = { 0, 1, 3, 4, 5, 7 }; // N, NE, SE, S, SW, NW
+
 		private List<Ring> rings;
-		private readonly List<Text> labels = new List<Text>();
+		private readonly Slot[] slots = new Slot[8];
 		private Text center;
-		private Text hintLeft;
-		private Text hintRight;
-		private int sel;
 		private int openFrame;
 		private Font font;
+		private Vector2 prevAxis;
 
 		public static void Toggle(List<Ring> rings)
 		{
@@ -63,6 +81,7 @@ namespace ElonaKeys
 			instance.rings = _rings;
 			instance.font = FindFont();
 			instance.openFrame = Time.frameCount;
+			instance.prevAxis = Vector2.one; // require release before first flick
 			ringIndex = Mathf.Clamp(ringIndex, 0, _rings.Count - 1);
 			instance.BuildRing();
 		}
@@ -90,62 +109,56 @@ namespace ElonaKeys
 
 		private void BuildRing()
 		{
-			foreach (Text t in labels)
+			for (int i = 0; i < slots.Length; i++)
 			{
-				if ((bool)t)
+				if (slots[i] != null && (bool)slots[i].text)
 				{
-					UnityEngine.Object.Destroy(t.gameObject);
+					UnityEngine.Object.Destroy(slots[i].text.gameObject);
 				}
+				slots[i] = null;
 			}
-			labels.Clear();
 			if ((bool)center)
 			{
 				UnityEngine.Object.Destroy(center.gameObject);
 			}
-			if ((bool)hintLeft)
+			// ring links east/west (linear chain, like Elona)
+			if (ringIndex + 1 < rings.Count)
 			{
-				UnityEngine.Object.Destroy(hintLeft.gameObject);
+				slots[SlotE] = new Slot { label = rings[ringIndex + 1].name + " ►", link = 1 };
 			}
-			if ((bool)hintRight)
+			if (ringIndex - 1 >= 0)
 			{
-				UnityEngine.Object.Destroy(hintRight.gameObject);
+				slots[SlotW] = new Slot { label = "◄ " + rings[ringIndex - 1].name, link = -1 };
 			}
-			sel = Mathf.Clamp(sel, 0, Current.items.Count - 1);
-			int n = Current.items.Count;
-			float radius = Mathf.Min(220f, 100f + n * 10f);
-			for (int i = 0; i < n; i++)
+			// verbs on the remaining compass points
+			for (int v = 0; v < Current.items.Count && v < verbSlots.Length; v++)
 			{
-				float ang = (90f - (float)i * 360f / n) * Mathf.Deg2Rad;
-				Text t = MakeText(transform, font, 20);
-				t.rectTransform.anchoredPosition = new Vector2(Mathf.Cos(ang) * radius, Mathf.Sin(ang) * radius);
-				t.text = Current.items[i].label;
+				(string label, Action act) item = Current.items[v];
+				slots[verbSlots[v]] = new Slot { label = item.label, act = item.act };
+			}
+			// render
+			for (int i = 0; i < slots.Length; i++)
+			{
+				Slot s = slots[i];
+				if (s == null)
+				{
+					continue;
+				}
+				Text t = MakeText(transform, font, (s.link != 0) ? 18 : 21);
+				float rx = 190f;
+				float ry = 120f;
+				t.rectTransform.anchoredPosition = new Vector2(dirs[i].x * rx, dirs[i].y * ry);
+				t.text = s.label;
+				t.color = (s.link != 0) ? new Color(0.72f, 0.72f, 0.66f) : new Color(0.95f, 0.93f, 0.85f);
 				int index = i;
 				Button b = t.gameObject.AddComponent<Button>();
-				b.onClick.AddListener(delegate
-				{
-					sel = index;
-					Activate();
-				});
-				labels.Add(t);
+				b.onClick.AddListener(delegate { Trigger(index); });
+				s.text = t;
 			}
 			center = MakeText(transform, font, 26);
-			center.rectTransform.anchoredPosition = new Vector2(0f, -6f);
-			// neighbor-ring links, like Elona's side diamonds
-			Ring prev = rings[(ringIndex - 1 + rings.Count) % rings.Count];
-			Ring next = rings[(ringIndex + 1) % rings.Count];
-			hintLeft = MakeText(transform, font, 17);
-			hintLeft.rectTransform.anchoredPosition = new Vector2(-radius - 130f, 0f);
-			hintLeft.text = "◄ " + prev.name;
-			hintLeft.color = new Color(0.7f, 0.7f, 0.65f);
-			Button pb = hintLeft.gameObject.AddComponent<Button>();
-			pb.onClick.AddListener(delegate { SwitchRing(-1); });
-			hintRight = MakeText(transform, font, 17);
-			hintRight.rectTransform.anchoredPosition = new Vector2(radius + 130f, 0f);
-			hintRight.text = next.name + " ►";
-			hintRight.color = new Color(0.7f, 0.7f, 0.65f);
-			Button nb = hintRight.gameObject.AddComponent<Button>();
-			nb.onClick.AddListener(delegate { SwitchRing(1); });
-			Refresh();
+			center.rectTransform.anchoredPosition = Vector2.zero;
+			center.text = "- " + Current.name + " -";
+			center.color = new Color(1f, 0.95f, 0.6f);
 		}
 
 		private static Text MakeText(Transform root, Font font, int size)
@@ -158,44 +171,32 @@ namespace ElonaKeys
 			t.alignment = TextAnchor.MiddleCenter;
 			t.horizontalOverflow = HorizontalWrapMode.Overflow;
 			t.verticalOverflow = VerticalWrapMode.Overflow;
-			t.color = Color.white;
 			t.raycastTarget = true;
-			t.rectTransform.sizeDelta = new Vector2(180f, 32f);
+			t.rectTransform.sizeDelta = new Vector2(170f, 32f);
 			Outline o = go.AddComponent<Outline>();
 			o.effectColor = new Color(0f, 0f, 0f, 0.9f);
 			o.effectDistance = new Vector2(1.5f, -1.5f);
 			return t;
 		}
 
-		private void Refresh()
+		private void Trigger(int slotIndex)
 		{
-			for (int i = 0; i < labels.Count; i++)
+			Slot s = slots[slotIndex];
+			if (s == null)
 			{
-				bool on = i == sel;
-				labels[i].color = on ? new Color(1f, 0.9f, 0.3f) : new Color(0.85f, 0.85f, 0.8f);
-				labels[i].transform.localScale = on ? new Vector3(1.25f, 1.25f, 1f) : Vector3.one;
+				return;
 			}
-			if ((bool)center)
+			if (s.link != 0)
 			{
-				center.text = "- " + Current.name + " -\n<size=20>" + Current.items[sel].label + "</size>";
-				center.color = new Color(1f, 0.95f, 0.6f);
+				ringIndex = Mathf.Clamp(ringIndex + s.link, 0, rings.Count - 1);
+				BuildRing();
+				return;
 			}
-		}
-
-		private void SwitchRing(int dir)
-		{
-			ringIndex = (ringIndex + dir + rings.Count) % rings.Count;
-			sel = 0;
-			BuildRing();
-		}
-
-		private void Activate()
-		{
-			Action act = Current.items[sel].act;
+			Action act = s.act;
 			CloseWheel();
 			try
 			{
-				act();
+				act?.Invoke();
 			}
 			catch (Exception ex)
 			{
@@ -213,6 +214,7 @@ namespace ElonaKeys
 			}
 			if (Time.frameCount - w.openFrame < 2)
 			{
+				w.prevAxis = Vector2.one;
 				return; // ignore the keystroke that opened the wheel
 			}
 			if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Z) || Input.GetMouseButtonDown(1))
@@ -220,32 +222,23 @@ namespace ElonaKeys
 				CloseWheel();
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.RightArrow))
+			// instant 8-way selection on a fresh direction press
+			Vector2 a = EInput.axis;
+			if (a != Vector2.zero && w.prevAxis == Vector2.zero)
 			{
-				w.SwitchRing(1);
-				return;
+				int sx = Math.Sign(a.x);
+				int sy = Math.Sign(a.y);
+				for (int i = 0; i < dirs.Length; i++)
+				{
+					if ((int)dirs[i].x == sx && (int)dirs[i].y == sy)
+					{
+						w.prevAxis = a;
+						w.Trigger(i);
+						return;
+					}
+				}
 			}
-			if (Input.GetKeyDown(KeyCode.LeftArrow))
-			{
-				w.SwitchRing(-1);
-				return;
-			}
-			if (Input.GetKeyDown(KeyCode.DownArrow))
-			{
-				w.sel = (w.sel + 1) % w.Current.items.Count;
-				w.Refresh();
-				return;
-			}
-			if (Input.GetKeyDown(KeyCode.UpArrow))
-			{
-				w.sel = (w.sel - 1 + w.Current.items.Count) % w.Current.items.Count;
-				w.Refresh();
-				return;
-			}
-			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
-			{
-				w.Activate();
-			}
+			w.prevAxis = a;
 		}
 	}
 }
