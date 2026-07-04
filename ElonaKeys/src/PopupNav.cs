@@ -3,14 +3,17 @@ using UnityEngine;
 
 namespace ElonaKeys
 {
-	// Keyboard navigation for Elin's NATIVE popups: right-click context menus
-	// (UIContextMenu), yes/no dialogs and native list windows. Arrows move a
-	// highlight, Enter clicks it. Our own menus handle their own keys.
+	// Keyboard navigation for Elin's NATIVE popups: right-click context menus,
+	// yes/no dialogs, native list windows, and any window carrying an item grid
+	// (containers, crafting stations). Arrows move a highlight, Enter clicks it
+	// (on grids: the auto-transfer/use action, i.e. what right-click does),
+	// x examines a grid item. Our own menus handle their own keys.
 	public static class PopupNav
 	{
 		private static Object lastTarget;
 		private static int index = -1;
 		private static readonly List<UIButton> buttons = new List<UIButton>();
+		private static bool gridMode;
 
 		public static void OnUpdate()
 		{
@@ -20,6 +23,7 @@ namespace ElonaKeys
 			}
 			Object target = null;
 			buttons.Clear();
+			gridMode = false;
 			UIContextMenu ctx = UIContextMenu.Current;
 			if ((bool)ctx)
 			{
@@ -38,6 +42,31 @@ namespace ElonaKeys
 				{
 					target = layerList;
 					CollectListButtons(layerList.list);
+				}
+				else if (top != null)
+				{
+					// generic: item grids first (containers, crafting), then any list
+					foreach (ButtonGrid bg in top.GetComponentsInChildren<ButtonGrid>(includeInactive: false))
+					{
+						if (bg.card != null && bg.invOwner != null && bg.interactable && bg.gameObject.activeInHierarchy)
+						{
+							buttons.Add(bg);
+						}
+					}
+					if (buttons.Count > 0)
+					{
+						target = top;
+						gridMode = true;
+					}
+					else
+					{
+						UIList ul = top.GetComponentInChildren<UIList>(includeInactive: false);
+						if (ul != null)
+						{
+							target = top;
+							CollectListButtons(ul);
+						}
+					}
 				}
 			}
 			if (target == null || buttons.Count == 0)
@@ -98,12 +127,32 @@ namespace ElonaKeys
 				Highlight();
 				return;
 			}
-			if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && index >= 0 && index < buttons.Count)
+			if (index < 0 || index >= buttons.Count)
+			{
+				return;
+			}
+			if (gridMode && Input.GetKeyDown(KeyCode.X))
+			{
+				if (buttons[index] is ButtonGrid bx && bx.card is Thing tx)
+				{
+					EClass.ui.AddLayerDontCloseOthers<LayerInfo>().SetThing(tx);
+				}
+				return;
+			}
+			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
 			{
 				UIButton b = buttons[index];
 				index = -1;
 				lastTarget = null;
-				b.onClick.Invoke();
+				if (gridMode && b is ButtonGrid bg)
+				{
+					// same as right-click: auto-transfer/use through the game's logic
+					bg.invOwner.OnRightClick(bg);
+				}
+				else
+				{
+					b.onClick.Invoke();
+				}
 				EInput.Consume();
 			}
 		}

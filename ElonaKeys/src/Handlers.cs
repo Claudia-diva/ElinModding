@@ -569,15 +569,17 @@ namespace ElonaKeys
 			foreach (Thing thing in pc.things.List((Thing t) => Safe((Thing x) => x.trait.CanOpenContainer || (x.trait is TraitCrafter && x.trait.CanUse(pc)), t), onlyAccessible: true))
 			{
 				Thing t = thing;
+				bool isContainer = t.trait.CanOpenContainer;
 				rows.Add(new MenuRow
 				{
-					label = (t.trait.CanOpenContainer ? "Open: " : "Use: ") + t.Name,
+					label = (isContainer ? "Open: " : "Use: ") + t.Name,
 					icon = t,
+					closeOnAct = !isContainer, // container menu chains for shift-back
 					act = delegate
 					{
-						if (t.trait.CanOpenContainer)
+						if (isContainer)
 						{
-							(t.trait as TraitContainer)?.TryOpen();
+							ContainerMenu(t);
 						}
 						else
 						{
@@ -597,10 +599,12 @@ namespace ElonaKeys
 					Thing t = thing;
 					if (t.trait.CanOpenContainer)
 					{
+						bool locked = t.c_lockLv > 0;
 						rows.Add(new MenuRow
 						{
-							label = "Open: " + t.Name + " (nearby)",
+							label = "Open: " + t.Name + " (nearby)" + (locked ? " <color=#c08080>(locked)</color>" : ""),
 							icon = t,
+							closeOnAct = locked,
 							act = delegate
 							{
 								if (t.c_lockLv > 0)
@@ -609,7 +613,7 @@ namespace ElonaKeys
 								}
 								else
 								{
-									(t.trait as TraitContainer)?.TryOpen();
+									ContainerMenu(t);
 								}
 							}
 						});
@@ -626,6 +630,67 @@ namespace ElonaKeys
 				}
 			}
 			RunRows("Open what?", rows, "There is nothing to open here.");
+		}
+
+		// keyboard take/put for any container (chests, bags, boxes)
+		internal static void ContainerMenu(Thing container)
+		{
+			MenuSystem.Show(container.Name, BuildContainerRows(container), delegate
+			{
+				MenuSystem.SetRows(BuildContainerRows(container));
+			});
+		}
+
+		private static List<MenuRow> BuildContainerRows(Thing container)
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			rows.Add(new MenuRow
+			{
+				label = "[ Put items in... ]",
+				closeOnAct = false,
+				act = delegate { PutMenu(container); }
+			});
+			foreach (Thing thing in container.things)
+			{
+				Thing t = thing;
+				rows.Add(new MenuRow
+				{
+					label = DetailName(t),
+					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
+					closeOnAct = false,
+					maxAmount = t.Num,
+					onAmount = delegate(int n)
+					{
+						Thing take = (n >= t.Num) ? t : t.Split(n);
+						pc.AddCard(take);
+						Msg.SayRaw("You take " + take.Name + ".");
+					}
+				});
+			}
+			return rows;
+		}
+
+		private static void PutMenu(Thing container)
+		{
+			ItemMenu("Put what into " + container.Name + "?",
+				(Thing t) => t != container && !t.isEquipped,
+				null,
+				"You have nothing to put in.",
+				refresh: true, label: null, extraRows: null, category: null,
+				amount: (Thing t) => t.Num,
+				onAmount: delegate(Thing t, int n)
+				{
+					if (container.things.IsFull())
+					{
+						Msg.SayRaw("The " + container.Name + " is full.");
+						return;
+					}
+					Thing put = (n >= t.Num) ? t : t.Split(n);
+					container.AddThing(put);
+					Msg.SayRaw("You put " + put.Name + " in.");
+				});
 		}
 
 		public static void DoorToggle()

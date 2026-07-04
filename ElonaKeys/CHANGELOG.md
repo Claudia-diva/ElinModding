@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.1 - 2026-07-03
+
+- Containers (chests, boxes, bags) opened via o now use a keyboard take/put menu: item rows with count spinner to take, "[ Put items in... ]" opens your inventory with a spinner to store; shift walks back through the chain.
+- Native windows that still open (crafting stations, mouse-opened containers) got grid navigation: arrows walk the item grid, Enter performs the transfer/use (what right-click does), x examines the item.
+
 ## 1.8.0 - 2026-07-03
 
 - Wheel slots wear Elona-style diamonds (rotated plates with edge trim); the whole wheel is a draggable widget: drag the center diamond, position saved to config (WheelPosX/Y).

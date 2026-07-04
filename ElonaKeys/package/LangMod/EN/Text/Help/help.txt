@@ -10,6 +10,7 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
 ・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
 ・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
+・ Native item grids (crafting stations, container windows): arrows navigate, Enter transfers/uses, x examines.
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
 {pair|Source and issues|github.com/Claudia-diva/ElinModding}
@@ -39,7 +40,7 @@ $Keys
 {pair|f|Fire ranged weapon}
 {pair|b|Bash a direction}
 {pair|D|Dig/mine a wall (auto-holds your digging tool)}
-{pair|o|Open containers and crafting kits, yours or nearby}
+{pair|o|Open containers (keyboard take/put menu) and crafting kits}
 {pair|C|Open or close a door in a chosen direction}
 {pair|p|Pray}
 {pair|O|Offer at an adjacent altar}
