@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.9.1";
+		public const string Version = "1.10.0";
 
 		internal static ManualLogSource Log;
 
@@ -50,6 +50,7 @@ namespace ElonaKeys
 		private static ConfigEntry<bool> shiftDirTool;
 		private static ConfigEntry<bool> bumpToTalk;
 		private static ConfigEntry<bool> bumpToUse;
+		private static ConfigEntry<bool> isoAim;
 		private static ConfigEntry<string> suppressNativeKeys;
 		private static ConfigEntry<string> wheelStyle;
 		private static ConfigEntry<string> wheelInfo;
@@ -70,6 +71,7 @@ namespace ElonaKeys
 		internal static bool ShiftDirTool => shiftDirTool.Value;
 		internal static bool BumpToTalk => bumpToTalk.Value;
 		internal static bool BumpToUse => bumpToUse.Value;
+		internal static bool IsoAim => isoAim.Value;
 		internal static string WheelStyle => wheelStyle.Value;
 		internal static string WheelInfo => wheelInfo.Value;
 		internal static string WheelAction => wheelAction.Value;
@@ -107,6 +109,8 @@ namespace ElonaKeys
 				"Walking into a friendly NPC talks to them, Elona style (party members still swap places).");
 			bumpToUse = Config.Bind("General", "BumpToUse", true,
 				"Walking into a solid interactable (quest board, gacha, fountain...) uses it, like Elona's walk-over + Space.");
+			isoAim = Config.Bind("General", "IsoAim", true,
+				"Direction prompts aim at the tile that LOOKS that way on screen (Elin's grid is rotated 45 degrees). Off = raw grid directions matching movement.");
 			suppressNativeKeys = Config.Bind("General", "SuppressNativeKeys", "",
 				"Comma-separated keys hidden from the game entirely (use when a native Elin key annoys you and you don't want either binding).");
 			wheelStyle = Config.Bind("Menus", "WheelStyle", "radial",
@@ -133,7 +137,8 @@ namespace ElonaKeys
 			Def("Quaff", "q", Handlers.Quaff, "Drink a potion, or from an adjacent well/fountain.");
 			Def("Read", "r", Handlers.ReadItem, "Read a book, scroll or scrap.");
 			Def("Zap", "shift+z", Handlers.Zap, "Zap a rod, then pick a direction (wait key = yourself).");
-			Def("Cast", "v", Handlers.Cast, "Open the spell/ability list. Hover a spell and press 0-9 to hotkey it.");
+			Def("Cast", "v", Handlers.Cast, "Spell list (mana): favorites, type filters, digits hotkey the selection.");
+			Def("Action", "a", Handlers.ActionList, "Special actions list (stamina): favorites, type filters, digits hotkey the selection.");
 			Def("Wear", "w", Handlers.Wear, "Elona-style equipment window: body slot rows, pick a slot to equip or remove; DV/PV in the title.");
 			Def("Tool", "t", Handlers.HoldTool, "Pick a tool from your inventory and hold it in your hands.");
 			Def("Use", "u", Handlers.Use, "Use a usable item from your inventory.");

@@ -1161,6 +1161,7 @@ namespace ElonaKeys
 			{ "Read", ("Read", ReadItem) },
 			{ "Zap", ("Zap", Zap) },
 			{ "Cast", ("Cast", Cast) },
+			{ "Action", ("Action", ActionList) },
 			{ "Equip", ("Equip", Wear) },
 			{ "Tool", ("Tool", HoldTool) },
 			{ "Use", ("Use", Use) },
@@ -1252,40 +1253,172 @@ namespace ElonaKeys
 
 		// ---------- spells and abilities ----------
 
-		// Our own castable list of everything the PC knows. Enter/letter casts
-		// (native targeting flow via ButtonAbility.TryUse), digits hotkey the
-		// selected spell, and the native window stays reachable from the last row.
+		// v = spells (mana, group SPELL), a = actions (stamina, group ABILITY).
+		// Both menus: favorites, type filters (attack/buff/hex/heal), favorite
+		// management, native targeting via ButtonAbility.TryUse, digit hotkeys.
 		public static void Cast()
 		{
-			string[] groups = { "attack", "defense", "util", "ability" };
+			AbilityMenu(spells: true, bucket: null, favOnly: false);
+		}
+
+		public static void ActionList()
+		{
+			AbilityMenu(spells: false, bucket: null, favOnly: false);
+		}
+
+		private static string TypeBucket(Element e)
+		{
+			string t = (e.source.abilityType != null && e.source.abilityType.Length > 0) ? e.source.abilityType[0] : "";
+			switch (t)
+			{
+			case "attack":
+			case "dot":
+				return "attack";
+			case "buff":
+			case "buffStats":
+				return "buff";
+			case "debuff":
+			case "debuffStats":
+				return "hex";
+			case "heal":
+				return "heal";
+			default:
+				return "other";
+			}
+		}
+
+		private static List<Element> KnownAbilities(bool spells)
+		{
 			List<Element> known = new List<Element>();
 			foreach (Element e in pc.elements.dict.Values)
 			{
-				if (e.Value != 0 && Array.IndexOf(groups, e.source.categorySub) >= 0)
+				if (e.Value != 0 && e.source.group == (spells ? "SPELL" : "ABILITY"))
 				{
 					known.Add(e);
 				}
 			}
 			known.Sort((Element a, Element b) => string.Compare(a.source.GetName(), b.source.GetName(), StringComparison.OrdinalIgnoreCase));
+			return known;
+		}
+
+		private static void AbilityMenu(bool spells, string bucket, bool favOnly)
+		{
+			string what = spells ? "Cast" : "Action";
+			List<Element> known = KnownAbilities(spells);
 			List<MenuRow> rows = new List<MenuRow>();
+			if (bucket == null && !favOnly)
+			{
+				rows.Add(new MenuRow
+				{
+					label = "[ ★ Favorites ]",
+					closeOnAct = false,
+					act = delegate { AbilityMenu(spells, null, favOnly: true); }
+				});
+				rows.Add(new MenuRow
+				{
+					label = "[ Filter by type... ]",
+					closeOnAct = false,
+					act = delegate { FilterMenu(spells); }
+				});
+				rows.Add(new MenuRow
+				{
+					label = "[ Manage favorites... ]",
+					closeOnAct = false,
+					act = delegate { FavoriteMenu(spells); }
+				});
+			}
 			foreach (Element element in known)
 			{
 				Element e = element;
-				string cost = (e.source.cost != null && e.source.cost.Length > 0 && e.source.cost[0] > 0) ? e.source.cost[0].ToString() : "";
+				if (favOnly && !EClass.player.favAbility.Contains(e.id))
+				{
+					continue;
+				}
+				if (bucket != null && TypeBucket(e) != bucket)
+				{
+					continue;
+				}
+				rows.Add(AbilityRow(e, spells));
+			}
+			if (bucket == null && !favOnly)
+			{
 				rows.Add(new MenuRow
 				{
-					label = e.source.GetName() + " <size=13><color=#8f8f7a>" + e.source.categorySub + "</color></size>",
-					rightText = cost,
-					actSrc = e.source,
-					act = delegate { CastAbility(e); }
+					label = "(open the ability window...)",
+					act = delegate { EClass.ui.ToggleAbility(); }
 				});
 			}
-			rows.Add(new MenuRow
+			string title = what + ((bucket != null) ? (" - " + bucket) : (favOnly ? " - favorites" : "")) + " what?";
+			if (rows.Count == 0)
 			{
-				label = "(open the ability window...)",
-				act = delegate { EClass.ui.ToggleAbility(); }
+				Msg.SayRaw(spells ? "You know no spells like that." : "You have no such actions.");
+			}
+			else
+			{
+				MenuSystem.Show(title, rows);
+			}
+		}
+
+		private static MenuRow AbilityRow(Element e, bool spells)
+		{
+			bool fav = EClass.player.favAbility.Contains(e.id);
+			string cost = (e.source.cost != null && e.source.cost.Length > 0 && e.source.cost[0] > 0)
+				? (e.source.cost[0] + (spells ? " mp" : " sp")) : "";
+			return new MenuRow
+			{
+				label = (fav ? "★ " : "") + e.source.GetName() + " <size=13><color=#8f8f7a>" + TypeBucket(e) + "</color></size>",
+				rightText = cost,
+				actSrc = e.source,
+				act = delegate { CastAbility(e); }
+			};
+		}
+
+		private static void FilterMenu(bool spells)
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (string b in new string[] { "attack", "buff", "hex", "heal", "other" })
+			{
+				string bucket = b;
+				rows.Add(new MenuRow
+				{
+					label = bucket,
+					closeOnAct = false,
+					act = delegate { AbilityMenu(spells, bucket, favOnly: false); }
+				});
+			}
+			MenuSystem.Show("Filter by type", rows);
+		}
+
+		// Enter toggles the star instead of casting
+		private static void FavoriteMenu(bool spells)
+		{
+			MenuSystem.Show("Toggle favorites", BuildFavRows(spells), delegate
+			{
+				MenuSystem.SetRows(BuildFavRows(spells));
 			});
-			MenuSystem.Show("Cast what?", rows);
+		}
+
+		private static List<MenuRow> BuildFavRows(bool spells)
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (Element element in KnownAbilities(spells))
+			{
+				Element e = element;
+				bool fav = EClass.player.favAbility.Contains(e.id);
+				rows.Add(new MenuRow
+				{
+					label = (fav ? "★ " : "☆ ") + e.source.GetName(),
+					closeOnAct = false,
+					act = delegate
+					{
+						if (!EClass.player.favAbility.Remove(e.id))
+						{
+							EClass.player.favAbility.Add(e.id);
+						}
+					}
+				});
+			}
+			return rows;
 		}
 
 		private static void CastAbility(Element e)

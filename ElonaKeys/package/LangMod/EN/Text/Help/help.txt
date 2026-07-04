@@ -34,7 +34,8 @@ $Keys
 {pair|shift+x|Inventory}
 
 {topic|Action Keys}
-{pair|v|Cast: spell/ability list (hover + digit = hotkey)}
+{pair|v|Spells (mana): favorites, type filter, digit = hotkey}
+{pair|a|Special actions (stamina): favorites, type filter, digit = hotkey}
 {pair|i|Interact with a direction: keyboard menu of everything there}
 {pair|s|Actions on your own tile: search, harvest, dig treasure...}
 {pair|f|Fire ranged weapon}

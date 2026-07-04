@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.10.0 - 2026-07-03
+
+- Iso-aware aiming: direction prompts target the tile that LOOKS that way on screen (Elin's grid is rotated 45°; pressing down now hits visual south instead of grid-south/screen-southwest). IsoAim config, on by default; movement/bump keep native grid behavior.
+- a = special actions (stamina, ABILITY group), v = spells (mana, SPELL group). Both lists: ★ favorites view, type filter (attack/buff/hex/heal/other via the game's own abilityType data), favorite management (Enter toggles the star), cost column with mp/sp, digit hotkeying, native window still one row away.
+- Ammo stays on shift+a.
+
 ## 1.9.0 - 2026-07-03
 
 - Wheel diamonds fixed (1.8.0 never assigned the label text) and restyled: transparent fill with a simple border.

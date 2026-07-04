@@ -78,9 +78,10 @@ namespace ElonaKeys
 			}
 			if (axis != Vector2.zero)
 			{
+				Vector2 dir = Plugin.IsoAim ? IsoRotate(axis) : axis;
 				Point p = EClass.pc.pos.Copy();
-				p.x += (int)axis.x;
-				p.z += (int)axis.y;
+				p.x += (int)dir.x;
+				p.z += (int)dir.y;
 				Fire(p);
 				return true;
 			}
@@ -89,6 +90,19 @@ namespace ElonaKeys
 			Swallow();
 			HighlightNeighbors();
 			return true;
+		}
+
+		// Elin renders isometric: the grid is rotated 45° from the screen, so a
+		// "down" press should aim at the tile that LOOKS south (grid south-east).
+		// One compass step of rotation maps screen direction to grid direction.
+		private static Vector2 IsoRotate(Vector2 v)
+		{
+			int x = Math.Sign(v.x);
+			int y = Math.Sign(v.y);
+			// rotate 45°: screen (x, y) -> grid (x - y, y + x), clamped to -1..1
+			// checks: screen S (0,-1) -> grid (1,-1) which renders straight down;
+			// screen E (1,0) -> grid (1,1); screen N (0,1) -> grid (-1,1)
+			return new Vector2(Mathf.Clamp(x - y, -1, 1), Mathf.Clamp(y + x, -1, 1));
 		}
 
 		private static void Swallow()
