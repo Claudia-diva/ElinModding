@@ -58,6 +58,7 @@ namespace ElonaKeys
 					return;
 				}
 				MenuSystem.HandleKeys();
+				PopupNav.OnUpdate();
 				UpdateExamineKey();
 				UpdateAssignKey();
 			}

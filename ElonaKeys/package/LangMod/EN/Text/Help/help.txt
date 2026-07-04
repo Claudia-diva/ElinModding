@@ -9,6 +9,7 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Stacks open a « n (max) » count spinner: left/right ±1, up/down ±10, Enter confirms.
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
 ・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
+・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
 {pair|Source and issues|github.com/Claudia-diva/ElinModding}
@@ -59,6 +60,10 @@ $Keys
 ・ Character sheet (c), journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.5.2}
+・ Native popups (context menus, dialogs, list windows) navigable with arrows + Enter.
+・ Fixed Cast stuck on shift+z in old configs (now v); Wheel added to old configs.
+
 {topic|1.5.0}
 ・ w = Elona-style equipment window: slot rows, pick a slot to change/remove; DV/PV in the title.
 ・ Weight column and z-sort (original/name/weight) in every menu.

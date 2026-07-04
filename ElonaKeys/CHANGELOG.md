@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.2 - 2026-07-03
+
+- Native popups are keyboard-navigable: right-click context menus, yes/no dialogs and native list windows respond to arrows + Enter (arrows move a highlight, Enter clicks; untouched until you press an arrow, so mouse and default-Enter behavior stay intact).
+
+## 1.5.1 - 2026-07-03
+
+- Fixed Cast/Zap both bound to shift+z in upgraded configs (Cast is v); config repair script covers it.
+- Wheel added to existing config files; all key descriptions and Mod Help refreshed to match current behavior.
+
 ## 1.5.0 - 2026-07-03
 
 - Elona-style equipment window on w: body slot rows (Head/Body/Hand/...), "-" for empty, pick a slot to see candidates or remove; equip weight and DV/PV in the caption.
