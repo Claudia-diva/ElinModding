@@ -169,6 +169,23 @@ namespace ElonaKeys
 				iconParent.SetActive(enable: true);
 				iconParent.anchoredPosition = new Vector2(24f, 0f);
 				Image img = b.button1.icon;
+				// the slot chrome (frame/chip images living in the same container)
+				// draws OVER the sprite: hide everything that isn't the sprite and
+				// make the sprite the last sibling so it renders on top
+				Image parentImg = iconParent.GetComponent<Image>();
+				if ((bool)parentImg && parentImg != img)
+				{
+					parentImg.enabled = false;
+				}
+				foreach (Image sib in iconParent.GetComponentsInChildren<Image>(includeInactive: true))
+				{
+					if (sib != img)
+					{
+						sib.enabled = false;
+					}
+				}
+				img.enabled = true;
+				img.transform.SetAsLastSibling();
 				r.icon.SetImage(img);
 				// RenderRow.SetImage assumes the inventory-grid material and render
 				// pivots; normalize so the sprite shows inside the small slot.
