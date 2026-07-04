@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.7.0 - 2026-07-03
+
+- z wheel reworked into Elona's linked circles: Info / Action / Etc / Items rings, left/right (or clicking the side links) switches ring, up/down rotates, Enter fires, and the last-used ring is remembered like Elona. Each ring's verbs configurable (WheelInfo/WheelAction/WheelEtc/WheelItems); new verbs Help, Chara, Journal, Log, Fire.
+
+## 1.6.3 - 2026-07-03
+
+- Row layout matches Elona: sprite at far left, letter badge (revived, with its letter) next, name, weight as a true right-aligned column. Letters select through the game's own badge matching.
+
+## 1.6.2 - 2026-07-03
+
+- Attempted icon fix (superseded by 1.6.3).
+
 ## 1.6.0 - 2026-07-03
 
 - z now opens a true radial action wheel (custom circle UI): arrows rotate, Enter/Space or click activates, z/Escape closes. WheelVerbs config picks what's on it (default 12 classic verbs); WheelStyle=list brings the window back.

@@ -45,7 +45,7 @@ $Keys
 {pair|O|Offer at an adjacent altar}
 {pair|G|Give to an adjacent character (one per pick from stacks)}
 {pair|shift+q|Party member sheets and inventories}
-{pair|z|Radial action wheel: arrows rotate, Enter picks, z closes}
+{pair|z|Action circles: ←→ switch ring (Info/Action/Etc/Items), ↑↓ rotate, Enter picks, z closes; last ring remembered}
 
 {topic|Hotkeys and extras}
 {pair|shift + 0-9|Fire Extra-hotbar slots 1-10 (ActivateHotkeys config)}
@@ -60,6 +60,12 @@ $Keys
 ・ Character sheet (c), journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.7.0}
+・ z = Elona's linked circles (Info/Action/Etc/Items), ring position remembered; ring contents configurable.
+
+{topic|1.6.3}
+・ Rows now: sprite, letter badge, name, right-aligned weight column.
+
 {topic|1.6.0}
 ・ z opens a real radial wheel (WheelVerbs/WheelStyle configs); bash kicks like Elona (shove NPCs, kick doors open).
 

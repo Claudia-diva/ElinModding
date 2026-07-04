@@ -5,23 +5,32 @@ using UnityEngine.UI;
 
 namespace ElonaKeys
 {
-	// Classic Elona action wheel: verbs arranged in a circle around the center
-	// of the screen. Left/up rotates counter-clockwise, right/down clockwise,
-	// Enter (or clicking a label) activates, z/Escape closes. Input is fenced in
-	// InputRouter while the wheel is up.
+	// Classic Elona z-circles: several rings of verbs. Left/right switches ring
+	// (remembered between opens), up/down rotates the selection, Enter (or click)
+	// activates, z/Escape closes. Input is fenced in InputRouter while open.
 	public class RadialWheel : MonoBehaviour
 	{
+		public class Ring
+		{
+			public string name;
+			public List<(string label, Action act)> items = new List<(string, Action)>();
+		}
+
 		private static RadialWheel instance;
+		private static int ringIndex; // remembered across opens, like Elona
 
 		public static bool Active => instance != null && instance;
 
+		private List<Ring> rings;
 		private readonly List<Text> labels = new List<Text>();
-		private List<(string label, Action act)> items;
 		private Text center;
+		private Text hintLeft;
+		private Text hintRight;
 		private int sel;
 		private int openFrame;
+		private Font font;
 
-		public static void Toggle(List<(string, Action)> items)
+		public static void Toggle(List<Ring> rings)
 		{
 			if (Active)
 			{
@@ -29,14 +38,14 @@ namespace ElonaKeys
 			}
 			else
 			{
-				Show(items);
+				Show(rings);
 			}
 		}
 
-		public static void Show(List<(string, Action)> _items)
+		public static void Show(List<Ring> _rings)
 		{
 			CloseWheel();
-			if (_items == null || _items.Count == 0 || EClass.ui == null)
+			if (_rings == null || _rings.Count == 0 || EClass.ui == null)
 			{
 				return;
 			}
@@ -51,11 +60,11 @@ namespace ElonaKeys
 			bg.color = new Color(0f, 0f, 0f, 0.45f);
 			bg.raycastTarget = true;
 			instance = root.AddComponent<RadialWheel>();
-			instance.items = _items;
-			instance.sel = 0;
+			instance.rings = _rings;
+			instance.font = FindFont();
 			instance.openFrame = Time.frameCount;
-			instance.Build(root.transform);
-			instance.Refresh();
+			ringIndex = Mathf.Clamp(ringIndex, 0, _rings.Count - 1);
+			instance.BuildRing();
 		}
 
 		public static void CloseWheel()
@@ -77,16 +86,39 @@ namespace ElonaKeys
 			return Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 		}
 
-		private void Build(Transform root)
+		private Ring Current => rings[ringIndex];
+
+		private void BuildRing()
 		{
-			Font font = FindFont();
-			float radius = Mathf.Min(240f, 90f + items.Count * 11f);
-			for (int i = 0; i < items.Count; i++)
+			foreach (Text t in labels)
 			{
-				float ang = (90f - (float)i * 360f / items.Count) * Mathf.Deg2Rad;
-				Text t = MakeText(root, font, 20);
+				if ((bool)t)
+				{
+					UnityEngine.Object.Destroy(t.gameObject);
+				}
+			}
+			labels.Clear();
+			if ((bool)center)
+			{
+				UnityEngine.Object.Destroy(center.gameObject);
+			}
+			if ((bool)hintLeft)
+			{
+				UnityEngine.Object.Destroy(hintLeft.gameObject);
+			}
+			if ((bool)hintRight)
+			{
+				UnityEngine.Object.Destroy(hintRight.gameObject);
+			}
+			sel = Mathf.Clamp(sel, 0, Current.items.Count - 1);
+			int n = Current.items.Count;
+			float radius = Mathf.Min(220f, 100f + n * 10f);
+			for (int i = 0; i < n; i++)
+			{
+				float ang = (90f - (float)i * 360f / n) * Mathf.Deg2Rad;
+				Text t = MakeText(transform, font, 20);
 				t.rectTransform.anchoredPosition = new Vector2(Mathf.Cos(ang) * radius, Mathf.Sin(ang) * radius);
-				t.text = items[i].label;
+				t.text = Current.items[i].label;
 				int index = i;
 				Button b = t.gameObject.AddComponent<Button>();
 				b.onClick.AddListener(delegate
@@ -96,8 +128,24 @@ namespace ElonaKeys
 				});
 				labels.Add(t);
 			}
-			center = MakeText(root, font, 26);
-			center.rectTransform.anchoredPosition = Vector2.zero;
+			center = MakeText(transform, font, 26);
+			center.rectTransform.anchoredPosition = new Vector2(0f, -6f);
+			// neighbor-ring links, like Elona's side diamonds
+			Ring prev = rings[(ringIndex - 1 + rings.Count) % rings.Count];
+			Ring next = rings[(ringIndex + 1) % rings.Count];
+			hintLeft = MakeText(transform, font, 17);
+			hintLeft.rectTransform.anchoredPosition = new Vector2(-radius - 130f, 0f);
+			hintLeft.text = "◄ " + prev.name;
+			hintLeft.color = new Color(0.7f, 0.7f, 0.65f);
+			Button pb = hintLeft.gameObject.AddComponent<Button>();
+			pb.onClick.AddListener(delegate { SwitchRing(-1); });
+			hintRight = MakeText(transform, font, 17);
+			hintRight.rectTransform.anchoredPosition = new Vector2(radius + 130f, 0f);
+			hintRight.text = next.name + " ►";
+			hintRight.color = new Color(0.7f, 0.7f, 0.65f);
+			Button nb = hintRight.gameObject.AddComponent<Button>();
+			nb.onClick.AddListener(delegate { SwitchRing(1); });
+			Refresh();
 		}
 
 		private static Text MakeText(Transform root, Font font, int size)
@@ -129,14 +177,21 @@ namespace ElonaKeys
 			}
 			if ((bool)center)
 			{
-				center.text = items[sel].label;
+				center.text = "- " + Current.name + " -\n<size=20>" + Current.items[sel].label + "</size>";
 				center.color = new Color(1f, 0.95f, 0.6f);
 			}
 		}
 
+		private void SwitchRing(int dir)
+		{
+			ringIndex = (ringIndex + dir + rings.Count) % rings.Count;
+			sel = 0;
+			BuildRing();
+		}
+
 		private void Activate()
 		{
-			Action act = items[sel].act;
+			Action act = Current.items[sel].act;
 			CloseWheel();
 			try
 			{
@@ -165,15 +220,25 @@ namespace ElonaKeys
 				CloseWheel();
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+			if (Input.GetKeyDown(KeyCode.RightArrow))
 			{
-				w.sel = (w.sel + 1) % w.items.Count;
+				w.SwitchRing(1);
+				return;
+			}
+			if (Input.GetKeyDown(KeyCode.LeftArrow))
+			{
+				w.SwitchRing(-1);
+				return;
+			}
+			if (Input.GetKeyDown(KeyCode.DownArrow))
+			{
+				w.sel = (w.sel + 1) % w.Current.items.Count;
 				w.Refresh();
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.UpArrow))
+			if (Input.GetKeyDown(KeyCode.UpArrow))
 			{
-				w.sel = (w.sel - 1 + w.items.Count) % w.items.Count;
+				w.sel = (w.sel - 1 + w.Current.items.Count) % w.Current.items.Count;
 				w.Refresh();
 				return;
 			}

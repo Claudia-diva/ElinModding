@@ -885,15 +885,51 @@ namespace ElonaKeys
 			return rows;
 		}
 
-		// Classic 'z' action wheel: radial circle by default, window as fallback.
+		// Classic 'z' action wheel: Elona's linked rings (Info/Action/Etc/Items),
+		// left/right switches ring, last ring remembered. Window as fallback.
 		public static void Wheel()
 		{
 			if (Plugin.WheelStyle != "list")
 			{
-				RadialWheel.Toggle(WheelVerbList());
+				RadialWheel.Toggle(BuildRings());
 				return;
 			}
 			WheelWindow();
+		}
+
+		private static List<RadialWheel.Ring> BuildRings()
+		{
+			List<RadialWheel.Ring> rings = new List<RadialWheel.Ring>();
+			void AddRing(string name, string csv)
+			{
+				RadialWheel.Ring ring = new RadialWheel.Ring { name = name };
+				foreach (string raw in csv.Split(','))
+				{
+					string verb = raw.Trim();
+					if (verb.Length > 0 && wheelVerbs.TryGetValue(verb, out (string label, Action act) v))
+					{
+						ring.items.Add((v.label, v.act));
+					}
+				}
+				if (ring.items.Count > 0)
+				{
+					rings.Add(ring);
+				}
+			}
+			AddRing("Info", Plugin.WheelInfo);
+			AddRing("Action", Plugin.WheelAction);
+			AddRing("Etc", Plugin.WheelEtc);
+			AddRing("Items", Plugin.WheelItems);
+			if (rings.Count == 0)
+			{
+				RadialWheel.Ring all = new RadialWheel.Ring { name = "Actions" };
+				foreach (KeyValuePair<string, (string label, Action act)> kv in wheelVerbs)
+				{
+					all.items.Add((kv.Value.label, kv.Value.act));
+				}
+				rings.Add(all);
+			}
+			return rings;
 		}
 
 		private static readonly Dictionary<string, (string label, Action act)> wheelVerbs =
@@ -922,28 +958,37 @@ namespace ElonaKeys
 			{ "Offer", ("Offer", Offer) },
 			{ "Give", ("Give", Give) },
 			{ "Party", ("Party", Party) },
-			{ "Inventory", ("Inventory", ExamineInventory) }
+			{ "Inventory", ("Inventory", ExamineInventory) },
+			{ "Help", ("Help", ShowHelp) },
+			{ "Chara", ("Chara", ShowChara) },
+			{ "Journal", ("Journal", ShowJournal) },
+			{ "Log", ("Log", ShowLog) },
+			{ "Fire", ("Fire", FireRanged) }
 		};
 
-		private static List<(string, Action)> WheelVerbList()
+		public static void ShowHelp()
 		{
-			List<(string, Action)> list = new List<(string, Action)>();
-			foreach (string raw in Plugin.WheelVerbs.Split(','))
-			{
-				string name = raw.Trim();
-				if (name.Length > 0 && wheelVerbs.TryGetValue(name, out (string label, Action act) v))
-				{
-					list.Add((v.label, v.act));
-				}
-			}
-			if (list.Count == 0)
-			{
-				foreach (KeyValuePair<string, (string label, Action act)> kv in wheelVerbs)
-				{
-					list.Add((kv.Value.label, kv.Value.act));
-				}
-			}
-			return list;
+			LayerHelp.Toggle("general", "1");
+		}
+
+		public static void ShowChara()
+		{
+			EClass.ui.ToggleLayer<LayerChara>()?.SetChara(pc);
+		}
+
+		public static void ShowJournal()
+		{
+			EClass.ui.ToggleLayer<LayerJournal>();
+		}
+
+		public static void ShowLog()
+		{
+			WidgetMainText.ToggleLog();
+		}
+
+		public static void FireRanged()
+		{
+			InputRouter.QueueNative(EAction.Fire);
 		}
 
 		private static void WheelWindow()

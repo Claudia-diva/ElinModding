@@ -15,6 +15,13 @@ namespace ElonaKeys
 	{
 		private static float lastLog;
 		private static float lastError;
+		private static EAction queuedNative = EAction.None;
+
+		// let handlers (e.g. the wheel's Fire) trigger a native EAction next frame
+		public static void QueueNative(EAction a)
+		{
+			queuedNative = a;
+		}
 
 		internal static void OnEInputUpdated()
 		{
@@ -52,6 +59,12 @@ namespace ElonaKeys
 			if (DirPrompt.Handle())
 			{
 				return; // direction prompt is eating input this frame
+			}
+			if (queuedNative != EAction.None)
+			{
+				EInput.action = queuedNative;
+				queuedNative = EAction.None;
+				return;
 			}
 			if (EInput.isInputFieldActive || EInput.isCtrlDown || EInput.isAltDown)
 			{
