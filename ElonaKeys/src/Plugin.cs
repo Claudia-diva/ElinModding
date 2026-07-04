@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.4.0";
+		public const string Version = "1.4.1";
 
 		internal static ManualLogSource Log;
 
@@ -106,6 +106,7 @@ namespace ElonaKeys
 			Def("Search", "s", Handlers.SearchHere, "Do things on your own tile: search spots, harvest, dig treasure...");
 			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
 			Def("Party", "shift+q", Handlers.Party, "Party member character sheets and inventories.");
+			Def("Wheel", "z", Handlers.Wheel, "Action wheel: every verb of this mod in one menu, like classic Elona's z.");
 			Def("ExamineInventory", "shift+x", Handlers.ExamineInventory, "Open/close your inventory.");
 			Def("Hold", "none", Handlers.Hold, "Hold any item in your hands (Elin-specific, unbound by default).");
 			DefNative("Fire", "f", EAction.Fire, "Fire your ranged weapon (native Fire action).");

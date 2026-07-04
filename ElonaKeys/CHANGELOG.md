@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.1 - 2026-07-03
+
+- Item sprites finally render in menu rows (RenderRow.SetImage assumes the inventory-grid shader material and render pivots; sprites are now normalized: centered pivot, white color, scaled to the slot).
+- Stat tooltip stays open while keyboard-browsing (TooltipManager.disableHide), instead of flashing for one frame.
+- Quantity menu for stacks on Drop and Give: 1 / 5 / 10 / half / all rows, letters work; single items skip the question.
+- z = action wheel: every mod verb in one menu, classic Elona style.
+
 ## 1.4.0 - 2026-07-03
 
 - Throw offers a target list (visible characters sorted by distance, hostiles marked) before the direction fallback.

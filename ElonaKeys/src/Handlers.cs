@@ -256,9 +256,56 @@ namespace ElonaKeys
 		public static void Drop()
 		{
 			ItemMenu("Drop what?", (Thing t) => !t.isEquipped,
-				delegate(Thing t) { pc.DropThing(t); },
+				delegate(Thing t)
+				{
+					QuantityMenu(t, "Drop how many " + t.Name + "?", delegate(int n)
+					{
+						pc.DropThing(t, n);
+					});
+				},
 				"You have nothing to drop.",
 				refresh: true);
+		}
+
+		// Elona asks a count for stacks; Elin has no keyboard number widget, so
+		// offer the useful presets as menu rows. Single items skip the question.
+		private static void QuantityMenu(Thing t, string title, Action<int> onAmount)
+		{
+			int num = t.Num;
+			if (num <= 1)
+			{
+				onAmount(1);
+				return;
+			}
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (int n in new int[] { 1, 5, 10, num / 2, num })
+			{
+				if (n <= 0 || n > num)
+				{
+					continue;
+				}
+				int amount = n;
+				string label = amount.ToString();
+				if (amount == num)
+				{
+					label += " (all)";
+				}
+				else if (amount == num / 2 && amount != 1 && amount != 5 && amount != 10)
+				{
+					label += " (half)";
+				}
+				if (rows.Exists((MenuRow r) => r.label.StartsWith(amount + " ") || r.label == amount.ToString()))
+				{
+					continue;
+				}
+				rows.Add(new MenuRow
+				{
+					label = label,
+					icon = t,
+					act = delegate { onAmount(amount); }
+				});
+			}
+			MenuSystem.Show(title, rows);
 		}
 
 		public static void Wear()
@@ -658,7 +705,7 @@ namespace ElonaKeys
 
 		private static void GiveTo(Chara c)
 		{
-			ItemMenu("Give what to " + c.Name + "? (one per pick from stacks)",
+			ItemMenu("Give what to " + c.Name + "?",
 				(Thing t) => !t.trait.CanOnlyCarry && !t.isEquipped && !t.c_isImportant,
 				delegate(Thing t)
 				{
@@ -667,8 +714,11 @@ namespace ElonaKeys
 						Msg.SayRaw(c.Name + " cannot take that.");
 						return;
 					}
-					Thing give = (t.Num > 1) ? t.Split(1) : t;
-					pc.GiveGift(c, give);
+					QuantityMenu(t, "Give how many " + t.Name + "?", delegate(int n)
+					{
+						Thing give = (n >= t.Num) ? t : t.Split(n);
+						pc.GiveGift(c, give);
+					});
 				},
 				"You have nothing you can give.",
 				refresh: true);
@@ -705,6 +755,41 @@ namespace ElonaKeys
 				});
 			}
 			RunRows("Party", rows, "You have no party members with you.");
+		}
+
+		// Classic 'z' action wheel: every verb in one menu.
+		public static void Wheel()
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			void Add(string label, Action act)
+			{
+				rows.Add(new MenuRow { label = label, act = act });
+			}
+			Add("Eat", Eat);
+			Add("Quaff", Quaff);
+			Add("Read", ReadItem);
+			Add("Zap a rod", Zap);
+			Add("Cast a spell", Cast);
+			Add("Wear/wield", Wear);
+			Add("Hold a tool", HoldTool);
+			Add("Use an item", Use);
+			Add("Dip/blend", Blend);
+			Add("Throw", Throw);
+			Add("Load ammo", Ammo);
+			Add("Get items here", Get);
+			Add("Drop", Drop);
+			Add("Open a container", Open);
+			Add("Open/close a door", DoorToggle);
+			Add("Bash", Bash);
+			Add("Dig a wall", Dig);
+			Add("Actions on this tile", SearchHere);
+			Add("Interact...", Interact);
+			Add("Pray", Pray);
+			Add("Offer", Offer);
+			Add("Give", Give);
+			Add("Party", Party);
+			Add("Inventory", ExamineInventory);
+			MenuSystem.Show("Action wheel", rows);
 		}
 
 		// ---------- simple toggles ----------

@@ -41,6 +41,7 @@ $Keys
 {pair|O|Offer at an adjacent altar}
 {pair|G|Give to an adjacent character (one per pick from stacks)}
 {pair|shift+q|Party member sheets and inventories}
+{pair|z|Action wheel: every verb of this mod in one menu}
 
 {topic|Hotkeys and extras}
 {pair|shift + 0-9|Fire Extra-hotbar slots 1-10 (ActivateHotkeys config)}
@@ -49,12 +50,17 @@ $Keys
 {pair|SuppressNativeKeys|Config list of game keys to swallow (e.g. z)}
 
 {topic|Deliberate differences from Elona}
-・ No quantity prompt: Elin has no native number picker; drop moves whole stacks, give hands over one per pick.
+・ Quantity for stacks is a quick preset menu (1/5/10/half/all) instead of typed numbers.
 ・ No Rest key: Elin rests via beds and the native Meditate key.
 ・ No dedicated target/look keys: throwing offers a target list instead.
 ・ Character sheet (c), journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.4.1}
+・ Item sprites render in menu rows; stat card stays open while keyboard-browsing.
+・ Quantity presets (1/5/10/half/all) for dropping and giving stacks.
+・ z action wheel with every verb.
+
 {topic|1.4.0}
 ・ Throw now offers a target list (visible characters by distance) before falling back to a direction.
 ・ Give reworked: fully keyboard flow via the real gift logic; no more mouse-only drag window.

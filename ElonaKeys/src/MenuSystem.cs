@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ElonaKeys
 {
@@ -92,7 +93,22 @@ namespace ElonaKeys
 				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
 				iconParent.SetActive(enable: true);
 				iconParent.anchoredPosition = new Vector2(24f, 0f);
-				r.icon.SetImage(b.button1.icon);
+				Image img = b.button1.icon;
+				r.icon.SetImage(img);
+				// RenderRow.SetImage assumes the inventory-grid material and render
+				// pivots; this mold has neither. Normalize so the sprite actually
+				// shows inside the small slot.
+				img.color = Color.white;
+				RectTransform rt = img.rectTransform;
+				rt.pivot = new Vector2(0.5f, 0.5f);
+				rt.anchoredPosition = Vector2.zero;
+				img.transform.localScale = new Vector3(Mathf.Abs(img.transform.localScale.x), img.transform.localScale.y, 1f);
+				Vector2 s = rt.sizeDelta;
+				float max = Mathf.Max(s.x, s.y);
+				if (max > 36f)
+				{
+					rt.sizeDelta = s * (36f / max);
+				}
 				b.button1.mainText.rectTransform.anchoredPosition = new Vector2(52f, 0f);
 				Thing tip = r.icon;
 				b.button1.SetTooltip("note", delegate(UITooltip tt)
@@ -184,6 +200,9 @@ namespace ElonaKeys
 				ItemGeneral item = layer.list.buttons[sel].component as ItemGeneral;
 				if ((bool)item)
 				{
+					// stop the manager from fading the card when the mouse isn't
+					// hovering; LayerList.OnKill clears disableHide on close
+					TooltipManager.Instance.disableHide = "note";
 					item.button1.ShowTooltipForced(ignoreWhenRightClick: false);
 				}
 			}
