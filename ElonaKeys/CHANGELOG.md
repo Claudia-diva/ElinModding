@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.5.0 - 2026-07-03
+
+- Elona-style equipment window on w: body slot rows (Head/Body/Hand/...), "-" for empty, pick a slot to see candidates or remove; equip weight and DV/PV in the caption.
+- Weight column on the right of every item menu.
+- z inside a menu cycles sort: original / name / weight.
+- Shift (released without being used as a modifier) goes back to the previous window, Elona style; window chains (wheel, give, categories, throw) keep a back-stack.
+- Drop and Give use an inline count spinner like Elona's Input box: Enter on a stack, left/right ±1, up/down ±10, Enter confirms; defaults to all.
+- Party items browse in our window: take items (with count) from members; character sheet entry kept.
+- Preset quantity submenu removed (replaced by the spinner).
+
 ## 1.4.1 - 2026-07-03
 
 - Item sprites finally render in menu rows (RenderRow.SetImage assumes the inventory-grid shader material and render pivots; sprites are now normalized: centered pivot, white color, scaled to the slot).

@@ -6,59 +6,92 @@ using UnityEngine.UI;
 namespace ElonaKeys
 {
 	// The Elona-style menu window: paginated, fully keyboard-navigable.
-	// - fixed rows per page (MenuPageSize config), everything fits on screen
-	// - left/right (or PageUp/Down) switch pages
-	// - up/down move the ► cursor, Enter activates it
-	// - a..o letter per row (typed letter activates), click also works
-	// - row text carries the letter itself ("a) bread") so nothing can overlap
+	// - fixed rows per page, left/right (or PageUp/Down) switch pages
+	// - up/down move the ► cursor, Enter/letter/click act
+	// - weight column on the right, z cycles sort (original/name/weight)
+	// - Shift goes back to the previous window (or closes), like Elona
+	// - stack rows open a « n (max) » count spinner: left/right ±1, up/down ±10
 	public class MenuRow
 	{
 		public string label;
 		public Thing icon;
 		public Action act;
 		public bool closeOnAct = true;
+		public string rightText;       // usually the weight column
+		public int sortWeight;         // for the weight sort mode
+		public int maxAmount;          // >1 enables the count spinner
+		public Action<int> onAmount;   // called with the chosen count
 	}
 
 	public static class MenuSystem
 	{
 		private const string Letters = "abcdefghijklmnopqrstuvwxyz";
 
+		private class Screen
+		{
+			public string title;
+			public List<MenuRow> rows;
+			public Action refreshSource;
+		}
+
 		private static LayerList layer;
-		private static string title;
-		private static List<MenuRow> all = new List<MenuRow>();
+		private static Screen current;
+		private static readonly List<Screen> history = new List<Screen>();
 		private static readonly List<MenuRow> pageRows = new List<MenuRow>();
+		private static List<MenuRow> view = new List<MenuRow>();
 		private static int page;
 		private static int sel;
+		private static int sortMode; // 0 original, 1 name, 2 weight
 		private static int openFrame;
-		private static Action refreshSource; // optional: rebuilds `all` after an action
+
+		// count spinner state
+		private static MenuRow amountRow;
+		private static int amount;
+
+		// shift = back, but only if shift wasn't a modifier for something else
+		private static bool shiftHeld;
+		private static bool shiftUsed;
 
 		public static bool Alive => layer != null && (bool)layer;
 
-		// max 20 rows so x (examine) and z stay free as letters
+		// max 20 rows so x (examine) and z (sort) stay free as letters
 		private static int PageSize => Mathf.Clamp(Plugin.MenuPageSize, 5, 20);
 
-		private static int PageCount => Mathf.Max(1, (all.Count + PageSize - 1) / PageSize);
+		private static int PageCount => Mathf.Max(1, (view.Count + PageSize - 1) / PageSize);
 
 		public static void Show(string _title, List<MenuRow> rows, Action _refreshSource = null)
 		{
-			title = _title;
-			all = rows;
-			refreshSource = _refreshSource;
+			if (Alive && current != null)
+			{
+				history.Add(current); // shift returns here
+			}
+			else
+			{
+				history.Clear();
+			}
+			current = new Screen { title = _title, rows = rows, refreshSource = _refreshSource };
 			page = 0;
 			sel = 0;
+			amountRow = null;
 			openFrame = Time.frameCount;
-			layer = EClass.ui.AddLayer<LayerList>();
-			layer.SetSize(640f);
-			layer.SetList2(pageRows, RowText, delegate(MenuRow r, ItemGeneral b)
+			if (!Alive)
 			{
-				Activate(r);
-			}, BuildRow, autoClose: false);
+				layer = EClass.ui.AddLayer<LayerList>();
+				layer.SetSize(680f);
+				layer.SetList2(pageRows, RowText, delegate(MenuRow r, ItemGeneral b)
+				{
+					Activate(r);
+				}, BuildRow, autoClose: false);
+			}
 			ApplyPage();
 			MenuExtras.RegisterMenu(layer);
 		}
 
 		public static void Close()
 		{
+			history.Clear();
+			current = null;
+			amountRow = null;
 			if (Alive)
 			{
 				layer.Close();
@@ -66,24 +99,50 @@ namespace ElonaKeys
 			layer = null;
 		}
 
+		private static void Back()
+		{
+			if (amountRow != null)
+			{
+				amountRow = null;
+				ApplyPage();
+				return;
+			}
+			if (history.Count == 0)
+			{
+				Close();
+				return;
+			}
+			Screen prev = history[history.Count - 1];
+			history.RemoveAt(history.Count - 1);
+			current = prev;
+			page = 0;
+			sel = 0;
+			amountRow = null;
+			prev.refreshSource?.Invoke();
+			ApplyPage();
+		}
+
 		public static void SetRows(List<MenuRow> rows)
 		{
-			all = rows;
+			if (current != null)
+			{
+				current.rows = rows;
+			}
 		}
 
 		private static string RowText(MenuRow r)
 		{
 			int i = pageRows.IndexOf(r);
-			string cursor = (i == sel) ? "► " : "   ";
+			string cursor = (i == sel) ? "► " : "    ";
 			string letter = (i >= 0 && i < Letters.Length) ? (Letters[i] + ")  ") : "";
-			return cursor + letter + r.label;
+			string spin = (r == amountRow) ? ("   « " + amount + " (" + r.maxAmount + ") »") : "";
+			return cursor + letter + r.label + spin;
 		}
 
 		private static void BuildRow(MenuRow r, ItemGeneral b)
 		{
 			if ((bool)b.button1.keyText)
 			{
-				// letters live inside the label; kill the key-chip visual entirely
 				b.button1.keyText.text = "";
 				b.button1.keyText.SetActive(enable: false);
 			}
@@ -96,8 +155,7 @@ namespace ElonaKeys
 				Image img = b.button1.icon;
 				r.icon.SetImage(img);
 				// RenderRow.SetImage assumes the inventory-grid material and render
-				// pivots; this mold has neither. Normalize so the sprite actually
-				// shows inside the small slot.
+				// pivots; normalize so the sprite shows inside the small slot.
 				img.color = Color.white;
 				RectTransform rt = img.rectTransform;
 				rt.pivot = new Vector2(0.5f, 0.5f);
@@ -120,21 +178,24 @@ namespace ElonaKeys
 			{
 				b.button1.mainText.rectTransform.anchoredPosition = new Vector2(30f, 0f);
 			}
-			MenuExtras.ApplyNameDisplay(b.button1.mainText, 480f);
+			if (!string.IsNullOrEmpty(r.rightText))
+			{
+				b.SetSubText2(r.rightText);
+			}
+			MenuExtras.ApplyNameDisplay(b.button1.mainText, 430f);
 		}
 
-		// Called after an action on a refreshable menu (drop/wear): rebuild rows
-		// in place, keep the page, close when nothing is left.
+		// Rebuild rows in place after an action on a refreshable menu.
 		private static void Refresh()
 		{
-			if (refreshSource == null || !Alive)
+			if (current == null || current.refreshSource == null || !Alive)
 			{
 				return;
 			}
-			refreshSource();
-			if (all.Count == 0)
+			current.refreshSource();
+			if (current.rows.Count == 0)
 			{
-				Close();
+				Back();
 			}
 			else
 			{
@@ -147,15 +208,16 @@ namespace ElonaKeys
 		{
 			try
 			{
-				if (r.closeOnAct)
+				if (r.maxAmount > 1 && r.onAmount != null)
 				{
-					Close();
+					// enter the count spinner instead of acting immediately
+					amountRow = r;
+					amount = r.maxAmount;
+					sel = pageRows.IndexOf(r);
+					ApplyPage();
+					return;
 				}
-				r.act();
-				if (!r.closeOnAct)
-				{
-					Refresh();
-				}
+				Run(r, (r.onAmount != null) ? ((Action)delegate { r.onAmount(1); }) : r.act);
 			}
 			catch (Exception ex)
 			{
@@ -163,25 +225,55 @@ namespace ElonaKeys
 			}
 		}
 
-		private static void ApplyPage()
+		private static void Run(MenuRow r, Action action)
 		{
-			if (!Alive)
+			if (action == null)
 			{
 				return;
 			}
+			if (r.closeOnAct)
+			{
+				Close();
+			}
+			action();
+			if (!r.closeOnAct)
+			{
+				Refresh();
+			}
+		}
+
+		private static void ApplyPage()
+		{
+			if (!Alive || current == null)
+			{
+				return;
+			}
+			view = new List<MenuRow>(current.rows);
+			if (sortMode == 1)
+			{
+				view.Sort((MenuRow a, MenuRow b) => string.Compare(a.label, b.label, StringComparison.OrdinalIgnoreCase));
+			}
+			else if (sortMode == 2)
+			{
+				view.Sort((MenuRow a, MenuRow b) => b.sortWeight.CompareTo(a.sortWeight));
+			}
 			pageRows.Clear();
 			int start = page * PageSize;
-			for (int i = start; i < all.Count && i < start + PageSize; i++)
+			for (int i = start; i < view.Count && i < start + PageSize; i++)
 			{
-				pageRows.Add(all[i]);
+				pageRows.Add(view[i]);
 			}
 			sel = Mathf.Clamp(sel, 0, Mathf.Max(0, pageRows.Count - 1));
 			layer.list.List();
 			layer.RefreshSize();
-			string caption = title;
+			string caption = current.title;
 			if (PageCount > 1)
 			{
-				caption += "  (" + (page + 1) + "/" + PageCount + ")  ◄ ►";
+				caption += "  (" + (page + 1) + "/" + PageCount + ") ◄►";
+			}
+			if (sortMode != 0)
+			{
+				caption += (sortMode == 1) ? " [name]" : " [weight]";
 			}
 			layer.windows[0].SetCaption(caption);
 			ShowSelTooltip();
@@ -200,9 +292,7 @@ namespace ElonaKeys
 				ItemGeneral item = layer.list.buttons[sel].component as ItemGeneral;
 				if ((bool)item)
 				{
-					// stop the manager from fading the card when the mouse isn't
-					// hovering; LayerList.OnKill clears disableHide on close
-					TooltipManager.Instance.disableHide = "note";
+					TooltipManager.Instance.disableHide = "note"; // LayerList.OnKill clears it
 					item.button1.ShowTooltipForced(ignoreWhenRightClick: false);
 				}
 			}
@@ -216,13 +306,38 @@ namespace ElonaKeys
 
 		public static void HandleKeys()
 		{
-			if (!Alive)
+			if (!Alive || current == null)
 			{
 				return;
 			}
-			// never react to the same keystroke that opened this menu
+			// never react to the keystroke that opened this menu
 			if (Time.frameCount - openFrame < 2 || EInput.waitReleaseAnyKey)
 			{
+				return;
+			}
+			// Shift alone = back/close, like Elona. Fires on release so that
+			// shift+digit (hotkey assignment) still works inside menus.
+			if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+			{
+				shiftHeld = true;
+				shiftUsed = false;
+			}
+			else if (shiftHeld && Input.anyKeyDown)
+			{
+				shiftUsed = true;
+			}
+			if ((Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift)) && shiftHeld)
+			{
+				shiftHeld = false;
+				if (!shiftUsed)
+				{
+					Back();
+					return;
+				}
+			}
+			if (amountRow != null)
+			{
+				HandleAmountKeys();
 				return;
 			}
 			if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.PageDown))
@@ -265,15 +380,61 @@ namespace ElonaKeys
 				}
 				return;
 			}
-			// typed letter selects the row (lowercase only; capitals stay free)
+			// typed keys: z = sort, letters = rows (lowercase only)
 			string typed = Input.inputString;
 			if (!string.IsNullOrEmpty(typed) && !EInput.isShiftDown && !EInput.isCtrlDown && !EInput.isAltDown)
 			{
 				char c = typed[0];
+				if (c == 'z')
+				{
+					sortMode = (sortMode + 1) % 3;
+					sel = 0;
+					page = 0;
+					ApplyPage();
+					return;
+				}
 				int index = Letters.IndexOf(c);
-				if (index >= 0 && index < pageRows.Count)
+				if (index >= 0 && index < pageRows.Count && index < PageSize)
 				{
 					Activate(pageRows[index]);
+				}
+			}
+		}
+
+		private static void HandleAmountKeys()
+		{
+			MenuRow r = amountRow;
+			if (Input.GetKeyDown(KeyCode.RightArrow))
+			{
+				amount = (amount % r.maxAmount) + 1;
+				ApplyPage();
+			}
+			else if (Input.GetKeyDown(KeyCode.LeftArrow))
+			{
+				amount = ((amount - 2 + r.maxAmount) % r.maxAmount) + 1;
+				ApplyPage();
+			}
+			else if (Input.GetKeyDown(KeyCode.UpArrow))
+			{
+				amount = Mathf.Min(r.maxAmount, amount + 10);
+				ApplyPage();
+			}
+			else if (Input.GetKeyDown(KeyCode.DownArrow))
+			{
+				amount = Mathf.Max(1, amount - 10);
+				ApplyPage();
+			}
+			else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+			{
+				int n = amount;
+				amountRow = null;
+				try
+				{
+					Run(r, delegate { r.onAmount(n); });
+				}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogError("ElonaKeys amount action failed: " + ex);
 				}
 			}
 		}

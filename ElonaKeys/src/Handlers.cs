@@ -5,14 +5,20 @@ using UnityEngine;
 namespace ElonaKeys
 {
 	// Implementations of each classic Elona action on top of Elin's systems.
-	// All menus go through MenuSystem (paginated, keyboard-navigable).
+	// All menus go through MenuSystem (paginated, keyboard-navigable, weight
+	// column, z-sort, shift = back, count spinner on stacks).
 	public static class Handlers
 	{
 		private static Chara pc => EClass.pc;
 
 		// ---------- shared plumbing ----------
 
-		private static void ItemMenu(string title, Func<Thing, bool> filter, Action<Thing> onSelect, string emptyMsg, bool refresh = false, Func<Thing, string> label = null, List<MenuRow> extraRows = null, string category = null)
+		private static string WeightText(int w)
+		{
+			return ((float)w / 1000f).ToString("0.0") + "s";
+		}
+
+		private static void ItemMenu(string title, Func<Thing, bool> filter, Action<Thing> onSelect, string emptyMsg, bool refresh = false, Func<Thing, string> label = null, List<MenuRow> extraRows = null, string category = null, Func<Thing, int> amount = null, Action<Thing, int> onAmount = null)
 		{
 			List<Thing> things = Matching(filter, category);
 			if (things.Count == 0 && (extraRows == null || extraRows.Count == 0))
@@ -22,33 +28,25 @@ namespace ElonaKeys
 			}
 			if (category == null && Plugin.MenuCategories && things.Count > Plugin.CategoryThreshold)
 			{
-				CategoryMenu(title, things, filter, onSelect, emptyMsg, refresh, label, extraRows);
+				CategoryMenu(title, things, filter, onSelect, emptyMsg, refresh, label, extraRows, amount, onAmount);
 				return;
 			}
-			List<MenuRow> rows = BuildRows(things, onSelect, label, refresh, extraRows);
+			List<MenuRow> rows = BuildRows(things, onSelect, label, refresh, extraRows, amount, onAmount);
 			if (rows.Count == 0)
 			{
 				Msg.SayRaw(emptyMsg);
 				return;
 			}
-			if (refresh)
+			string cat = category;
+			MenuSystem.Show(title, rows, refresh ? ((Action)delegate
 			{
-				string cat = category;
-				MenuSystem.Show(title, rows, delegate
-				{
-					MenuSystem.SetRows(BuildRows(Matching(filter, cat), onSelect, label, refresh: true, null));
-				});
-			}
-			else
-			{
-				MenuSystem.Show(title, rows);
-			}
+				MenuSystem.SetRows(BuildRows(Matching(filter, cat), onSelect, label, refresh: true, null, amount, onAmount));
+			}) : null);
 		}
 
 		private static List<Thing> Matching(Func<Thing, bool> filter, string category)
 		{
-			// TraitAbility things are hotbar spell placeholders (TraitAbility :
-			// TraitCatalyst : TraitTool), not real inventory items: never list them.
+			// TraitAbility things are hotbar spell placeholders, never real items
 			List<Thing> things = pc.things.List((Thing t) => !(t.trait is TraitAbility) && Safe(filter, t), onlyAccessible: true);
 			if (!string.IsNullOrEmpty(category))
 			{
@@ -57,7 +55,7 @@ namespace ElonaKeys
 			return things;
 		}
 
-		private static List<MenuRow> BuildRows(List<Thing> things, Action<Thing> onSelect, Func<Thing, string> label, bool refresh, List<MenuRow> extraRows)
+		private static List<MenuRow> BuildRows(List<Thing> things, Action<Thing> onSelect, Func<Thing, string> label, bool refresh, List<MenuRow> extraRows, Func<Thing, int> amount = null, Action<Thing, int> onAmount = null)
 		{
 			List<MenuRow> rows = new List<MenuRow>();
 			if (extraRows != null)
@@ -71,8 +69,12 @@ namespace ElonaKeys
 				{
 					label = (label != null) ? label(t) : t.Name,
 					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
 					closeOnAct = !refresh,
-					act = delegate { onSelect(t); }
+					maxAmount = (amount != null) ? amount(t) : 0,
+					onAmount = (onAmount != null) ? ((Action<int>)delegate(int n) { onAmount(t, n); }) : null,
+					act = (onSelect != null) ? ((Action)delegate { onSelect(t); }) : null
 				});
 			}
 			return rows;
@@ -90,7 +92,7 @@ namespace ElonaKeys
 			}
 		}
 
-		private static void CategoryMenu(string title, List<Thing> things, Func<Thing, bool> filter, Action<Thing> onSelect, string emptyMsg, bool refresh, Func<Thing, string> label, List<MenuRow> extraRows)
+		private static void CategoryMenu(string title, List<Thing> things, Func<Thing, bool> filter, Action<Thing> onSelect, string emptyMsg, bool refresh, Func<Thing, string> label, List<MenuRow> extraRows, Func<Thing, int> amount, Action<Thing, int> onAmount)
 		{
 			Dictionary<string, int> counts = new Dictionary<string, int>();
 			foreach (Thing t in things)
@@ -107,7 +109,8 @@ namespace ElonaKeys
 			rows.Add(new MenuRow
 			{
 				label = "All items (" + things.Count + ")",
-				act = delegate { ItemMenu(title, filter, onSelect, emptyMsg, refresh, label, null, ""); }
+				closeOnAct = false, // keep this window in the back-stack for shift
+				act = delegate { ItemMenu(title, filter, onSelect, emptyMsg, refresh, label, null, "", amount, onAmount); }
 			});
 			foreach (KeyValuePair<string, int> kv in counts)
 			{
@@ -115,7 +118,8 @@ namespace ElonaKeys
 				rows.Add(new MenuRow
 				{
 					label = cat + " (" + kv.Value + ")",
-					act = delegate { ItemMenu(title + " - " + cat, filter, onSelect, emptyMsg, refresh, label, null, cat); }
+					closeOnAct = false,
+					act = delegate { ItemMenu(title + " - " + cat, filter, onSelect, emptyMsg, refresh, label, null, cat, amount, onAmount); }
 				});
 			}
 			MenuSystem.Show(title, rows);
@@ -166,8 +170,6 @@ namespace ElonaKeys
 			return plan;
 		}
 
-		// Rows for every act with the given DynamicAct id on nearby tiles
-		// (e.g. "actDrink" finds wells and fountains through the game's own logic).
 		private static List<MenuRow> TileActRows(string actId, string labelPrefix)
 		{
 			List<MenuRow> rows = new List<MenuRow>();
@@ -202,7 +204,7 @@ namespace ElonaKeys
 			{
 				Msg.SayRaw(emptyMsg);
 			}
-			else if (rows.Count == 1)
+			else if (rows.Count == 1 && rows[0].act != null)
 			{
 				rows[0].act();
 			}
@@ -253,78 +255,130 @@ namespace ElonaKeys
 				"You have no rods.");
 		}
 
+		// Elona drop: pick item, spinner picks the count, menu stays open.
 		public static void Drop()
 		{
 			ItemMenu("Drop what?", (Thing t) => !t.isEquipped,
-				delegate(Thing t)
-				{
-					QuantityMenu(t, "Drop how many " + t.Name + "?", delegate(int n)
-					{
-						pc.DropThing(t, n);
-					});
-				},
+				null,
 				"You have nothing to drop.",
-				refresh: true);
+				refresh: true, label: null, extraRows: null, category: null,
+				amount: (Thing t) => t.Num,
+				onAmount: delegate(Thing t, int n) { pc.DropThing(t, n); });
 		}
 
-		// Elona asks a count for stacks; Elin has no keyboard number widget, so
-		// offer the useful presets as menu rows. Single items skip the question.
-		private static void QuantityMenu(Thing t, string title, Action<int> onAmount)
-		{
-			int num = t.Num;
-			if (num <= 1)
-			{
-				onAmount(1);
-				return;
-			}
-			List<MenuRow> rows = new List<MenuRow>();
-			foreach (int n in new int[] { 1, 5, 10, num / 2, num })
-			{
-				if (n <= 0 || n > num)
-				{
-					continue;
-				}
-				int amount = n;
-				string label = amount.ToString();
-				if (amount == num)
-				{
-					label += " (all)";
-				}
-				else if (amount == num / 2 && amount != 1 && amount != 5 && amount != 10)
-				{
-					label += " (half)";
-				}
-				if (rows.Exists((MenuRow r) => r.label.StartsWith(amount + " ") || r.label == amount.ToString()))
-				{
-					continue;
-				}
-				rows.Add(new MenuRow
-				{
-					label = label,
-					icon = t,
-					act = delegate { onAmount(amount); }
-				});
-			}
-			MenuSystem.Show(title, rows);
-		}
-
+		// Elona equipment window: body slots with what's worn, pick a slot to
+		// change it. Footer stats live in the caption.
 		public static void Wear()
 		{
-			ItemMenu("Wear or wield what?", (Thing t) => t.IsEquipmentOrRanged,
-				delegate(Thing t)
+			MenuSystem.Show(EquipTitle(), BuildEquipRows(), delegate
+			{
+				MenuSystem.SetRows(BuildEquipRows());
+			});
+		}
+
+		private static string EquipTitle()
+		{
+			string title = "Equipment";
+			try
+			{
+				int w = 0;
+				foreach (BodySlot s in pc.body.slots)
 				{
-					if (t.isEquipped)
+					if (s.thing != null)
 					{
-						pc.body.Unequip(t);
+						w += s.thing.ChildrenAndSelfWeight;
 					}
-					else if (!pc.body.Equip(t))
+				}
+				title += "  " + WeightText(w);
+				SourceElement.Row dv = EClass.sources.elements.alias.TryGetValue("DV");
+				SourceElement.Row pv = EClass.sources.elements.alias.TryGetValue("PV");
+				if (dv != null && pv != null)
+				{
+					title += "  DV/PV: " + pc.Evalue(dv.id) + "/" + pc.Evalue(pv.id);
+				}
+			}
+			catch
+			{
+			}
+			return title;
+		}
+
+		private static List<MenuRow> BuildEquipRows()
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (BodySlot bodySlot in pc.body.slots)
+			{
+				BodySlot slot = bodySlot;
+				string slotName = SlotName(slot);
+				Thing eq = slot.thing;
+				rows.Add(new MenuRow
+				{
+					label = slotName + ":  " + ((eq != null) ? eq.Name : "-"),
+					icon = eq,
+					rightText = (eq != null) ? WeightText(eq.ChildrenAndSelfWeight) : "-",
+					sortWeight = (eq != null) ? eq.ChildrenAndSelfWeight : 0,
+					closeOnAct = false,
+					act = delegate { SlotMenu(slot, slotName); }
+				});
+			}
+			return rows;
+		}
+
+		private static string SlotName(BodySlot slot)
+		{
+			try
+			{
+				return EClass.sources.elements.map[slot.elementId].GetName();
+			}
+			catch
+			{
+				return "slot";
+			}
+		}
+
+		private static void SlotMenu(BodySlot slot, string slotName)
+		{
+			MenuSystem.Show(slotName, BuildSlotRows(slot), delegate
+			{
+				MenuSystem.SetRows(BuildSlotRows(slot));
+			});
+		}
+
+		private static List<MenuRow> BuildSlotRows(BodySlot slot)
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			if (slot.thing != null)
+			{
+				Thing worn = slot.thing;
+				rows.Add(new MenuRow
+				{
+					label = "(remove)  " + worn.Name,
+					icon = worn,
+					rightText = WeightText(worn.ChildrenAndSelfWeight),
+					closeOnAct = false,
+					act = delegate { pc.body.Unequip(worn); }
+				});
+			}
+			foreach (Thing thing in pc.things.List((Thing t) => !(t.trait is TraitAbility) && !t.isEquipped && t.category.slot == slot.elementId, onlyAccessible: true))
+			{
+				Thing t = thing;
+				rows.Add(new MenuRow
+				{
+					label = t.Name,
+					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
+					closeOnAct = false,
+					act = delegate
 					{
-						Msg.SayRaw("You cannot equip that.");
+						if (!pc.body.Equip(t, slot))
+						{
+							Msg.SayRaw("You cannot equip that.");
+						}
 					}
-				},
-				"You have nothing to equip.",
-				refresh: true,
-				label: (Thing t) => t.isEquipped ? (t.Name + " <size=12>(equipped)</size>") : t.Name);
+				});
+			}
+			return rows;
 		}
 
 		public static void HoldTool()
@@ -359,10 +413,10 @@ namespace ElonaKeys
 		{
 			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld,
 				delegate(Thing t) { ThrowTargetMenu(t); },
-				"You have nothing to throw.");
+				"You have nothing to throw.",
+				refresh: true); // keeps the item list in the back-stack for shift
 		}
 
-		// Elona-style target pick: visible characters by distance, or a direction.
 		private static void ThrowTargetMenu(Thing t)
 		{
 			List<MenuRow> rows = new List<MenuRow>();
@@ -404,7 +458,6 @@ namespace ElonaKeys
 			MenuSystem.Show("Throw " + t.Name + " at?", rows);
 		}
 
-		// Classic 'A': load compatible ammo into your ranged weapon.
 		public static void Ammo()
 		{
 			Thing weapon = pc.ranged;
@@ -422,6 +475,7 @@ namespace ElonaKeys
 				{
 					label = t.Name + (loaded ? " <size=12>(loaded)</size>" : ""),
 					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
 					act = delegate
 					{
 						Act.CC = pc;
@@ -437,8 +491,6 @@ namespace ElonaKeys
 
 		// ---------- world keys ----------
 
-		// Classic 'g': pick up what the game itself considers pickable here,
-		// falling back to loose things on the tile.
 		public static void Get()
 		{
 			ActPlan plan = BuildPlan(pc.pos.Copy());
@@ -468,8 +520,6 @@ namespace ElonaKeys
 			}
 		}
 
-		// Convert a tile's ActPlan into our keyboard menu. Single action runs
-		// immediately, Elona style.
 		private static void PlanMenu(string title, Point p, string emptyMsg)
 		{
 			ActPlan plan = BuildPlan(p);
@@ -493,14 +543,11 @@ namespace ElonaKeys
 			RunRows(title, rows, emptyMsg);
 		}
 
-		// Classic 's': everything you could do on your own tile (search spots,
-		// harvest, dig treasure, gather...) as a keyboard menu.
 		public static void SearchHere()
 		{
 			PlanMenu("Actions here", pc.pos.Copy(), "There is nothing to do here.");
 		}
 
-		// Classic 'o': containers and crafting kits, in inventory and nearby.
 		public static void Open()
 		{
 			List<MenuRow> rows = new List<MenuRow>();
@@ -566,7 +613,6 @@ namespace ElonaKeys
 			RunRows("Open what?", rows, "There is nothing to open here.");
 		}
 
-		// Classic 'C': open or close a door in a chosen direction.
 		public static void DoorToggle()
 		{
 			DirPrompt.Ask("Open or close a door in which direction?", self: false, delegate(Point p)
@@ -623,7 +669,6 @@ namespace ElonaKeys
 
 		public static void Dig()
 		{
-			// auto-hold a digging tool first, like Elona
 			Thing tool = pc.held as Thing;
 			if (tool == null || !tool.HasElement(220))
 			{
@@ -695,6 +740,7 @@ namespace ElonaKeys
 						rows.Add(new MenuRow
 						{
 							label = "Give to: " + c.Name,
+							closeOnAct = false, // shift returns to this list
 							act = delegate { GiveTo(target); }
 						});
 					}
@@ -707,21 +753,20 @@ namespace ElonaKeys
 		{
 			ItemMenu("Give what to " + c.Name + "?",
 				(Thing t) => !t.trait.CanOnlyCarry && !t.isEquipped && !t.c_isImportant,
-				delegate(Thing t)
+				null,
+				"You have nothing you can give.",
+				refresh: true, label: null, extraRows: null, category: null,
+				amount: (Thing t) => t.Num,
+				onAmount: delegate(Thing t, int n)
 				{
 					if (!c.CanAcceptGift(pc, t))
 					{
 						Msg.SayRaw(c.Name + " cannot take that.");
 						return;
 					}
-					QuantityMenu(t, "Give how many " + t.Name + "?", delegate(int n)
-					{
-						Thing give = (n >= t.Num) ? t : t.Split(n);
-						pc.GiveGift(c, give);
-					});
-				},
-				"You have nothing you can give.",
-				refresh: true);
+					Thing give = (n >= t.Num) ? t : t.Split(n);
+					pc.GiveGift(c, give);
+				});
 		}
 
 		public static void Interact()
@@ -732,7 +777,7 @@ namespace ElonaKeys
 			});
 		}
 
-		// Party access: character sheets and inventories of your party members.
+		// Party: character sheets and item browsing/taking through our window.
 		public static void Party()
 		{
 			List<MenuRow> rows = new List<MenuRow>();
@@ -750,45 +795,85 @@ namespace ElonaKeys
 				});
 				rows.Add(new MenuRow
 				{
-					label = c.Name + " - Inventory",
-					act = delegate { LayerInventory.CreateContainerAlly(c, c); }
+					label = c.Name + " - Items",
+					closeOnAct = false,
+					act = delegate { PartyInventory(c); }
 				});
 			}
 			RunRows("Party", rows, "You have no party members with you.");
+		}
+
+		private static void PartyInventory(Chara c)
+		{
+			MenuSystem.Show(c.Name + "'s items", BuildPartyRows(c), delegate
+			{
+				MenuSystem.SetRows(BuildPartyRows(c));
+			});
+		}
+
+		private static List<MenuRow> BuildPartyRows(Chara c)
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (Thing thing in c.things.List((Thing t) => !(t.trait is TraitAbility), onlyAccessible: true))
+			{
+				Thing t = thing;
+				bool worn = t.isEquipped;
+				rows.Add(new MenuRow
+				{
+					label = t.Name + (worn ? " <size=12>(equipped)</size>" : ""),
+					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
+					closeOnAct = false,
+					maxAmount = worn ? 0 : t.Num,
+					onAmount = worn ? null : ((Action<int>)delegate(int n)
+					{
+						Thing take = (n >= t.Num) ? t : t.Split(n);
+						pc.AddCard(take);
+						Msg.SayRaw("You take " + take.Name + " from " + c.Name + ".");
+					}),
+					act = worn ? ((Action)delegate { Msg.SayRaw("Unequip it through " + c.Name + "'s sheet first."); }) : null
+				});
+			}
+			return rows;
 		}
 
 		// Classic 'z' action wheel: every verb in one menu.
 		public static void Wheel()
 		{
 			List<MenuRow> rows = new List<MenuRow>();
-			void Add(string label, Action act)
+			void Sub(string label, Action act) // opens one of our menus; shift returns here
+			{
+				rows.Add(new MenuRow { label = label, closeOnAct = false, act = act });
+			}
+			void Direct(string label, Action act) // acts or opens a game window
 			{
 				rows.Add(new MenuRow { label = label, act = act });
 			}
-			Add("Eat", Eat);
-			Add("Quaff", Quaff);
-			Add("Read", ReadItem);
-			Add("Zap a rod", Zap);
-			Add("Cast a spell", Cast);
-			Add("Wear/wield", Wear);
-			Add("Hold a tool", HoldTool);
-			Add("Use an item", Use);
-			Add("Dip/blend", Blend);
-			Add("Throw", Throw);
-			Add("Load ammo", Ammo);
-			Add("Get items here", Get);
-			Add("Drop", Drop);
-			Add("Open a container", Open);
-			Add("Open/close a door", DoorToggle);
-			Add("Bash", Bash);
-			Add("Dig a wall", Dig);
-			Add("Actions on this tile", SearchHere);
-			Add("Interact...", Interact);
-			Add("Pray", Pray);
-			Add("Offer", Offer);
-			Add("Give", Give);
-			Add("Party", Party);
-			Add("Inventory", ExamineInventory);
+			Sub("Eat", Eat);
+			Sub("Quaff", Quaff);
+			Sub("Read", ReadItem);
+			Sub("Zap a rod", Zap);
+			Direct("Cast a spell", Cast);
+			Sub("Equipment", Wear);
+			Sub("Hold a tool", HoldTool);
+			Sub("Use an item", Use);
+			Sub("Dip/blend", Blend);
+			Sub("Throw", Throw);
+			Sub("Load ammo", Ammo);
+			Direct("Get items here", Get);
+			Sub("Drop", Drop);
+			Sub("Open a container", Open);
+			Direct("Open/close a door", DoorToggle);
+			Direct("Bash", Bash);
+			Direct("Dig a wall", Dig);
+			Sub("Actions on this tile", SearchHere);
+			Direct("Interact...", Interact);
+			Direct("Pray", Pray);
+			Sub("Offer", Offer);
+			Sub("Give", Give);
+			Sub("Party", Party);
+			Direct("Inventory", ExamineInventory);
 			MenuSystem.Show("Action wheel", rows);
 		}
 
