@@ -43,9 +43,11 @@ namespace ElonaKeys
 					target = layerList;
 					CollectListButtons(layerList.list);
 				}
-				else if (top != null)
+				else if (top != null && EClass.ui.BlockActions)
 				{
-					// generic: item grids first (containers, crafting), then any list
+					// generic branch, only for MODAL windows (drama, quest boards,
+					// crafting, containers): item grids first, then every list,
+					// then any plain buttons (drama choices are loose buttons)
 					foreach (ButtonGrid bg in top.GetComponentsInChildren<ButtonGrid>(includeInactive: false))
 					{
 						if (bg.card != null && bg.invOwner != null && bg.interactable && bg.gameObject.activeInHierarchy)
@@ -60,11 +62,17 @@ namespace ElonaKeys
 					}
 					else
 					{
-						UIList ul = top.GetComponentInChildren<UIList>(includeInactive: false);
-						if (ul != null)
+						foreach (UIList ul in top.GetComponentsInChildren<UIList>(includeInactive: false))
+						{
+							CollectListButtons(ul);
+						}
+						if (buttons.Count == 0)
+						{
+							CollectButtons(top.transform);
+						}
+						if (buttons.Count > 0)
 						{
 							target = top;
-							CollectListButtons(ul);
 						}
 					}
 				}

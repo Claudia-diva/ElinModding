@@ -191,9 +191,18 @@ namespace ElonaKeys
 				img.enabled = true;
 				img.transform.SetAsLastSibling();
 				r.icon.SetImage(img);
-				// RenderRow.SetImage assumes the inventory-grid material and render
-				// pivots; normalize so the sprite shows inside the small slot.
-				img.color = Color.white;
+				// RenderRow.SetImage encodes the material tint for the game's item
+				// shader. Borrow that material from a live inventory button so the
+				// tint decodes correctly; fall back to plain white without it.
+				Material itemMat = ItemMaterial();
+				if (itemMat != null)
+				{
+					img.material = itemMat;
+				}
+				else
+				{
+					img.color = Color.white;
+				}
 				RectTransform rt = img.rectTransform;
 				rt.pivot = new Vector2(0.5f, 0.5f);
 				rt.anchoredPosition = Vector2.zero;
@@ -218,6 +227,28 @@ namespace ElonaKeys
 			b.button1.mainText.rectTransform.anchoredPosition = new Vector2(badge ? 78f : 52f, 0f);
 			SetWeightText(b, r.rightText);
 			MenuExtras.ApplyNameDisplay(b.button1.mainText, 430f);
+		}
+
+		private static Material cachedItemMat;
+
+		// the shader material real inventory buttons use for material-tinted sprites
+		private static Material ItemMaterial()
+		{
+			if (cachedItemMat == null)
+			{
+				try
+				{
+					ButtonGrid any = UnityEngine.Object.FindObjectOfType<ButtonGrid>();
+					if (any != null && any.icon != null)
+					{
+						cachedItemMat = any.icon.material;
+					}
+				}
+				catch
+				{
+				}
+			}
+			return cachedItemMat;
 		}
 
 		// right-aligned weight column: our own Text child, pooled-row safe
