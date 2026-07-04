@@ -566,7 +566,63 @@ namespace ElonaKeys
 
 		public static void SearchHere()
 		{
-			PlanMenu("Actions here", pc.pos.Copy(), "There is nothing to do here.");
+			Point p = pc.pos.Copy();
+			// standing on a grown crop/plant/gatherable: harvest it right away
+			TaskHarvest harvest = null;
+			try
+			{
+				harvest = TaskHarvest.TryGetAct(pc, p);
+			}
+			catch
+			{
+			}
+			if (harvest != null)
+			{
+				pc.SetAIImmediate(harvest);
+				EClass.player.EndTurn();
+				return;
+			}
+			ActPlan plan = BuildPlan(p);
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (ActPlan.Item i in plan.list)
+			{
+				ActPlan.Item item = i;
+				rows.Add(new MenuRow
+				{
+					label = ContextLabel(item, plan.HasMultipleTargets),
+					icon = item.tc as Thing,
+					act = delegate
+					{
+						if (item.Perform())
+						{
+							EClass.player.EndTurn();
+						}
+					}
+				});
+			}
+			if (rows.Count == 0)
+			{
+				// nothing else here: classic Elona search-the-ground
+				if (!ActWait.SearchMedal(pc, p))
+				{
+					Msg.SayRaw("You search the ground but find nothing.");
+				}
+				EClass.player.EndTurn();
+				return;
+			}
+			rows.Add(new MenuRow
+			{
+				label = "Search the ground",
+				act = delegate
+				{
+					if (!ActWait.SearchMedal(pc, pc.pos))
+					{
+						Msg.SayRaw("You search the ground but find nothing.");
+					}
+					EClass.player.EndTurn();
+				}
+			});
+			MenuSystem.Show("Actions here", rows);
 		}
 
 		// Elona Space: everything doable on and around you, one action fires instantly.
@@ -667,6 +723,63 @@ namespace ElonaKeys
 		}
 
 		// keyboard take/put for any container (chests, bags, boxes)
+		// Keyboard ingredient picker stacked over the native drag grid of an item
+		// processor (mill, seed maker, grindstone...). Picking an ingredient places
+		// it in the grid slot the way a mouse transfer would (SetCardGrid +
+		// OnProcess); filling the last slot starts the craft (InvOwnerCraft
+		// .TryStartCraft). Esc just leaves the native window for the mouse.
+		internal static void CrafterIngredientMenu(TraitCrafter crafter, int idx)
+		{
+			LayerDragGrid lg = LayerDragGrid.Instance;
+			if (!(bool)lg || crafter == null || idx >= crafter.numIng)
+			{
+				return;
+			}
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (Thing thing in pc.things.List((Thing t) => Safe((Thing x) => !(x.trait is TraitAbility) && crafter.IsCraftIngredient(x, idx), t), onlyAccessible: true))
+			{
+				Thing t = thing;
+				rows.Add(new MenuRow
+				{
+					label = t.Name,
+					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
+					closeOnAct = false,
+					act = delegate
+					{
+						LayerDragGrid lg2 = LayerDragGrid.Instance;
+						if (!(bool)lg2 || lg2.owner == null || idx >= lg2.owner.buttons.Count)
+						{
+							MenuSystem.Close();
+							return;
+						}
+						lg2.owner.buttons[idx].SetCardGrid(t, lg2.owner.buttons[idx].invOwner);
+						lg2.owner.OnProcess(t);
+						if (idx + 1 < crafter.numIng)
+						{
+							CrafterIngredientMenu(crafter, idx + 1);
+						}
+						else
+						{
+							MenuSystem.Close();
+						}
+					}
+				});
+			}
+			if (rows.Count == 0)
+			{
+				Msg.SayRaw((idx == 0) ? "You carry nothing this station can process." : "You carry no matching second ingredient.");
+				return;
+			}
+			string title = crafter.CrafterTitle.IsEmpty() ? "Process" : crafter.CrafterTitle.lang();
+			if (crafter.numIng > 1)
+			{
+				title += " - ingredient " + (idx + 1) + "/" + crafter.numIng;
+			}
+			MenuSystem.Show(title, rows, null, keepLayers: true);
+		}
+
 		internal static void ContainerMenu(Thing container)
 		{
 			MenuSystem.Show(container.Name, BuildContainerRows(container), delegate
@@ -1312,14 +1425,30 @@ namespace ElonaKeys
 			string what = spells ? "Cast" : "Action";
 			List<Element> known = KnownAbilities(spells);
 			List<MenuRow> rows = new List<MenuRow>();
+			// favorites listed first, no extra press; left/right switch pages
+			for (int pass = 0; pass < 2; pass++)
+			{
+				foreach (Element element in known)
+				{
+					Element e = element;
+					bool fav = EClass.player.favAbility.Contains(e.id);
+					if (fav != (pass == 0))
+					{
+						continue;
+					}
+					if (favOnly && !fav)
+					{
+						continue;
+					}
+					if (bucket != null && TypeBucket(e) != bucket)
+					{
+						continue;
+					}
+					rows.Add(AbilityRow(e, spells));
+				}
+			}
 			if (bucket == null && !favOnly)
 			{
-				rows.Add(new MenuRow
-				{
-					label = "[ ★ Favorites ]",
-					closeOnAct = false,
-					act = delegate { AbilityMenu(spells, null, favOnly: true); }
-				});
 				rows.Add(new MenuRow
 				{
 					label = "[ Filter by type... ]",
@@ -1332,22 +1461,6 @@ namespace ElonaKeys
 					closeOnAct = false,
 					act = delegate { FavoriteMenu(spells); }
 				});
-			}
-			foreach (Element element in known)
-			{
-				Element e = element;
-				if (favOnly && !EClass.player.favAbility.Contains(e.id))
-				{
-					continue;
-				}
-				if (bucket != null && TypeBucket(e) != bucket)
-				{
-					continue;
-				}
-				rows.Add(AbilityRow(e, spells));
-			}
-			if (bucket == null && !favOnly)
-			{
 				rows.Add(new MenuRow
 				{
 					label = "(open the ability window...)",

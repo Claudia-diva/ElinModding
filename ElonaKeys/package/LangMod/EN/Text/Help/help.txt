@@ -34,15 +34,17 @@ $Keys
 {pair|shift+x|Inventory}
 
 {topic|Action Keys}
-{pair|v|Spells (mana): favorites, type filter, digit = hotkey}
-{pair|a|Special actions (stamina): favorites, type filter, digit = hotkey}
-{pair|* (keypad)|Set the remembered target; spells/throws then fire at it instantly}
+{pair|v|Spells (mana): favorites listed first, ←→ pages, digit = hotkey}
+{pair|a|Special actions (stamina): favorites first, ←→ pages, digit = hotkey}
+{pair|* (keypad) or '|Set the remembered target; the hover info card (mouseover widget, hover mods) follows the selection}
+{pair|c|Character sheet}
 {pair|i|Interact with a direction: keyboard menu of everything there}
-{pair|s|Actions on your own tile: search, harvest, dig treasure...}
+{pair|s|Your own tile: harvests/collects instantly if something grows here, else menu + search the ground}
 {pair|f|Fire ranged weapon}
 {pair|b|Bash a direction}
 {pair|D|Dig/mine a wall (auto-holds your digging tool)}
 {pair|o|Open containers (keyboard take/put menu) and crafting kits}
+{pair|(any route)|Chests/containers always open the keyboard menu; item processors open a keyboard ingredient picker (KeyboardContainers / KeyboardCrafters config)}
 {pair|C|Open or close a door in a chosen direction}
 {pair|p|Pray}
 {pair|O|Offer at an adjacent altar}
@@ -67,10 +69,16 @@ $Keys
 {topic|Deliberate differences from Elona}
 ・ Quantity for stacks is an arrow-key spinner instead of typed numbers.
 ・ No Rest key: Elin rests via beds and the native Meditate key.
-・ No dedicated target/look keys: throwing offers a target list instead.
-・ Character sheet (c), journal (j), log and help stay on Elin's own keys.
+・ No dedicated look key: * targeting shows the same info card as mouse hover instead.
+・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.11.3}
+・ Chests/containers open the keyboard menu from ANY route; item processors get a keyboard ingredient picker.
+・ s harvests/collects your tile instantly; falls back to a menu with "Search the ground".
+・ c = character sheet. Spell/action menus list favorites first, utility rows moved to the bottom.
+・ * targeting drives the game's real mouse-hover, so hover info mods work on the selection.
+
 {topic|1.11.0}
 ・ True item colors (canonical UI material). Real spell targeting: self instant, party multi-cast, target menus, ground aiming. Macros.
 ・ Digit hotkeys write to the quickslots (both pages); shift+1-9 fires the other page; mini-bar shows it.

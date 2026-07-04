@@ -61,7 +61,7 @@ namespace ElonaKeys
 
 		private static int PageCount => Mathf.Max(1, (view.Count + PageSize - 1) / PageSize);
 
-		public static void Show(string _title, List<MenuRow> rows, Action _refreshSource = null)
+		public static void Show(string _title, List<MenuRow> rows, Action _refreshSource = null, bool keepLayers = false)
 		{
 			if (Alive && current != null)
 			{
@@ -78,7 +78,7 @@ namespace ElonaKeys
 			openFrame = Time.frameCount;
 			if (!Alive)
 			{
-				layer = EClass.ui.AddLayer<LayerList>();
+				layer = keepLayers ? EClass.ui.AddLayerDontCloseOthers<LayerList>() : EClass.ui.AddLayer<LayerList>();
 				layer.SetSize(680f);
 				layer.SetList2(pageRows, RowText, delegate(MenuRow r, ItemGeneral b)
 				{

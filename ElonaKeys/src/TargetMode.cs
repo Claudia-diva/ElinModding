@@ -23,6 +23,15 @@ namespace ElonaKeys
 		public static bool Active => onPick != null;
 
 		// instantly usable remembered target (or current enemy) for this act
+		public static Point SelectedPos()
+		{
+			if (Active && candidates != null && candidates.Count > 0 && index >= 0 && index < candidates.Count)
+			{
+				return candidates[index].pos;
+			}
+			return null;
+		}
+
 		public static Chara QuickTarget(Act act)
 		{
 			Chara c = lastTarget;

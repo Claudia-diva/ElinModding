@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.11.2";
+		public const string Version = "1.11.3";
 
 		internal static ManualLogSource Log;
 
@@ -63,6 +63,8 @@ namespace ElonaKeys
 		private static ConfigEntry<bool> shiftBarVisible;
 		private static ConfigEntry<float> shiftBarX;
 		private static ConfigEntry<float> shiftBarY;
+		private static ConfigEntry<bool> keyboardContainers;
+		private static ConfigEntry<bool> keyboardCrafters;
 		private static ConfigEntry<string> macro1;
 		private static ConfigEntry<string> macro2;
 		private static ConfigEntry<string> macro3;
@@ -90,6 +92,8 @@ namespace ElonaKeys
 		internal static bool ShiftBarVisible => shiftBarVisible.Value;
 		internal static float ShiftBarX => shiftBarX.Value;
 		internal static float ShiftBarY => shiftBarY.Value;
+		internal static bool KeyboardContainers => keyboardContainers.Value;
+		internal static bool KeyboardCrafters => keyboardCrafters.Value;
 		internal static string Macro1 => macro1.Value;
 		internal static string Macro2 => macro2.Value;
 		internal static string Macro3 => macro3.Value;
@@ -152,6 +156,10 @@ namespace ElonaKeys
 				"Show a small draggable bar with the other quickslot page's icons (what shift+1..9 fires).");
 			shiftBarX = Config.Bind("Hotkeys", "ShiftBarX", 0f, "Shift-bar position (drag it to move; saved automatically).");
 			shiftBarY = Config.Bind("Hotkeys", "ShiftBarY", -320f, "Shift-bar position (drag it to move; saved automatically).");
+			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
+				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Locked chests and surprise packages stay native.");
+			keyboardCrafters = Config.Bind("Menus", "KeyboardCrafters", true,
+				"Item processors (mill, seed maker, grindstone, cooking tools...) open a keyboard ingredient picker on top of the native window; picking ingredients starts the craft. Esc leaves the native window for the mouse.");
 			macro1 = Config.Bind("Macros", "Macro1", "", "Comma-separated ability aliases cast in sequence (self/party per spell; targeted spells hit your current enemy). Find aliases via the spell list names or the ability window.");
 			macro2 = Config.Bind("Macros", "Macro2", "", "Second macro sequence.");
 			macro3 = Config.Bind("Macros", "Macro3", "", "Third macro sequence.");
@@ -178,7 +186,8 @@ namespace ElonaKeys
 			Def("Offer", "shift+o", Handlers.Offer, "Offer a sacrifice at an adjacent altar.");
 			Def("Give", "shift+g", Handlers.Give, "Give to an adjacent character; count spinner for stacks.");
 			Def("Interact", "i", Handlers.Interact, "Interaction menu for a direction (talk, give, trade...).");
-			Def("Search", "s", Handlers.SearchHere, "Do things on your own tile: search spots, harvest, dig treasure...");
+			Def("Search", "s", Handlers.SearchHere, "Do things on your own tile: search the ground, harvest, collect, dig treasure...");
+			Def("Chara", "c", Handlers.ShowChara, "Character sheet, classic Elona c.");
 			Def("Context", "space", Handlers.ContextAll, "Everything interactable on and around you; a single action fires instantly (Elona Space).");
 			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
 			Def("Party", "shift+q", Handlers.Party, "Party menu: character sheets, browse and take members' items.");

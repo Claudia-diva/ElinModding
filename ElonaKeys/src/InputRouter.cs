@@ -329,4 +329,86 @@ namespace ElonaKeys
 			return !DirPrompt.Active; // no walking while a direction prompt waits
 		}
 	}
+
+	// Every container-open route (mouse, bump, space, interact) funnels into
+	// TraitContainer.Open: redirect to the keyboard take/put menu. TryOpen's
+	// lockpick branch and Open's surprise-package (mimic) branch stay native.
+	[HarmonyPatch(typeof(TraitContainer), nameof(TraitContainer.Open))]
+	internal static class Patch_ContainerOpen
+	{
+		private static bool Prefix(TraitContainer __instance)
+		{
+			if (!Plugin.KeyboardContainers || __instance.owner == null || __instance.HasChara || !(__instance.owner is Thing))
+			{
+				return true;
+			}
+			try
+			{
+				Handlers.ContainerMenu(__instance.owner.Thing);
+				return false;
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys container redirect failed: " + ex);
+				return true;
+			}
+		}
+	}
+
+	// Item processors (mill, seed maker, grindstone...) open the native drag
+	// grid; put our ingredient picker on top so the whole flow stays keyboard.
+	[HarmonyPatch(typeof(LayerDragGrid), nameof(LayerDragGrid.CreateCraft))]
+	internal static class Patch_CrafterOpen
+	{
+		private static void Postfix(TraitCrafter crafter)
+		{
+			if (!Plugin.KeyboardCrafters || crafter == null)
+			{
+				return;
+			}
+			try
+			{
+				Handlers.CrafterIngredientMenu(crafter, 0);
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys crafter menu failed: " + ex);
+			}
+		}
+	}
+
+	// While in-world targeting is active, feed the selected target into the
+	// game's mouse-target so hover UIs (WidgetMouseover, BetterHoverText...)
+	// display it exactly as if the mouse were on it.
+	[HarmonyPatch(typeof(ActionMode), nameof(ActionMode.UpdateInput))]
+	internal static class Patch_HoverFeed
+	{
+		private static void Postfix()
+		{
+			if (!TargetMode.Active)
+			{
+				return;
+			}
+			try
+			{
+				Point p = TargetMode.SelectedPos();
+				if (p != null)
+				{
+					PointTarget mt = EClass.scene.mouseTarget;
+					bool wasMouse = mt.mouse;
+					mt.mouse = false; // skip the pointer-over-UI bailout
+					mt.Update(p);
+					mt.mouse = wasMouse;
+					if ((bool)WidgetMouseover.Instance)
+					{
+						WidgetMouseover.Instance.Refresh();
+					}
+				}
+			}
+			catch
+			{
+				// cosmetic only
+			}
+		}
+	}
 }

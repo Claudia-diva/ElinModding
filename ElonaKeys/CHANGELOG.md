@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.11.3 - 2026-07-04
+
+- Chests and containers now open the keyboard take/put menu no matter how you open them (walking into them, space, mouse click...). Locked chests still lockpick natively and surprise packages still spring their mimic. KeyboardContainers config to turn off.
+- Item processors (mill, seed maker, grindstone, cooking tools...) open a keyboard ingredient picker on top of the native window; picking the ingredient(s) starts the craft exactly like a mouse transfer would. Esc leaves the native window for mouse use. KeyboardCrafters config.
+- s on your own tile harvests/collects instantly when something is growing there (game's own harvest logic, tool-aware); otherwise it shows the tile menu with a "Search the ground" row (medal spots), so s always does something.
+- c opens the character sheet, classic Elona style.
+- Spell (v) and action (a) menus list your starred favorites first with no extra key press; the filter/favorites/native-window rows moved to the bottom. Left/right switch pages as before.
+- Targeting mode (*) now feeds the selected character into the game's real mouse-hover pipeline every frame, so the mouseover info card and hover mods (e.g. Betterhovertext's level/stats/hobbies) display for the keyboard selection just like a mouse hover.
+
 ## 1.11.2 - 2026-07-04
 
 - Crafting: recipe list finally keyboard-driven; up/down walk the FULL virtualized recipe list (auto-scrolls, selects each recipe like a click so the product panel updates live), left/right still switch to material slots and buttons, Tab still switches categories.
