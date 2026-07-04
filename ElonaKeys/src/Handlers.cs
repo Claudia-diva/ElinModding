@@ -1452,9 +1452,56 @@ namespace ElonaKeys
 				}
 				return;
 			}
-			// ground-targeted: iso-aware direction (self allowed when valid)
-			if (tt.Range == TargetRange.Ground || tt.Range == TargetRange.Neighbor)
+			// neighbor-only spells: iso-aware direction prompt
+			if (tt.Range == TargetRange.Neighbor)
 			{
+				DirPrompt.Ask("Aim " + act.GetText() + " where? (wait key = your tile)", self: true, delegate(Point p)
+				{
+					if (pc.UseAbility(act, null, p))
+					{
+						EClass.player.EndTurn();
+					}
+					else
+					{
+						Msg.SayRaw("You cannot aim there.");
+					}
+				});
+				return;
+			}
+			// ground-targeted at range (projectiles like ice arrow): aim at
+			// characters' tiles via the remembered target / targeting mode
+			if (tt.Range == TargetRange.Ground)
+			{
+				Chara quickG = TargetMode.QuickTarget(null);
+				if (quickG != null && SafeCanPerformAt(act, quickG.pos))
+				{
+					if (pc.UseAbility(act, null, quickG.pos))
+					{
+						TargetMode.Remember(quickG);
+						EClass.player.EndTurn();
+					}
+					return;
+				}
+				List<Chara> spots = new List<Chara>();
+				foreach (Chara c in EClass._map.charas)
+				{
+					if (c != pc && !c.isDead && pc.CanSee(c) && SafeCanPerformAt(act, c.pos))
+					{
+						spots.Add(c);
+					}
+				}
+				spots.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
+				if (spots.Count > 0)
+				{
+					TargetMode.Begin(act.GetText(), spots, delegate(Chara c)
+					{
+						if (pc.UseAbility(act, null, c.pos))
+						{
+							EClass.player.EndTurn();
+						}
+					});
+					return;
+				}
 				DirPrompt.Ask("Aim " + act.GetText() + " where? (wait key = your tile)", self: true, delegate(Point p)
 				{
 					if (pc.UseAbility(act, null, p))
@@ -1487,6 +1534,18 @@ namespace ElonaKeys
 					EClass.player.EndTurn();
 				}
 			});
+		}
+
+		private static bool SafeCanPerformAt(Act act, Point p)
+		{
+			try
+			{
+				return act.CanPerform(pc, null, p);
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		private static List<Chara> CastCandidates(Act act, TargetType tt)

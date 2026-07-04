@@ -120,8 +120,8 @@ namespace ElonaKeys
 			RectTransform lrt = label.rectTransform;
 			lrt.anchorMin = new Vector2(0.5f, 0f);
 			lrt.anchorMax = new Vector2(0.5f, 0f);
-			lrt.anchoredPosition = new Vector2(0f, 120f);
-			lrt.sizeDelta = new Vector2(700f, 30f);
+			lrt.anchoredPosition = new Vector2(0f, 130f);
+			lrt.sizeDelta = new Vector2(760f, 58f);
 			Outline o = lg.AddComponent<Outline>();
 			o.effectColor = new Color(0f, 0f, 0f, 0.95f);
 			o.effectDistance = new Vector2(1.5f, -1.5f);
@@ -129,12 +129,22 @@ namespace ElonaKeys
 
 		private static void RefreshLabel()
 		{
-			if ((bool)label && candidates != null && candidates.Count > 0)
+			if (!(bool)label || candidates == null || candidates.Count == 0)
 			{
-				Chara c = candidates[index];
-				string tag = EClass.pc.IsHostile(c) ? " (hostile)" : (c.IsPCParty ? " (party)" : "");
-				label.text = "► " + verb + ": " + c.Name + tag + " (" + EClass.pc.pos.Distance(c.pos) + ")   " + (index + 1) + "/" + candidates.Count + "   Enter = confirm, Esc = cancel";
+				return;
 			}
+			Chara c = candidates[index];
+			string tag = EClass.pc.IsHostile(c) ? " <color=#ff9090>(hostile)</color>" : (c.IsPCParty ? " <color=#90d090>(party)</color>" : "");
+			string details = "";
+			try
+			{
+				details = "Lv" + c.LV + "   HP " + c.hp + "/" + c.MaxHP + "   dist " + EClass.pc.pos.Distance(c.pos);
+			}
+			catch
+			{
+			}
+			label.text = "► " + verb + ": " + c.Name + tag + "   " + (index + 1) + "/" + candidates.Count
+				+ "\n<size=16>" + details + "   |   arrows cycle, Enter confirm, Esc cancel</size>";
 		}
 
 		// called every frame from InputRouter while Active (input is fenced there)

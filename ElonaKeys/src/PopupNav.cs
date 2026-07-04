@@ -15,7 +15,9 @@ namespace ElonaKeys
 		{
 			public readonly List<UIButton> buttons = new List<UIButton>();
 			public bool grid;
-			public UIList list; // for auto-scroll
+			public UIList list;        // for auto-scroll
+			public UIDynamicList dyn;  // virtualized lists (crafting recipes): data-index navigation
+			public int dataIndex;
 		}
 
 		private static Object lastTarget;
@@ -83,8 +85,17 @@ namespace ElonaKeys
 				}
 				else if (topLayer != null && EClass.ui.BlockActions)
 				{
-					// generic modal window: build all three group kinds
+					// generic modal window: build all group kinds
 					target = topLayer;
+					// virtualized lists first (crafting recipes): navigate the DATA,
+					// select-on-move gives the native click preview
+					foreach (UIDynamicList dl in topLayer.GetComponentsInChildren<UIDynamicList>(includeInactive: false))
+					{
+						if (dl.objects != null && dl.objects.Count > 0)
+						{
+							groups.Add(new Group { dyn = dl });
+						}
+					}
 					foreach (UIList ul in topLayer.GetComponentsInChildren<UIList>(includeInactive: false))
 					{
 						Group g = new Group { list = ul };
@@ -123,6 +134,7 @@ namespace ElonaKeys
 					}
 				}
 			}
+			groups.RemoveAll((Group gr) => gr.dyn == null && gr.buttons.Count == 0);
 			if (target == null || groups.Count == 0)
 			{
 				lastTarget = null;
@@ -206,6 +218,31 @@ namespace ElonaKeys
 			{
 				next = groupNext; // single group: left/right also navigate
 				prev = groupPrev;
+			}
+			// virtualized list group (crafting recipes): walk the DATA, selecting
+			// each entry as we go (same as clicking it: product panel updates)
+			if (g.dyn != null)
+			{
+				if (next || prev)
+				{
+					int count = g.dyn.objects.Count;
+					if (count == 0)
+					{
+						return;
+					}
+					g.dataIndex = (g.dataIndex + (next ? 1 : -1) + count) % count;
+					object o = g.dyn.objects[g.dataIndex];
+					try
+					{
+						g.dyn.Scroll(Mathf.Max(0, g.dyn.GetIndex(o)));
+						g.dyn.Select(o, invoke: true);
+					}
+					catch (System.Exception ex)
+					{
+						Plugin.Log?.LogError("ElonaKeys dyn-list nav failed: " + ex);
+					}
+				}
+				return; // Enter not needed: selection already invoked
 			}
 			if (next || prev)
 			{

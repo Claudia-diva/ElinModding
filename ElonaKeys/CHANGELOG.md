@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.2 - 2026-07-04
+
+- Crafting: recipe list finally keyboard-driven; up/down walk the FULL virtualized recipe list (auto-scrolls, selects each recipe like a click so the product panel updates live), left/right still switch to material slots and buttons, Tab still switches categories.
+- Quickslot assignment now evicts an occupying ITEM back to the inventory before placing a spell (no more ghost item firing on shift+digit); activation prefers the ability when duplicates share a slot.
+- Ranged ground-targeted spells (ice arrow and friends) no longer fall into the adjacent-direction prompt: they use the remembered target / targeting mode aimed at characters' tiles, with the direction prompt only as a last resort.
+- Targeting mode shows target details (level, HP, distance, hostility) in a two-line strip; the Target key is also on the apostrophe (') for keyboards without a numpad.
+
 ## 1.11.1 - 2026-07-04
 
 - Targeting flow rework: no windows in combat. Chara-targeted spells and throws fire INSTANTLY at your remembered target; without one, a light in-world targeting mode opens (slight dim, tile highlight, name strip, arrows cycle by distance, Enter confirms, Esc cancels). Confirming remembers the target.

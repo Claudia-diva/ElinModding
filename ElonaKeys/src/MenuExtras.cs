@@ -127,13 +127,19 @@ namespace ElonaKeys
 			try
 			{
 				int invX = page * 10 + slot;
+				// evict whatever occupies the slot: abilities are destroyed,
+				// real items go back to the main inventory
 				foreach (Thing t in EClass.pc.things.List((Thing x) => x.invY == 1 && x.invX == invX, onlyAccessible: false))
 				{
 					if (t.trait is TraitAbility)
 					{
-						t.Destroy(); // replace old ability placeholder
+						t.Destroy();
 					}
-					break;
+					else
+					{
+						t.invY = 0;
+						t.invX = 0;
+					}
 				}
 				string what;
 				if (src != null)
@@ -174,8 +180,11 @@ namespace ElonaKeys
 			{
 				if (t.invY == 1 && t.invX == invX)
 				{
-					found = t;
-					break;
+					// abilities win when a stray duplicate occupies the slot
+					if (found == null || t.trait is TraitAbility)
+					{
+						found = t;
+					}
 				}
 			}
 			if (found == null)
