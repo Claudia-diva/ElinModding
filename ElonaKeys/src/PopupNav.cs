@@ -1,19 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ElonaKeys
 {
-	// Keyboard navigation for Elin's NATIVE popups: right-click context menus,
-	// yes/no dialogs, native list windows, and any window carrying an item grid
-	// (containers, crafting stations). Arrows move a highlight, Enter clicks it
-	// (on grids: the auto-transfer/use action, i.e. what right-click does),
-	// x examines a grid item. Our own menus handle their own keys.
+	// Keyboard navigation for Elin's NATIVE windows: context menus, dialogs,
+	// drama talk choices, list windows, quest boards, crafting stations,
+	// containers. Up/down move within the current group, LEFT/RIGHT switch
+	// navigation groups (lists / item grids / side buttons), TAB cycles the
+	// window's tabs, Enter activates (grids act like right-click), x examines.
 	public static class PopupNav
 	{
+		private class Group
+		{
+			public readonly List<UIButton> buttons = new List<UIButton>();
+			public bool grid;
+			public UIList list; // for auto-scroll
+		}
+
 		private static Object lastTarget;
+		private static int groupIndex;
 		private static int index = -1;
-		private static readonly List<UIButton> buttons = new List<UIButton>();
-		private static bool gridMode;
+		private static readonly List<Group> groups = new List<Group>();
 
 		public static void OnUpdate()
 		{
@@ -21,88 +29,141 @@ namespace ElonaKeys
 			{
 				return;
 			}
+			groups.Clear();
 			Object target = null;
-			buttons.Clear();
-			gridMode = false;
+			Layer topLayer = null;
 			UIContextMenu ctx = UIContextMenu.Current;
 			if ((bool)ctx)
 			{
 				target = ctx;
-				CollectButtons(ctx.transform);
+				Group g = new Group();
+				CollectButtons(ctx.transform, g.buttons);
+				if (g.buttons.Count > 0)
+				{
+					groups.Add(g);
+				}
 			}
 			else
 			{
-				Layer top = (EClass.ui != null) ? EClass.ui.TopLayer : null;
-				if (top is Dialog dialog && dialog.list != null)
+				topLayer = (EClass.ui != null) ? EClass.ui.TopLayer : null;
+				if (topLayer is LayerDrama)
+				{
+					// drama talk choices are loose buttons under DialogDrama.transChoices
+					DialogDrama dd = topLayer.GetComponentInChildren<DialogDrama>(includeInactive: false);
+					if (dd != null && dd.transChoices != null)
+					{
+						target = topLayer;
+						Group g = new Group();
+						CollectButtons(dd.transChoices, g.buttons);
+						if (g.buttons.Count > 0)
+						{
+							groups.Add(g);
+						}
+					}
+				}
+				else if (topLayer is Dialog dialog && dialog.list != null)
 				{
 					target = dialog;
-					CollectListButtons(dialog.list);
+					Group g = new Group { list = dialog.list };
+					CollectListButtons(dialog.list, g.buttons);
+					if (g.buttons.Count > 0)
+					{
+						groups.Add(g);
+					}
 				}
-				else if (top is LayerList layerList && layerList.list != null)
+				else if (topLayer is LayerList layerList && layerList.list != null)
 				{
 					target = layerList;
-					CollectListButtons(layerList.list);
+					Group g = new Group { list = layerList.list };
+					CollectListButtons(layerList.list, g.buttons);
+					if (g.buttons.Count > 0)
+					{
+						groups.Add(g);
+					}
 				}
-				else if (top != null && EClass.ui.BlockActions)
+				else if (topLayer != null && EClass.ui.BlockActions)
 				{
-					// generic branch, only for MODAL windows (drama, quest boards,
-					// crafting, containers): item grids first, then every list,
-					// then any plain buttons (drama choices are loose buttons)
-					foreach (ButtonGrid bg in top.GetComponentsInChildren<ButtonGrid>(includeInactive: false))
+					// generic modal window: build all three group kinds
+					target = topLayer;
+					foreach (UIList ul in topLayer.GetComponentsInChildren<UIList>(includeInactive: false))
 					{
-						if (bg.card != null && bg.invOwner != null && bg.interactable && bg.gameObject.activeInHierarchy)
+						Group g = new Group { list = ul };
+						CollectListButtons(ul, g.buttons);
+						if (g.buttons.Count > 0)
 						{
-							buttons.Add(bg);
+							groups.Add(g);
 						}
 					}
-					if (buttons.Count > 0)
+					Group grids = new Group { grid = true };
+					foreach (ButtonGrid bg in topLayer.GetComponentsInChildren<ButtonGrid>(includeInactive: false))
 					{
-						target = top;
-						gridMode = true;
+						if (bg.card != null && bg.invOwner != null && bg.interactable && bg.gameObject.activeInHierarchy && !InAnyGroup(bg))
+						{
+							grids.buttons.Add(bg);
+						}
 					}
-					else
+					if (grids.buttons.Count > 0)
 					{
-						foreach (UIList ul in top.GetComponentsInChildren<UIList>(includeInactive: false))
+						groups.Add(grids);
+					}
+					Group loose = new Group();
+					foreach (UIButton b in topLayer.GetComponentsInChildren<UIButton>(includeInactive: false))
+					{
+						// card-less ButtonGrids (e.g. crafting recipe rows) act like
+						// plain buttons; card-carrying grids live in the grid group
+						bool cardGrid = b is ButtonGrid bgb && bgb.card != null && bgb.invOwner != null;
+						if (b.interactable && b.gameObject.activeInHierarchy && !cardGrid && !InAnyGroup(b))
 						{
-							CollectListButtons(ul);
+							loose.buttons.Add(b);
 						}
-						if (buttons.Count == 0)
-						{
-							CollectButtons(top.transform);
-						}
-						if (buttons.Count > 0)
-						{
-							target = top;
-						}
+					}
+					if (loose.buttons.Count > 0)
+					{
+						groups.Add(loose);
 					}
 				}
 			}
-			if (target == null || buttons.Count == 0)
+			if (target == null || groups.Count == 0)
 			{
 				lastTarget = null;
 				index = -1;
+				groupIndex = 0;
 				return;
 			}
 			if (target != lastTarget)
 			{
 				lastTarget = target;
 				index = -1;
+				groupIndex = 0;
 			}
-			HandleKeys();
+			groupIndex = Mathf.Clamp(groupIndex, 0, groups.Count - 1);
+			HandleKeys(topLayer);
 		}
 
-		private static void CollectButtons(Transform root)
+		private static bool InAnyGroup(UIButton b)
+		{
+			foreach (Group g in groups)
+			{
+				if (g.buttons.Contains(b))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private static void CollectButtons(Transform root, List<UIButton> into)
 		{
 			foreach (UIButton b in root.GetComponentsInChildren<UIButton>(includeInactive: false))
 			{
 				if (b.interactable && b.gameObject.activeInHierarchy)
 				{
-					buttons.Add(b);
+					into.Add(b);
 				}
 			}
 		}
 
-		private static void CollectListButtons(UIList list)
+		private static void CollectListButtons(UIList list, List<UIButton> into)
 		{
 			if (list.buttons == null)
 			{
@@ -113,35 +174,60 @@ namespace ElonaKeys
 				UIButton b = (pair.component is ItemGeneral item) ? item.button1 : (pair.component as UIButton);
 				if ((bool)b && b.interactable && b.gameObject.activeInHierarchy)
 				{
-					buttons.Add(b);
+					into.Add(b);
 				}
 			}
 		}
 
-		private static void HandleKeys()
+		private static void HandleKeys(Layer topLayer)
 		{
-			bool next = Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.RightArrow);
-			bool prev = Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.LeftArrow);
+			Group g = groups[groupIndex];
+			// Tab cycles the window's tabs (quest board, crafting categories)
+			if (Input.GetKeyDown(KeyCode.Tab) && topLayer != null && topLayer.windows != null && topLayer.windows.Count > 0)
+			{
+				topLayer.windows[0].NextTab(-1);
+				index = -1;
+				return;
+			}
+			bool next = Input.GetKeyDown(KeyCode.DownArrow);
+			bool prev = Input.GetKeyDown(KeyCode.UpArrow);
+			bool groupNext = Input.GetKeyDown(KeyCode.RightArrow);
+			bool groupPrev = Input.GetKeyDown(KeyCode.LeftArrow);
+			if (groups.Count > 1 && (groupNext || groupPrev))
+			{
+				Unhighlight(g);
+				groupIndex = (groupIndex + (groupNext ? 1 : -1) + groups.Count) % groups.Count;
+				index = 0;
+				Highlight(groups[groupIndex]);
+				EnsureVisible(groups[groupIndex]);
+				return;
+			}
+			if (groups.Count == 1 && (groupNext || groupPrev))
+			{
+				next = groupNext; // single group: left/right also navigate
+				prev = groupPrev;
+			}
 			if (next || prev)
 			{
 				if (index == -1)
 				{
-					index = next ? 0 : (buttons.Count - 1);
+					index = next ? 0 : (g.buttons.Count - 1);
 				}
 				else
 				{
-					index = (index + (next ? 1 : -1) + buttons.Count) % buttons.Count;
+					index = (index + (next ? 1 : -1) + g.buttons.Count) % g.buttons.Count;
 				}
-				Highlight();
+				Highlight(g);
+				EnsureVisible(g);
 				return;
 			}
-			if (index < 0 || index >= buttons.Count)
+			if (index < 0 || index >= g.buttons.Count)
 			{
 				return;
 			}
-			if (gridMode && Input.GetKeyDown(KeyCode.X))
+			if (g.grid && Input.GetKeyDown(KeyCode.X))
 			{
-				if (buttons[index] is ButtonGrid bx && bx.card is Thing tx)
+				if (g.buttons[index] is ButtonGrid bx && bx.card is Thing tx)
 				{
 					EClass.ui.AddLayerDontCloseOthers<LayerInfo>().SetThing(tx);
 				}
@@ -149,13 +235,12 @@ namespace ElonaKeys
 			}
 			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
 			{
-				UIButton b = buttons[index];
+				UIButton b = g.buttons[index];
 				index = -1;
 				lastTarget = null;
-				if (gridMode && b is ButtonGrid bg)
+				if (g.grid && b is ButtonGrid bg)
 				{
-					// same as right-click: auto-transfer/use through the game's logic
-					bg.invOwner.OnRightClick(bg);
+					bg.invOwner.OnRightClick(bg); // the transfer/use action
 				}
 				else
 				{
@@ -165,20 +250,54 @@ namespace ElonaKeys
 			}
 		}
 
-		private static void Highlight()
+		private static void EnsureVisible(Group g)
 		{
-			for (int i = 0; i < buttons.Count; i++)
+			if (index < 0 || index >= g.buttons.Count)
 			{
-				if ((bool)buttons[i])
+				return;
+			}
+			try
+			{
+				if (g.list != null && g.buttons.Count > 1)
+				{
+					ScrollRect sr = g.list.GetComponentInParent<ScrollRect>();
+					if (sr != null && sr.vertical)
+					{
+						sr.verticalNormalizedPosition = Mathf.Clamp01(1f - (float)index / (g.buttons.Count - 1));
+					}
+				}
+			}
+			catch
+			{
+				// cosmetic only
+			}
+		}
+
+		private static void Highlight(Group g)
+		{
+			for (int i = 0; i < g.buttons.Count; i++)
+			{
+				if ((bool)g.buttons[i])
 				{
 					if (i == index)
 					{
-						buttons[i].DoHighlightTransition();
+						g.buttons[i].DoHighlightTransition();
 					}
 					else
 					{
-						buttons[i].DoNormalTransition();
+						g.buttons[i].DoNormalTransition();
 					}
+				}
+			}
+		}
+
+		private static void Unhighlight(Group g)
+		{
+			foreach (UIButton b in g.buttons)
+			{
+				if ((bool)b)
+				{
+					b.DoNormalTransition();
 				}
 			}
 		}

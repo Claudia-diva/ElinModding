@@ -10,7 +10,7 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
 ・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
 ・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
-・ Native item grids (crafting stations, container windows): arrows navigate, Enter transfers/uses, x examines.
+・ Native windows: ↑↓ move, ←→ switch group (list/grid/buttons), Tab switches window tabs, Enter acts, x examines.
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
 {pair|Source and issues|github.com/Claudia-diva/ElinModding}
@@ -55,8 +55,11 @@ $Keys
 {pair|bump object|Walking into a solid interactable uses it (BumpToUse)}
 
 {topic|Hotkeys and extras}
-{pair|shift + 0-9|Fire Extra-hotbar slots 1-10 (ActivateHotkeys config)}
-{pair|F1-F8|Fire slots natively}
+{pair|1-9 in a menu|Assign the selected item/spell to that quickslot}
+{pair|shift+1-9 in a menu|Assign to the OTHER quickslot page}
+{pair|shift + 1-9|Fire the other quickslot page (mini-bar shows it)}
+{pair|MacroKey1-3|Cast the Macro1-3 ability sequences (config)}
+{pair|F1-F8|Fire the Extra bar natively}
 {pair|shift + move|Use held tool on the adjacent tile (mine/chop/till)}
 {pair|SuppressNativeKeys|Config list of game keys to swallow (e.g. z)}
 
@@ -67,6 +70,12 @@ $Keys
 ・ Character sheet (c), journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.11.0}
+・ True item colors (canonical UI material). Real spell targeting: self instant, party multi-cast, target menus, ground aiming. Macros.
+・ Digit hotkeys write to the quickslots (both pages); shift+1-9 fires the other page; mini-bar shows it.
+・ Native windows: group navigation, Tab = tabs, auto-scroll, drama choices navigable.
+・ Space menu names its targets; equipment slot labels stay static.
+
 {topic|1.7.0}
 ・ z = Elona's linked circles (Info/Action/Etc/Items), ring position remembered; ring contents configurable.
 

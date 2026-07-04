@@ -328,7 +328,8 @@ namespace ElonaKeys
 				Thing eq = slot.thing;
 				rows.Add(new MenuRow
 				{
-					label = slotName + ":  " + ((eq != null) ? DetailName(eq) : "-"),
+					fixedPrefix = slotName + ":",
+					label = (eq != null) ? DetailName(eq) : "-",
 					icon = eq,
 					rightText = (eq != null) ? WeightText(eq.ChildrenAndSelfWeight) : "-",
 					sortWeight = (eq != null) ? eq.ChildrenAndSelfWeight : 0,
@@ -544,7 +545,7 @@ namespace ElonaKeys
 				ActPlan.Item item = i;
 				rows.Add(new MenuRow
 				{
-					label = item.GetTextContext(plan.HasMultipleTargets).Replace("\n", " "),
+					label = ContextLabel(item, plan.HasMultipleTargets),
 					icon = item.tc as Thing,
 					act = delegate
 					{
@@ -556,6 +557,17 @@ namespace ElonaKeys
 				});
 			}
 			RunRows(title, rows, emptyMsg);
+		}
+
+		// "Talk - Poppy" instead of six anonymous Talks when several targets exist
+		private static string ContextLabel(ActPlan.Item item, bool forceName)
+		{
+			string label = item.GetTextContext(forceName).Replace("\n", " ");
+			if (forceName && item.tc != null && !label.Contains(item.tc.Name))
+			{
+				label += " <size=13><color=#8f8f7a>- " + item.tc.Name + "</color></size>";
+			}
+			return label;
 		}
 
 		public static void SearchHere()
@@ -576,7 +588,7 @@ namespace ElonaKeys
 					ActPlan.Item item = i;
 					rows.Add(new MenuRow
 					{
-						label = item.GetTextContext(plan.HasMultipleTargets).Replace("\n", " "),
+						label = ContextLabel(item, forceName: true),
 						icon = item.tc as Thing,
 						act = delegate
 						{
@@ -1421,12 +1433,164 @@ namespace ElonaKeys
 			return rows;
 		}
 
+		// Cast honoring the spell's real TargetType (research: TargetType.cs,
+		// Chara.UseAbility pt-flag loops the whole party = native multi-cast).
 		private static void CastAbility(Element e)
 		{
 			Act act = (e as Act) ?? ACT.Create(e.source);
-			Card tg = (pc.enemy != null && pc.CanSee(pc.enemy) && !pc.enemy.isDead) ? pc.enemy : null;
-			Point p = (tg != null) ? tg.pos : pc.pos;
-			ButtonAbility.TryUse(act, tg, p);
+			TargetType tt = act.TargetType;
+			// self-only: instant
+			if (tt.Range == TargetRange.Self && !tt.ForceParty)
+			{
+				if (pc.UseAbility(act, pc, pc.pos))
+				{
+					EClass.player.EndTurn();
+				}
+				return;
+			}
+			// party spells: native multi-cast, plus individual picks
+			if (tt.ForceParty || tt.Range == TargetRange.Party)
+			{
+				List<MenuRow> prows = new List<MenuRow>();
+				prows.Add(new MenuRow
+				{
+					label = "Cast on the whole party",
+					act = delegate
+					{
+						if (pc.UseAbility(act, null, null, pt: true))
+						{
+							EClass.player.EndTurn();
+						}
+					}
+				});
+				foreach (Chara chara in pc.party.members)
+				{
+					Chara m = chara;
+					prows.Add(new MenuRow
+					{
+						label = m.IsPC ? "Yourself" : m.Name,
+						act = delegate
+						{
+							if (pc.UseAbility(act, m, m.pos))
+							{
+								EClass.player.EndTurn();
+							}
+						}
+					});
+				}
+				MenuSystem.Show(act.GetText() + " on?", prows);
+				return;
+			}
+			// ground-targeted: iso-aware direction (self allowed when valid)
+			if (tt.Range == TargetRange.Ground || tt.Range == TargetRange.Neighbor)
+			{
+				DirPrompt.Ask("Aim " + act.GetText() + " where? (wait key = your tile)", self: true, delegate(Point p)
+				{
+					if (pc.UseAbility(act, null, p))
+					{
+						EClass.player.EndTurn();
+					}
+					else
+					{
+						Msg.SayRaw("You cannot aim there.");
+					}
+				});
+				return;
+			}
+			// chara-targeted: menu of valid targets, range/LOS enforced by CanPerform
+			List<MenuRow> rows = new List<MenuRow>();
+			List<Chara> targets = new List<Chara>();
+			foreach (Chara c in EClass._map.charas)
+			{
+				if (c.isDead || !pc.CanSee(c))
+				{
+					continue;
+				}
+				if (c == pc && !tt.CanSelectSelf)
+				{
+					continue;
+				}
+				if (tt.CanOnlyTargetEnemy && !pc.IsHostile(c))
+				{
+					continue;
+				}
+				if (!act.IsValidTC(c) || !act.CanPerform(pc, c, c.pos))
+				{
+					continue;
+				}
+				targets.Add(c);
+			}
+			targets.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
+			foreach (Chara chara in targets)
+			{
+				Chara c = chara;
+				string tag = pc.IsHostile(c) ? " <color=#ff8080>(hostile)</color>" : (c.IsPCParty ? " <color=#80c080>(party)</color>" : "");
+				rows.Add(new MenuRow
+				{
+					label = (c == pc ? "Yourself" : c.Name) + " (" + pc.pos.Distance(c.pos) + ")" + tag,
+					act = delegate
+					{
+						if (pc.UseAbility(act, c, c.pos))
+						{
+							EClass.player.EndTurn();
+						}
+					}
+				});
+			}
+			if (rows.Count == 0)
+			{
+				Msg.SayRaw("No valid target in range for " + act.GetText() + ".");
+				return;
+			}
+			MenuSystem.Show(act.GetText() + " at?", rows);
+		}
+
+		// config macros: cast a comma-separated ability sequence (buff chains)
+		public static void RunMacro(string csv)
+		{
+			if (string.IsNullOrWhiteSpace(csv))
+			{
+				Msg.SayRaw("This macro is empty (set it in the config).");
+				return;
+			}
+			foreach (string raw in csv.Split(','))
+			{
+				string alias = raw.Trim();
+				if (alias.Length == 0)
+				{
+					continue;
+				}
+				Element e = pc.elements.GetElement(alias);
+				if (e == null || e.Value == 0)
+				{
+					Msg.SayRaw("You don't know " + alias + ".");
+					continue;
+				}
+				Act act = (e as Act) ?? ACT.Create(e.source);
+				TargetType tt = act.TargetType;
+				bool ok;
+				if (tt.ForceParty || tt.Range == TargetRange.Party)
+				{
+					ok = pc.UseAbility(act, null, null, pt: true);
+				}
+				else if (tt.Range == TargetRange.Self)
+				{
+					ok = pc.UseAbility(act, pc, pc.pos);
+				}
+				else if (pc.enemy != null && !pc.enemy.isDead && pc.CanSee(pc.enemy) && act.CanPerform(pc, pc.enemy, pc.enemy.pos))
+				{
+					ok = pc.UseAbility(act, pc.enemy, pc.enemy.pos);
+				}
+				else
+				{
+					Msg.SayRaw(act.GetText() + " needs a target, skipped.");
+					continue;
+				}
+				if (ok)
+				{
+					EClass.player.EndTurn();
+				}
+			}
 		}
 
 		// ---------- simple toggles ----------

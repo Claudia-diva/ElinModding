@@ -22,6 +22,7 @@ namespace ElonaKeys
 		public int maxAmount;                // >1 enables the count spinner
 		public Action<int> onAmount;         // called with the chosen count
 		public SourceElement.Row actSrc;     // ability rows: enables digit hotkeying
+		public string fixedPrefix;           // static text (slot names); label scrolls separately
 	}
 
 	public static class MenuSystem
@@ -136,6 +137,11 @@ namespace ElonaKeys
 			int i = pageRows.IndexOf(r);
 			string cursor = (i == sel) ? "► " : "    ";
 			string spin = (r == amountRow) ? ("   « " + amount + " (" + r.maxAmount + ") »") : "";
+			if (r.fixedPrefix != null)
+			{
+				// the scrolling name lives in a separate child text (EKName)
+				return cursor + r.fixedPrefix + spin;
+			}
 			return cursor + r.label + spin;
 		}
 
@@ -226,29 +232,74 @@ namespace ElonaKeys
 			}
 			b.button1.mainText.rectTransform.anchoredPosition = new Vector2(badge ? 78f : 52f, 0f);
 			SetWeightText(b, r.rightText);
-			MenuExtras.ApplyNameDisplay(b.button1.mainText, 430f);
+			if (r.fixedPrefix != null)
+			{
+				// static prefix in mainText; only the name (child text) scrolls
+				SetNameText(b, r.label, 150f + (badge ? 78f : 52f));
+			}
+			else
+			{
+				SetNameText(b, null, 0f);
+				MenuExtras.ApplyNameDisplay(b.button1.mainText, 430f);
+			}
 		}
 
-		private static Material cachedItemMat;
+		// scrolling name child for fixedPrefix rows (pooled-row safe)
+		private static void SetNameText(ItemGeneral b, string text, float x)
+		{
+			try
+			{
+				Transform existing = b.button1.transform.Find("EKName");
+				UIText nt = (existing != null) ? existing.GetComponent<UIText>() : null;
+				if (text == null)
+				{
+					if ((bool)nt)
+					{
+						nt.text = "";
+					}
+					return;
+				}
+				if (nt == null)
+				{
+					GameObject go = new GameObject("EKName");
+					go.transform.SetParent(b.button1.transform, worldPositionStays: false);
+					nt = go.AddComponent<UIText>();
+					nt.font = b.button1.mainText.font;
+					nt.fontSize = b.button1.mainText.fontSize;
+					nt.alignment = TextAnchor.MiddleLeft;
+					nt.horizontalOverflow = HorizontalWrapMode.Overflow;
+					nt.verticalOverflow = VerticalWrapMode.Overflow;
+					nt.raycastTarget = false;
+					RectTransform nrt = nt.rectTransform;
+					nrt.anchorMin = new Vector2(0f, 0.5f);
+					nrt.anchorMax = new Vector2(0f, 0.5f);
+					nrt.pivot = new Vector2(0f, 0.5f);
+					nrt.sizeDelta = new Vector2(300f, 24f);
+				}
+				nt.color = b.button1.mainText.color;
+				nt.rectTransform.anchoredPosition = new Vector2(x, 0f);
+				nt.text = text;
+				MenuExtras.ApplyNameDisplay(nt, 280f);
+			}
+			catch
+			{
+				// cosmetic only
+			}
+		}
 
-		// the shader material real inventory buttons use for material-tinted sprites
+		// the canonical shared UI item material (CoreRef.matUIObj): decodes the
+		// encoded tint from RenderRow.SetImage. Never borrow from a live button;
+		// their instances carry per-save/per-state properties (darkened sprites).
 		private static Material ItemMaterial()
 		{
-			if (cachedItemMat == null)
+			try
 			{
-				try
-				{
-					ButtonGrid any = UnityEngine.Object.FindObjectOfType<ButtonGrid>();
-					if (any != null && any.icon != null)
-					{
-						cachedItemMat = any.icon.material;
-					}
-				}
-				catch
-				{
-				}
+				return EClass.core.refs.matUIObj;
 			}
-			return cachedItemMat;
+			catch
+			{
+				return null;
+			}
 		}
 
 		// right-aligned weight column: our own Text child, pooled-row safe

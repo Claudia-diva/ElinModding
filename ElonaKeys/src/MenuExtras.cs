@@ -59,6 +59,7 @@ namespace ElonaKeys
 				}
 				MenuSystem.HandleKeys();
 				PopupNav.OnUpdate();
+				ShiftBarWidget.EnsureAndUpdate();
 				UpdateAssignKey();
 			}
 			catch (Exception ex)
@@ -83,90 +84,119 @@ namespace ElonaKeys
 		private static void UpdateAssignKey()
 		{
 			int digit = GetDigitDown();
-			if (digit == -1 || EInput.isCtrlDown || EInput.isAltDown)
+			if (digit == -1 || digit >= 9 || EInput.isCtrlDown || EInput.isAltDown)
 			{
-				return;
+				return; // quickslots are 1-9 (digit 0 has no native slot)
 			}
-			int slot = digit + (EInput.isShiftDown ? 10 : 0);
-			HotItem hotItem = null;
-			string what = null;
+			// which of the two quickslot pages: plain = shown page, shift = other
+			int page = EClass.player.hotbarPage;
+			if (EInput.isShiftDown)
+			{
+				page = (page == 0) ? 1 : 0;
+			}
+			SourceElement.Row src = null;
+			Thing item = null;
 			if (MenuOpen)
 			{
-				Thing t = HoveredThing() ?? MenuSystem.SelectedThing();
-				if (t != null)
+				item = HoveredThing() ?? MenuSystem.SelectedThing();
+				if (item == null)
 				{
-					hotItem = new HotItemThing { thing = t };
-					what = t.Name;
-				}
-				else
-				{
-					SourceElement.Row src = MenuSystem.SelectedActSrc();
-					if (src != null)
-					{
-						hotItem = new HotItemAct(src);
-						what = src.GetName();
-					}
+					src = MenuSystem.SelectedActSrc();
 				}
 			}
-			if (hotItem == null && (bool)LayerAbility.Instance)
+			if (src == null && item == null && (bool)LayerAbility.Instance)
 			{
 				ButtonAbility ba = InputModuleEX.GetComponentOf<ButtonAbility>();
 				if ((bool)ba && ba.source != null)
 				{
-					hotItem = new HotItemAct(ba.source);
-					what = ba.source.GetName();
+					src = ba.source;
 				}
 			}
-			if (hotItem == null)
+			if (src == null && item == null)
 			{
 				return;
 			}
-			AssignToExtraHotbar(hotItem, slot, what);
+			AssignQuickslot(page, digit, src, item);
 		}
 
-		private static void AssignToExtraHotbar(HotItem item, int slot, string what)
+		// The quickslot bar is pc.things with invY=1, invX = page*10 + slot
+		// (WidgetCurrentTool). This mirrors the native drag-assign at
+		// ActionMode.cs:595-609.
+		private static void AssignQuickslot(int page, int slot, SourceElement.Row src, Thing item)
 		{
-			WidgetHotbar widget = WidgetHotbar.HotbarExtra;
-			if (!widget || widget.hotbar == null)
-			{
-				Msg.SayRaw("The extra hotbar is not available.");
-				return;
-			}
 			try
 			{
-				Hotbar bar = widget.hotbar;
-				if (bar.itemsPerPage <= slot)
+				int invX = page * 10 + slot;
+				foreach (Thing t in EClass.pc.things.List((Thing x) => x.invY == 1 && x.invX == invX, onlyAccessible: false))
 				{
-					bar.SetSlotNum(slot + 1);
+					if (t.trait is TraitAbility)
+					{
+						t.Destroy(); // replace old ability placeholder
+					}
+					break;
 				}
-				bar.SetItem(item, slot, -1, refreshActor: true);
+				string what;
+				if (src != null)
+				{
+					Thing ability = ThingGen.Create("ability");
+					ability.c_idAbility = src.alias;
+					EClass.pc.AddThing(ability, tryStack: false, invX, 1);
+					ability.invY = 1;
+					ability.invX = invX;
+					what = src.GetName();
+				}
+				else
+				{
+					item.invX = invX;
+					item.invY = 1;
+					what = item.Name;
+				}
+				WidgetCurrentTool.dirty = true;
+				ShiftBarWidget.SetDirty();
 				SE.Equip();
-				Msg.SayRaw(what + " assigned to hotkey " + (slot + 1) + ".");
+				Msg.SayRaw(what + " set to quickslot " + (slot + 1) + (EInput.isShiftDown ? " (other page)." : "."));
 			}
 			catch (Exception ex)
 			{
-				Plugin.Log?.LogError("ElonaKeys hotbar assign failed: " + ex);
+				Plugin.Log?.LogError("ElonaKeys quickslot assign failed: " + ex);
 				SE.BeepSmall();
 			}
 		}
 
-		public static void UseHotbarSlot(int slot)
+		// shift+digit: fire slot N of the NON-displayed quickslot page without
+		// flipping pages (replicates WidgetCurrentTool.Select's ability auto-use)
+		public static void UseOtherPageSlot(int slot)
 		{
-			WidgetHotbar widget = WidgetHotbar.HotbarExtra;
-			if (!widget || widget.hotbar == null)
+			int page = (EClass.player.hotbarPage == 0) ? 1 : 0;
+			int invX = page * 10 + slot;
+			Thing found = null;
+			foreach (Thing t in EClass.pc.things)
+			{
+				if (t.invY == 1 && t.invX == invX)
+				{
+					found = t;
+					break;
+				}
+			}
+			if (found == null)
 			{
 				SE.BeepSmall();
 				return;
 			}
-			HotItem item = widget.hotbar.CurrentPage.GetItem(slot);
-			if (item == null)
+			if (found.trait is TraitAbility ability)
 			{
-				SE.BeepSmall();
-				Msg.SayRaw("Hotkey " + (slot + 1) + " is empty. Hover an item or spell in a menu and press the digit to assign it.");
+				if (ability.CanUse(EClass.pc) && EClass.player.CanAcceptInput() && ability.OnUse(EClass.pc))
+				{
+					EClass.player.EndTurn();
+				}
+			}
+			else if (found.trait.CanUse(EClass.pc))
+			{
+				found.trait.OnUse(EClass.pc);
 			}
 			else
 			{
-				widget.TryUse(slot);
+				EClass.pc.HoldCard(found);
 			}
 		}
 

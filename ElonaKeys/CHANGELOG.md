@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.0 - 2026-07-04
+
+- Item colors fixed for real: menus now use the game's canonical UI item material (CoreRef.matUIObj) instead of borrowing from a live button whose state varied per save (the darkening).
+- Casting honors each spell's real targeting: self spells cast instantly; party buffs offer "Cast on the whole party" (native multi-cast) or a single member; chara-targeted spells open a target menu (range/LOS enforced, hostiles/party marked); ground spells use the iso-aware direction prompt.
+- Spell macros: Macro1-3 config sequences + MacroKey1-3 binds; casts each ability in order (self/party by type, targeted ones hit your current enemy).
+- Digit hotkeys now use the QUICKSLOT bar: assignment (digit in menus/ability window) writes real toolbelt entries; plain digit = shown page, shift+digit = other page. shift+1..9 fires the other page without flipping. A draggable mini-bar shows the other page's icons (ShiftBarVisible).
+- Native window navigation v4: up/down within a group, left/right between groups (lists / item grids / side buttons), Tab cycles window tabs (quest board, crafting categories), lists auto-scroll to the selection, drama talk choices navigable (native 1-9 selection also still works), quest reroll reachable via the side-button group.
+- Space menu labels each action with its target ("Talk - Poppy").
+- Equipment window: slot names stay static; only the item name scrolls.
+
 ## 1.10.0 - 2026-07-03
 
 - Iso-aware aiming: direction prompts target the tile that LOOKS that way on screen (Elin's grid is rotated 45°; pressing down now hits visual south instead of grid-south/screen-southwest). IsoAim config, on by default; movement/bump keep native grid behavior.

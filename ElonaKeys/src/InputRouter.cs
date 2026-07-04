@@ -145,9 +145,9 @@ namespace ElonaKeys
 			}
 			if (entry == null)
 			{
-				// digit hotkey activation
-				EInput.hotkey = -1; // keep the native toolbelt out of it (it ignores shift)
-				MenuExtras.UseHotbarSlot(digitSlot);
+				// shift+digit: fire the other quickslot page
+				EInput.hotkey = -1; // native GetHotkeyDown ignores shift
+				MenuExtras.UseOtherPageSlot(digitSlot);
 				EInput.Consume();
 				return;
 			}
@@ -269,23 +269,20 @@ namespace ElonaKeys
 		}
 
 		// slot 0-19 to fire, or -1
+		// shift+digit fires the NON-displayed quickslot page; plain digits are
+		// fully native (WidgetCurrentTool). Returns slot 0-8 or -1.
 		private static int DigitActivationSlot()
 		{
-			string mode = Plugin.ActivateHotkeys;
-			if (mode != "shift" && mode != "plain")
+			if (Plugin.ActivateHotkeys == "off" || !EInput.isShiftDown)
 			{
 				return -1;
 			}
 			int digit = MenuExtras.GetDigitDown();
-			if (digit == -1)
+			if (digit == -1 || digit >= 9)
 			{
 				return -1;
 			}
-			if (mode == "shift")
-			{
-				return EInput.isShiftDown ? digit : -1; // plain digits stay on the native toolbelt
-			}
-			return digit + (EInput.isShiftDown ? 10 : 0);
+			return digit;
 		}
 
 		private static void Gate(Plugin.Entry entry, string reason)

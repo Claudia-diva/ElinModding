@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.10.0";
+		public const string Version = "1.11.0";
 
 		internal static ManualLogSource Log;
 
@@ -60,6 +60,12 @@ namespace ElonaKeys
 		private static ConfigEntry<string> wheelMisc;
 		private static ConfigEntry<float> wheelPosX;
 		private static ConfigEntry<float> wheelPosY;
+		private static ConfigEntry<bool> shiftBarVisible;
+		private static ConfigEntry<float> shiftBarX;
+		private static ConfigEntry<float> shiftBarY;
+		private static ConfigEntry<string> macro1;
+		private static ConfigEntry<string> macro2;
+		private static ConfigEntry<string> macro3;
 
 		internal static bool OverrideGameKeys => overrideGameKeys.Value;
 		internal static bool DebugLog => debugLog.Value;
@@ -81,10 +87,23 @@ namespace ElonaKeys
 		internal static float WheelPosX => wheelPosX.Value;
 		internal static float WheelPosY => wheelPosY.Value;
 
+		internal static bool ShiftBarVisible => shiftBarVisible.Value;
+		internal static float ShiftBarX => shiftBarX.Value;
+		internal static float ShiftBarY => shiftBarY.Value;
+		internal static string Macro1 => macro1.Value;
+		internal static string Macro2 => macro2.Value;
+		internal static string Macro3 => macro3.Value;
+
 		internal static void SaveWheelPos(float x, float y)
 		{
 			wheelPosX.Value = x;
 			wheelPosY.Value = y;
+		}
+
+		internal static void SaveShiftBarPos(float x, float y)
+		{
+			shiftBarX.Value = x;
+			shiftBarY.Value = y;
 		}
 		internal static List<Keybind> SuppressBinds { get; private set; } = new List<Keybind>();
 
@@ -128,7 +147,14 @@ namespace ElonaKeys
 			wheelPosX = Config.Bind("Menus", "WheelPosX", 0f, "Wheel widget offset from screen center (drag the center diamond to move; saved automatically).");
 			wheelPosY = Config.Bind("Menus", "WheelPosY", 0f, "Wheel widget offset from screen center (drag the center diamond to move; saved automatically).");
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
-				"Digit keys activate Extra-hotbar slots assigned via the menus (hover an item/spell and press 0-9, shift+0-9 for slots 11-20). Activation mode: off, shift (shift+1..0 fires slots 1-10), plain (1..0 fires slots 1-10 and REPLACES the native toolbelt digits; shift+1..0 fires slots 11-20). F1-F8 always work natively for the first slots.");
+				"shift = shift+1..9 fires the NON-displayed quickslot page (plain digits stay native). off = disable. Assignment: select/hover an item or spell in a menu and press 1-9 (shift+digit = other page).");
+			shiftBarVisible = Config.Bind("Hotkeys", "ShiftBarVisible", true,
+				"Show a small draggable bar with the other quickslot page's icons (what shift+1..9 fires).");
+			shiftBarX = Config.Bind("Hotkeys", "ShiftBarX", 0f, "Shift-bar position (drag it to move; saved automatically).");
+			shiftBarY = Config.Bind("Hotkeys", "ShiftBarY", -320f, "Shift-bar position (drag it to move; saved automatically).");
+			macro1 = Config.Bind("Macros", "Macro1", "", "Comma-separated ability aliases cast in sequence (self/party per spell; targeted spells hit your current enemy). Find aliases via the spell list names or the ability window.");
+			macro2 = Config.Bind("Macros", "Macro2", "", "Second macro sequence.");
+			macro3 = Config.Bind("Macros", "Macro3", "", "Third macro sequence.");
 
 			// Defaults follow classic Elona (elona.fandom.com/wiki/Controls).
 			Def("Get", "g, keypad0", Handlers.Get, "Pick up everything on the tile you are standing on.");
@@ -157,6 +183,9 @@ namespace ElonaKeys
 			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
 			Def("Party", "shift+q", Handlers.Party, "Party menu: character sheets, browse and take members' items.");
 			Def("Wheel", "z", Handlers.Wheel, "Action wheel: every verb of this mod in one menu, like classic Elona's z.");
+			Def("MacroKey1", "none", delegate { Handlers.RunMacro(Macro1); }, "Casts the Macro1 ability sequence.");
+			Def("MacroKey2", "none", delegate { Handlers.RunMacro(Macro2); }, "Casts the Macro2 ability sequence.");
+			Def("MacroKey3", "none", delegate { Handlers.RunMacro(Macro3); }, "Casts the Macro3 ability sequence.");
 			Def("ExamineInventory", "shift+x", Handlers.ExamineInventory, "Open/close your inventory.");
 			Def("Hold", "none", Handlers.Hold, "Hold any item in your hands (Elin-specific, unbound by default).");
 			DefNative("Fire", "f", EAction.Fire, "Fire your ranged weapon (native Fire action).");
