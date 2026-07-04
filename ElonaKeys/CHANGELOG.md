@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.8.0 - 2026-07-03
+
+- Wheel slots wear Elona-style diamonds (rotated plates with edge trim); the whole wheel is a draggable widget: drag the center diamond, position saved to config (WheelPosX/Y).
+- Fixed native menus (e.g. the ability window) leaking through while a direction prompt was waiting: prompts are now fully modal.
+- v opens the mod's own castable spell/ability list: everything the PC knows with cost column and category tag, Enter/letter casts through the game's targeting flow, digits hotkey the selected spell, native window reachable from the last row.
+
+## 1.7.1 - 2026-07-03
+
+- Wheel selection is instant 8-way: press a direction, that diamond fires; east/west diamonds switch rings. Misc ring added (rings hold max 6 verbs).
+
 ## 1.7.0 - 2026-07-03
 
 - z wheel reworked into Elona's linked circles: Info / Action / Etc / Items rings, left/right (or clicking the side links) switches ring, up/down rotates, Enter fires, and the last-used ring is remembered like Elona. Each ring's verbs configurable (WheelInfo/WheelAction/WheelEtc/WheelItems); new verbs Help, Chara, Journal, Log, Fire.

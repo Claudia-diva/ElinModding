@@ -72,7 +72,7 @@ namespace ElonaKeys
 				{
 					waitRelease = false;
 				}
-				EInput.axis = Vector2.zero;
+				Swallow();
 				HighlightNeighbors();
 				return true;
 			}
@@ -84,10 +84,19 @@ namespace ElonaKeys
 				Fire(p);
 				return true;
 			}
-			// still waiting; block movement this frame, show where you can aim
-			EInput.axis = Vector2.zero;
+			// still waiting; the prompt is modal: no movement AND no native actions
+			// (otherwise e.g. the native ability menu opens mid-bash-prompt)
+			Swallow();
 			HighlightNeighbors();
 			return true;
+		}
+
+		private static void Swallow()
+		{
+			EInput.axis = Vector2.zero;
+			EInput.action = EAction.None;
+			EInput.hotkey = -1;
+			EInput.functionkey = -1;
 		}
 
 		private static void HighlightNeighbors()

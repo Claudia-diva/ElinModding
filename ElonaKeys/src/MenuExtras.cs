@@ -98,6 +98,15 @@ namespace ElonaKeys
 					hotItem = new HotItemThing { thing = t };
 					what = t.Name;
 				}
+				else
+				{
+					SourceElement.Row src = MenuSystem.SelectedActSrc();
+					if (src != null)
+					{
+						hotItem = new HotItemAct(src);
+						what = src.GetName();
+					}
+				}
 			}
 			if (hotItem == null && (bool)LayerAbility.Instance)
 			{

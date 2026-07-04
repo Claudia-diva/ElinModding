@@ -17,10 +17,11 @@ namespace ElonaKeys
 		public Thing icon;
 		public Action act;
 		public bool closeOnAct = true;
-		public string rightText;       // usually the weight column
-		public int sortWeight;         // for the weight sort mode
-		public int maxAmount;          // >1 enables the count spinner
-		public Action<int> onAmount;   // called with the chosen count
+		public string rightText;             // usually the weight column
+		public int sortWeight;               // for the weight sort mode
+		public int maxAmount;                // >1 enables the count spinner
+		public Action<int> onAmount;         // called with the chosen count
+		public SourceElement.Row actSrc;     // ability rows: enables digit hotkeying
 	}
 
 	public static class MenuSystem
@@ -530,6 +531,15 @@ namespace ElonaKeys
 			if (Alive && sel >= 0 && sel < pageRows.Count)
 			{
 				return pageRows[sel].icon;
+			}
+			return null;
+		}
+
+		public static SourceElement.Row SelectedActSrc()
+		{
+			if (Alive && sel >= 0 && sel < pageRows.Count)
+			{
+				return pageRows[sel].actSrc;
 			}
 			return null;
 		}

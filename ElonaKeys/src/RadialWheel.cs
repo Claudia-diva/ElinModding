@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace ElonaKeys
 {
-	// Classic Elona z-circles, faithful edition: 8 compass slots per ring,
-	// pressing a DIRECTION instantly triggers that slot. East/west slots are the
-	// links to the neighboring rings (so "right" walks you through the circles,
-	// and the current ring is remembered between opens). z/Escape/right-click
-	// closes; clicking a diamond also works.
+	// Classic Elona z-circles: 8 diamond slots per ring, pressing a DIRECTION
+	// instantly triggers that slot. East/west diamonds link to the neighboring
+	// rings; the current ring is remembered between opens. The whole wheel is a
+	// draggable widget (drag the center diamond), position saved to config.
 	public class RadialWheel : MonoBehaviour
 	{
 		public class Ring
@@ -21,9 +21,31 @@ namespace ElonaKeys
 		private class Slot
 		{
 			public string label;
-			public Action act;      // verb, or null
-			public int link;        // -1 prev ring, +1 next ring, 0 none
-			public Text text;
+			public Action act;
+			public int link;
+			public GameObject go;
+		}
+
+		// drag handle on the center diamond
+		private class DragHandle : MonoBehaviour, IDragHandler, IEndDragHandler
+		{
+			public RectTransform target;
+
+			public void OnDrag(PointerEventData e)
+			{
+				if ((bool)target)
+				{
+					target.anchoredPosition += e.delta;
+				}
+			}
+
+			public void OnEndDrag(PointerEventData e)
+			{
+				if ((bool)target)
+				{
+					Plugin.SaveWheelPos(target.anchoredPosition.x, target.anchoredPosition.y);
+				}
+			}
 		}
 
 		private static RadialWheel instance;
@@ -43,7 +65,8 @@ namespace ElonaKeys
 
 		private List<Ring> rings;
 		private readonly Slot[] slots = new Slot[8];
-		private Text center;
+		private RectTransform container;
+		private GameObject centerGo;
 		private int openFrame;
 		private Font font;
 		private Vector2 prevAxis;
@@ -75,13 +98,17 @@ namespace ElonaKeys
 			rt.offsetMin = Vector2.zero;
 			rt.offsetMax = Vector2.zero;
 			Image bg = root.AddComponent<Image>();
-			bg.color = new Color(0f, 0f, 0f, 0.45f);
+			bg.color = new Color(0f, 0f, 0f, 0.4f);
 			bg.raycastTarget = true;
 			instance = root.AddComponent<RadialWheel>();
 			instance.rings = _rings;
 			instance.font = FindFont();
 			instance.openFrame = Time.frameCount;
 			instance.prevAxis = Vector2.one; // require release before first flick
+			GameObject cont = new GameObject("container");
+			cont.transform.SetParent(root.transform, worldPositionStays: false);
+			instance.container = cont.AddComponent<RectTransform>();
+			instance.container.anchoredPosition = new Vector2(Plugin.WheelPosX, Plugin.WheelPosY);
 			ringIndex = Mathf.Clamp(ringIndex, 0, _rings.Count - 1);
 			instance.BuildRing();
 		}
@@ -111,17 +138,16 @@ namespace ElonaKeys
 		{
 			for (int i = 0; i < slots.Length; i++)
 			{
-				if (slots[i] != null && (bool)slots[i].text)
+				if (slots[i] != null && (bool)slots[i].go)
 				{
-					UnityEngine.Object.Destroy(slots[i].text.gameObject);
+					UnityEngine.Object.Destroy(slots[i].go);
 				}
 				slots[i] = null;
 			}
-			if ((bool)center)
+			if ((bool)centerGo)
 			{
-				UnityEngine.Object.Destroy(center.gameObject);
+				UnityEngine.Object.Destroy(centerGo);
 			}
-			// ring links east/west (linear chain, like Elona)
 			if (ringIndex + 1 < rings.Count)
 			{
 				slots[SlotE] = new Slot { label = rings[ringIndex + 1].name + " ►", link = 1 };
@@ -130,13 +156,13 @@ namespace ElonaKeys
 			{
 				slots[SlotW] = new Slot { label = "◄ " + rings[ringIndex - 1].name, link = -1 };
 			}
-			// verbs on the remaining compass points
 			for (int v = 0; v < Current.items.Count && v < verbSlots.Length; v++)
 			{
 				(string label, Action act) item = Current.items[v];
 				slots[verbSlots[v]] = new Slot { label = item.label, act = item.act };
 			}
-			// render
+			float rx = 200f;
+			float ry = 128f;
 			for (int i = 0; i < slots.Length; i++)
 			{
 				Slot s = slots[i];
@@ -144,39 +170,63 @@ namespace ElonaKeys
 				{
 					continue;
 				}
-				Text t = MakeText(transform, font, (s.link != 0) ? 18 : 21);
-				float rx = 190f;
-				float ry = 120f;
-				t.rectTransform.anchoredPosition = new Vector2(dirs[i].x * rx, dirs[i].y * ry);
-				t.text = s.label;
-				t.color = (s.link != 0) ? new Color(0.72f, 0.72f, 0.66f) : new Color(0.95f, 0.93f, 0.85f);
+				bool isLink = s.link != 0;
+				s.go = MakeDiamond(container, font, s.label, isLink, new Vector2(dirs[i].x * rx, dirs[i].y * ry));
 				int index = i;
-				Button b = t.gameObject.AddComponent<Button>();
-				b.onClick.AddListener(delegate { Trigger(index); });
-				s.text = t;
+				s.go.GetComponent<Button>().onClick.AddListener(delegate { Trigger(index); });
 			}
-			center = MakeText(transform, font, 26);
-			center.rectTransform.anchoredPosition = Vector2.zero;
-			center.text = "- " + Current.name + " -";
-			center.color = new Color(1f, 0.95f, 0.6f);
+			// center diamond: ring name, doubles as the drag handle
+			centerGo = MakeDiamond(container, font, Current.name, isLink: false, Vector2.zero, center: true);
+			DragHandle dh = centerGo.AddComponent<DragHandle>();
+			dh.target = container;
 		}
 
-		private static Text MakeText(Transform root, Font font, int size)
+		private GameObject MakeDiamond(Transform parent, Font f, string label, bool isLink, Vector2 pos, bool center = false)
 		{
-			GameObject go = new GameObject("label");
-			go.transform.SetParent(root, worldPositionStays: false);
-			Text t = go.AddComponent<Text>();
-			t.font = font;
-			t.fontSize = size;
+			GameObject go = new GameObject("slot");
+			go.transform.SetParent(parent, worldPositionStays: false);
+			RectTransform rt = go.AddComponent<RectTransform>();
+			rt.anchoredPosition = pos;
+			rt.sizeDelta = new Vector2(96f, 96f);
+			// invisible raycast surface so clicks land on the whole slot
+			Image hit = go.AddComponent<Image>();
+			hit.color = new Color(0f, 0f, 0f, 0f);
+			hit.raycastTarget = true;
+			go.AddComponent<Button>();
+			// the diamond: a rotated square behind the label, Elona style
+			GameObject dia = new GameObject("diamond");
+			dia.transform.SetParent(go.transform, worldPositionStays: false);
+			Image di = dia.AddComponent<Image>();
+			di.raycastTarget = false;
+			di.color = center ? new Color(0.28f, 0.2f, 0.12f, 0.95f)
+				: (isLink ? new Color(0.16f, 0.15f, 0.14f, 0.92f) : new Color(0.22f, 0.17f, 0.11f, 0.95f));
+			RectTransform drt = di.rectTransform;
+			drt.sizeDelta = new Vector2(72f, 72f);
+			drt.localRotation = Quaternion.Euler(0f, 0f, 45f);
+			GameObject edge = new GameObject("edge");
+			edge.transform.SetParent(dia.transform, worldPositionStays: false);
+			Image ei = edge.AddComponent<Image>();
+			ei.raycastTarget = false;
+			ei.color = new Color(0.75f, 0.65f, 0.45f, 0.6f);
+			RectTransform ert = ei.rectTransform;
+			ert.sizeDelta = new Vector2(76f, 76f);
+			ert.SetAsFirstSibling();
+			// label on top, not rotated
+			GameObject lg = new GameObject("label");
+			lg.transform.SetParent(go.transform, worldPositionStays: false);
+			Text t = lg.AddComponent<Text>();
+			t.font = f;
+			t.fontSize = center ? 20 : (isLink ? 15 : 17);
 			t.alignment = TextAnchor.MiddleCenter;
 			t.horizontalOverflow = HorizontalWrapMode.Overflow;
 			t.verticalOverflow = VerticalWrapMode.Overflow;
-			t.raycastTarget = true;
-			t.rectTransform.sizeDelta = new Vector2(170f, 32f);
-			Outline o = go.AddComponent<Outline>();
+			t.color = center ? new Color(1f, 0.95f, 0.6f) : (isLink ? new Color(0.75f, 0.75f, 0.7f) : new Color(0.96f, 0.94f, 0.86f));
+			t.raycastTarget = false;
+			t.rectTransform.sizeDelta = new Vector2(150f, 32f);
+			Outline o = lg.AddComponent<Outline>();
 			o.effectColor = new Color(0f, 0f, 0f, 0.9f);
 			o.effectDistance = new Vector2(1.5f, -1.5f);
-			return t;
+			return go;
 		}
 
 		private void Trigger(int slotIndex)

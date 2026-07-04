@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.7.1";
+		public const string Version = "1.8.0";
 
 		internal static ManualLogSource Log;
 
@@ -55,6 +55,8 @@ namespace ElonaKeys
 		private static ConfigEntry<string> wheelEtc;
 		private static ConfigEntry<string> wheelItems;
 		private static ConfigEntry<string> wheelMisc;
+		private static ConfigEntry<float> wheelPosX;
+		private static ConfigEntry<float> wheelPosY;
 
 		internal static bool OverrideGameKeys => overrideGameKeys.Value;
 		internal static bool DebugLog => debugLog.Value;
@@ -70,6 +72,14 @@ namespace ElonaKeys
 		internal static string WheelEtc => wheelEtc.Value;
 		internal static string WheelItems => wheelItems.Value;
 		internal static string WheelMisc => wheelMisc.Value;
+		internal static float WheelPosX => wheelPosX.Value;
+		internal static float WheelPosY => wheelPosY.Value;
+
+		internal static void SaveWheelPos(float x, float y)
+		{
+			wheelPosX.Value = x;
+			wheelPosY.Value = y;
+		}
 		internal static List<Keybind> SuppressBinds { get; private set; } = new List<Keybind>();
 
 		private void Awake()
@@ -103,6 +113,8 @@ namespace ElonaKeys
 				"Verbs on the Items ring (max 6, same verb list as WheelInfo).");
 			wheelMisc = Config.Bind("Menus", "WheelMisc", "Tool,Blend,Door,Open,Party",
 				"Verbs on the Misc ring (max 6, same verb list as WheelInfo). Leave empty to remove the ring.");
+			wheelPosX = Config.Bind("Menus", "WheelPosX", 0f, "Wheel widget offset from screen center (drag the center diamond to move; saved automatically).");
+			wheelPosY = Config.Bind("Menus", "WheelPosY", 0f, "Wheel widget offset from screen center (drag the center diamond to move; saved automatically).");
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
 				"Digit keys activate Extra-hotbar slots assigned via the menus (hover an item/spell and press 0-9, shift+0-9 for slots 11-20). Activation mode: off, shift (shift+1..0 fires slots 1-10), plain (1..0 fires slots 1-10 and REPLACES the native toolbelt digits; shift+1..0 fires slots 11-20). F1-F8 always work natively for the first slots.");
 

@@ -1030,12 +1030,53 @@ namespace ElonaKeys
 			MenuSystem.Show("Action wheel", rows);
 		}
 
-		// ---------- simple toggles ----------
+		// ---------- spells and abilities ----------
 
+		// Our own castable list of everything the PC knows. Enter/letter casts
+		// (native targeting flow via ButtonAbility.TryUse), digits hotkey the
+		// selected spell, and the native window stays reachable from the last row.
 		public static void Cast()
 		{
-			EClass.ui.ToggleAbility();
+			string[] groups = { "attack", "defense", "util", "ability" };
+			List<Element> known = new List<Element>();
+			foreach (Element e in pc.elements.dict.Values)
+			{
+				if (e.Value != 0 && Array.IndexOf(groups, e.source.categorySub) >= 0)
+				{
+					known.Add(e);
+				}
+			}
+			known.Sort((Element a, Element b) => string.Compare(a.source.GetName(), b.source.GetName(), StringComparison.OrdinalIgnoreCase));
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (Element element in known)
+			{
+				Element e = element;
+				string cost = (e.source.cost != null && e.source.cost.Length > 0 && e.source.cost[0] > 0) ? e.source.cost[0].ToString() : "";
+				rows.Add(new MenuRow
+				{
+					label = e.source.GetName() + " <size=13><color=#8f8f7a>" + e.source.categorySub + "</color></size>",
+					rightText = cost,
+					actSrc = e.source,
+					act = delegate { CastAbility(e); }
+				});
+			}
+			rows.Add(new MenuRow
+			{
+				label = "(open the ability window...)",
+				act = delegate { EClass.ui.ToggleAbility(); }
+			});
+			MenuSystem.Show("Cast what?", rows);
 		}
+
+		private static void CastAbility(Element e)
+		{
+			Act act = (e as Act) ?? ACT.Create(e.source);
+			Card tg = (pc.enemy != null && pc.CanSee(pc.enemy) && !pc.enemy.isDead) ? pc.enemy : null;
+			Point p = (tg != null) ? tg.pos : pc.pos;
+			ButtonAbility.TryUse(act, tg, p);
+		}
+
+		// ---------- simple toggles ----------
 
 		public static void ExamineInventory()
 		{
