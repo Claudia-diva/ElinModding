@@ -4,6 +4,9 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 
 ・ Item keys open a paginated menu: ► cursor with up/down, Enter or letter or click to act, left/right arrows switch pages.
 ・ The selected item's full stat card is shown automatically; press x on a row to open the examine window.
+・ z inside a menu cycles sorting (original / name / weight); the weight column sits on the right.
+・ Shift returns to the previous window in a chain (wheel, give, equipment slots...), or closes the last one.
+・ Stacks open a « n (max) » count spinner: left/right ±1, up/down ±10, Enter confirms.
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
 ・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
 
@@ -15,12 +18,12 @@ Mod keys beat Elin's own bindings on clash by default (OverrideGameKeys). If key
 $Keys
 {topic|Item Keys}
 {pair|g / numpad 0|Get everything pickable on your tile}
-{pair|d|Drop menu (stays open, drops whole stacks)}
+{pair|d|Drop menu (count spinner for stacks, stays open)}
 {pair|e|Eat menu}
 {pair|q|Quaff menu, includes nearby wells and fountains}
 {pair|r|Read menu}
 {pair|Z|Zap a rod, then a direction (wait key = self)}
-{pair|w|Wear/wield menu; picking an equipped item removes it}
+{pair|w|Equipment window: body slots, pick one to equip/remove}
 {pair|t|Hold a tool in your hands}
 {pair|u|Use an item}
 {pair|B|Dip/blend: pick a liquid, then mix items into it}
@@ -50,7 +53,7 @@ $Keys
 {pair|SuppressNativeKeys|Config list of game keys to swallow (e.g. z)}
 
 {topic|Deliberate differences from Elona}
-・ Quantity for stacks is a quick preset menu (1/5/10/half/all) instead of typed numbers.
+・ Quantity for stacks is an arrow-key spinner instead of typed numbers.
 ・ No Rest key: Elin rests via beds and the native Meditate key.
 ・ No dedicated target/look keys: throwing offers a target list instead.
 ・ Character sheet (c), journal (j), log and help stay on Elin's own keys.

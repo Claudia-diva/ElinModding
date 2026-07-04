@@ -4,8 +4,8 @@ if (-not (Test-Path $f)) { exit 0 }
 $lines = Get-Content $f | ForEach-Object {
     switch -Regex ($_) {
         "^OverrideGameKeys = false$" { "OverrideGameKeys = true" }
-        "^DebugLog = false$"         { "DebugLog = true" }
         "^Zap = z$"                  { "Zap = shift+z" }
+        "^Cast = shift\+z$"          { "Cast = v" }
         "^Close = c$"                { "Close = shift+c" }
         "^ExamineInventory = x$"     { "ExamineInventory = shift+x" }
         default { $_ }

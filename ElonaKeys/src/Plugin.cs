@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.5.0";
+		public const string Version = "1.5.1";
 
 		internal static ManualLogSource Log;
 
@@ -78,34 +78,34 @@ namespace ElonaKeys
 			shiftDirTool = Config.Bind("General", "ShiftDirTool", true,
 				"While holding a tool, shift+direction uses it on the adjacent tile (mine, chop, till...) like drag-right-click.");
 			suppressNativeKeys = Config.Bind("General", "SuppressNativeKeys", "",
-				"Comma-separated keys to swallow entirely so the game never sees them (e.g. 'z' if the native examine-target key annoys you).");
+				"Comma-separated keys hidden from the game entirely (use when a native Elin key annoys you and you don't want either binding).");
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
 				"Digit keys activate Extra-hotbar slots assigned via the menus (hover an item/spell and press 0-9, shift+0-9 for slots 11-20). Activation mode: off, shift (shift+1..0 fires slots 1-10), plain (1..0 fires slots 1-10 and REPLACES the native toolbelt digits; shift+1..0 fires slots 11-20). F1-F8 always work natively for the first slots.");
 
 			// Defaults follow classic Elona (elona.fandom.com/wiki/Controls).
 			Def("Get", "g, keypad0", Handlers.Get, "Pick up everything on the tile you are standing on.");
-			Def("Drop", "d", Handlers.Drop, "Drop items via menu (stays open to drop several).");
+			Def("Drop", "d", Handlers.Drop, "Drop menu with count spinner: Enter on a stack, left/right adjusts, Enter drops. Menu stays open.");
 			Def("Eat", "e", Handlers.Eat, "Eat something from your inventory.");
 			Def("Quaff", "q", Handlers.Quaff, "Drink a potion, or from an adjacent well/fountain.");
 			Def("Read", "r", Handlers.ReadItem, "Read a book, scroll or scrap.");
 			Def("Zap", "shift+z", Handlers.Zap, "Zap a rod, then pick a direction (wait key = yourself).");
 			Def("Cast", "v", Handlers.Cast, "Open the spell/ability list. Hover a spell and press 0-9 to hotkey it.");
-			Def("Wear", "w", Handlers.Wear, "Equip menu; click to wear/wield, click equipped items to remove.");
+			Def("Wear", "w", Handlers.Wear, "Elona-style equipment window: body slot rows, pick a slot to equip or remove; DV/PV in the title.");
 			Def("Tool", "t", Handlers.HoldTool, "Pick a tool from your inventory and hold it in your hands.");
 			Def("Use", "u", Handlers.Use, "Use a usable item from your inventory.");
 			Def("Blend", "shift+b", Handlers.Blend, "Dip/blend: pick a potion or liquid, then mix items into it.");
-			Def("Throw", "shift+t", Handlers.Throw, "Throw an item at your target, or pick a direction.");
+			Def("Throw", "shift+t", Handlers.Throw, "Throw: pick an item, then a target from the list or a direction.");
 			Def("Bash", "b", Handlers.Bash, "Bash in a chosen direction.");
 			Def("Dig", "shift+d", Handlers.Dig, "Mine a wall in a chosen direction (auto-holds your digging tool).");
 			Def("Open", "o", Handlers.Open, "Open containers and crafting kits in your inventory, or nearby ones.");
 			Def("Close", "shift+c", Handlers.DoorToggle, "Open or close a door in a chosen direction.");
 			Def("Pray", "p", Handlers.Pray, "Pray to your god.");
 			Def("Offer", "shift+o", Handlers.Offer, "Offer a sacrifice at an adjacent altar.");
-			Def("Give", "shift+g", Handlers.Give, "Give items to an adjacent character.");
+			Def("Give", "shift+g", Handlers.Give, "Give to an adjacent character; count spinner for stacks.");
 			Def("Interact", "i", Handlers.Interact, "Interaction menu for a direction (talk, give, trade...).");
 			Def("Search", "s", Handlers.SearchHere, "Do things on your own tile: search spots, harvest, dig treasure...");
 			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
-			Def("Party", "shift+q", Handlers.Party, "Party member character sheets and inventories.");
+			Def("Party", "shift+q", Handlers.Party, "Party menu: character sheets, browse and take members' items.");
 			Def("Wheel", "z", Handlers.Wheel, "Action wheel: every verb of this mod in one menu, like classic Elona's z.");
 			Def("ExamineInventory", "shift+x", Handlers.ExamineInventory, "Open/close your inventory.");
 			Def("Hold", "none", Handlers.Hold, "Hold any item in your hands (Elin-specific, unbound by default).");
