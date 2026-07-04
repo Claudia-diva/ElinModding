@@ -134,11 +134,8 @@ namespace ElonaKeys
 		{
 			int i = pageRows.IndexOf(r);
 			string cursor = (i == sel) ? "► " : "    ";
-			string letter = (i >= 0 && i < Letters.Length) ? (Letters[i] + ")  ") : "";
 			string spin = (r == amountRow) ? ("   « " + amount + " (" + r.maxAmount + ") »") : "";
-			// weight lives inside the label: the list mold has no right-column slot
-			string weight = string.IsNullOrEmpty(r.rightText) ? "" : ("   <size=13><color=#8f8f7a>" + r.rightText + "</color></size>");
-			return cursor + letter + r.label + spin + weight;
+			return cursor + r.label + spin;
 		}
 
 		private static void BuildRow(MenuRow r, ItemGeneral b)
@@ -157,26 +154,32 @@ namespace ElonaKeys
 
 		private static void BuildRowInner(MenuRow r, ItemGeneral b)
 		{
+			int index = pageRows.IndexOf(r);
+			string letter = (index >= 0 && index < Letters.Length) ? Letters[index].ToString() : "";
+			// Elona layout: [sprite @16] [letter badge @46] [name @78] [weight right]
+			bool badge = false;
 			if ((bool)b.button1.keyText)
 			{
-				b.button1.keyText.text = "";
-				b.button1.keyText.SetActive(enable: false);
+				// the |_\ chip is the letter badge (keyText's container): revive it,
+				// give it its letter back, park it right of the sprite
+				b.button1.keyText.SetActive(enable: true);
+				b.button1.keyText.text = letter;
+				RectTransform chip = b.button1.keyText.transform as RectTransform;
+				if (chip.parent != null && chip.parent != b.button1.transform && chip.parent.GetComponent<ItemGeneral>() == null)
+				{
+					chip = chip.parent as RectTransform;
+				}
+				chip.anchoredPosition = new Vector2(46f, 0f);
+				badge = true;
 			}
 			if (r.icon != null)
 			{
 				b.card = r.icon;
 				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
 				iconParent.SetActive(enable: true);
-				iconParent.anchoredPosition = new Vector2(24f, 0f);
+				iconParent.anchoredPosition = new Vector2(16f, 0f);
 				Image img = b.button1.icon;
-				// the slot chrome (frame/chip images living in the same container)
-				// draws OVER the sprite: hide everything that isn't the sprite and
-				// make the sprite the last sibling so it renders on top
-				Image parentImg = iconParent.GetComponent<Image>();
-				if ((bool)parentImg && parentImg != img)
-				{
-					parentImg.enabled = false;
-				}
+				// hide slot chrome living in the icon container, sprite on top
 				foreach (Image sib in iconParent.GetComponentsInChildren<Image>(includeInactive: true))
 				{
 					if (sib != img)
@@ -196,22 +199,63 @@ namespace ElonaKeys
 				img.transform.localScale = new Vector3(Mathf.Abs(img.transform.localScale.x), img.transform.localScale.y, 1f);
 				Vector2 s = rt.sizeDelta;
 				float max = Mathf.Max(s.x, s.y);
-				if (max > 36f)
+				if (max > 34f)
 				{
-					rt.sizeDelta = s * (36f / max);
+					rt.sizeDelta = s * (34f / max);
 				}
-				b.button1.mainText.rectTransform.anchoredPosition = new Vector2(52f, 0f);
 				Thing tip = r.icon;
 				b.button1.SetTooltip("note", delegate(UITooltip tt)
 				{
 					tip.WriteNote(tt.note);
 				});
 			}
-			else
+			if (!badge)
 			{
-				b.button1.mainText.rectTransform.anchoredPosition = new Vector2(30f, 0f);
+				// no badge on this mold: letter goes into the text itself
+				b.button1.mainText.text = letter + ")  " + b.button1.mainText.text;
 			}
-			MenuExtras.ApplyNameDisplay(b.button1.mainText, 520f);
+			b.button1.mainText.rectTransform.anchoredPosition = new Vector2(badge ? 78f : 52f, 0f);
+			SetWeightText(b, r.rightText);
+			MenuExtras.ApplyNameDisplay(b.button1.mainText, 430f);
+		}
+
+		// right-aligned weight column: our own Text child, pooled-row safe
+		private static void SetWeightText(ItemGeneral b, string text)
+		{
+			try
+			{
+				Transform existing = b.button1.transform.Find("EKWeight");
+				Text wt;
+				if (existing != null)
+				{
+					wt = existing.GetComponent<Text>();
+				}
+				else
+				{
+					GameObject go = new GameObject("EKWeight");
+					go.transform.SetParent(b.button1.transform, worldPositionStays: false);
+					wt = go.AddComponent<Text>();
+					wt.font = b.button1.mainText.font;
+					wt.fontSize = 15;
+					wt.alignment = TextAnchor.MiddleRight;
+					wt.color = new Color(0.45f, 0.42f, 0.32f);
+					wt.raycastTarget = false;
+					RectTransform wrt = wt.rectTransform;
+					wrt.anchorMin = new Vector2(1f, 0.5f);
+					wrt.anchorMax = new Vector2(1f, 0.5f);
+					wrt.pivot = new Vector2(1f, 0.5f);
+					wrt.sizeDelta = new Vector2(90f, 24f);
+					wrt.anchoredPosition = new Vector2(-14f, 0f);
+				}
+				if ((bool)wt)
+				{
+					wt.text = text ?? "";
+				}
+			}
+			catch
+			{
+				// cosmetic only
+			}
 		}
 
 		// Rebuild rows in place after an action on a refreshable menu.
@@ -431,24 +475,15 @@ namespace ElonaKeys
 				}
 				return;
 			}
-			// typed keys: z = sort, letters = rows (lowercase only)
+			// z = sort. Row letters are handled NATIVELY by LayerList via keyText
+			// (adding our own letter handler would double-activate rows).
 			string typed = Input.inputString;
-			if (!string.IsNullOrEmpty(typed) && !EInput.isShiftDown && !EInput.isCtrlDown && !EInput.isAltDown)
+			if (typed == "z" && !EInput.isShiftDown && !EInput.isCtrlDown && !EInput.isAltDown)
 			{
-				char c = typed[0];
-				if (c == 'z')
-				{
-					sortMode = (sortMode + 1) % 3;
-					sel = 0;
-					page = 0;
-					ApplyPage();
-					return;
-				}
-				int index = Letters.IndexOf(c);
-				if (index >= 0 && index < pageRows.Count && index < PageSize)
-				{
-					Activate(pageRows[index]);
-				}
+				sortMode = (sortMode + 1) % 3;
+				sel = 0;
+				page = 0;
+				ApplyPage();
 			}
 		}
 
