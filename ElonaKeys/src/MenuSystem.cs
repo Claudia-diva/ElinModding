@@ -136,10 +136,26 @@ namespace ElonaKeys
 			string cursor = (i == sel) ? "► " : "    ";
 			string letter = (i >= 0 && i < Letters.Length) ? (Letters[i] + ")  ") : "";
 			string spin = (r == amountRow) ? ("   « " + amount + " (" + r.maxAmount + ") »") : "";
-			return cursor + letter + r.label + spin;
+			// weight lives inside the label: the list mold has no right-column slot
+			string weight = string.IsNullOrEmpty(r.rightText) ? "" : ("   <size=13><color=#8f8f7a>" + r.rightText + "</color></size>");
+			return cursor + letter + r.label + spin + weight;
 		}
 
 		private static void BuildRow(MenuRow r, ItemGeneral b)
+		{
+			// cosmetic failures must never abort UIList.List(): a thrown
+			// onInstantiate leaves half-built windows and stale pooled rows
+			try
+			{
+				BuildRowInner(r, b);
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys row build failed: " + ex);
+			}
+		}
+
+		private static void BuildRowInner(MenuRow r, ItemGeneral b)
 		{
 			if ((bool)b.button1.keyText)
 			{
@@ -178,11 +194,7 @@ namespace ElonaKeys
 			{
 				b.button1.mainText.rectTransform.anchoredPosition = new Vector2(30f, 0f);
 			}
-			if (!string.IsNullOrEmpty(r.rightText))
-			{
-				b.SetSubText2(r.rightText);
-			}
-			MenuExtras.ApplyNameDisplay(b.button1.mainText, 430f);
+			MenuExtras.ApplyNameDisplay(b.button1.mainText, 520f);
 		}
 
 		// Rebuild rows in place after an action on a refreshable menu.
