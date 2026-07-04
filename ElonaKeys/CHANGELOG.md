@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.9.0 - 2026-07-03
+
+- Wheel diamonds fixed (1.8.0 never assigned the label text) and restyled: transparent fill with a simple border.
+- Containers: picking an item now offers Take / Drop at your feet / Move to another container (each with a count spinner), and "[ Container settings... ]" edits the game's own flags: cooler mode (only rottable), refuse rotten, always sort, distribution priority.
+- Space = Elona context action: menu of everything interactable on and around you; a single action fires instantly (fountains, gacha machines, boards next to you).
+- Bump-to-talk: walking into a friendly NPC talks to them (party members still swap). BumpToTalk config.
+- Bump-to-use: walking into a solid interactable (quest board, gacha, fountain) uses it. BumpToUse config.
+
 ## 1.8.1 - 2026-07-03
 
 - Containers (chests, boxes, bags) opened via o now use a keyboard take/put menu: item rows with count spinner to take, "[ Put items in... ]" opens your inventory with a spinner to store; shift walks back through the chain.

@@ -193,24 +193,22 @@ namespace ElonaKeys
 			hit.color = new Color(0f, 0f, 0f, 0f);
 			hit.raycastTarget = true;
 			go.AddComponent<Button>();
-			// the diamond: a rotated square behind the label, Elona style
+			// diamond = mostly transparent fill with a simple border: an outer
+			// rotated square (border color) with a slightly smaller dark inner
 			GameObject dia = new GameObject("diamond");
 			dia.transform.SetParent(go.transform, worldPositionStays: false);
-			Image di = dia.AddComponent<Image>();
-			di.raycastTarget = false;
-			di.color = center ? new Color(0.28f, 0.2f, 0.12f, 0.95f)
-				: (isLink ? new Color(0.16f, 0.15f, 0.14f, 0.92f) : new Color(0.22f, 0.17f, 0.11f, 0.95f));
-			RectTransform drt = di.rectTransform;
+			Image border = dia.AddComponent<Image>();
+			border.raycastTarget = false;
+			border.color = center ? new Color(0.85f, 0.75f, 0.5f, 0.85f) : new Color(0.7f, 0.65f, 0.55f, 0.7f);
+			RectTransform drt = border.rectTransform;
 			drt.sizeDelta = new Vector2(72f, 72f);
 			drt.localRotation = Quaternion.Euler(0f, 0f, 45f);
-			GameObject edge = new GameObject("edge");
-			edge.transform.SetParent(dia.transform, worldPositionStays: false);
-			Image ei = edge.AddComponent<Image>();
-			ei.raycastTarget = false;
-			ei.color = new Color(0.75f, 0.65f, 0.45f, 0.6f);
-			RectTransform ert = ei.rectTransform;
-			ert.sizeDelta = new Vector2(76f, 76f);
-			ert.SetAsFirstSibling();
+			GameObject inner = new GameObject("fill");
+			inner.transform.SetParent(dia.transform, worldPositionStays: false);
+			Image fill = inner.AddComponent<Image>();
+			fill.raycastTarget = false;
+			fill.color = new Color(0.05f, 0.04f, 0.03f, 0.35f);
+			fill.rectTransform.sizeDelta = new Vector2(66f, 66f);
 			// label on top, not rotated
 			GameObject lg = new GameObject("label");
 			lg.transform.SetParent(go.transform, worldPositionStays: false);
@@ -220,9 +218,10 @@ namespace ElonaKeys
 			t.alignment = TextAnchor.MiddleCenter;
 			t.horizontalOverflow = HorizontalWrapMode.Overflow;
 			t.verticalOverflow = VerticalWrapMode.Overflow;
-			t.color = center ? new Color(1f, 0.95f, 0.6f) : (isLink ? new Color(0.75f, 0.75f, 0.7f) : new Color(0.96f, 0.94f, 0.86f));
+			t.color = center ? new Color(1f, 0.95f, 0.6f) : (isLink ? new Color(0.78f, 0.78f, 0.72f) : new Color(0.97f, 0.95f, 0.88f));
 			t.raycastTarget = false;
-			t.rectTransform.sizeDelta = new Vector2(150f, 32f);
+			t.rectTransform.sizeDelta = new Vector2(160f, 32f);
+			t.text = label; // 1.8.0 forgot this: diamonds rendered with no text
 			Outline o = lg.AddComponent<Outline>();
 			o.effectColor = new Color(0f, 0f, 0f, 0.9f);
 			o.effectDistance = new Vector2(1.5f, -1.5f);

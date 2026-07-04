@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.8.1";
+		public const string Version = "1.9.0";
 
 		internal static ManualLogSource Log;
 
@@ -48,6 +48,8 @@ namespace ElonaKeys
 		private static ConfigEntry<string> nameDisplay;
 		private static ConfigEntry<string> activateHotkeys;
 		private static ConfigEntry<bool> shiftDirTool;
+		private static ConfigEntry<bool> bumpToTalk;
+		private static ConfigEntry<bool> bumpToUse;
 		private static ConfigEntry<string> suppressNativeKeys;
 		private static ConfigEntry<string> wheelStyle;
 		private static ConfigEntry<string> wheelInfo;
@@ -66,6 +68,8 @@ namespace ElonaKeys
 		internal static string NameDisplay => nameDisplay.Value;
 		internal static string ActivateHotkeys => activateHotkeys.Value;
 		internal static bool ShiftDirTool => shiftDirTool.Value;
+		internal static bool BumpToTalk => bumpToTalk.Value;
+		internal static bool BumpToUse => bumpToUse.Value;
 		internal static string WheelStyle => wheelStyle.Value;
 		internal static string WheelInfo => wheelInfo.Value;
 		internal static string WheelAction => wheelAction.Value;
@@ -99,6 +103,10 @@ namespace ElonaKeys
 				"Rows per menu page. Multiple pages are switched with the left/right arrow keys.");
 			shiftDirTool = Config.Bind("General", "ShiftDirTool", true,
 				"While holding a tool, shift+direction uses it on the adjacent tile (mine, chop, till...) like drag-right-click.");
+			bumpToTalk = Config.Bind("General", "BumpToTalk", true,
+				"Walking into a friendly NPC talks to them, Elona style (party members still swap places).");
+			bumpToUse = Config.Bind("General", "BumpToUse", true,
+				"Walking into a solid interactable (quest board, gacha, fountain...) uses it, like Elona's walk-over + Space.");
 			suppressNativeKeys = Config.Bind("General", "SuppressNativeKeys", "",
 				"Comma-separated keys hidden from the game entirely (use when a native Elin key annoys you and you don't want either binding).");
 			wheelStyle = Config.Bind("Menus", "WheelStyle", "radial",
@@ -140,6 +148,7 @@ namespace ElonaKeys
 			Def("Give", "shift+g", Handlers.Give, "Give to an adjacent character; count spinner for stacks.");
 			Def("Interact", "i", Handlers.Interact, "Interaction menu for a direction (talk, give, trade...).");
 			Def("Search", "s", Handlers.SearchHere, "Do things on your own tile: search spots, harvest, dig treasure...");
+			Def("Context", "space", Handlers.ContextAll, "Everything interactable on and around you; a single action fires instantly (Elona Space).");
 			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
 			Def("Party", "shift+q", Handlers.Party, "Party menu: character sheets, browse and take members' items.");
 			Def("Wheel", "z", Handlers.Wheel, "Action wheel: every verb of this mod in one menu, like classic Elona's z.");

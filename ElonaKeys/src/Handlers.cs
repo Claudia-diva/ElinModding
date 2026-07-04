@@ -563,6 +563,34 @@ namespace ElonaKeys
 			PlanMenu("Actions here", pc.pos.Copy(), "There is nothing to do here.");
 		}
 
+		// Elona Space: everything doable on and around you, one action fires instantly.
+		public static void ContextAll()
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (Point point in Nearby())
+			{
+				Point p = point;
+				ActPlan plan = BuildPlan(p);
+				foreach (ActPlan.Item i in plan.list)
+				{
+					ActPlan.Item item = i;
+					rows.Add(new MenuRow
+					{
+						label = item.GetTextContext(plan.HasMultipleTargets).Replace("\n", " "),
+						icon = item.tc as Thing,
+						act = delegate
+						{
+							if (item.Perform())
+							{
+								EClass.player.EndTurn();
+							}
+						}
+					});
+				}
+			}
+			RunRows("Around you", rows, "There is nothing to interact with here.");
+		}
+
 		public static void Open()
 		{
 			List<MenuRow> rows = new List<MenuRow>();
@@ -650,6 +678,12 @@ namespace ElonaKeys
 				closeOnAct = false,
 				act = delegate { PutMenu(container); }
 			});
+			rows.Add(new MenuRow
+			{
+				label = "[ Container settings... ]",
+				closeOnAct = false,
+				act = delegate { ContainerSettings(container); }
+			});
 			foreach (Thing thing in container.things)
 			{
 				Thing t = thing;
@@ -660,15 +694,136 @@ namespace ElonaKeys
 					rightText = WeightText(t.ChildrenAndSelfWeight),
 					sortWeight = t.ChildrenAndSelfWeight,
 					closeOnAct = false,
+					act = delegate { ContainerItemMenu(container, t); }
+				});
+			}
+			return rows;
+		}
+
+		// per-item actions inside a container: take / drop / move elsewhere
+		private static void ContainerItemMenu(Thing container, Thing t)
+		{
+			MenuSystem.Show(t.Name, BuildContainerItemRows(container, t), delegate
+			{
+				MenuSystem.SetRows(BuildContainerItemRows(container, t));
+			});
+		}
+
+		private static List<MenuRow> BuildContainerItemRows(Thing container, Thing t)
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			if (t.isDestroyed || t.parent != container)
+			{
+				return rows; // moved away; menu closes via refresh
+			}
+			rows.Add(new MenuRow
+			{
+				label = "Take",
+				icon = t,
+				closeOnAct = false,
+				maxAmount = t.Num,
+				onAmount = delegate(int n)
+				{
+					Thing x = (n >= t.Num) ? t : t.Split(n);
+					pc.AddCard(x);
+					Msg.SayRaw("You take " + x.Name + ".");
+				}
+			});
+			rows.Add(new MenuRow
+			{
+				label = "Drop at your feet",
+				icon = t,
+				closeOnAct = false,
+				maxAmount = t.Num,
+				onAmount = delegate(int n)
+				{
+					Thing x = (n >= t.Num) ? t : t.Split(n);
+					pc.AddCard(x);
+					pc.DropThing(x);
+				}
+			});
+			foreach (Thing other in OtherContainers(container))
+			{
+				Thing dest = other;
+				rows.Add(new MenuRow
+				{
+					label = "Move to: " + dest.Name,
+					icon = dest,
+					closeOnAct = false,
 					maxAmount = t.Num,
 					onAmount = delegate(int n)
 					{
-						Thing take = (n >= t.Num) ? t : t.Split(n);
-						pc.AddCard(take);
-						Msg.SayRaw("You take " + take.Name + ".");
+						if (dest.things.IsFull())
+						{
+							Msg.SayRaw("The " + dest.Name + " is full.");
+							return;
+						}
+						Thing x = (n >= t.Num) ? t : t.Split(n);
+						dest.AddThing(x);
+						Msg.SayRaw("You move " + x.Name + " to " + dest.Name + ".");
 					}
 				});
 			}
+			return rows;
+		}
+
+		private static List<Thing> OtherContainers(Thing except)
+		{
+			List<Thing> found = new List<Thing>();
+			foreach (Thing t in pc.things.List((Thing x) => x != except && x.trait.CanOpenContainer, onlyAccessible: true))
+			{
+				found.Add(t);
+			}
+			foreach (Point p in Nearby())
+			{
+				foreach (Thing t in p.Things)
+				{
+					if (t != except && t.IsInstalled && t.trait.CanOpenContainer && t.c_lockLv == 0)
+					{
+						found.Add(t);
+					}
+				}
+			}
+			return found;
+		}
+
+		// the game's own per-container flags (what the mouse config window edits)
+		private static void ContainerSettings(Thing container)
+		{
+			MenuSystem.Show(container.Name + " settings", BuildSettingsRows(container), delegate
+			{
+				MenuSystem.SetRows(BuildSettingsRows(container));
+			});
+		}
+
+		private static List<MenuRow> BuildSettingsRows(Thing container)
+		{
+			Window.SaveData sd = container.c_windowSaveData;
+			if (sd == null)
+			{
+				sd = new Window.SaveData();
+				container.c_windowSaveData = sd;
+			}
+			List<MenuRow> rows = new List<MenuRow>();
+			void Toggle(string name, bool value, Action flip)
+			{
+				rows.Add(new MenuRow
+				{
+					label = name + ":  " + (value ? "<color=#70a070>ON</color>" : "<color=#a07070>OFF</color>"),
+					closeOnAct = false,
+					act = flip
+				});
+			}
+			Toggle("Only rottable items (cooler/fridge)", sd.onlyRottable, delegate { sd.onlyRottable = !sd.onlyRottable; });
+			Toggle("Hide/refuse rotten items", sd.noRotten, delegate { sd.noRotten = !sd.noRotten; });
+			Toggle("Always sort", sd.alwaysSort, delegate { sd.alwaysSort = !sd.alwaysSort; });
+			rows.Add(new MenuRow
+			{
+				label = "Distribution priority: " + sd.priority + "  (pick a new value)",
+				closeOnAct = false,
+				maxAmount = 20,
+				onAmount = delegate(int n) { sd.priority = n; }
+			});
 			return rows;
 		}
 

@@ -48,6 +48,11 @@ $Keys
 {pair|shift+q|Party member sheets and inventories}
 {pair|z|Action circles: ←→ switch ring (Info/Action/Etc/Items), ↑↓ rotate, Enter picks, z closes; last ring remembered}
 
+{topic|Movement shortcuts}
+{pair|Space|Menu of everything interactable around you (single action fires instantly)}
+{pair|bump NPC|Walking into a friendly NPC talks to them (BumpToTalk)}
+{pair|bump object|Walking into a solid interactable uses it (BumpToUse)}
+
 {topic|Hotkeys and extras}
 {pair|shift + 0-9|Fire Extra-hotbar slots 1-10 (ActivateHotkeys config)}
 {pair|F1-F8|Fire slots natively}

@@ -85,6 +85,10 @@ namespace ElonaKeys
 			{
 				return;
 			}
+			// bump tracking: fresh direction press edges (for talk/use on bump)
+			Vector2 axisNow = EInput.axis;
+			bool bumpFresh = axisNow != Vector2.zero && prevBumpAxis == Vector2.zero;
+			prevBumpAxis = axisNow;
 			// what did the user press?
 			Plugin.Entry entry = Plugin.FindPressed();
 			int digitSlot = -1;
@@ -93,6 +97,10 @@ namespace ElonaKeys
 				digitSlot = DigitActivationSlot();
 				if (digitSlot == -1)
 				{
+					if (bumpFresh)
+					{
+						TryBump(axisNow);
+					}
 					return; // nothing of ours pressed
 				}
 			}
@@ -160,6 +168,62 @@ namespace ElonaKeys
 				Plugin.Log?.LogError("ElonaKeys handler '" + entry.name + "' failed: " + ex);
 			}
 			EInput.Consume();
+		}
+
+		private static Vector2 prevBumpAxis;
+
+		// Elona habits: walking into a friendly NPC talks to them; walking into a
+		// solid interactable (quest board, gacha, fountain) uses it.
+		private static void TryBump(Vector2 a)
+		{
+			if (EInput.isShiftDown || EInput.IsConsumed)
+			{
+				return; // shift+move = run / tool use
+			}
+			if (!Plugin.BumpToTalk && !Plugin.BumpToUse)
+			{
+				return;
+			}
+			ActionMode am = EClass.scene.actionMode;
+			if (!(am is AM_Adv) || am is AM_ADV_Target || !EClass.pc.currentZone.IsActiveZone || EClass.ui.BlockActions)
+			{
+				return;
+			}
+			if (EClass.ui.contextMenu != null && EClass.ui.contextMenu.isActive)
+			{
+				return;
+			}
+			Point p = EClass.pc.pos.Copy();
+			p.x += Math.Sign(a.x);
+			p.z += Math.Sign(a.y);
+			if (!p.IsValid)
+			{
+				return;
+			}
+			if (Plugin.BumpToTalk)
+			{
+				foreach (Chara c in p.Charas)
+				{
+					if (c != EClass.pc && !c.IsPCParty && !c.IsHostile() && EClass.pc.CanSee(c))
+					{
+						EInput.axis = Vector2.zero; // talk instead of shoving past
+						ACT.Chat.Perform(EClass.pc, c, p);
+						return;
+					}
+				}
+			}
+			if (Plugin.BumpToUse && p.IsBlocked)
+			{
+				ActPlan plan = Handlers.BuildPlan(p);
+				if (plan.HasAct && !plan.list[0].act.IsHostileAct)
+				{
+					EInput.axis = Vector2.zero;
+					if (plan.list[0].Perform())
+					{
+						EClass.player.EndTurn();
+					}
+				}
+			}
 		}
 
 		// While holding a tool, shift+direction applies it to the adjacent tile
