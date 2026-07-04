@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.1 - 2026-07-04
+
+- Targeting flow rework: no windows in combat. Chara-targeted spells and throws fire INSTANTLY at your remembered target; without one, a light in-world targeting mode opens (slight dim, tile highlight, name strip, arrows cycle by distance, Enter confirms, Esc cancels). Confirming remembers the target.
+- New Target key (classic *, default keypad-multiply): set/change the remembered target without acting.
+- Party buffs cast on the whole party immediately (no member picker).
+- Toolbelt protected: shown as (fixed) in the equipment window, cannot be removed there, excluded from throw.
+
 ## 1.11.0 - 2026-07-04
 
 - Item colors fixed for real: menus now use the game's canonical UI item material (CoreRef.matUIObj) instead of borrowing from a live button whose state varied per save (the darkening).

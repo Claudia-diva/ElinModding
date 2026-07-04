@@ -326,15 +326,18 @@ namespace ElonaKeys
 				BodySlot slot = bodySlot;
 				string slotName = SlotName(slot);
 				Thing eq = slot.thing;
+				bool locked = eq != null && eq.trait is TraitToolBelt; // holds the quickslots
 				rows.Add(new MenuRow
 				{
 					fixedPrefix = slotName + ":",
-					label = (eq != null) ? DetailName(eq) : "-",
+					label = ((eq != null) ? DetailName(eq) : "-") + (locked ? " <size=12>(fixed)</size>" : ""),
 					icon = eq,
 					rightText = (eq != null) ? WeightText(eq.ChildrenAndSelfWeight) : "-",
 					sortWeight = (eq != null) ? eq.ChildrenAndSelfWeight : 0,
 					closeOnAct = false,
-					act = delegate { SlotMenu(slot, slotName); }
+					act = locked
+						? (Action)delegate { Msg.SayRaw("The toolbelt stays on; it holds your quickslots."); }
+						: delegate { SlotMenu(slot, slotName); }
 				});
 			}
 			return rows;
@@ -363,7 +366,7 @@ namespace ElonaKeys
 		private static List<MenuRow> BuildSlotRows(BodySlot slot)
 		{
 			List<MenuRow> rows = new List<MenuRow>();
-			if (slot.thing != null)
+			if (slot.thing != null && !(slot.thing.trait is TraitToolBelt))
 			{
 				Thing worn = slot.thing;
 				rows.Add(new MenuRow
@@ -427,51 +430,42 @@ namespace ElonaKeys
 
 		public static void Throw()
 		{
-			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld,
-				delegate(Thing t) { ThrowTargetMenu(t); },
-				"You have nothing to throw.",
-				refresh: true); // keeps the item list in the back-stack for shift
-		}
-
-		private static void ThrowTargetMenu(Thing t)
-		{
-			List<MenuRow> rows = new List<MenuRow>();
-			List<Chara> targets = new List<Chara>();
-			foreach (Chara c in EClass._map.charas)
-			{
-				if (c != pc && !c.isDead && pc.CanSee(c) && pc.pos.Distance(c.pos) <= 8)
+			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld && !(t.trait is TraitToolBelt),
+				delegate(Thing t)
 				{
-					targets.Add(c);
-				}
-			}
-			targets.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
-			foreach (Chara chara in targets)
-			{
-				Chara c = chara;
-				string tag = pc.IsHostile(c) ? " <color=#ff8080>(hostile)</color>" : "";
-				rows.Add(new MenuRow
-				{
-					label = "Throw at " + c.Name + " (" + pc.pos.Distance(c.pos) + ")" + tag,
-					act = delegate
+					// remembered target throws instantly; otherwise in-world targeting
+					Chara quick = TargetMode.QuickTarget(null);
+					if (quick != null && pc.pos.Distance(quick.pos) <= 8)
+					{
+						ActThrow.Throw(pc, quick.pos, t);
+						EClass.player.EndTurn();
+						return;
+					}
+					List<Chara> targets = new List<Chara>();
+					foreach (Chara c in EClass._map.charas)
+					{
+						if (c != pc && !c.isDead && pc.CanSee(c) && pc.pos.Distance(c.pos) <= 8)
+						{
+							targets.Add(c);
+						}
+					}
+					targets.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
+					if (targets.Count == 0)
+					{
+						DirPrompt.Ask("Throw in which direction?", self: false, delegate(Point p)
+						{
+							ActThrow.Throw(pc, p, t);
+							EClass.player.EndTurn();
+						});
+						return;
+					}
+					TargetMode.Begin("Throw " + t.Name, targets, delegate(Chara c)
 					{
 						ActThrow.Throw(pc, c.pos, t);
 						EClass.player.EndTurn();
-					}
-				});
-			}
-			rows.Add(new MenuRow
-			{
-				label = "Pick a direction...",
-				act = delegate
-				{
-					DirPrompt.Ask("Throw in which direction?", self: false, delegate(Point p)
-					{
-						ActThrow.Throw(pc, p, t);
-						EClass.player.EndTurn();
 					});
-				}
-			});
-			MenuSystem.Show("Throw " + t.Name + " at?", rows);
+				},
+				"You have nothing to throw.");
 		}
 
 		public static void Ammo()
@@ -1448,37 +1442,14 @@ namespace ElonaKeys
 				}
 				return;
 			}
-			// party spells: native multi-cast, plus individual picks
+			// party spells: cast on the whole party immediately (native multi-cast),
+			// combat flow beats a member-picker
 			if (tt.ForceParty || tt.Range == TargetRange.Party)
 			{
-				List<MenuRow> prows = new List<MenuRow>();
-				prows.Add(new MenuRow
+				if (pc.UseAbility(act, null, null, pt: true))
 				{
-					label = "Cast on the whole party",
-					act = delegate
-					{
-						if (pc.UseAbility(act, null, null, pt: true))
-						{
-							EClass.player.EndTurn();
-						}
-					}
-				});
-				foreach (Chara chara in pc.party.members)
-				{
-					Chara m = chara;
-					prows.Add(new MenuRow
-					{
-						label = m.IsPC ? "Yourself" : m.Name,
-						act = delegate
-						{
-							if (pc.UseAbility(act, m, m.pos))
-							{
-								EClass.player.EndTurn();
-							}
-						}
-					});
+					EClass.player.EndTurn();
 				}
-				MenuSystem.Show(act.GetText() + " on?", prows);
 				return;
 			}
 			// ground-targeted: iso-aware direction (self allowed when valid)
@@ -1497,8 +1468,29 @@ namespace ElonaKeys
 				});
 				return;
 			}
-			// chara-targeted: menu of valid targets, range/LOS enforced by CanPerform
-			List<MenuRow> rows = new List<MenuRow>();
+			// chara-targeted: remembered target fires INSTANTLY (Elona flow);
+			// otherwise the in-world targeting mode (dim + cycle), no window
+			Chara quick = TargetMode.QuickTarget(act);
+			if (quick != null && (!tt.CanOnlyTargetEnemy || pc.IsHostile(quick)))
+			{
+				if (pc.UseAbility(act, quick, quick.pos))
+				{
+					TargetMode.Remember(quick);
+					EClass.player.EndTurn();
+				}
+				return;
+			}
+			TargetMode.Begin(act.GetText(), CastCandidates(act, tt), delegate(Chara c)
+			{
+				if (pc.UseAbility(act, c, c.pos))
+				{
+					EClass.player.EndTurn();
+				}
+			});
+		}
+
+		private static List<Chara> CastCandidates(Act act, TargetType tt)
+		{
 			List<Chara> targets = new List<Chara>();
 			foreach (Chara c in EClass._map.charas)
 			{
@@ -1521,28 +1513,26 @@ namespace ElonaKeys
 				targets.Add(c);
 			}
 			targets.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
-			foreach (Chara chara in targets)
+			return targets;
+		}
+
+		// classic '*': set or change the remembered target without acting
+		public static void PickTarget()
+		{
+			List<Chara> targets = new List<Chara>();
+			foreach (Chara c in EClass._map.charas)
 			{
-				Chara c = chara;
-				string tag = pc.IsHostile(c) ? " <color=#ff8080>(hostile)</color>" : (c.IsPCParty ? " <color=#80c080>(party)</color>" : "");
-				rows.Add(new MenuRow
+				if (c != pc && !c.isDead && pc.CanSee(c) && pc.pos.Distance(c.pos) <= 12)
 				{
-					label = (c == pc ? "Yourself" : c.Name) + " (" + pc.pos.Distance(c.pos) + ")" + tag,
-					act = delegate
-					{
-						if (pc.UseAbility(act, c, c.pos))
-						{
-							EClass.player.EndTurn();
-						}
-					}
-				});
+					targets.Add(c);
+				}
 			}
-			if (rows.Count == 0)
+			targets.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
+			TargetMode.Begin("Target", targets, delegate(Chara c)
 			{
-				Msg.SayRaw("No valid target in range for " + act.GetText() + ".");
-				return;
-			}
-			MenuSystem.Show(act.GetText() + " at?", rows);
+				TargetMode.Remember(c);
+				Msg.SayRaw("Targeting " + c.Name + ".");
+			});
 		}
 
 		// config macros: cast a comma-separated ability sequence (buff chains)

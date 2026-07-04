@@ -56,6 +56,15 @@ namespace ElonaKeys
 				EInput.functionkey = -1;
 				return;
 			}
+			if (TargetMode.Active)
+			{
+				// in-world targeting: fence movement and native actions
+				TargetMode.HandleKeys();
+				EInput.axis = Vector2.zero;
+				EInput.action = EAction.None;
+				EInput.hotkey = -1;
+				return;
+			}
 			if (DirPrompt.Handle())
 			{
 				return; // direction prompt is eating input this frame

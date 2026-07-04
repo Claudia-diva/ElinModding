@@ -36,6 +36,7 @@ $Keys
 {topic|Action Keys}
 {pair|v|Spells (mana): favorites, type filter, digit = hotkey}
 {pair|a|Special actions (stamina): favorites, type filter, digit = hotkey}
+{pair|* (keypad)|Set the remembered target; spells/throws then fire at it instantly}
 {pair|i|Interact with a direction: keyboard menu of everything there}
 {pair|s|Actions on your own tile: search, harvest, dig treasure...}
 {pair|f|Fire ranged weapon}
