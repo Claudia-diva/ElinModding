@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.11.4 - 2026-07-04
+
+- The shift-page bar is now a clone of the real hotbar widget instead of a hand-drawn strip: same slot size, skin, icon rendering and shortcut numbers, and it follows the hotbar's icon-size setting. Slots are real hotbar slots (drag items onto them to assign to the other page). Position is saved as an offset from the main hotbar (drag the bar's empty space to move it); config keys renamed to ShiftBarOffsetX/Y, default is right above the hotbar.
+
 ## 1.11.3 - 2026-07-04
 
 - Chests and containers now open the keyboard take/put menu no matter how you open them (walking into them, space, mouse click...). Locked chests still lockpick natively and surprise packages still spring their mimic. KeyboardContainers config to turn off.

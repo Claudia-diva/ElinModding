@@ -60,7 +60,7 @@ $Keys
 {topic|Hotkeys and extras}
 {pair|1-9 in a menu|Assign the selected item/spell to that quickslot}
 {pair|shift+1-9 in a menu|Assign to the OTHER quickslot page}
-{pair|shift + 1-9|Fire the other quickslot page (mini-bar shows it)}
+{pair|shift + 1-9|Fire the other quickslot page (second hotbar shows it; cloned from the real one, drag items onto it to assign)}
 {pair|MacroKey1-3|Cast the Macro1-3 ability sequences (config)}
 {pair|F1-F8|Fire the Extra bar natively}
 {pair|shift + move|Use held tool on the adjacent tile (mine/chop/till)}
@@ -73,6 +73,9 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.11.4}
+・ Shift-page bar rebuilt as a clone of the real hotbar widget: identical size/skin, real slots (drag to assign), sits above the hotbar by default.
+
 {topic|1.11.3}
 ・ Chests/containers open the keyboard menu from ANY route; item processors get a keyboard ingredient picker.
 ・ s harvests/collects your tile instantly; falls back to a menu with "Search the ground".

@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.11.3";
+		public const string Version = "1.11.4";
 
 		internal static ManualLogSource Log;
 
@@ -153,9 +153,9 @@ namespace ElonaKeys
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
 				"shift = shift+1..9 fires the NON-displayed quickslot page (plain digits stay native). off = disable. Assignment: select/hover an item or spell in a menu and press 1-9 (shift+digit = other page).");
 			shiftBarVisible = Config.Bind("Hotkeys", "ShiftBarVisible", true,
-				"Show a small draggable bar with the other quickslot page's icons (what shift+1..9 fires).");
-			shiftBarX = Config.Bind("Hotkeys", "ShiftBarX", 0f, "Shift-bar position (drag it to move; saved automatically).");
-			shiftBarY = Config.Bind("Hotkeys", "ShiftBarY", -320f, "Shift-bar position (drag it to move; saved automatically).");
+				"Show a second hotbar with the other quickslot page's slots (what shift+1..9 fires). Cloned from the real hotbar widget, so it matches its size and skin.");
+			shiftBarX = Config.Bind("Hotkeys", "ShiftBarOffsetX", 0f, "Shift-bar offset from the main hotbar (drag its empty space to move; saved automatically).");
+			shiftBarY = Config.Bind("Hotkeys", "ShiftBarOffsetY", 76f, "Shift-bar offset from the main hotbar (drag its empty space to move; saved automatically).");
 			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
 				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Locked chests and surprise packages stay native.");
 			keyboardCrafters = Config.Bind("Menus", "KeyboardCrafters", true,

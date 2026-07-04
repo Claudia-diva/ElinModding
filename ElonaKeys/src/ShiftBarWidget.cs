@@ -5,18 +5,21 @@ using UnityEngine.UI;
 
 namespace ElonaKeys
 {
-	// Small persistent overlay showing the NON-displayed quickslot page (the one
-	// shift+1..9 fires). Draggable; position saved to config. Refreshes when the
-	// toolbelt changes or the page flips.
+	// Overlay showing the NON-displayed quickslot page (what shift+1..9 fires).
+	// Built by cloning the live hotbar widget (WidgetCurrentTool), so size, skin
+	// and slot rendering are pixel-identical to the real bar; the clone's UIList
+	// is re-driven with the other page's things through the same InvOwnerHotbar,
+	// which also makes drag-assign onto the bar work. Draggable by its empty
+	// space; offset from the hotbar saved to config.
 	public class ShiftBarWidget : MonoBehaviour, IDragHandler, IEndDragHandler
 	{
 		private static ShiftBarWidget instance;
 		private static bool dirty = true;
 
-		private readonly Image[] icons = new Image[9];
-		private readonly Image[] bgs = new Image[9];
+		private UIList list;
 		private int shownPage = -1;
 		private float refreshTimer;
+		private Vector2 cellAtBuild;
 
 		public static void SetDirty()
 		{
@@ -26,136 +29,171 @@ namespace ElonaKeys
 		// called every frame from MenuExtras.OnUpdate
 		public static void EnsureAndUpdate()
 		{
-			bool wanted = Plugin.ShiftBarVisible && EClass.core != null && EClass.core.IsGameStarted && EClass.pc != null && EClass.ui != null;
+			WidgetCurrentTool src = WidgetCurrentTool.Instance;
+			bool wanted = Plugin.ShiftBarVisible && EClass.core != null && EClass.core.IsGameStarted
+				&& EClass.pc != null && EClass.ui != null && src != null && (bool)src;
 			if (!wanted)
 			{
-				if (instance != null && instance)
-				{
-					UnityEngine.Object.Destroy(instance.gameObject);
-					instance = null;
-				}
+				Drop();
 				return;
+			}
+			// follow the hotbar's icon-size setting: rebuild when it changes
+			if (instance != null && instance && instance.cellAtBuild != CellSize(src))
+			{
+				Drop();
 			}
 			if (instance == null || !instance)
 			{
-				Build();
+				try
+				{
+					Build(src);
+				}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogError("ElonaKeys shift bar build failed: " + ex);
+					return;
+				}
 			}
-			instance.Tick();
+			if (instance != null && instance)
+			{
+				instance.Tick();
+			}
 		}
 
-		private static void Build()
+		private static Vector2 CellSize(WidgetCurrentTool src)
 		{
-			GameObject root = new GameObject("ElonaKeysShiftBar");
-			root.transform.SetParent(EClass.ui.transform, worldPositionStays: false);
-			RectTransform rt = root.AddComponent<RectTransform>();
-			rt.sizeDelta = new Vector2(9 * 42f + 8f, 50f);
-			rt.anchoredPosition = new Vector2(Plugin.ShiftBarX, Plugin.ShiftBarY);
-			Image bg = root.AddComponent<Image>();
-			bg.color = new Color(0.05f, 0.04f, 0.03f, 0.45f);
-			bg.raycastTarget = true; // drag surface
+			try
+			{
+				return EClass.setting.ui.iconSizes[src.extra.iconSize];
+			}
+			catch
+			{
+				return new Vector2(40f, 40f);
+			}
+		}
+
+		private static void Drop()
+		{
+			if (instance != null && instance)
+			{
+				UnityEngine.Object.Destroy(instance.gameObject);
+			}
+			instance = null;
+		}
+
+		private static int OtherPage()
+		{
+			return (EClass.player.hotbarPage == 0) ? 1 : 0;
+		}
+
+		private static void Build(WidgetCurrentTool src)
+		{
+			GameObject root = UnityEngine.Object.Instantiate(src.gameObject, src.transform.parent);
+			root.name = "ElonaKeysShiftBar";
+			WidgetCurrentTool comp = root.GetComponent<WidgetCurrentTool>();
+			UIList clonedList = comp.list;
+			GridLayoutGroup layout = comp.layout;
+			int slots = Mathf.Clamp(src.maxSlots, 1, 9);
+			bool showShortcut = false;
+			try
+			{
+				showShortcut = src.extra.showShortcut;
+			}
+			catch
+			{
+			}
+			// strip everything that isn't the slot grid
+			if ((bool)comp.buttonHotItem)
+			{
+				UnityEngine.Object.DestroyImmediate(comp.buttonHotItem.gameObject);
+			}
+			if ((bool)comp.buttonSwitchPage)
+			{
+				UnityEngine.Object.DestroyImmediate(comp.buttonSwitchPage.gameObject);
+			}
+			if ((bool)comp.iconHeld)
+			{
+				UnityEngine.Object.DestroyImmediate(comp.iconHeld.gameObject);
+			}
+			if ((bool)comp.imageHighlight)
+			{
+				UnityEngine.Object.DestroyImmediate(comp.imageHighlight.gameObject);
+			}
+			if ((bool)comp.transHighlightSwitch)
+			{
+				UnityEngine.Object.DestroyImmediate(comp.transHighlightSwitch.gameObject);
+			}
+			// the widget component's Update would NRE on the stripped pieces
+			UnityEngine.Object.DestroyImmediate(comp);
+			foreach (UIPlaceHelper ph in root.GetComponentsInChildren<UIPlaceHelper>(includeInactive: true))
+			{
+				UnityEngine.Object.DestroyImmediate(ph);
+			}
 			instance = root.AddComponent<ShiftBarWidget>();
-			Font font = FindFont();
-			for (int i = 0; i < 9; i++)
+			instance.list = clonedList;
+			instance.cellAtBuild = CellSize(src);
+			layout.cellSize = instance.cellAtBuild;
+			RectTransform rt = root.transform as RectTransform;
+			RectTransform srcRt = src.transform as RectTransform;
+			rt.anchoredPosition = srcRt.anchoredPosition + new Vector2(Plugin.ShiftBarX, Plugin.ShiftBarY);
+			// same wiring as WidgetCurrentTool.RebuildSlots, aimed at the other page
+			clonedList.Clear();
+			clonedList.callbacks = new UIList.Callback<Thing, ButtonGridDrag>
 			{
-				GameObject slot = new GameObject("slot" + i);
-				slot.transform.SetParent(root.transform, worldPositionStays: false);
-				RectTransform srt = slot.AddComponent<RectTransform>();
-				srt.sizeDelta = new Vector2(40f, 40f);
-				srt.anchoredPosition = new Vector2(-((9 - 1) * 42f) / 2f + i * 42f, 2f);
-				Image sbg = slot.AddComponent<Image>();
-				sbg.color = new Color(0.1f, 0.09f, 0.07f, 0.7f);
-				sbg.raycastTarget = false;
-				instance.bgs[i] = sbg;
-				GameObject icon = new GameObject("icon");
-				icon.transform.SetParent(slot.transform, worldPositionStays: false);
-				Image img = icon.AddComponent<Image>();
-				img.raycastTarget = false;
-				img.enabled = false;
-				instance.icons[i] = img;
-				GameObject lab = new GameObject("num");
-				lab.transform.SetParent(slot.transform, worldPositionStays: false);
-				Text t = lab.AddComponent<Text>();
-				t.font = font;
-				t.fontSize = 11;
-				t.alignment = TextAnchor.LowerRight;
-				t.color = new Color(0.85f, 0.8f, 0.6f, 0.9f);
-				t.raycastTarget = false;
-				t.text = "S" + (i + 1);
-				RectTransform lrt = t.rectTransform;
-				lrt.sizeDelta = new Vector2(38f, 14f);
-				lrt.anchoredPosition = new Vector2(0f, -14f);
+				onRedraw = delegate(Thing a, ButtonGridDrag b, int i)
+				{
+					int other = OtherPage();
+					b.subText2.SetText(((i + 1) % 10).ToString() ?? "");
+					b.subText2.SetActive(showShortcut);
+					b.index = i % 10 + 10 * other;
+					b.SetCardGrid(a, new InvOwnerHotbar(EClass.pc)
+					{
+						index = i % 10 + 10 * other
+					});
+				}
+			};
+			for (int j = 0; j < slots; j++)
+			{
+				clonedList.Add(null);
 			}
+			clonedList.onBeforeRedraw = delegate
+			{
+				int other = OtherPage();
+				Thing[] grid = new Thing[20];
+				foreach (Thing t in EClass.pc.things)
+				{
+					if (t.invY == 1 && t.invX >= other * 10 && t.invX < other * 10 + 10 && t.invX < 20)
+					{
+						grid[t.invX] = t;
+					}
+				}
+				for (int l = 0; l < clonedList.buttons.Count; l++)
+				{
+					UIList.ButtonPair pair = clonedList.buttons[l];
+					pair.obj = grid[l + other * 10];
+					clonedList.buttons[l] = pair;
+				}
+			};
+			clonedList.onAfterRedraw = null;
+			clonedList.Refresh();
+			clonedList.Redraw();
 			dirty = true;
-		}
-
-		private static Font FindFont()
-		{
-			Text existing = UnityEngine.Object.FindObjectOfType<Text>();
-			if (existing != null && existing.font != null)
-			{
-				return existing.font;
-			}
-			return Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 		}
 
 		private void Tick()
 		{
 			refreshTimer -= Time.unscaledDeltaTime;
-			int otherPage = (EClass.player.hotbarPage == 0) ? 1 : 0;
-			if (!dirty && otherPage == shownPage && refreshTimer > 0f && !WidgetCurrentTool.dirty)
+			int other = OtherPage();
+			if (!dirty && other == shownPage && refreshTimer > 0f && !WidgetCurrentTool.dirty)
 			{
 				return;
 			}
 			dirty = false;
-			shownPage = otherPage;
+			shownPage = other;
 			refreshTimer = 1f;
 			try
 			{
-				Thing[] slots = new Thing[9];
-				foreach (Thing t in EClass.pc.things)
-				{
-					if (t.invY == 1 && t.invX >= otherPage * 10 && t.invX < otherPage * 10 + 9)
-					{
-						slots[t.invX - otherPage * 10] = t;
-					}
-				}
-				for (int i = 0; i < 9; i++)
-				{
-					Image img = icons[i];
-					if (slots[i] == null)
-					{
-						img.enabled = false;
-						continue;
-					}
-					img.enabled = true;
-					slots[i].SetImage(img);
-					Material mat = null;
-					try
-					{
-						mat = EClass.core.refs.matUIObj;
-					}
-					catch
-					{
-					}
-					if (mat != null)
-					{
-						img.material = mat;
-					}
-					else
-					{
-						img.color = Color.white;
-					}
-					RectTransform rt = img.rectTransform;
-					rt.pivot = new Vector2(0.5f, 0.5f);
-					rt.anchoredPosition = Vector2.zero;
-					img.transform.localScale = new Vector3(Mathf.Abs(img.transform.localScale.x), img.transform.localScale.y, 1f);
-					Vector2 s = rt.sizeDelta;
-					float max = Mathf.Max(s.x, s.y);
-					if (max > 34f)
-					{
-						rt.sizeDelta = s * (34f / max);
-					}
-				}
+				list.Redraw();
 			}
 			catch (Exception ex)
 			{
@@ -172,7 +210,12 @@ namespace ElonaKeys
 		public void OnEndDrag(PointerEventData e)
 		{
 			RectTransform rt = transform as RectTransform;
-			Plugin.SaveShiftBarPos(rt.anchoredPosition.x, rt.anchoredPosition.y);
+			WidgetCurrentTool src = WidgetCurrentTool.Instance;
+			if (src != null && (bool)src)
+			{
+				Vector2 off = rt.anchoredPosition - (src.transform as RectTransform).anchoredPosition;
+				Plugin.SaveShiftBarPos(off.x, off.y);
+			}
 		}
 	}
 }
