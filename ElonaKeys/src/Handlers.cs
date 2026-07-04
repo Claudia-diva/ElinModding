@@ -651,10 +651,41 @@ namespace ElonaKeys
 			});
 		}
 
+		// Elona bash = kick: shove characters, kick doors open, smash blockers.
 		public static void Bash()
 		{
 			DirPrompt.Ask("Bash in which direction?", self: false, delegate(Point p)
 			{
+				foreach (Chara c in p.Charas)
+				{
+					if (c != pc)
+					{
+						if (ACT.Kick.Perform(pc, c, p))
+						{
+							EClass.player.EndTurn();
+						}
+						return;
+					}
+				}
+				foreach (Thing t in p.Things)
+				{
+					if (t.IsInstalled && t.trait is TraitDoor door && !door.IsOpen())
+					{
+						if (t.c_lockLv > 0)
+						{
+							pc.PlaySound("kick");
+							Msg.SayRaw("The " + t.Name + " is locked.");
+						}
+						else
+						{
+							pc.PlaySound("kick");
+							pc.Say("bash", pc, t.Name);
+							door.ToggleDoor();
+							EClass.player.EndTurn();
+						}
+						return;
+					}
+				}
 				ActBash act = new ActBash();
 				if (act.Perform(pc, null, p))
 				{
@@ -662,7 +693,8 @@ namespace ElonaKeys
 				}
 				else
 				{
-					Msg.SayRaw("There is nothing there to bash.");
+					pc.Kick(p, ignoreSelf: true);
+					EClass.player.EndTurn();
 				}
 			});
 		}
@@ -838,8 +870,68 @@ namespace ElonaKeys
 			return rows;
 		}
 
-		// Classic 'z' action wheel: every verb in one menu.
+		// Classic 'z' action wheel: radial circle by default, window as fallback.
 		public static void Wheel()
+		{
+			if (Plugin.WheelStyle != "list")
+			{
+				RadialWheel.Toggle(WheelVerbList());
+				return;
+			}
+			WheelWindow();
+		}
+
+		private static readonly Dictionary<string, (string label, Action act)> wheelVerbs =
+			new Dictionary<string, (string, Action)>(StringComparer.OrdinalIgnoreCase)
+		{
+			{ "Eat", ("Eat", Eat) },
+			{ "Quaff", ("Quaff", Quaff) },
+			{ "Read", ("Read", ReadItem) },
+			{ "Zap", ("Zap", Zap) },
+			{ "Cast", ("Cast", Cast) },
+			{ "Equip", ("Equip", Wear) },
+			{ "Tool", ("Tool", HoldTool) },
+			{ "Use", ("Use", Use) },
+			{ "Blend", ("Blend", Blend) },
+			{ "Throw", ("Throw", Throw) },
+			{ "Ammo", ("Ammo", Ammo) },
+			{ "Get", ("Get", Get) },
+			{ "Drop", ("Drop", Drop) },
+			{ "Open", ("Open", Open) },
+			{ "Door", ("Door", DoorToggle) },
+			{ "Bash", ("Bash", Bash) },
+			{ "Dig", ("Dig", Dig) },
+			{ "Search", ("Search", SearchHere) },
+			{ "Interact", ("Interact", Interact) },
+			{ "Pray", ("Pray", Pray) },
+			{ "Offer", ("Offer", Offer) },
+			{ "Give", ("Give", Give) },
+			{ "Party", ("Party", Party) },
+			{ "Inventory", ("Inventory", ExamineInventory) }
+		};
+
+		private static List<(string, Action)> WheelVerbList()
+		{
+			List<(string, Action)> list = new List<(string, Action)>();
+			foreach (string raw in Plugin.WheelVerbs.Split(','))
+			{
+				string name = raw.Trim();
+				if (name.Length > 0 && wheelVerbs.TryGetValue(name, out (string label, Action act) v))
+				{
+					list.Add((v.label, v.act));
+				}
+			}
+			if (list.Count == 0)
+			{
+				foreach (KeyValuePair<string, (string label, Action act)> kv in wheelVerbs)
+				{
+					list.Add((kv.Value.label, kv.Value.act));
+				}
+			}
+			return list;
+		}
+
+		private static void WheelWindow()
 		{
 			List<MenuRow> rows = new List<MenuRow>();
 			void Sub(string label, Action act) // opens one of our menus; shift returns here

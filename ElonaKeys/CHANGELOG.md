@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.6.0 - 2026-07-03
+
+- z now opens a true radial action wheel (custom circle UI): arrows rotate, Enter/Space or click activates, z/Escape closes. WheelVerbs config picks what's on it (default 12 classic verbs); WheelStyle=list brings the window back.
+- Bash rewired to Elona behavior: kick characters to shove them, kick closed doors open (locked doors thud), smash block-pass objects, kick the air otherwise.
+
+## 1.5.3 - 2026-07-03
+
+- Fixed a null tooltip-slot call that aborted every menu build after row one (broken Wear window, stale ghost rows). Row building is now exception-proof per row; weight renders inside the row text.
+
 ## 1.5.2 - 2026-07-03
 
 - Native popups are keyboard-navigable: right-click context menus, yes/no dialogs and native list windows respond to arrows + Enter (arrows move a highlight, Enter clicks; untouched until you press an arrow, so mouse and default-Enter behavior stay intact).

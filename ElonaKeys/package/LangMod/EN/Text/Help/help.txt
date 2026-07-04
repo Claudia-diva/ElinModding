@@ -45,7 +45,7 @@ $Keys
 {pair|O|Offer at an adjacent altar}
 {pair|G|Give to an adjacent character (one per pick from stacks)}
 {pair|shift+q|Party member sheets and inventories}
-{pair|z|Action wheel: every verb of this mod in one menu}
+{pair|z|Radial action wheel: arrows rotate, Enter picks, z closes}
 
 {topic|Hotkeys and extras}
 {pair|shift + 0-9|Fire Extra-hotbar slots 1-10 (ActivateHotkeys config)}
@@ -60,6 +60,12 @@ $Keys
 ・ Character sheet (c), journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.6.0}
+・ z opens a real radial wheel (WheelVerbs/WheelStyle configs); bash kicks like Elona (shove NPCs, kick doors open).
+
+{topic|1.5.3}
+・ Fixed broken menu builds (single row, ghost items); weight shown inside row text.
+
 {topic|1.5.2}
 ・ Native popups (context menus, dialogs, list windows) navigable with arrows + Enter.
 ・ Fixed Cast stuck on shift+z in old configs (now v); Wheel added to old configs.

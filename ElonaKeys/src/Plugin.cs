@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.5.3";
+		public const string Version = "1.6.0";
 
 		internal static ManualLogSource Log;
 
@@ -49,6 +49,8 @@ namespace ElonaKeys
 		private static ConfigEntry<string> activateHotkeys;
 		private static ConfigEntry<bool> shiftDirTool;
 		private static ConfigEntry<string> suppressNativeKeys;
+		private static ConfigEntry<string> wheelStyle;
+		private static ConfigEntry<string> wheelVerbs;
 
 		internal static bool OverrideGameKeys => overrideGameKeys.Value;
 		internal static bool DebugLog => debugLog.Value;
@@ -58,6 +60,8 @@ namespace ElonaKeys
 		internal static string NameDisplay => nameDisplay.Value;
 		internal static string ActivateHotkeys => activateHotkeys.Value;
 		internal static bool ShiftDirTool => shiftDirTool.Value;
+		internal static string WheelStyle => wheelStyle.Value;
+		internal static string WheelVerbs => wheelVerbs.Value;
 		internal static List<Keybind> SuppressBinds { get; private set; } = new List<Keybind>();
 
 		private void Awake()
@@ -79,6 +83,10 @@ namespace ElonaKeys
 				"While holding a tool, shift+direction uses it on the adjacent tile (mine, chop, till...) like drag-right-click.");
 			suppressNativeKeys = Config.Bind("General", "SuppressNativeKeys", "",
 				"Comma-separated keys hidden from the game entirely (use when a native Elin key annoys you and you don't want either binding).");
+			wheelStyle = Config.Bind("Menus", "WheelStyle", "radial",
+				"z action wheel style: radial (classic Elona circle) or list (window).");
+			wheelVerbs = Config.Bind("Menus", "WheelVerbs", "Eat,Quaff,Read,Zap,Cast,Equip,Throw,Get,Drop,Search,Interact,Pray",
+				"Comma-separated verbs on the radial wheel. Available: Eat, Quaff, Read, Zap, Cast, Equip, Tool, Use, Blend, Throw, Ammo, Get, Drop, Open, Door, Bash, Dig, Search, Interact, Pray, Offer, Give, Party, Inventory.");
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
 				"Digit keys activate Extra-hotbar slots assigned via the menus (hover an item/spell and press 0-9, shift+0-9 for slots 11-20). Activation mode: off, shift (shift+1..0 fires slots 1-10), plain (1..0 fires slots 1-10 and REPLACES the native toolbelt digits; shift+1..0 fires slots 11-20). F1-F8 always work natively for the first slots.");
 

@@ -39,6 +39,16 @@ namespace ElonaKeys
 			{
 				return;
 			}
+			if (RadialWheel.Active)
+			{
+				// the wheel owns the keyboard: no movement, no native actions
+				RadialWheel.HandleKeys();
+				EInput.axis = Vector2.zero;
+				EInput.action = EAction.None;
+				EInput.hotkey = -1;
+				EInput.functionkey = -1;
+				return;
+			}
 			if (DirPrompt.Handle())
 			{
 				return; // direction prompt is eating input this frame
