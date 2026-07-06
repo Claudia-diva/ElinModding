@@ -93,6 +93,25 @@ namespace ElonaKeys
 			{
 				return;
 			}
+			// vanilla-lock toggle (default CapsLock): while ON, no vanilla key
+			// ACTION fires at all; movement and digit quickslots stay native
+			foreach (Keybind kb in Plugin.SuppressAllBinds)
+			{
+				if (kb.IsDown())
+				{
+					suppressVanilla = !suppressVanilla;
+					Msg.SayRaw(suppressVanilla
+						? "Vanilla keybinds LOCKED: only " + Plugin.Name + " keys act. (" + kb + " to restore)"
+						: "Vanilla keybinds restored.");
+					EInput.action = EAction.None;
+					EInput.Consume();
+					return;
+				}
+			}
+			if (suppressVanilla)
+			{
+				EInput.action = EAction.None;
+			}
 			// swallow keys the user asked us to hide from the game entirely
 			foreach (Keybind sb in Plugin.SuppressBinds)
 			{
@@ -114,6 +133,15 @@ namespace ElonaKeys
 			prevBumpAxis = axisNow;
 			// what did the user press?
 			Plugin.Entry entry = Plugin.FindPressed();
+			// THE OverrideGameKeys promise, kept fully: the moment a pressed key
+			// matches one of our binds, the native action is dead — even when a
+			// gate below skips our handler (float windows, wrong mode...).
+			// Previously suppression only happened after ALL gates passed, so
+			// vanilla actions leaked through in exactly those in-between states.
+			if (entry != null && Plugin.OverrideGameKeys && entry.action == EAction.None)
+			{
+				EInput.action = EAction.None;
+			}
 			int digitSlot = -1;
 			if (entry == null)
 			{
@@ -200,6 +228,7 @@ namespace ElonaKeys
 		}
 
 		private static Vector2 prevBumpAxis;
+		private static bool suppressVanilla;
 
 		// Elona habits: walking into a friendly NPC talks to them; walking into a
 		// solid interactable (quest board, gacha, fountain) uses it.

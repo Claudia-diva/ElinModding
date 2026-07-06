@@ -71,6 +71,7 @@ $Keys
 {pair|F1-F8|Fire the Extra bar natively}
 {pair|shift + move|Use held tool on the adjacent tile (mine/chop/till)}
 {pair|SuppressNativeKeys|Config list of game keys to swallow (e.g. z)}
+{pair|CapsLock|Vanilla lock toggle: while ON, no vanilla key action fires (mod keys, movement, quickslots only). SuppressAllKey config}
 
 {topic|Deliberate differences from Elona}
 ・ Quantity for stacks is an arrow-key spinner instead of typed numbers.
@@ -79,6 +80,9 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.17.1}
+・ OverrideGameKeys no longer leaks vanilla actions in gated states. CapsLock toggles a full vanilla-key lock (SuppressAllKey).
+
 {topic|1.17.0}
 ・ Tab never falls through to the native inventory. Bump-to-work: run into trees/walls with the right tool held.
 ・ t menu pins "(held) put away". Family bar: size slider + Tab-hint toggle in its right-click menu.

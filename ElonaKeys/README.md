@@ -69,7 +69,8 @@ Movement stays on numpad/arrows/WASD as in vanilla. Journal (j), log and help re
 
 - Every key rebindable: `e`, `shift+t`, `period`, comma-separated alternatives, `none`.
 - `OverrideGameKeys` (default **true**): mod keys beat native Elin bindings on clash. If keys ever behave "native", check this first.
-- `SuppressNativeKeys`: swallow game keys entirely. `KeyboardContainers` / `KeyboardCrafters`: the container/processor redirects. `FamilyBarVisible` / `ShiftBarVisible`: the widget/overlay defaults. `IsoAim`, `BumpToTalk`, `BumpToUse`, `ShiftDirTool`, `MenuPageSize`, `NameDisplay`, `MacroN`.
+- `SuppressAllKey` (default **CapsLock**, unused by the game): toggles a full vanilla-key lock: while ON only mod keys, movement, and digit quickslots act. No need to unbind anything in Elin's settings.
+- `SuppressNativeKeys`: swallow game keys entirely. `KeyboardContainers` / `KeyboardCrafters`: the container/processor redirects. `FamilyBarVisible` / `ShiftBarVisible` / `FamilyBarScale` / `FamilyBarHint`: widget/overlay options. `IsoAim`, `BumpToTalk`, `BumpToUse`, `ShiftDirTool`, `MenuPageSize`, `NameDisplay`, `MacroN`.
 - `DebugLog` explains every ignored keypress in `BepInEx/LogOutput.log`.
 
 ## Deliberate differences from classic Elona

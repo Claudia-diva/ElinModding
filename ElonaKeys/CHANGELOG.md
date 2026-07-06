@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.17.1 - 2026-07-05
+
+- OverrideGameKeys fixed properly: it used to suppress the vanilla action only when our handler actually ran, so in every in-between state (float windows open, gates skipping) the vanilla key leaked through. Now the instant a pressed key matches one of our binds, the native action is dead, gates or not. (Native-passthrough binds like Fire are exempt.)
+- CapsLock = vanilla lock toggle (new SuppressAllKey config): while ON, NO vanilla key action fires at all: only this mod's keys, movement, and digit quickslots work. No need to unbind anything in Elin's settings. CapsLock is unused by the game; rebind or set 'none' to disable.
+
 ## 1.17.0 - 2026-07-05
 
 - Tab can no longer fall through to the native inventory: while our menus (or any modal window) are open, the game's own Tab action is neutralized at the input stage. That was the "Tab quits the menu and opens the Elin inventory" bug.

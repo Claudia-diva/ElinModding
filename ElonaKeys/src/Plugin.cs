@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.17.0";
+		public const string Version = "1.17.1";
 
 		internal static ManualLogSource Log;
 
@@ -53,6 +53,7 @@ namespace ElonaKeys
 		private static ConfigEntry<bool> bumpToUse;
 		private static ConfigEntry<bool> isoAim;
 		private static ConfigEntry<string> suppressNativeKeys;
+		private static ConfigEntry<string> suppressAllKey;
 		private static ConfigEntry<string> wheelStyle;
 		private static ConfigEntry<string> wheelInfo;
 		private static ConfigEntry<string> wheelAction;
@@ -116,6 +117,7 @@ namespace ElonaKeys
 		}
 
 		internal static List<Keybind> SuppressBinds { get; private set; } = new List<Keybind>();
+		internal static List<Keybind> SuppressAllBinds { get; private set; } = new List<Keybind>();
 
 		private void Awake()
 		{
@@ -142,6 +144,8 @@ namespace ElonaKeys
 				"Direction prompts aim at the tile that LOOKS that way on screen (Elin's grid is rotated 45 degrees). Off = raw grid directions matching movement.");
 			suppressNativeKeys = Config.Bind("General", "SuppressNativeKeys", "",
 				"Comma-separated keys hidden from the game entirely (use when a native Elin key annoys you and you don't want either binding).");
+			suppressAllKey = Config.Bind("General", "SuppressAllKey", "capsLock",
+				"Toggle key: while ON, ALL vanilla key actions are blocked and only this mod's keys (plus movement and digit quickslots) work. CapsLock is unused by the game. 'none' disables the toggle.");
 			wheelStyle = Config.Bind("Menus", "WheelStyle", "radial",
 				"z action wheel style: radial (classic Elona circles) or list (window).");
 			wheelInfo = Config.Bind("Menus", "WheelInfo", "Help,Chara,Journal,Log,Equip,Inventory",
@@ -246,6 +250,7 @@ namespace ElonaKeys
 				}
 			}
 			SuppressBinds = Keybind.ParseList(suppressNativeKeys.Value);
+			SuppressAllBinds = Keybind.ParseList(suppressAllKey.Value);
 		}
 
 		internal static Entry FindPressed()
