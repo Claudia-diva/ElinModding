@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.17.1";
+		public const string Version = "1.18.0";
 
 		internal static ManualLogSource Log;
 
@@ -66,6 +66,10 @@ namespace ElonaKeys
 		private static ConfigEntry<bool> familyBarVisible;
 		private static ConfigEntry<float> familyBarScale;
 		private static ConfigEntry<bool> familyBarHint;
+		private static ConfigEntry<int> weightWidth;
+		private static ConfigEntry<int> menuWidth;
+		private static ConfigEntry<int> nameScrollSlack;
+		private static ConfigEntry<string> quickbinds;
 		private static ConfigEntry<bool> keyboardContainers;
 		private static ConfigEntry<bool> keyboardCrafters;
 		private static ConfigEntry<string> macro1;
@@ -103,6 +107,14 @@ namespace ElonaKeys
 		{
 			get { return familyBarHint.Value; }
 			set { familyBarHint.Value = value; }
+		}
+		internal static float WeightWidth => Mathf.Clamp(weightWidth.Value, 30, 160);
+		internal static float MenuWidth => Mathf.Clamp(menuWidth.Value, 480, 1100);
+		internal static float NameScrollSlack => Mathf.Clamp(nameScrollSlack.Value, 0, 100);
+
+		internal static void SaveQuickbinds(string v)
+		{
+			quickbinds.Value = v;
 		}
 		internal static bool KeyboardContainers => keyboardContainers.Value;
 		internal static bool KeyboardCrafters => keyboardCrafters.Value;
@@ -161,7 +173,15 @@ namespace ElonaKeys
 			wheelPosX = Config.Bind("Menus", "WheelPosX", 0f, "Wheel widget offset from screen center (drag the center diamond to move; saved automatically).");
 			wheelPosY = Config.Bind("Menus", "WheelPosY", 0f, "Wheel widget offset from screen center (drag the center diamond to move; saved automatically).");
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
-				"shift = shift+1..9 fires the NON-displayed quickslot page (plain digits stay native). off = disable. Assignment: select/hover an item or spell in a menu and press 1-9 (shift+digit = other page).");
+				"shift = shift+1..9 fires ElonaKeys quickbind slots (plain digits stay native quickslots). off = disable. Bind: select an item or spell in any mod menu and press 1-9. Bindings resolve dynamically: bind a rod of identify, ANY rod of identify in your inventory fires.");
+			quickbinds = Config.Bind("Hotkeys", "Quickbinds", "",
+				"ElonaKeys quickbind registry storage (slot:kind:id:name;...). Edited automatically; clear to reset all slots.");
+			weightWidth = Config.Bind("Menus", "WeightWidth", 48,
+				"Width of the right-aligned weight column in pixels (about 4 digits). Longer weights scroll inside it.");
+			menuWidth = Config.Bind("Menus", "MenuWidth", 680,
+				"Width of the mod's menu windows in pixels.");
+			nameScrollSlack = Config.Bind("Menus", "NameScrollSlack", 20,
+				"Names overflowing their column by fewer pixels than this render as-is instead of scrolling.");
 			shiftBarVisible = Config.Bind("Hotkeys", "ShiftBarVisible", true,
 				"Show the OTHER quickslot page (what shift+1..9 fires) as small corner icons on the real hotbar's slots.");
 			familyBarVisible = Config.Bind("Menus", "FamilyBarVisible", true,
@@ -251,6 +271,7 @@ namespace ElonaKeys
 			}
 			SuppressBinds = Keybind.ParseList(suppressNativeKeys.Value);
 			SuppressAllBinds = Keybind.ParseList(suppressAllKey.Value);
+			Quickbind.LoadFrom(quickbinds.Value);
 		}
 
 		internal static Entry FindPressed()

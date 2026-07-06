@@ -64,9 +64,8 @@ $Keys
 {pair|bump + held tool|Running into a tree with an axe chops it, wall with pickaxe mines it (no shift needed)}
 
 {topic|Hotkeys and extras}
-{pair|1-9 in a menu|Assign the selected item/spell to that quickslot}
-{pair|shift+1-9 in a menu|Assign to the OTHER quickslot page}
-{pair|shift + 1-9|Fire the other quickslot page (shown as small corner icons on the hotbar's slots; ShiftBarVisible config)}
+{pair|1-9 in a menu|Bind the selected item/spell to that quickbind slot (mod's own registry; the game's quickslot bar stays native)}
+{pair|shift + 1-9|Fire the quickbind: resolves at press time, so any matching item works (a fresh rod replaces the burnt one automatically). Corner icons on the hotbar show the bindings}
 {pair|MacroKey1-3|Cast the Macro1-3 ability sequences (config)}
 {pair|F1-F8|Fire the Extra bar natively}
 {pair|shift + move|Use held tool on the adjacent tile (mine/chop/till)}
@@ -80,6 +79,10 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.18.0}
+・ Quickbinds: digits in menus bind, shift+digit fires, resolved by KIND at press time (next rod auto-replaces). Quickslot bar back to native.
+・ Caps-lock lock now truly blocks Tab and spares Escape. Hotbar back in the widget editor. Weight column ~4 digits; equipment names stop endless scrolling; Light Source → Light.
+
 {topic|1.17.1}
 ・ OverrideGameKeys no longer leaks vanilla actions in gated states. CapsLock toggles a full vanilla-key lock (SuppressAllKey).
 

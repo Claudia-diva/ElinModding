@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.18.0 - 2026-07-05
+
+- QUICKBINDS: hotkeys are now the mod's own registry, fully separate from the game's quickslot bar (which is back to 100% native). Press 1-9 on any item or spell in a mod menu to bind that slot; shift+digit fires it. Bindings are by KIND, resolved at press time: bind a rod of identify and when it burns out, the next rod of identify in your inventory fires automatically. Bound rows show a [n] tag; the hotbar corner icons now display these bindings. Stored in the config (Quickbinds), rebindable without any breakage.
+- The caps-lock vanilla lock now actually blocks Tab (the inventory toggle is hardcoded raw input in the game, outside the normal key action system; it is now intercepted at the destination), and no longer eats Escape/Enter.
+- Hotbar restored in the widget editor: the editor aborts silently when any widget's edit-cover throws, hiding every widget after it. All covers are exception-guarded now.
+- Layout: weight column narrowed to ~4 digits (WeightWidth config, long weights scroll inside it); name columns are computed from the real window and weight widths, so the equipment window stops scrolling everything endlessly (only genuinely long names move, and small overflows don't scroll at all: NameScrollSlack); "Light Source" slot reads "Light" and long slot names are trimmed; window width configurable (MenuWidth).
+
 ## 1.17.1 - 2026-07-05
 
 - OverrideGameKeys fixed properly: it used to suppress the vanilla action only when our handler actually ran, so in every in-between state (float windows open, gates skipping) the vanilla key leaked through. Now the instant a pressed key matches one of our binds, the native action is dead, gates or not. (Native-passthrough binds like Fire are exempt.)

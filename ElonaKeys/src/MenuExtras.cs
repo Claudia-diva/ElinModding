@@ -121,13 +121,7 @@ namespace ElonaKeys
 			int digit = GetDigitDown();
 			if (digit == -1 || digit >= 9 || EInput.isCtrlDown || EInput.isAltDown)
 			{
-				return; // quickslots are 1-9 (digit 0 has no native slot)
-			}
-			// which of the two quickslot pages: plain = shown page, shift = other
-			int page = EClass.player.hotbarPage;
-			if (EInput.isShiftDown)
-			{
-				page = (page == 0) ? 1 : 0;
+				return; // quickbind slots are 1-9
 			}
 			SourceElement.Row src = null;
 			Thing item = null;
@@ -151,96 +145,15 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			AssignQuickslot(page, digit, src, item);
-		}
-
-		// The quickslot bar is pc.things with invY=1, invX = page*10 + slot
-		// (WidgetCurrentTool). This mirrors the native drag-assign at
-		// ActionMode.cs:595-609.
-		private static void AssignQuickslot(int page, int slot, SourceElement.Row src, Thing item)
-		{
-			try
+			// digits in menus bind ElonaKeys' OWN registry (Quickbind): the
+			// game's quickslot bar is never touched anymore
+			if (src != null)
 			{
-				int invX = page * 10 + slot;
-				// evict whatever occupies the slot: abilities are destroyed,
-				// real items go back to the main inventory
-				foreach (Thing t in EClass.pc.things.List((Thing x) => x.invY == 1 && x.invX == invX, onlyAccessible: false))
-				{
-					if (t.trait is TraitAbility)
-					{
-						t.Destroy();
-					}
-					else
-					{
-						t.invY = 0;
-						t.invX = 0;
-					}
-				}
-				string what;
-				if (src != null)
-				{
-					Thing ability = ThingGen.Create("ability");
-					ability.c_idAbility = src.alias;
-					EClass.pc.AddThing(ability, tryStack: false, invX, 1);
-					ability.invY = 1;
-					ability.invX = invX;
-					what = src.GetName();
-				}
-				else
-				{
-					item.invX = invX;
-					item.invY = 1;
-					what = item.Name;
-				}
-				WidgetCurrentTool.dirty = true;
-				ShiftOverlay.SetDirty();
-				SE.Equip();
-				Msg.SayRaw(what + " set to quickslot " + (slot + 1) + (EInput.isShiftDown ? " (other page)." : "."));
-			}
-			catch (Exception ex)
-			{
-				Plugin.Log?.LogError("ElonaKeys quickslot assign failed: " + ex);
-				SE.BeepSmall();
-			}
-		}
-
-		// shift+digit: fire slot N of the NON-displayed quickslot page without
-		// flipping pages (replicates WidgetCurrentTool.Select's ability auto-use)
-		public static void UseOtherPageSlot(int slot)
-		{
-			int page = (EClass.player.hotbarPage == 0) ? 1 : 0;
-			int invX = page * 10 + slot;
-			Thing found = null;
-			foreach (Thing t in EClass.pc.things)
-			{
-				if (t.invY == 1 && t.invX == invX)
-				{
-					// abilities win when a stray duplicate occupies the slot
-					if (found == null || t.trait is TraitAbility)
-					{
-						found = t;
-					}
-				}
-			}
-			if (found == null)
-			{
-				SE.BeepSmall();
-				return;
-			}
-			if (found.trait is TraitAbility ability)
-			{
-				if (ability.CanUse(EClass.pc) && EClass.player.CanAcceptInput() && ability.OnUse(EClass.pc))
-				{
-					EClass.player.EndTurn();
-				}
-			}
-			else if (found.trait.CanUse(EClass.pc))
-			{
-				found.trait.OnUse(EClass.pc);
+				Quickbind.AssignAbility(digit, src);
 			}
 			else
 			{
-				EClass.pc.HoldCard(found);
+				Quickbind.AssignItem(digit, item);
 			}
 		}
 
@@ -265,7 +178,8 @@ namespace ElonaKeys
 			}
 			text.horizontalOverflow = HorizontalWrapMode.Overflow;
 			float pref = text.preferredWidth;
-			if (pref <= maxWidth)
+			// slack: tiny overflows render as-is instead of scrolling forever
+			if (pref <= maxWidth + Plugin.NameScrollSlack)
 			{
 				return;
 			}

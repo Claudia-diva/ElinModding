@@ -49,7 +49,7 @@ Every item key opens a paginated Elona-style window:
 | p / O | Pray / Offer at an altar |
 | G | Give to an adjacent character |
 | Shift+Q | Party member sheets and inventories |
-| Shift+1-9 | Fire the other quickslot page (small corner icons on the hotbar show it) |
+| Shift+1-9 | Fire a quickbind (mod registry, resolved by kind at press time; corner icons on the hotbar show them; bind with digits inside menus) |
 | Shift+move | Use held tool on the adjacent tile (chop, mine, till...) |
 | Tab | Cycle window families; native chat otherwise |
 

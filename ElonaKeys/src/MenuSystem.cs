@@ -81,7 +81,7 @@ namespace ElonaKeys
 			if (!Alive)
 			{
 				layer = keepLayers ? EClass.ui.AddLayerDontCloseOthers<LayerList>() : EClass.ui.AddLayer<LayerList>();
-				layer.SetSize(680f);
+				layer.SetSize(Plugin.MenuWidth);
 				layer.SetList2(pageRows, RowText, delegate(MenuRow r, ItemGeneral b)
 				{
 					Activate(r);
@@ -290,22 +290,25 @@ namespace ElonaKeys
 				// no badge on this mold: letter goes into the text itself
 				b.button1.mainText.text = letter + ")  " + b.button1.mainText.text;
 			}
-			b.button1.mainText.rectTransform.anchoredPosition = new Vector2(badge ? 78f : 52f, 0f);
+			float nameX = badge ? 78f : 52f;
+			b.button1.mainText.rectTransform.anchoredPosition = new Vector2(nameX, 0f);
 			SetWeightText(b, r.rightText);
 			if (r.fixedPrefix != null)
 			{
-				// static prefix in mainText; only the name (child text) scrolls
-				SetNameText(b, r.label, 150f + (badge ? 78f : 52f));
+				// static prefix in mainText; only the name (child text) scrolls.
+				// Prefix column is narrow (slot names are trimmed to 9 chars).
+				float prefixW = 116f;
+				SetNameText(b, r.label, nameX + prefixW, Plugin.MenuWidth - (nameX + prefixW) - Plugin.WeightWidth - 24f);
 			}
 			else
 			{
-				SetNameText(b, null, 0f);
-				MenuExtras.ApplyNameDisplay(b.button1.mainText, 430f);
+				SetNameText(b, null, 0f, 0f);
+				MenuExtras.ApplyNameDisplay(b.button1.mainText, Plugin.MenuWidth - nameX - Plugin.WeightWidth - 24f);
 			}
 		}
 
 		// scrolling name child for fixedPrefix rows (pooled-row safe)
-		private static void SetNameText(ItemGeneral b, string text, float x)
+		private static void SetNameText(ItemGeneral b, string text, float x, float maxWidth)
 		{
 			try
 			{
@@ -339,7 +342,7 @@ namespace ElonaKeys
 				nt.color = b.button1.mainText.color;
 				nt.rectTransform.anchoredPosition = new Vector2(x, 0f);
 				nt.text = text;
-				MenuExtras.ApplyNameDisplay(nt, 280f);
+				MenuExtras.ApplyNameDisplay(nt, Mathf.Max(120f, maxWidth));
 			}
 			catch
 			{
@@ -368,16 +371,17 @@ namespace ElonaKeys
 			try
 			{
 				Transform existing = b.button1.transform.Find("EKWeight");
-				Text wt;
-				if (existing != null)
+				UIText wt = (existing != null) ? existing.GetComponent<UIText>() : null;
+				if (existing != null && wt == null)
 				{
-					wt = existing.GetComponent<Text>();
+					UnityEngine.Object.Destroy(existing.gameObject); // pre-1.18 plain Text
+					existing = null;
 				}
-				else
+				if (wt == null)
 				{
 					GameObject go = new GameObject("EKWeight");
 					go.transform.SetParent(b.button1.transform, worldPositionStays: false);
-					wt = go.AddComponent<Text>();
+					wt = go.AddComponent<UIText>();
 					wt.font = b.button1.mainText.font;
 					wt.fontSize = 15;
 					wt.alignment = TextAnchor.MiddleRight;
@@ -387,12 +391,14 @@ namespace ElonaKeys
 					wrt.anchorMin = new Vector2(1f, 0.5f);
 					wrt.anchorMax = new Vector2(1f, 0.5f);
 					wrt.pivot = new Vector2(1f, 0.5f);
-					wrt.sizeDelta = new Vector2(90f, 24f);
 					wrt.anchoredPosition = new Vector2(-14f, 0f);
 				}
 				if ((bool)wt)
 				{
+					wt.rectTransform.sizeDelta = new Vector2(Plugin.WeightWidth, 24f);
 					wt.text = text ?? "";
+					// very long weights scroll inside the narrow column
+					MenuExtras.ApplyNameDisplay(wt, Plugin.WeightWidth);
 				}
 			}
 			catch

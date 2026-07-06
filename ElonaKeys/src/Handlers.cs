@@ -184,7 +184,7 @@ namespace ElonaKeys
 				Thing t = thing;
 				rows.Add(new MenuRow
 				{
-					label = (label != null) ? label(t) : DetailName(t),
+					label = ((label != null) ? label(t) : DetailName(t)) + Quickbind.TagForItem(t.id),
 					icon = t,
 					rightText = WeightText(t.ChildrenAndSelfWeight),
 					sortWeight = t.ChildrenAndSelfWeight,
@@ -398,18 +398,20 @@ namespace ElonaKeys
 		{
 			MenuCycle.Set("items", 5);
 			ItemMenu("Zap which rod?", (Thing t) => t.trait is TraitRod,
-				delegate(Thing t)
-				{
-					DirPrompt.Ask("Zap in which direction? (press the wait key to zap yourself)", self: true, delegate(Point p)
-					{
-						ActZap act = new ActZap { trait = (TraitRod)t.trait };
-						if (act.Perform(pc, null, p))
-						{
-							EClass.player.EndTurn();
-						}
-					});
-				},
+				delegate(Thing t) { ZapRod(t); },
 				"You have no rods.");
+		}
+
+		internal static void ZapRod(Thing t)
+		{
+			DirPrompt.Ask("Zap in which direction? (press the wait key to zap yourself)", self: true, delegate(Point p)
+			{
+				ActZap act = new ActZap { trait = (TraitRod)t.trait };
+				if (act.Perform(pc, null, p))
+				{
+					EClass.player.EndTurn();
+				}
+			});
 		}
 
 		// Elona drop: pick item, spinner picks the count, menu stays open.
@@ -492,7 +494,16 @@ namespace ElonaKeys
 		{
 			try
 			{
-				return EClass.sources.elements.map[slot.elementId].GetName();
+				string name = EClass.sources.elements.map[slot.elementId].GetName();
+				if (name == "Light Source")
+				{
+					name = "Light";
+				}
+				if (name.Length > 9)
+				{
+					name = name.Substring(0, 8) + "…";
+				}
+				return name;
 			}
 			catch
 			{
@@ -1786,7 +1797,7 @@ namespace ElonaKeys
 			}
 			return new MenuRow
 			{
-				label = (fav ? "★ " : "") + e.source.GetName() + " <size=13><color=#8f8f7a>" + TypeBucket(e) + stat + "</color></size>",
+				label = (fav ? "★ " : "") + e.source.GetName() + Quickbind.TagForAbility(e.source.alias) + " <size=13><color=#8f8f7a>" + TypeBucket(e) + stat + "</color></size>",
 				rightText = AbilityCostText(e, spells),
 				actSrc = e.source,
 				ability = e,
@@ -1917,7 +1928,7 @@ namespace ElonaKeys
 
 		// Cast honoring the spell's real TargetType (research: TargetType.cs,
 		// Chara.UseAbility pt-flag loops the whole party = native multi-cast).
-		private static void CastAbility(Element e)
+		internal static void CastAbility(Element e)
 		{
 			Act act = (e as Act) ?? ACT.Create(e.source);
 			TargetType tt = act.TargetType;

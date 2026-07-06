@@ -83,6 +83,35 @@ namespace ElonaKeys
 		}
 	}
 
+	// LayerWidget calls OnManagerActivate on EVERY live widget with no guard
+	// (LayerWidget.cs:80): one throwing widget hides all later ones (incl. the
+	// hotbar) from the editor. Never again.
+	[HarmonyPatch(typeof(Widget), nameof(Widget.OnManagerActivate))]
+	internal static class Patch_WidgetCoverGuard
+	{
+		private static Exception Finalizer(Exception __exception, Widget __instance)
+		{
+			if (__exception != null)
+			{
+				Plugin.Log?.LogError("ElonaKeys: widget cover failed (" + (__instance ? __instance.name : "?") + "): " + __exception);
+			}
+			return null;
+		}
+	}
+
+	[HarmonyPatch(typeof(Widget), nameof(Widget.OnManagerDeactivate))]
+	internal static class Patch_WidgetCoverGuard2
+	{
+		private static Exception Finalizer(Exception __exception, Widget __instance)
+		{
+			if (__exception != null)
+			{
+				Plugin.Log?.LogError("ElonaKeys: widget cover teardown failed (" + (__instance ? __instance.name : "?") + "): " + __exception);
+			}
+			return null;
+		}
+	}
+
 	[HarmonyPatch(typeof(WidgetManager), nameof(WidgetManager.OnGameInstantiated))]
 	internal static class Patch_WidgetMetas
 	{

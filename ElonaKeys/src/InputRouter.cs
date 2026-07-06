@@ -108,8 +108,9 @@ namespace ElonaKeys
 					return;
 				}
 			}
-			if (suppressVanilla)
+			if (suppressVanilla && !Input.GetKey(KeyCode.Escape) && !Input.GetKey(KeyCode.Return) && !Input.GetKey(KeyCode.KeypadEnter))
 			{
+				// Escape/Enter stay alive: menus and dialogs must remain usable
 				EInput.action = EAction.None;
 			}
 			// swallow keys the user asked us to hide from the game entirely
@@ -202,9 +203,9 @@ namespace ElonaKeys
 			}
 			if (entry == null)
 			{
-				// shift+digit: fire the other quickslot page
+				// shift+digit: fire the ElonaKeys quickbind registry
 				EInput.hotkey = -1; // native GetHotkeyDown ignores shift
-				MenuExtras.UseOtherPageSlot(digitSlot);
+				Quickbind.Fire(digitSlot);
 				EInput.Consume();
 				return;
 			}
@@ -229,6 +230,8 @@ namespace ElonaKeys
 
 		private static Vector2 prevBumpAxis;
 		private static bool suppressVanilla;
+
+		internal static bool VanillaLocked => suppressVanilla;
 
 		// Elona habits: walking into a friendly NPC talks to them; walking into a
 		// solid interactable (quest board, gacha, fountain) uses it.
@@ -445,6 +448,23 @@ namespace ElonaKeys
 			{
 				Plugin.Log?.LogError("ElonaKeys crafter menu failed: " + ex);
 			}
+		}
+	}
+
+	// Tab's inventory toggle is HARDCODED raw input in ActionMode.UpdateInput
+	// (ActionMode.cs:739), not an EInput action: block it at the destination.
+	// Mouse clicks on the inventory button pass (no Tab keydown that frame).
+	[HarmonyPatch(typeof(UI), nameof(UI.ToggleInventory), new Type[] { })]
+	internal static class Patch_ToggleInventory
+	{
+		private static bool Prefix()
+		{
+			if (Input.GetKey(KeyCode.Tab)
+				&& (InputRouter.VanillaLocked || MenuSystem.Alive || (EClass.ui != null && EClass.ui.BlockActions)))
+			{
+				return false;
+			}
+			return true;
 		}
 	}
 
