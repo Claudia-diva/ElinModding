@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.19.0 - 2026-07-05
+
+- ELONA-STYLE CRAFTING: stations and the quick-craft action open a keyboard recipe list (craftable recipes first with skill and max count, uncraftable grayed). Enter a recipe: each ingredient row shows what's assigned and how much you own; Enter cycles through EVERY owned candidate (inventory AND home storage, the same search the game itself uses). The Craft row takes a count spinner and executes through the game's own craft task. The native window stays one row away ("open the native window..."), and KeyboardCrafting=false restores it entirely.
+- Inventory browser: shift+x (and x last-menu) now cycles inventories with z/x: You → each party member → Home stock (owned storage in your base). Party/home rows take items with the count spinner; your own rows open the stat card.
+- Item processors also list home-storage materials when you're in your base, like the native drag grid does.
+
 ## 1.18.0 - 2026-07-05
 
 - QUICKBINDS: hotkeys are now the mod's own registry, fully separate from the game's quickslot bar (which is back to 100% native). Press 1-9 on any item or spell in a mod menu to bind that slot; shift+digit fires it. Bindings are by KIND, resolved at press time: bind a rod of identify and when it burns out, the next rod of identify in your inventory fires automatically. Bound rows show a [n] tag; the hotbar corner icons now display these bindings. Stored in the config (Quickbinds), rebindable without any breakage.

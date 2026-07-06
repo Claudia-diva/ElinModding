@@ -931,7 +931,21 @@ namespace ElonaKeys
 				return;
 			}
 			List<MenuRow> rows = new List<MenuRow>();
-			foreach (Thing thing in pc.things.List((Thing t) => Safe((Thing x) => !(x.trait is TraitAbility) && crafter.IsCraftIngredient(x, idx), t), onlyAccessible: true))
+			List<Thing> cands = pc.things.List((Thing t) => Safe((Thing x) => !(x.trait is TraitAbility) && crafter.IsCraftIngredient(x, idx), t), onlyAccessible: true);
+			// home zones: stocked storage counts too, like the native drag grid
+			// (InvOwnerCraft.AllowStockIngredients)
+			if (EClass._zone.IsPCFaction || EClass._zone is Zone_Tent)
+			{
+				foreach (Thing t in EClass._map.Stocked.things)
+				{
+					if (t != null && !t.isDestroyed && !t.isNPCProperty && !cands.Contains(t)
+						&& Safe((Thing x) => !(x.trait is TraitAbility) && crafter.IsCraftIngredient(x, idx), t))
+					{
+						cands.Add(t);
+					}
+				}
+			}
+			foreach (Thing thing in cands)
 			{
 				Thing t = thing;
 				rows.Add(new MenuRow
@@ -2141,29 +2155,116 @@ namespace ElonaKeys
 
 		// ---------- simple toggles ----------
 
-		// Elona x: the full inventory as a browsable list (Enter/x = stat card);
-		// the caption carries the total item count and weight
+		// Elona x: the inventory BROWSER. z/x cycle the shown inventory:
+		// you -> each party member -> home stock (owned storage in this zone).
+		// Enter = stat card for your own things, count-spinner take elsewhere.
+		private static int browseSrc;
+
 		public static void ExamineInventory()
 		{
 			MenuCycle.Set("items", 0);
+			browseSrc = 0;
+			ShowBrowser();
+		}
+
+		private static List<(string name, Chara owner)> BrowserSources()
+		{
+			List<(string, Chara)> s = new List<(string, Chara)> { ("You", pc) };
+			foreach (Chara c in EClass.pc.party.members)
+			{
+				if (c != pc && !c.isDead)
+				{
+					s.Add((c.Name, c));
+				}
+			}
+			if (EClass._zone.IsPCFaction || EClass._zone is Zone_Tent)
+			{
+				s.Add(("Home stock", null));
+			}
+			return s;
+		}
+
+		private static void ShowBrowser()
+		{
+			List<(string name, Chara owner)> sources = BrowserSources();
+			browseSrc = ((browseSrc % sources.Count) + sources.Count) % sources.Count;
+			(string name, Chara owner) src = sources[browseSrc];
+			List<MenuRow> rows = BuildBrowserRows(src.owner);
+			string title = "Inventory - " + src.name + "  <size=12>(z/x switch)</size>";
+			if (rows.Count == 0)
+			{
+				rows.Add(new MenuRow { label = "<color=#8f8f7a>(empty)</color>" });
+			}
+			MenuSystem.Show(title, rows, delegate
+			{
+				MenuSystem.SetRows(BuildBrowserRows(src.owner));
+			});
+			int count = sources.Count;
+			MenuSystem.SetSourceCycle(delegate(int dir)
+			{
+				browseSrc = ((browseSrc + dir) % count + count) % count;
+				ShowBrowser();
+			});
+		}
+
+		private static List<MenuRow> BuildBrowserRows(Chara owner)
+		{
 			List<MenuRow> rows = new List<MenuRow>();
-			foreach (Thing thing in pc.things.List((Thing t) => !(t.trait is TraitAbility), onlyAccessible: true))
+			if (owner == pc)
+			{
+				foreach (Thing thing in pc.things.List((Thing t) => !(t.trait is TraitAbility), onlyAccessible: true))
+				{
+					Thing t = thing;
+					rows.Add(new MenuRow
+					{
+						label = t.Name + (t.isEquipped ? " <size=12><color=#90d090>(equipped)</color></size>" : "") + Quickbind.TagForItem(t.id),
+						icon = t,
+						rightText = WeightText(t.ChildrenAndSelfWeight),
+						sortWeight = t.ChildrenAndSelfWeight,
+						closeOnAct = false,
+						act = delegate
+						{
+							EClass.ui.AddLayerDontCloseOthers<LayerInfo>().SetThing(t);
+						}
+					});
+				}
+				return rows;
+			}
+			// party member or home stock: browse + take (count spinner)
+			List<Thing> pool = new List<Thing>();
+			if (owner != null)
+			{
+				pool.AddRange(owner.things.List((Thing t) => !(t.trait is TraitAbility) && !t.isEquipped, onlyAccessible: true));
+			}
+			else
+			{
+				foreach (Thing t in EClass._map.Stocked.things)
+				{
+					if (t != null && !t.isDestroyed && !t.isNPCProperty)
+					{
+						pool.Add(t);
+					}
+				}
+			}
+			foreach (Thing thing in pool)
 			{
 				Thing t = thing;
 				rows.Add(new MenuRow
 				{
-					label = t.Name + (t.isEquipped ? " <size=12><color=#90d090>(equipped)</color></size>" : ""),
+					label = t.Name,
 					icon = t,
 					rightText = WeightText(t.ChildrenAndSelfWeight),
 					sortWeight = t.ChildrenAndSelfWeight,
 					closeOnAct = false,
-					act = delegate
+					maxAmount = Mathf.Max(1, t.Num),
+					onAmount = delegate(int n)
 					{
-						EClass.ui.AddLayerDontCloseOthers<LayerInfo>().SetThing(t);
+						Thing taken = (n >= t.Num) ? t : t.Split(n);
+						pc.Pick(taken);
 					}
 				});
 			}
-			RunRows("Inventory", rows, "You carry nothing.");
+			return rows;
 		}
 	}
 }

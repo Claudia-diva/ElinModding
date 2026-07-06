@@ -12,7 +12,7 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
 ・ Native windows: ↑↓ move, ←→ switch group (list/grid/dropdowns/buttons), z/x switch window tabs (character sheet, quest board, crafting), Enter acts, x examines in item grids. Tab stays native (chat) except inside window families.
 ・ Quest boards: ↑↓ scroll the requests, ←→ switch tabs, r = reroll.
-・ Quick craft: arrows walk the recipe list (WASD still moves you), Enter on an ingredient dropdown opens its options.
+・ Crafting (stations + quick craft): keyboard recipe list, Enter = recipe, ingredient rows cycle owned materials (inventory + home storage), Craft row with count spinner. Native window on the last row.
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
 {pair|Source and issues|github.com/Claudia-diva/ElinModding}
@@ -34,7 +34,7 @@ $Keys
 {pair|T|Throw: pick item, then the free cursor (auto-fires at your remembered HOSTILE target)}
 {pair|A (shift+a)|Load compatible ammo into your ranged weapon}
 {pair|x|Reopen the last-used item menu (Elona x)}
-{pair|shift+x|Examine inventory: full list with totals, Enter/x = stat card}
+{pair|shift+x|Inventory browser: z/x switch You ↔ party members ↔ Home stock; take with the count spinner}
 {pair|Tab in a menu|Cycle the window family: items X,d,e,r,q,Z,t,o,B,T / equipment↔chara / spells↔actions}
 {pair|Family bar|Elona-style diamond tabs shown while family windows are open (current = gold, click to jump). A real widget: toggle/drag/lock it in the widget manager, like the shift-page hotbar}
 
@@ -79,6 +79,10 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.19.0}
+・ Elona-style crafting menu (recipes → ingredients cycle owned+stored materials → Craft xN). KeyboardCrafting config.
+・ Inventory browser: z/x cycle You / party / Home stock; spinner-take. Processors use home storage too.
+
 {topic|1.18.0}
 ・ Quickbinds: digits in menus bind, shift+digit fires, resolved by KIND at press time (next rod auto-replaces). Quickslot bar back to native.
 ・ Caps-lock lock now truly blocks Tab and spares Escape. Hotbar back in the widget editor. Weight column ~4 digits; equipment names stop endless scrolling; Light Source → Light.

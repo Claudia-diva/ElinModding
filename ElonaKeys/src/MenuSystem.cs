@@ -51,6 +51,15 @@ namespace ElonaKeys
 		private static MenuRow amountRow;
 		private static int amount;
 
+		// multi-source browsers (inventory browser): z/x cycle sources instead
+		// of sort/examine while set; cleared on every Show/Close
+		private static Action<int> onSourceCycle;
+
+		public static void SetSourceCycle(Action<int> cb)
+		{
+			onSourceCycle = cb;
+		}
+
 		// shift = back, but only if shift wasn't a modifier for something else
 		private static bool shiftHeld;
 		private static bool shiftUsed;
@@ -65,6 +74,7 @@ namespace ElonaKeys
 		public static void Show(string _title, List<MenuRow> rows, Action _refreshSource = null, bool keepLayers = false)
 		{
 			MenuCycle.ClearUnlessJustSet(); // Tab only cycles inside a window family
+			onSourceCycle = null;           // browsers re-set it after Show
 			if (Alive && current != null)
 			{
 				history.Add(current); // shift returns here
@@ -96,6 +106,7 @@ namespace ElonaKeys
 			history.Clear();
 			current = null;
 			amountRow = null;
+			onSourceCycle = null;
 			if (Alive)
 			{
 				layer.Close();
@@ -105,6 +116,7 @@ namespace ElonaKeys
 
 		private static void Back()
 		{
+			onSourceCycle = null; // browser hook must not leak into older screens
 			if (amountRow != null)
 			{
 				amountRow = null;
@@ -569,6 +581,20 @@ namespace ElonaKeys
 			if (Input.GetKeyDown(KeyCode.Tab) && MenuCycle.Next())
 			{
 				return;
+			}
+			// multi-source browser: z/x flip the shown inventory
+			if (onSourceCycle != null && !EInput.isCtrlDown && !EInput.isAltDown)
+			{
+				if (Input.GetKeyDown(KeyCode.Z))
+				{
+					onSourceCycle(-1);
+					return;
+				}
+				if (Input.GetKeyDown(KeyCode.X))
+				{
+					onSourceCycle(1);
+					return;
+				}
 			}
 			// x examines the hovered/selected row (press again to close)
 			if (Input.GetKeyDown(KeyCode.X) && !EInput.isCtrlDown && !EInput.isAltDown)

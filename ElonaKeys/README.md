@@ -59,7 +59,9 @@ Movement stays on numpad/arrows/WASD as in vanilla. Journal (j), log and help re
 
 - **Held items are generic**: whatever the game (or another mod) lets you right-click with while holding, the same acts appear through i / Space / s. No per-item special cases.
 - **Chests/containers** open the keyboard take/put menu from ANY route (bump, space, mouse); locked chests lockpick natively. Container settings cover the full native set: sort mode/ascending/always, distribution priority, cooler mode, refuse rotten, advanced distribution, per-category allow/block, autodump mode, name filter.
-- **Item processors** (mill, seed maker...) open a keyboard ingredient picker; picking ingredients starts the craft.
+- **Crafting is Elona-style**: stations and quick craft open a keyboard recipe list (craftable first, skill + max count); Enter a recipe to cycle each ingredient through every owned material (inventory + home storage) and craft with a count spinner. Native window on the last row; `KeyboardCrafting` config.
+- **Item processors** (mill, seed maker...) open a keyboard ingredient picker (home storage included at your base); picking ingredients starts the craft.
+- **Inventory browser** (shift+x): z/x cycle You → party members → Home stock; take items with the count spinner.
 - **Native windows** (dialogs, drama choices, quest boards, crafting, quick craft): arrows navigate in reading order (hold to scroll), left/right switch groups, z/x switch tabs, Enter acts, dropdown pickers open with Enter and pick with arrows. Quest boards: up/down scroll, left/right tabs, r rerolls.
 - **Targeting** is a free tile cursor within your vision; confirmed characters are remembered and hostile acts never auto-target allies. The hover info card (and hover mods) follow the cursor.
 - **Widgets**: the family tab bar is a real Elin widget (full native style menu: skin background, size, color, decorations; manage it in the widget manager, positions save with themes). The other quickslot page shows as corner icons on the real hotbar (`ShiftBarVisible`).
