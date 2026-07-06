@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.16.0 - 2026-07-05
+
+- GENERIC held-item interactions: whatever you hold (brush, whip, syringe, any of the game's tools, mods included) now offers its full right-click act set through the keyboard: i toward a target, Space around you, s on your own tile. One engine-level merge instead of per-item handlers: the game only injected held-item acts into mouse right-click plans; our plans now pull them in too. Holding via t prints a hint.
+- Hold-to-repeat: keeping an arrow key held keeps scrolling: menus, count spinners, native window navigation, dropdowns, quest board tabs, the targeting cursor. 0.35s delay, then 14 steps/second.
+- Container settings menu now carries the FULL native option set: sort mode cycle + ascending + always sort, distribution priority (-5..20), only-rottable (cooler), refuse rotten, advanced distribution toggle, per-category allow/block list, autodump mode cycle, and the distribution name filter (opens the game's text input).
+- Fixed the caption printing literal size tags; totals now show as plain "· 123 items 24.4s".
+
 ## 1.15.0 - 2026-07-05
 
 - Second hotbar replaced with corner overlays on the REAL hotbar (as suggested): each slot shows the other page's item as a small top-right icon, so alignment/skin/theming are automatic. ShiftBarVisible toggles it; the EKShiftBar widget is gone (the game cleans its config up on its own).

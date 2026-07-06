@@ -236,7 +236,9 @@ namespace ElonaKeys
 			}
 			if (Plugin.BumpToUse && p.IsBlocked)
 			{
-				ActPlan plan = Handlers.BuildPlan(p);
+				// no held-item acts here: bumping a door while holding an axe
+				// should open it, not start chopping it
+				ActPlan plan = Handlers.BuildPlan(p, ActInput.AllAction, includeHeld: false);
 				if (plan.HasAct && !plan.list[0].act.IsHostileAct)
 				{
 					EInput.axis = Vector2.zero;

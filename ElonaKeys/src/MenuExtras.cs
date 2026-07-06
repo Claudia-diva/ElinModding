@@ -9,6 +9,41 @@ namespace ElonaKeys
 	// - hover an item row (our menus) or a spell (LayerAbility) and press 0-9
 	//   (shift for slots 11-20) to assign it to the Extra hotbar
 	// - ping-pong scrolling for long names
+	// Hold-to-repeat for NAVIGATION keys: fires on the initial press, then
+	// repeats while held (Elona-style list scrolling). Confirm/cancel keys
+	// stay single-shot.
+	internal static class KeyRepeat
+	{
+		private const float Delay = 0.35f;
+		private const float Interval = 0.07f;
+
+		private static readonly Dictionary<KeyCode, float> next = new Dictionary<KeyCode, float>();
+
+		public static bool Down(KeyCode k)
+		{
+			if (Input.GetKeyDown(k))
+			{
+				next[k] = Time.unscaledTime + Delay;
+				return true;
+			}
+			if (Input.GetKey(k))
+			{
+				float t;
+				if (!next.TryGetValue(k, out t))
+				{
+					next[k] = Time.unscaledTime + Delay;
+					return false;
+				}
+				if (Time.unscaledTime >= t)
+				{
+					next[k] = Time.unscaledTime + Interval;
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
 	public static class MenuExtras
 	{
 		private class Scroller

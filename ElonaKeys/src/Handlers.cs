@@ -272,7 +272,7 @@ namespace ElonaKeys
 			}
 		}
 
-		internal static ActPlan BuildPlan(Point p, ActInput input = ActInput.AllAction)
+		internal static ActPlan BuildPlan(Point p, ActInput input = ActInput.AllAction, bool includeHeld = true)
 		{
 			ActPlan plan = new ActPlan
 			{
@@ -284,6 +284,42 @@ namespace ElonaKeys
 			};
 			target.Update(p);
 			plan._Update(target);
+			// GENERIC held-item interactions: the game only adds the held item's
+			// right-click acts (brush, whip, syringe, tools...) in the RightMouse
+			// branch, so merge them into our AllAction plans too. The target-Card
+			// branch reads the GLOBAL mouse target, so point it at the tile first.
+			if (includeHeld && input == ActInput.AllAction && EClass.player.currentHotItem is HotItemHeld held)
+			{
+				try
+				{
+					PointTarget mt = EClass.scene.mouseTarget;
+					bool wasMouse = mt.mouse;
+					mt.mouse = false;
+					mt.Update(p);
+					mt.mouse = wasMouse;
+					int before = plan.list.Count;
+					held.TrySetAct(plan);
+					// drop duplicates the AllAction pass already produced
+					for (int i = plan.list.Count - 1; i >= before; i--)
+					{
+						for (int j = 0; j < before; j++)
+						{
+							if (plan.list[j].act == plan.list[i].act && plan.list[j].tc == plan.list[i].tc)
+							{
+								plan.list.RemoveAt(i);
+								break;
+							}
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					if (Plugin.DebugLog)
+					{
+						Plugin.Log?.LogInfo("ElonaKeys held-act merge skipped: " + ex.Message);
+					}
+				}
+			}
 			return plan;
 		}
 
@@ -530,6 +566,7 @@ namespace ElonaKeys
 				return;
 			}
 			EClass.player.SetCurrentHotItem(new HotItemHeld(t));
+			Msg.SayRaw("Holding " + t.Name + ": i / Space toward a target, s on yourself.");
 		}
 
 		public static void Use()
@@ -1051,16 +1088,121 @@ namespace ElonaKeys
 					act = flip
 				});
 			}
-			Toggle("Only rottable items (cooler/fridge)", sd.onlyRottable, delegate { sd.onlyRottable = !sd.onlyRottable; });
-			Toggle("Hide/refuse rotten items", sd.noRotten, delegate { sd.noRotten = !sd.noRotten; });
-			Toggle("Always sort", sd.alwaysSort, delegate { sd.alwaysSort = !sd.alwaysSort; });
+			// --- sort (same fields the native window setting menu writes) ---
 			rows.Add(new MenuRow
 			{
-				label = "Distribution priority: " + sd.priority + "  (pick a new value)",
+				label = "Sort mode:  <color=#9fd6ff>" + sd.sortMode + "</color>  (cycle)",
 				closeOnAct = false,
-				maxAmount = 20,
-				onAmount = delegate(int n) { sd.priority = n; }
+				act = delegate
+				{
+					UIList.SortMode[] all = (UIList.SortMode[])Enum.GetValues(typeof(UIList.SortMode));
+					int cur = Array.IndexOf(all, sd.sortMode);
+					sd.sortMode = all[(cur + 1) % all.Length];
+				}
 			});
+			Toggle("Sort ascending", sd.sort_ascending, delegate { sd.sort_ascending = !sd.sort_ascending; });
+			Toggle("Always sort", sd.alwaysSort, delegate { sd.alwaysSort = !sd.alwaysSort; });
+			// --- distribution ---
+			rows.Add(new MenuRow
+			{
+				label = "Distribution priority: <color=#9fd6ff>" + sd.priority + "</color>  (spinner, -5..20)",
+				closeOnAct = false,
+				maxAmount = 26,
+				onAmount = delegate(int n) { sd.priority = n - 6; } // 1..26 -> -5..20
+			});
+			Toggle("Only rottable items (cooler/fridge)", sd.onlyRottable, delegate { sd.onlyRottable = !sd.onlyRottable; });
+			Toggle("Refuse rotten items", sd.noRotten, delegate { sd.noRotten = !sd.noRotten; });
+			Toggle("Advanced distribution", sd.advDistribution, delegate { sd.advDistribution = !sd.advDistribution; });
+			rows.Add(new MenuRow
+			{
+				label = "[ Allowed categories... ]",
+				closeOnAct = false,
+				act = delegate { CategoryFilterMenu(container); }
+			});
+			// --- autodump ---
+			rows.Add(new MenuRow
+			{
+				label = "Autodump:  <color=#9fd6ff>" + sd.autodump + "</color>  (cycle)",
+				closeOnAct = false,
+				act = delegate
+				{
+					AutodumpFlag[] order = { AutodumpFlag.existing, AutodumpFlag.sameCategory, AutodumpFlag.distribution, AutodumpFlag.none };
+					int cur = Array.IndexOf(order, sd.autodump);
+					sd.autodump = order[(cur + 1) % order.Length];
+				}
+			});
+			// --- name filter (native input dialog: keyboard text entry) ---
+			rows.Add(new MenuRow
+			{
+				label = sd.filter.IsEmpty() ? "[ Distribution name filter... ]" : "[ Filter: " + sd.filter + " ]",
+				closeOnAct = false,
+				act = delegate
+				{
+					Dialog.InputName("distFilter3", sd.filter.IsEmpty(""), delegate(bool cancel, string s)
+					{
+						if (!cancel)
+						{
+							sd._filterStrs = null;
+							sd.filter = s;
+						}
+					}, Dialog.InputType.DistributionFilter);
+				}
+			});
+			return rows;
+		}
+
+		// per-category accept/block toggles: a SET ContainerFlag = category BLOCKED
+		private static void CategoryFilterMenu(Thing container)
+		{
+			MenuSystem.Show("Allowed categories - " + container.Name, BuildCategoryRows(container), delegate
+			{
+				MenuSystem.SetRows(BuildCategoryRows(container));
+			});
+		}
+
+		private static List<MenuRow> BuildCategoryRows(Thing container)
+		{
+			Window.SaveData sd = container.c_windowSaveData;
+			if (sd == null)
+			{
+				sd = new Window.SaveData();
+				container.c_windowSaveData = sd;
+			}
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (ContainerFlag value in Enum.GetValues(typeof(ContainerFlag)))
+			{
+				ContainerFlag f = value;
+				if (f == ContainerFlag.none)
+				{
+					continue;
+				}
+				string name;
+				try
+				{
+					name = EClass.sources.categories.map[f.ToString()].GetName();
+				}
+				catch
+				{
+					name = f.ToString();
+				}
+				bool allowed = !sd.flag.HasFlag(f);
+				rows.Add(new MenuRow
+				{
+					label = (allowed ? "★ " : "☆ ") + name,
+					closeOnAct = false,
+					act = delegate
+					{
+						if (sd.flag.HasFlag(f))
+						{
+							sd.flag &= ~f;
+						}
+						else
+						{
+							sd.flag |= f;
+						}
+					}
+				});
+			}
 			return rows;
 		}
 

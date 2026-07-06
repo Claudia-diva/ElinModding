@@ -504,7 +504,8 @@ namespace ElonaKeys
 			}
 			if (pieces > 0)
 			{
-				caption += "  <size=13>" + pieces + " items  " + (grams / 1000f).ToString("0.0") + "s</size>";
+				// plain text: the caption UIText doesn't parse rich-text tags
+				caption += "  · " + pieces + " items  " + (grams / 1000f).ToString("0.0") + "s";
 			}
 			layer.windows[0].SetCaption(caption);
 			ShowSelTooltip();
@@ -598,7 +599,7 @@ namespace ElonaKeys
 				HandleAmountKeys();
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.PageDown))
+			if (KeyRepeat.Down(KeyCode.RightArrow) || KeyRepeat.Down(KeyCode.PageDown))
 			{
 				if (PageCount > 1)
 				{
@@ -608,7 +609,7 @@ namespace ElonaKeys
 				}
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.PageUp))
+			if (KeyRepeat.Down(KeyCode.LeftArrow) || KeyRepeat.Down(KeyCode.PageUp))
 			{
 				if (PageCount > 1)
 				{
@@ -618,13 +619,13 @@ namespace ElonaKeys
 				}
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.DownArrow))
+			if (KeyRepeat.Down(KeyCode.DownArrow))
 			{
 				sel = (sel + 1) % Mathf.Max(1, pageRows.Count);
 				ApplyPage();
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.UpArrow))
+			if (KeyRepeat.Down(KeyCode.UpArrow))
 			{
 				sel = (sel - 1 + Mathf.Max(1, pageRows.Count)) % Mathf.Max(1, pageRows.Count);
 				ApplyPage();
@@ -653,22 +654,22 @@ namespace ElonaKeys
 		private static void HandleAmountKeys()
 		{
 			MenuRow r = amountRow;
-			if (Input.GetKeyDown(KeyCode.RightArrow))
+			if (KeyRepeat.Down(KeyCode.RightArrow))
 			{
 				amount = (amount % r.maxAmount) + 1;
 				ApplyPage();
 			}
-			else if (Input.GetKeyDown(KeyCode.LeftArrow))
+			else if (KeyRepeat.Down(KeyCode.LeftArrow))
 			{
 				amount = ((amount - 2 + r.maxAmount) % r.maxAmount) + 1;
 				ApplyPage();
 			}
-			else if (Input.GetKeyDown(KeyCode.UpArrow))
+			else if (KeyRepeat.Down(KeyCode.UpArrow))
 			{
 				amount = Mathf.Min(r.maxAmount, amount + 10);
 				ApplyPage();
 			}
-			else if (Input.GetKeyDown(KeyCode.DownArrow))
+			else if (KeyRepeat.Down(KeyCode.DownArrow))
 			{
 				amount = Mathf.Max(1, amount - 10);
 				ApplyPage();

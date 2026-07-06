@@ -194,11 +194,11 @@ namespace ElonaKeys
 		// option directly (the game refreshes live), Enter/Escape close it
 		private static void HandleDropdownPopup(UIDropdown dd)
 		{
-			if (Input.GetKeyDown(KeyCode.DownArrow))
+			if (KeyRepeat.Down(KeyCode.DownArrow))
 			{
 				dd.Next();
 			}
-			else if (Input.GetKeyDown(KeyCode.UpArrow))
+			else if (KeyRepeat.Down(KeyCode.UpArrow))
 			{
 				dd.Prev();
 			}
@@ -278,8 +278,8 @@ namespace ElonaKeys
 			// quest board: left/right switch tabs, r hits the reroll button
 			if (topLayer is LayerQuestBoard)
 			{
-				bool tabF = Input.GetKeyDown(KeyCode.RightArrow);
-				bool tabB = Input.GetKeyDown(KeyCode.LeftArrow);
+				bool tabF = KeyRepeat.Down(KeyCode.RightArrow);
+				bool tabB = KeyRepeat.Down(KeyCode.LeftArrow);
 				if (tabF || tabB)
 				{
 					try
@@ -330,10 +330,10 @@ namespace ElonaKeys
 			{
 				return; // tab-only window (character sheet)
 			}
-			bool next = Input.GetKeyDown(KeyCode.DownArrow);
-			bool prev = Input.GetKeyDown(KeyCode.UpArrow);
-			bool groupNext = Input.GetKeyDown(KeyCode.RightArrow);
-			bool groupPrev = Input.GetKeyDown(KeyCode.LeftArrow);
+			bool next = KeyRepeat.Down(KeyCode.DownArrow);
+			bool prev = KeyRepeat.Down(KeyCode.UpArrow);
+			bool groupNext = KeyRepeat.Down(KeyCode.RightArrow);
+			bool groupPrev = KeyRepeat.Down(KeyCode.LeftArrow);
 			if (groups.Count > 1 && (groupNext || groupPrev))
 			{
 				Unhighlight(g);

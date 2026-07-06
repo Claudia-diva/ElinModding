@@ -2,7 +2,7 @@ $About
 {topic|Elona Keys}
 Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optional.
 
-・ Item keys open a paginated menu: ► cursor with up/down, Enter or letter or click to act, left/right arrows switch pages.
+・ Item keys open a paginated menu: ► cursor with up/down (HOLD to keep scrolling), Enter or letter or click to act, left/right arrows switch pages.
 ・ The selected item's full stat card is shown automatically; press x on a row to open the examine window.
 ・ z inside a menu cycles sorting (original / name / weight); the weight column sits on the right.
 ・ Shift returns to the previous window in a chain (wheel, give, equipment slots...), or closes the last one.
@@ -28,7 +28,7 @@ $Keys
 {pair|r|Read menu}
 {pair|Z|Zap a rod, then a direction (wait key = self)}
 {pair|w|Equipment window: body slots, pick one to equip/remove}
-{pair|t|Hold a tool (through the game's hot-item system; pick it again to put it away)}
+{pair|t|Hold ANY usable item (brush, whip, syringe, tools...); then i / Space / s applies it to a target or yourself. Pick it again to put it away}
 {pair|u|Use an item}
 {pair|B|Dip/blend: pick a liquid, then mix items into it}
 {pair|T|Throw: pick item, then the free cursor (auto-fires at your remembered HOSTILE target)}
@@ -78,6 +78,10 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.16.0}
+・ Held items are fully usable by keyboard: hold (t), then i / Space / s: every right-click act appears (generic, works for all items).
+・ Hold arrows to keep scrolling everywhere. Container settings = full native set (sort, priority, categories, autodump, filter).
+
 {topic|1.15.0}
 ・ Other quickslot page = corner icons on the real hotbar (second bar removed). Family bar uses the real widget skin + full style menu.
 ・ Tab fixed in equipment; native-window arrows walk in reading order.

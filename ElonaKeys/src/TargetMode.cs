@@ -207,35 +207,35 @@ namespace ElonaKeys
 		private static Vector2 ReadDir()
 		{
 			Vector2 v = Vector2.zero;
-			if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.Keypad4))
+			if (KeyRepeat.Down(KeyCode.LeftArrow) || KeyRepeat.Down(KeyCode.Keypad4))
 			{
 				v = new Vector2(-1f, 0f);
 			}
-			else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.Keypad6))
+			else if (KeyRepeat.Down(KeyCode.RightArrow) || KeyRepeat.Down(KeyCode.Keypad6))
 			{
 				v = new Vector2(1f, 0f);
 			}
-			else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Keypad8))
+			else if (KeyRepeat.Down(KeyCode.UpArrow) || KeyRepeat.Down(KeyCode.Keypad8))
 			{
 				v = new Vector2(0f, 1f);
 			}
-			else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.Keypad2))
+			else if (KeyRepeat.Down(KeyCode.DownArrow) || KeyRepeat.Down(KeyCode.Keypad2))
 			{
 				v = new Vector2(0f, -1f);
 			}
-			else if (Input.GetKeyDown(KeyCode.Keypad7))
+			else if (KeyRepeat.Down(KeyCode.Keypad7))
 			{
 				v = new Vector2(-1f, 1f);
 			}
-			else if (Input.GetKeyDown(KeyCode.Keypad9))
+			else if (KeyRepeat.Down(KeyCode.Keypad9))
 			{
 				v = new Vector2(1f, 1f);
 			}
-			else if (Input.GetKeyDown(KeyCode.Keypad1))
+			else if (KeyRepeat.Down(KeyCode.Keypad1))
 			{
 				v = new Vector2(-1f, -1f);
 			}
-			else if (Input.GetKeyDown(KeyCode.Keypad3))
+			else if (KeyRepeat.Down(KeyCode.Keypad3))
 			{
 				v = new Vector2(1f, -1f);
 			}
