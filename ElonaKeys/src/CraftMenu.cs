@@ -131,7 +131,7 @@ namespace ElonaKeys
 				label = "(open the native window...)",
 				act = delegate { OpenNative(factory); }
 			});
-			string title = ((factory != null) ? (factory.Name + " - ") : "") + "Craft [" + CatName(craftCat) + "]  <size=12>(z/x tabs)</size>";
+			string title = ((factory != null) ? (factory.Name + " - ") : "") + "Craft [" + CatName(craftCat) + "]";
 			MenuSystem.Show(title, rows);
 			// z/x cycle the category tabs, same keys as everywhere else
 			List<string> catList = cats;

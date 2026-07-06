@@ -40,6 +40,7 @@ namespace ElonaKeys
 
 		private static LayerList layer;
 		private static Text hintText;
+		private static string hintInfo = "";
 		private static Screen current;
 		private static readonly List<Screen> history = new List<Screen>();
 		private static readonly List<MenuRow> pageRows = new List<MenuRow>();
@@ -502,16 +503,13 @@ namespace ElonaKeys
 			sel = Mathf.Clamp(sel, 0, Mathf.Max(0, pageRows.Count - 1));
 			layer.list.List();
 			layer.RefreshSize();
+			// caption stays a CLEAN title; page/totals live at the bottom, Elona style
 			string caption = current.title;
-			if (PageCount > 1)
-			{
-				caption += "  (" + (page + 1) + "/" + PageCount + ") ◄►";
-			}
 			if (sortMode != 0)
 			{
 				caption += (sortMode == 1) ? " [name]" : " [weight]";
 			}
-			// Elona-style totals for item lists: piece count + total weight
+			layer.windows[0].SetCaption(caption);
 			int pieces = 0;
 			int grams = 0;
 			foreach (MenuRow r in view)
@@ -522,12 +520,15 @@ namespace ElonaKeys
 					grams += r.sortWeight;
 				}
 			}
+			hintInfo = "";
+			if (PageCount > 1)
+			{
+				hintInfo = "Page " + (page + 1) + "/" + PageCount;
+			}
 			if (pieces > 0)
 			{
-				// plain text: the caption UIText doesn't parse rich-text tags
-				caption += "  · " + pieces + " items  " + (grams / 1000f).ToString("0.0") + "s";
+				hintInfo += ((hintInfo.Length > 0) ? "   " : "") + pieces + " items  " + (grams / 1000f).ToString("0.0") + "s";
 			}
-			layer.windows[0].SetCaption(caption);
 			UpdateHint();
 			ShowSelTooltip();
 		}
@@ -556,7 +557,7 @@ namespace ElonaKeys
 				rt.anchorMax = new Vector2(0.5f, 0f);
 				rt.pivot = new Vector2(0.5f, 1f);
 				rt.anchoredPosition = new Vector2(0f, -2f); // just under the window
-				rt.sizeDelta = new Vector2(Plugin.MenuWidth, 16f);
+				rt.sizeDelta = new Vector2(Plugin.MenuWidth, 34f); // two lines: info + keys
 				Outline o = go.AddComponent<Outline>();
 				o.effectColor = new Color(0f, 0f, 0f, 0.9f);
 				o.effectDistance = new Vector2(1.2f, -1.2f);
@@ -573,22 +574,22 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			string s;
+			string keys;
 			if (amountRow != null)
 			{
-				s = "←→ ±1 · ↑↓ ±10 · Enter confirm · Shift cancel";
+				keys = "<- -> 1   up/dn 10   Enter ok   Shift cancel";
 			}
 			else
 			{
-				s = "↑↓ move · ←→ page · Enter/letter use";
-				s += (current != null && current.sourceCycle != null) ? " · z/x tabs" : " · z sort · x examine";
+				keys = "Enter/letter use";
+				keys += (current != null && current.sourceCycle != null) ? "   z/x switch" : "   z sort   x examine";
 				if (MenuCycle.Group != null)
 				{
-					s += " · Tab window";
+					keys += "   Tab window";
 				}
-				s += " · 1-9 bind · Shift back";
+				keys += "   1-9 bind   Shift back";
 			}
-			hintText.text = s;
+			hintText.text = (hintInfo.Length > 0) ? (hintInfo + "\n" + keys) : keys;
 		}
 
 		// keep the item stat card visible for the keyboard-selected row
@@ -626,6 +627,13 @@ namespace ElonaKeys
 			if (Time.frameCount - openFrame < 2 || EInput.waitReleaseAnyKey)
 			{
 				return;
+			}
+			// Unity's EventSystem gives clicked rows FOCUS: Space then "clicks"
+			// the focused button (activating rows/spinners invisibly and breaking
+			// arrow navigation). No focus, no surprise clicks.
+			if (UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
+			{
+				UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
 			}
 			// another window (the examine card, etc.) sits ON TOP of our menu:
 			// route Shift/x to it and leave the menu underneath alone
@@ -725,8 +733,9 @@ namespace ElonaKeys
 				ApplyPage();
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
 			{
+				// Space = Enter, deliberately (it used to fall through to uGUI)
 				if (sel >= 0 && sel < pageRows.Count)
 				{
 					Activate(pageRows[sel]);
@@ -768,7 +777,7 @@ namespace ElonaKeys
 				amount = Mathf.Max(1, amount - 10);
 				ApplyPage();
 			}
-			else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+			else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
 			{
 				int n = amount;
 				amountRow = null;

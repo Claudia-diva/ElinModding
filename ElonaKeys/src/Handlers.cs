@@ -2190,7 +2190,7 @@ namespace ElonaKeys
 			browseSrc = ((browseSrc % sources.Count) + sources.Count) % sources.Count;
 			(string name, Chara owner) src = sources[browseSrc];
 			List<MenuRow> rows = BuildBrowserRows(src.owner);
-			string title = "Inventory - " + src.name + "  <size=12>(z/x switch)</size>";
+			string title = "Inventory - " + src.name;
 			if (rows.Count == 0)
 			{
 				rows.Add(new MenuRow { label = "<color=#8f8f7a>(empty)</color>" });

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.19.2 - 2026-07-06
+
+- Space no longer breaks menu navigation: Unity's UI focus was letting Space "click" the focused row invisibly (often opening the count spinner, after which arrows do ±1/±10). Focus is cleared while our menus are open and Space now explicitly acts as Enter, including in the spinner.
+- Captions cleaned up, Elona style: the title bar shows ONLY the title (plus sort marker); page number, item count and total weight moved to the bottom line above the key hints. Also removed leaked rich-text tags from the browser/craft titles and the "·" character the caption font can't render.
+- New release pipeline (release.ps1): builds, zips the mod package, tags ElonaKeys-vX.Y.Z, and publishes a GitHub release with the zip attached; -Backfill creates note-only releases for past versions.
+
 ## 1.19.1 - 2026-07-05
 
 - Crafting menu: z/x switch recipe category tabs (All / each present category), the same keys as everywhere else. The category shows in the caption.
