@@ -14,7 +14,49 @@ namespace ElonaKeys
 	{
 		internal static bool bypass; // "(open the native window...)" escape hatch
 
+		private static string craftCat = "all";
+
 		public static void Show(Thing factory)
+		{
+			craftCat = "all";
+			ShowCat(factory);
+		}
+
+		// second-root category of a recipe, collapsed like the native tabs
+		private static string CatOf(RecipeSource rs)
+		{
+			try
+			{
+				SourceCategory.Row root = rs.row.Category.GetSecondRoot();
+				if (root.id != "lightsource" && root.IsChildOf("armor"))
+				{
+					root = EClass.sources.categories.map["armor"];
+				}
+				return root.id;
+			}
+			catch
+			{
+				return "other";
+			}
+		}
+
+		private static string CatName(string id)
+		{
+			if (id == "all")
+			{
+				return "All";
+			}
+			try
+			{
+				return EClass.sources.categories.map[id].GetName();
+			}
+			catch
+			{
+				return id;
+			}
+		}
+
+		private static void ShowCat(Thing factory)
 		{
 			List<RecipeSource> sources;
 			try
@@ -27,10 +69,28 @@ namespace ElonaKeys
 				OpenNative(factory);
 				return;
 			}
+			// category tabs, native style: All + each present second-root category
+			List<string> cats = new List<string> { "all" };
+			foreach (RecipeSource rs0 in sources)
+			{
+				string c = CatOf(rs0);
+				if (!cats.Contains(c))
+				{
+					cats.Add(c);
+				}
+			}
+			if (!cats.Contains(craftCat))
+			{
+				craftCat = "all";
+			}
 			List<MenuRow> can = new List<MenuRow>();
 			List<MenuRow> cant = new List<MenuRow>();
 			foreach (RecipeSource rs in sources)
 			{
+				if (craftCat != "all" && CatOf(rs) != craftCat)
+				{
+					continue;
+				}
 				Recipe r;
 				try
 				{
@@ -71,7 +131,17 @@ namespace ElonaKeys
 				label = "(open the native window...)",
 				act = delegate { OpenNative(factory); }
 			});
-			MenuSystem.Show(((factory != null) ? (factory.Name + " - ") : "") + "Craft what?", rows);
+			string title = ((factory != null) ? (factory.Name + " - ") : "") + "Craft [" + CatName(craftCat) + "]  <size=12>(z/x tabs)</size>";
+			MenuSystem.Show(title, rows);
+			// z/x cycle the category tabs, same keys as everywhere else
+			List<string> catList = cats;
+			Thing fac2 = factory;
+			MenuSystem.SetSourceCycle(delegate(int dir)
+			{
+				int cur = Mathf.Max(0, catList.IndexOf(craftCat));
+				craftCat = catList[((cur + dir) % catList.Count + catList.Count) % catList.Count];
+				ShowCat(fac2);
+			});
 		}
 
 		private static string SafeName(Recipe r)

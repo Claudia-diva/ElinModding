@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.19.0";
+		public const string Version = "1.19.1";
 
 		internal static ManualLogSource Log;
 
@@ -69,6 +69,7 @@ namespace ElonaKeys
 		private static ConfigEntry<int> weightWidth;
 		private static ConfigEntry<int> menuWidth;
 		private static ConfigEntry<int> nameScrollSlack;
+		private static ConfigEntry<bool> menuKeyHints;
 		private static ConfigEntry<string> quickbinds;
 		private static ConfigEntry<bool> keyboardContainers;
 		private static ConfigEntry<bool> keyboardCrafters;
@@ -112,6 +113,7 @@ namespace ElonaKeys
 		internal static float WeightWidth => Mathf.Clamp(weightWidth.Value, 30, 160);
 		internal static float MenuWidth => Mathf.Clamp(menuWidth.Value, 480, 1100);
 		internal static float NameScrollSlack => Mathf.Clamp(nameScrollSlack.Value, 0, 100);
+		internal static bool MenuKeyHints => menuKeyHints.Value;
 
 		internal static void SaveQuickbinds(string v)
 		{
@@ -184,6 +186,8 @@ namespace ElonaKeys
 				"Width of the mod's menu windows in pixels.");
 			nameScrollSlack = Config.Bind("Menus", "NameScrollSlack", 20,
 				"Names overflowing their column by fewer pixels than this render as-is instead of scrolling.");
+			menuKeyHints = Config.Bind("Menus", "MenuKeyHints", true,
+				"Show the Elona-style key hint line under menu windows.");
 			shiftBarVisible = Config.Bind("Hotkeys", "ShiftBarVisible", true,
 				"Show the OTHER quickslot page (what shift+1..9 fires) as small corner icons on the real hotbar's slots.");
 			familyBarVisible = Config.Bind("Menus", "FamilyBarVisible", true,

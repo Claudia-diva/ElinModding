@@ -35,9 +35,11 @@ namespace ElonaKeys
 			public string title;
 			public List<MenuRow> rows;
 			public Action refreshSource;
+			public Action<int> sourceCycle; // z/x tab/source switching, per screen
 		}
 
 		private static LayerList layer;
+		private static Text hintText;
 		private static Screen current;
 		private static readonly List<Screen> history = new List<Screen>();
 		private static readonly List<MenuRow> pageRows = new List<MenuRow>();
@@ -51,13 +53,15 @@ namespace ElonaKeys
 		private static MenuRow amountRow;
 		private static int amount;
 
-		// multi-source browsers (inventory browser): z/x cycle sources instead
-		// of sort/examine while set; cleared on every Show/Close
-		private static Action<int> onSourceCycle;
-
+		// multi-source screens (inventory browser, craft categories): z/x cycle
+		// sources/tabs instead of sort/examine. Stored ON the screen, so shift-
+		// back restores the right behavior per window.
 		public static void SetSourceCycle(Action<int> cb)
 		{
-			onSourceCycle = cb;
+			if (current != null)
+			{
+				current.sourceCycle = cb;
+			}
 		}
 
 		// shift = back, but only if shift wasn't a modifier for something else
@@ -74,7 +78,6 @@ namespace ElonaKeys
 		public static void Show(string _title, List<MenuRow> rows, Action _refreshSource = null, bool keepLayers = false)
 		{
 			MenuCycle.ClearUnlessJustSet(); // Tab only cycles inside a window family
-			onSourceCycle = null;           // browsers re-set it after Show
 			if (Alive && current != null)
 			{
 				history.Add(current); // shift returns here
@@ -96,6 +99,7 @@ namespace ElonaKeys
 				{
 					Activate(r);
 				}, BuildRow, autoClose: false);
+				BuildHint();
 			}
 			ApplyPage();
 			MenuExtras.RegisterMenu(layer);
@@ -106,7 +110,6 @@ namespace ElonaKeys
 			history.Clear();
 			current = null;
 			amountRow = null;
-			onSourceCycle = null;
 			if (Alive)
 			{
 				layer.Close();
@@ -116,7 +119,6 @@ namespace ElonaKeys
 
 		private static void Back()
 		{
-			onSourceCycle = null; // browser hook must not leak into older screens
 			if (amountRow != null)
 			{
 				amountRow = null;
@@ -526,7 +528,67 @@ namespace ElonaKeys
 				caption += "  · " + pieces + " items  " + (grams / 1000f).ToString("0.0") + "s";
 			}
 			layer.windows[0].SetCaption(caption);
+			UpdateHint();
 			ShowSelTooltip();
+		}
+
+		// Elona-style key hint line at the bottom of every menu window
+		private static void BuildHint()
+		{
+			try
+			{
+				if (!Plugin.MenuKeyHints || layer == null || layer.windows.Count == 0)
+				{
+					hintText = null;
+					return;
+				}
+				GameObject go = new GameObject("EKHint");
+				go.transform.SetParent(layer.windows[0].transform, worldPositionStays: false);
+				hintText = go.AddComponent<Text>();
+				hintText.font = RadialWheel.FindFont();
+				hintText.fontSize = 12;
+				hintText.alignment = TextAnchor.MiddleCenter;
+				hintText.color = new Color(1f, 0.6f, 0.38f); // Elona's orange hint
+				hintText.raycastTarget = false;
+				hintText.horizontalOverflow = HorizontalWrapMode.Overflow;
+				RectTransform rt = hintText.rectTransform;
+				rt.anchorMin = new Vector2(0.5f, 0f);
+				rt.anchorMax = new Vector2(0.5f, 0f);
+				rt.pivot = new Vector2(0.5f, 1f);
+				rt.anchoredPosition = new Vector2(0f, -2f); // just under the window
+				rt.sizeDelta = new Vector2(Plugin.MenuWidth, 16f);
+				Outline o = go.AddComponent<Outline>();
+				o.effectColor = new Color(0f, 0f, 0f, 0.9f);
+				o.effectDistance = new Vector2(1.2f, -1.2f);
+			}
+			catch
+			{
+				hintText = null;
+			}
+		}
+
+		private static void UpdateHint()
+		{
+			if (hintText == null || !hintText)
+			{
+				return;
+			}
+			string s;
+			if (amountRow != null)
+			{
+				s = "←→ ±1 · ↑↓ ±10 · Enter confirm · Shift cancel";
+			}
+			else
+			{
+				s = "↑↓ move · ←→ page · Enter/letter use";
+				s += (current != null && current.sourceCycle != null) ? " · z/x tabs" : " · z sort · x examine";
+				if (MenuCycle.Group != null)
+				{
+					s += " · Tab window";
+				}
+				s += " · 1-9 bind · Shift back";
+			}
+			hintText.text = s;
 		}
 
 		// keep the item stat card visible for the keyboard-selected row
@@ -582,17 +644,17 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			// multi-source browser: z/x flip the shown inventory
-			if (onSourceCycle != null && !EInput.isCtrlDown && !EInput.isAltDown)
+			// multi-source screen: z/x flip the shown inventory / category tab
+			if (current.sourceCycle != null && !EInput.isCtrlDown && !EInput.isAltDown)
 			{
 				if (Input.GetKeyDown(KeyCode.Z))
 				{
-					onSourceCycle(-1);
+					current.sourceCycle(-1);
 					return;
 				}
 				if (Input.GetKeyDown(KeyCode.X))
 				{
-					onSourceCycle(1);
+					current.sourceCycle(1);
 					return;
 				}
 			}

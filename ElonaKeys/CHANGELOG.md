@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.19.1 - 2026-07-05
+
+- Crafting menu: z/x switch recipe category tabs (All / each present category), the same keys as everywhere else. The category shows in the caption.
+- Every menu window carries an Elona-style key hint line at the bottom (context-aware: navigation, z/x tabs vs z sort / x examine, Tab window, 1-9 bind, spinner keys). MenuKeyHints config to hide.
+- The z/x source/tab hook is stored per window, so shift-backing from a submenu restores it correctly.
+
 ## 1.19.0 - 2026-07-05
 
 - ELONA-STYLE CRAFTING: stations and the quick-craft action open a keyboard recipe list (craftable recipes first with skill and max count, uncraftable grayed). Enter a recipe: each ingredient row shows what's assigned and how much you own; Enter cycles through EVERY owned candidate (inventory AND home storage, the same search the game itself uses). The Craft row takes a count spinner and executes through the game's own craft task. The native window stays one row away ("open the native window..."), and KeyboardCrafting=false restores it entirely.

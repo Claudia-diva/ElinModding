@@ -12,7 +12,8 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
 ・ Native windows: ↑↓ move, ←→ switch group (list/grid/dropdowns/buttons), z/x switch window tabs (character sheet, quest board, crafting), Enter acts, x examines in item grids. Tab stays native (chat) except inside window families.
 ・ Quest boards: ↑↓ scroll the requests, ←→ switch tabs, r = reroll.
-・ Crafting (stations + quick craft): keyboard recipe list, Enter = recipe, ingredient rows cycle owned materials (inventory + home storage), Craft row with count spinner. Native window on the last row.
+・ Crafting (stations + quick craft): keyboard recipe list, z/x switch category tabs, Enter = recipe, ingredient rows cycle owned materials (inventory + home storage), Craft row with count spinner. Native window on the last row.
+・ Every menu shows its usable keys in the hint line at the bottom (MenuKeyHints config).
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
 {pair|Source and issues|github.com/Claudia-diva/ElinModding}
@@ -79,6 +80,9 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.19.1}
+・ z/x category tabs in the crafting menu; key-hint line under every menu window.
+
 {topic|1.19.0}
 ・ Elona-style crafting menu (recipes → ingredients cycle owned+stored materials → Craft xN). KeyboardCrafting config.
 ・ Inventory browser: z/x cycle You / party / Home stock; spinner-take. Processors use home storage too.
