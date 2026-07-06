@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.16.1 - 2026-07-05
+
+- Long names scroll their TEXT CONTENT (Elona style) instead of sliding the label over the sprite and letter badge; the name stays inside its own column.
+- Caption totals count unique entries, not stack sizes (a million gold coins = 1 item).
+
 ## 1.16.0 - 2026-07-05
 
 - GENERIC held-item interactions: whatever you hold (brush, whip, syringe, any of the game's tools, mods included) now offers its full right-click act set through the keyboard: i toward a target, Space around you, s on your own tile. One engine-level merge instead of per-item handlers: the game only injected held-item acts into mouse right-click plans; our plans now pull them in too. Holding via t prints a hint.

@@ -49,8 +49,8 @@ namespace ElonaKeys
 		private class Scroller
 		{
 			public UIText text;
-			public float baseX;
-			public float range;
+			public string full;   // plain text (tags stripped): we scroll CONTENT
+			public int budget;    // visible character window
 			public float t;
 		}
 
@@ -254,9 +254,6 @@ namespace ElonaKeys
 			{
 				if (scrollers[i].text == text)
 				{
-					Vector2 pos = text.rectTransform.anchoredPosition;
-					pos.x = scrollers[i].baseX;
-					text.rectTransform.anchoredPosition = pos;
 					scrollers.RemoveAt(i);
 				}
 			}
@@ -272,23 +269,30 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			if (mode == "pingpong")
+			// scroll the CONTENT, Elona style: the text component never moves, so
+			// nothing slides over the sprite/letter badge on the left
+			string plain = text.text;
+			if (plain.IndexOf('<') >= 0)
 			{
+				plain = System.Text.RegularExpressions.Regex.Replace(plain, "<.*?>", "");
+			}
+			int budget = Math.Max(4, (int)(plain.Length * maxWidth / pref) - 1);
+			if (mode == "pingpong" && budget < plain.Length)
+			{
+				text.text = plain.Substring(0, budget);
 				scrollers.Add(new Scroller
 				{
 					text = text,
-					baseX = text.rectTransform.anchoredPosition.x,
-					range = pref - maxWidth,
+					full = plain,
+					budget = budget,
 					t = 0f
 				});
 			}
-			else // truncate
+			else // truncate (or nothing to scroll)
 			{
-				string s = text.text;
-				int keep = Math.Max(4, (int)(s.Length * maxWidth / pref) - 2);
-				if (keep < s.Length)
+				if (budget < plain.Length)
 				{
-					text.text = s.Substring(0, keep) + "…";
+					text.text = plain.Substring(0, Math.Max(4, budget - 1)) + "…";
 				}
 			}
 		}
@@ -303,12 +307,17 @@ namespace ElonaKeys
 					scrollers.RemoveAt(i);
 					continue;
 				}
+				int range = s.full.Length - s.budget;
+				if (range <= 0)
+				{
+					scrollers.RemoveAt(i);
+					continue;
+				}
 				s.t += Time.unscaledDeltaTime * 0.5f;
 				float k = Mathf.PingPong(s.t, 1.2f);
-				float shift = Mathf.Clamp01(k - 0.1f) * s.range; // brief pause at each end
-				Vector2 pos = s.text.rectTransform.anchoredPosition;
-				pos.x = s.baseX - shift;
-				s.text.rectTransform.anchoredPosition = pos;
+				float frac = Mathf.Clamp01((k - 0.1f) / 1f); // brief pause at each end
+				int off = Mathf.Clamp(Mathf.RoundToInt(frac * range), 0, range);
+				s.text.text = s.full.Substring(off, s.budget);
 			}
 		}
 	}

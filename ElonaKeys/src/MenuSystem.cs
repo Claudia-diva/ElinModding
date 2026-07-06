@@ -498,7 +498,7 @@ namespace ElonaKeys
 			{
 				if (r.icon != null)
 				{
-					pieces += Mathf.Max(1, r.icon.Num);
+					pieces++; // unique entries, not stack counts (a million gold = 1)
 					grams += r.sortWeight;
 				}
 			}
