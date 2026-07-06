@@ -545,12 +545,33 @@ namespace ElonaKeys
 			return rows;
 		}
 
+		private static bool IsHeld(Thing t)
+		{
+			return pc.held != null && t != null && pc.held.uid == t.uid;
+		}
+
+		// pinned first row to put the held thing away (identity-proof: uid)
+		private static List<MenuRow> HeldRows()
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			if (pc.held is Thing h)
+			{
+				rows.Add(new MenuRow
+				{
+					label = "(held) put away — " + h.Name,
+					icon = h,
+					act = delegate { ToggleHold(h); }
+				});
+			}
+			return rows;
+		}
+
 		public static void HoldTool()
 		{
 			MenuCycle.Set("items", 6);
-			ItemMenu("Hold which tool?", (Thing t) => (t.trait is TraitTool && !(t.trait is TraitCatalyst) && !t.isEquipped) || t == pc.held,
+			ItemMenu("Hold which tool?", (Thing t) => t.trait is TraitTool && !(t.trait is TraitCatalyst) && !t.isEquipped && !IsHeld(t),
 				delegate(Thing t) { ToggleHold(t); },
-				"You have no tools.");
+				"You have no tools.", refresh: false, label: null, extraRows: HeldRows());
 		}
 
 		// Hold through the hot-item system so held-tool acts (chop, mine, till,
@@ -559,13 +580,21 @@ namespace ElonaKeys
 		// Picking the currently held thing un-holds it.
 		internal static void ToggleHold(Thing t)
 		{
-			if (pc.held == t)
+			if (IsHeld(t))
 			{
 				EClass.player.ResetCurrentHotItem();
+				if (Plugin.DebugLog)
+				{
+					Plugin.Log?.LogInfo("ElonaKeys: unheld " + t.Name + " uid=" + t.uid + ", hotItem=" + EClass.player.currentHotItem?.GetType().Name);
+				}
 				Msg.SayRaw("You put " + t.Name + " away.");
 				return;
 			}
 			EClass.player.SetCurrentHotItem(new HotItemHeld(t));
+			if (Plugin.DebugLog)
+			{
+				Plugin.Log?.LogInfo("ElonaKeys: held " + t.Name + " uid=" + t.uid + ", pc.held=" + (pc.held?.Name ?? "null") + ", hotItem=" + EClass.player.currentHotItem?.GetType().Name);
+			}
 			Msg.SayRaw("Holding " + t.Name + ": i / Space toward a target, s on yourself.");
 		}
 
@@ -578,9 +607,9 @@ namespace ElonaKeys
 
 		public static void Hold()
 		{
-			ItemMenu("Hold what in your hands?", (Thing t) => (t.trait.CanBeHeld && !t.isEquipped) || t == pc.held,
+			ItemMenu("Hold what in your hands?", (Thing t) => t.trait.CanBeHeld && !t.isEquipped && !IsHeld(t),
 				delegate(Thing t) { ToggleHold(t); },
-				"You have nothing you can hold.");
+				"You have nothing you can hold.", refresh: false, label: null, extraRows: HeldRows());
 		}
 
 		public static void Blend()

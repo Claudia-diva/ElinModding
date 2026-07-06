@@ -35,6 +35,7 @@ namespace ElonaKeys
 				}
 			}
 			AddMeta(metas, IdFamilyBar, Plugin.FamilyBarVisible, mode);
+			Plugin.Log?.LogInfo("ElonaKeys: widget meta ready (" + IdFamilyBar + ", mode=" + mode + ")");
 		}
 
 		private static void AddMeta(List<Widget.Meta> metas, string id, bool enabled, GameMode mode)
@@ -77,6 +78,7 @@ namespace ElonaKeys
 			dp.container = manager.transform as RectTransform;
 			dp.clamp = true;
 			w.dragPanel = dp;
+			Plugin.Log?.LogInfo("ElonaKeys: widget " + id + " activated");
 			return w;
 		}
 	}

@@ -4,6 +4,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using UnityEngine;
 
 namespace ElonaKeys
 {
@@ -12,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.16.1";
+		public const string Version = "1.17.0";
 
 		internal static ManualLogSource Log;
 
@@ -62,6 +63,8 @@ namespace ElonaKeys
 		private static ConfigEntry<float> wheelPosY;
 		private static ConfigEntry<bool> shiftBarVisible;
 		private static ConfigEntry<bool> familyBarVisible;
+		private static ConfigEntry<float> familyBarScale;
+		private static ConfigEntry<bool> familyBarHint;
 		private static ConfigEntry<bool> keyboardContainers;
 		private static ConfigEntry<bool> keyboardCrafters;
 		private static ConfigEntry<string> macro1;
@@ -90,6 +93,16 @@ namespace ElonaKeys
 
 		internal static bool ShiftBarVisible => shiftBarVisible.Value;
 		internal static bool FamilyBarVisible => familyBarVisible.Value;
+		internal static float FamilyBarScale
+		{
+			get { return Mathf.Clamp(familyBarScale.Value, 0.4f, 1.5f); }
+			set { familyBarScale.Value = Mathf.Clamp(value, 0.4f, 1.5f); }
+		}
+		internal static bool FamilyBarHint
+		{
+			get { return familyBarHint.Value; }
+			set { familyBarHint.Value = value; }
+		}
 		internal static bool KeyboardContainers => keyboardContainers.Value;
 		internal static bool KeyboardCrafters => keyboardCrafters.Value;
 		internal static string Macro1 => macro1.Value;
@@ -149,6 +162,10 @@ namespace ElonaKeys
 				"Show the OTHER quickslot page (what shift+1..9 fires) as small corner icons on the real hotbar's slots.");
 			familyBarVisible = Config.Bind("Menus", "FamilyBarVisible", true,
 				"Whether the Elona-style window-family bar (diamond tabs shown while item/chara/spell windows are open; Tab cycles them) starts ENABLED the first time. Also a real Elin widget: manage it in the widget manager.");
+			familyBarScale = Config.Bind("Menus", "FamilyBarScale", 0.75f,
+				"Size of the family bar (0.4 - 1.5). Also adjustable from the bar's right-click menu.");
+			familyBarHint = Config.Bind("Menus", "FamilyBarHint", true,
+				"Show the 'Tab [change]' hint line under the family bar.");
 			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
 				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Locked chests and surprise packages stay native.");
 			keyboardCrafters = Config.Bind("Menus", "KeyboardCrafters", true,

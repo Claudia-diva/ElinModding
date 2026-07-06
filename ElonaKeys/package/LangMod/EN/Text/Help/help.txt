@@ -61,6 +61,7 @@ $Keys
 {pair|Space|Menu of everything interactable around you (single action fires instantly)}
 {pair|bump NPC|Walking into a friendly NPC talks to them (BumpToTalk)}
 {pair|bump object|Walking into a solid interactable uses it (BumpToUse)}
+{pair|bump + held tool|Running into a tree with an axe chops it, wall with pickaxe mines it (no shift needed)}
 
 {topic|Hotkeys and extras}
 {pair|1-9 in a menu|Assign the selected item/spell to that quickslot}
@@ -78,6 +79,10 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.17.0}
+・ Tab never falls through to the native inventory. Bump-to-work: run into trees/walls with the right tool held.
+・ t menu pins "(held) put away". Family bar: size slider + Tab-hint toggle in its right-click menu.
+
 {topic|1.16.0}
 ・ Held items are fully usable by keyboard: hold (t), then i / Space / s: every right-click act appears (generic, works for all items).
 ・ Hold arrows to keep scrolling everywhere. Container settings = full native set (sort, priority, categories, autodump, filter).

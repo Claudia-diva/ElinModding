@@ -76,6 +76,13 @@ namespace ElonaKeys
 			{
 				EInput.axis = Vector2.zero;
 			}
+			// Tab is ALSO a native Elin action (inventory): while our menus or any
+			// modal window own it (family cycling, window tabs), neutralize the
+			// native dispatch or closing our layer lets it toggle the inventory
+			if (Input.GetKey(KeyCode.Tab) && (MenuSystem.Alive || EClass.ui.BlockActions))
+			{
+				EInput.action = EAction.None;
+			}
 			if (queuedNative != EAction.None)
 			{
 				EInput.action = queuedNative;
@@ -236,7 +243,7 @@ namespace ElonaKeys
 			}
 			if (Plugin.BumpToUse && p.IsBlocked)
 			{
-				// no held-item acts here: bumping a door while holding an axe
+				// no held-item acts first: bumping a door while holding an axe
 				// should open it, not start chopping it
 				ActPlan plan = Handlers.BuildPlan(p, ActInput.AllAction, includeHeld: false);
 				if (plan.HasAct && !plan.list[0].act.IsHostileAct)
@@ -245,6 +252,26 @@ namespace ElonaKeys
 					if (plan.list[0].Perform())
 					{
 						EClass.player.EndTurn();
+					}
+					return;
+				}
+				// nothing else there: let the HELD TOOL work the tile on bump
+				// (run into a tree with an axe = chop; wall with pickaxe = mine).
+				// Always-run friendly: no shift needed.
+				if (EClass.player.currentHotItem is HotItemHeld)
+				{
+					ActPlan toolPlan = Handlers.BuildPlan(p, ActInput.RightMouse);
+					if (toolPlan.HasAct && !toolPlan.list[0].act.IsHostileAct && !(toolPlan.list[0].act is ActMelee))
+					{
+						if (Plugin.DebugLog)
+						{
+							Plugin.Log?.LogInfo("ElonaKeys: bump-tool " + toolPlan.list[0].act.GetType().Name);
+						}
+						EInput.axis = Vector2.zero;
+						if (toolPlan.list[0].Perform())
+						{
+							EClass.player.EndTurn();
+						}
 					}
 				}
 			}

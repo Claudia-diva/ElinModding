@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.17.0 - 2026-07-05
+
+- Tab can no longer fall through to the native inventory: while our menus (or any modal window) are open, the game's own Tab action is neutralized at the input stage. That was the "Tab quits the menu and opens the Elin inventory" bug.
+- Bump-to-work: RUNNING into a tile with your held tool now works it when nothing else is there: tree with an axe = chop, wall with a pickaxe = mine, no shift needed (always-run friendly). Doors still open instead of getting chopped; shift+move stays for precision.
+- Hold toggle hardened: the held item is pinned as the first row of the t menu ("(held) put away"), matching by uid instead of object identity (stack merges/splits could orphan the old check). Hold/unhold now log to BepInEx/LogOutput.log for diagnosis.
+- Family bar: size slider ("Bar size", 0.4-1.5, default 0.75 = smaller than before) and "Show Tab hint" toggle in the bar's right-click menu (also FamilyBarScale/FamilyBarHint configs). Skin decorations were already available under the style submenu. All bar updates are exception-guarded and widget activation is logged, so if it misbehaves again the log will say why.
+
 ## 1.16.1 - 2026-07-05
 
 - Long names scroll their TEXT CONTENT (Elona style) instead of sliding the label over the sprite and letter badge; the name stays inside its own column.

@@ -19,6 +19,8 @@ namespace ElonaKeys
 		private GameObject content;
 		private Font font;
 		private UIImage bg;
+		private float builtScale = -1f;
+		private float lastErr;
 
 		public override void OnActivate()
 		{
@@ -33,44 +35,72 @@ namespace ElonaKeys
 
 		private void Update()
 		{
-			string g = null;
-			int idx = -1;
-			if (MenuSystem.Alive && MenuCycle.Group != null)
+			try
 			{
-				g = MenuCycle.Group;
-				idx = MenuCycle.Index;
-			}
-			else if (EClass.ui != null && EClass.ui.TopLayer is LayerChara && MenuCycle.Group == "chara")
-			{
-				g = "chara";
-				idx = MenuCycle.Index;
-			}
-			if (g == null && (bool)LayerWidget.Instance)
-			{
-				g = "items"; // widget-edit mode: show a sample so it can be placed
-				idx = 0;
-			}
-			if (g == null)
-			{
-				if (content != null)
+				string g = null;
+				int idx = -1;
+				if (MenuSystem.Alive && MenuCycle.Group != null)
 				{
-					content.SetActive(value: false);
+					g = MenuCycle.Group;
+					idx = MenuCycle.Index;
 				}
-				builtGroup = null;
-				return;
+				else if (EClass.ui != null && EClass.ui.TopLayer is LayerChara && MenuCycle.Group == "chara")
+				{
+					g = "chara";
+					idx = MenuCycle.Index;
+				}
+				if (g == null && (bool)LayerWidget.Instance)
+				{
+					g = "items"; // widget-edit mode: show a sample so it can be placed
+					idx = 0;
+				}
+				if (g == null)
+				{
+					if (content != null)
+					{
+						content.SetActive(value: false);
+					}
+					builtGroup = null;
+					return;
+				}
+				if (content != null && g == builtGroup && idx == builtIndex && builtScale == Plugin.FamilyBarScale)
+				{
+					content.SetActive(value: true);
+					return;
+				}
+				Rebuild(g, idx);
 			}
-			if (content != null && g == builtGroup && idx == builtIndex)
+			catch (Exception ex)
 			{
-				content.SetActive(value: true);
-				return;
+				if (Time.unscaledTime - lastErr > 5f)
+				{
+					lastErr = Time.unscaledTime;
+					Plugin.Log?.LogError("ElonaKeys family bar update failed: " + ex);
+				}
 			}
-			Rebuild(g, idx);
+		}
+
+		// widget right-click: native base options + our size/hint controls
+		public override void OnSetContextMenu(UIContextMenu m)
+		{
+			m.AddSlider("Bar size", (float n) => n.ToString("0.00"), Plugin.FamilyBarScale, delegate(float a)
+			{
+				Plugin.FamilyBarScale = a;
+				builtScale = -1f; // rebuild next frame
+			}, 0.4f, 1.5f);
+			m.AddToggle("Show Tab hint", Plugin.FamilyBarHint, delegate(bool a)
+			{
+				Plugin.FamilyBarHint = a;
+				builtScale = -1f;
+			});
+			SetBaseContextMenu(m);
 		}
 
 		private void Rebuild(string g, int idx)
 		{
 			builtGroup = g;
 			builtIndex = idx;
+			builtScale = Plugin.FamilyBarScale;
 			if (content != null)
 			{
 				UnityEngine.Object.Destroy(content);
@@ -86,8 +116,9 @@ namespace ElonaKeys
 			crt.anchorMin = new Vector2(0.5f, 0.5f);
 			crt.anchorMax = new Vector2(0.5f, 0.5f);
 			crt.anchoredPosition = Vector2.zero;
+			content.transform.localScale = new Vector3(builtScale, builtScale, 1f);
 			float width = entries.Length * Spacing + 40f;
-			(base.transform as RectTransform).sizeDelta = new Vector2(width, 120f);
+			(base.transform as RectTransform).sizeDelta = new Vector2(width * builtScale, 120f * builtScale);
 			BuildBg(crt, width);
 			float x0 = (0f - (entries.Length - 1)) * Spacing / 2f;
 			for (int i = 0; i < entries.Length; i++)
@@ -125,20 +156,23 @@ namespace ElonaKeys
 					Jump(ci);
 				});
 			}
-			// hint line, like Elona's ",Tab [Change]"
-			GameObject hg = new GameObject("hint");
-			hg.transform.SetParent(content.transform, worldPositionStays: false);
-			Text ht = hg.AddComponent<Text>();
-			ht.font = font;
-			ht.fontSize = 13;
-			ht.alignment = TextAnchor.MiddleCenter;
-			ht.color = new Color(1f, 0.55f, 0.35f);
-			ht.raycastTarget = false;
-			ht.text = "Tab [change]";
-			RectTransform hrt = ht.rectTransform;
-			hrt.anchoredPosition = new Vector2(0f, -58f);
-			hrt.sizeDelta = new Vector2(220f, 18f);
-			AddOutline(hg);
+			// hint line, like Elona's ",Tab [Change]" (optional)
+			if (Plugin.FamilyBarHint)
+			{
+				GameObject hg = new GameObject("hint");
+				hg.transform.SetParent(content.transform, worldPositionStays: false);
+				Text ht = hg.AddComponent<Text>();
+				ht.font = font;
+				ht.fontSize = 13;
+				ht.alignment = TextAnchor.MiddleCenter;
+				ht.color = new Color(1f, 0.55f, 0.35f);
+				ht.raycastTarget = false;
+				ht.text = "Tab [change]";
+				RectTransform hrt = ht.rectTransform;
+				hrt.anchoredPosition = new Vector2(0f, -58f);
+				hrt.sizeDelta = new Vector2(220f, 18f);
+				AddOutline(hg);
+			}
 		}
 
 		private static void AddOutline(GameObject go)
