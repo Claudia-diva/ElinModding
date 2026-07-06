@@ -17,25 +17,41 @@ namespace ElonaKeys
 		internal static Action lastItemMenu;
 
 		internal static string Group => group;
+		internal static int Index => index;
 
-		private static (string name, Action open)[] Cycle(string g)
+		internal static (string name, string key, Action open)[] Entries(string g)
 		{
 			switch (g)
 			{
 			case "items":
-				return new (string, Action)[]
+				return new (string, string, Action)[]
 				{
-					("examine", Handlers.ExamineInventory), ("drop", Handlers.Drop), ("eat", Handlers.Eat),
-					("read", Handlers.ReadItem), ("quaff", Handlers.Quaff), ("zap", Handlers.Zap),
-					("tool", Handlers.HoldTool), ("open", Handlers.Open), ("blend", Handlers.Blend), ("throw", Handlers.Throw)
+					("Examine", "X", Handlers.ExamineInventory), ("Drop", "d", Handlers.Drop), ("Eat", "e", Handlers.Eat),
+					("Read", "r", Handlers.ReadItem), ("Drink", "q", Handlers.Quaff), ("Zap", "Z", Handlers.Zap),
+					("Tool", "t", Handlers.HoldTool), ("Open", "o", Handlers.Open), ("Mix", "B", Handlers.Blend), ("Throw", "T", Handlers.Throw)
 				};
 			case "chara":
-				return new (string, Action)[] { ("equipment", Handlers.Wear), ("chara", Handlers.ShowChara) };
+				return new (string, string, Action)[] { ("Wear", "w", Handlers.Wear), ("Chara", "c", Handlers.ShowChara) };
 			case "ability":
-				return new (string, Action)[] { ("spells", Handlers.Cast), ("actions", Handlers.ActionList) };
+				return new (string, string, Action)[] { ("Spell", "v", Handlers.Cast), ("Skill", "a", Handlers.ActionList) };
 			default:
 				return null;
 			}
+		}
+
+		private static (string name, Action open)[] Cycle(string g)
+		{
+			(string name, string key, Action open)[] e = Entries(g);
+			if (e == null)
+			{
+				return null;
+			}
+			(string, Action)[] c = new (string, Action)[e.Length];
+			for (int i = 0; i < e.Length; i++)
+			{
+				c[i] = (e[i].name, e[i].open);
+			}
+			return c;
 		}
 
 		public static void Set(string g, int i)

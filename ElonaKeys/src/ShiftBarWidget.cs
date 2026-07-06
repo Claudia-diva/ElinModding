@@ -1,63 +1,34 @@
 using System;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace ElonaKeys
 {
-	// Overlay showing the NON-displayed quickslot page (what shift+1..9 fires).
-	// Built by cloning the live hotbar widget (WidgetCurrentTool), so size, skin
-	// and slot rendering are pixel-identical to the real bar; the clone's UIList
-	// is re-driven with the other page's things through the same InvOwnerHotbar,
-	// which also makes drag-assign onto the bar work. Draggable by its empty
-	// space; offset from the hotbar saved to config.
-	public class ShiftBarWidget : MonoBehaviour, IDragHandler, IEndDragHandler
+	// The other quickslot page (what shift+1..9 fires) as a REAL Elin widget:
+	// registered via WidgetHost, so toggle/drag/lock/anchor/theme-save are all
+	// native. The visible grid is a clone of the live hotbar widget
+	// (WidgetCurrentTool) re-driven with the non-displayed page, which keeps
+	// the exact size/skin and makes drag-assign onto the slots work.
+	public class WidgetEKShiftBar : Widget
 	{
-		private static ShiftBarWidget instance;
 		private static bool dirty = true;
 
 		private UIList list;
+		private GameObject gridRoot;
 		private int shownPage = -1;
 		private float refreshTimer;
 		private Vector2 cellAtBuild;
+
+		public override bool ShowStyleMenu => false; // no SkinRoot on runtime widgets
 
 		public static void SetDirty()
 		{
 			dirty = true;
 		}
 
-		// called every frame from MenuExtras.OnUpdate
-		public static void EnsureAndUpdate()
+		public override void OnActivate()
 		{
-			WidgetCurrentTool src = WidgetCurrentTool.Instance;
-			bool wanted = Plugin.ShiftBarVisible && EClass.core != null && EClass.core.IsGameStarted
-				&& EClass.pc != null && EClass.ui != null && src != null && (bool)src;
-			if (!wanted)
-			{
-				Drop();
-				return;
-			}
-			// follow the hotbar's icon-size setting: rebuild when it changes
-			if (instance != null && instance && instance.cellAtBuild != CellSize(src))
-			{
-				Drop();
-			}
-			if (instance == null || !instance)
-			{
-				try
-				{
-					Build(src);
-				}
-				catch (Exception ex)
-				{
-					Plugin.Log?.LogError("ElonaKeys shift bar build failed: " + ex);
-					return;
-				}
-			}
-			if (instance != null && instance)
-			{
-				instance.Tick();
-			}
+			TryBuildGrid();
 		}
 
 		private static Vector2 CellSize(WidgetCurrentTool src)
@@ -72,25 +43,27 @@ namespace ElonaKeys
 			}
 		}
 
-		private static void Drop()
-		{
-			if (instance != null && instance)
-			{
-				UnityEngine.Object.Destroy(instance.gameObject);
-			}
-			instance = null;
-		}
-
 		private static int OtherPage()
 		{
 			return (EClass.player.hotbarPage == 0) ? 1 : 0;
 		}
 
-		private static void Build(WidgetCurrentTool src)
+		private void TryBuildGrid()
 		{
-			GameObject root = UnityEngine.Object.Instantiate(src.gameObject, src.transform.parent);
-			root.name = "ElonaKeysShiftBar";
-			WidgetCurrentTool comp = root.GetComponent<WidgetCurrentTool>();
+			WidgetCurrentTool src = WidgetCurrentTool.Instance;
+			if (src == null || !src)
+			{
+				return; // hotbar widget not up yet; Update retries
+			}
+			if (gridRoot != null)
+			{
+				UnityEngine.Object.Destroy(gridRoot);
+				gridRoot = null;
+				list = null;
+			}
+			GameObject clone = UnityEngine.Object.Instantiate(src.gameObject, base.transform);
+			clone.name = "grid";
+			WidgetCurrentTool comp = clone.GetComponent<WidgetCurrentTool>();
 			UIList clonedList = comp.list;
 			GridLayoutGroup layout = comp.layout;
 			int slots = Mathf.Clamp(src.maxSlots, 1, 9);
@@ -102,7 +75,6 @@ namespace ElonaKeys
 			catch
 			{
 			}
-			// strip everything that isn't the slot grid
 			if ((bool)comp.buttonHotItem)
 			{
 				UnityEngine.Object.DestroyImmediate(comp.buttonHotItem.gameObject);
@@ -123,19 +95,27 @@ namespace ElonaKeys
 			{
 				UnityEngine.Object.DestroyImmediate(comp.transHighlightSwitch.gameObject);
 			}
-			// the widget component's Update would NRE on the stripped pieces
+			// the cloned widget component's Update would NRE on stripped pieces
 			UnityEngine.Object.DestroyImmediate(comp);
-			foreach (UIPlaceHelper ph in root.GetComponentsInChildren<UIPlaceHelper>(includeInactive: true))
+			foreach (UIDragPanel dp in clone.GetComponentsInChildren<UIDragPanel>(includeInactive: true))
+			{
+				UnityEngine.Object.DestroyImmediate(dp); // ours on the root handles dragging
+			}
+			foreach (UIPlaceHelper ph in clone.GetComponentsInChildren<UIPlaceHelper>(includeInactive: true))
 			{
 				UnityEngine.Object.DestroyImmediate(ph);
 			}
-			instance = root.AddComponent<ShiftBarWidget>();
-			instance.list = clonedList;
-			instance.cellAtBuild = CellSize(src);
-			layout.cellSize = instance.cellAtBuild;
-			RectTransform rt = root.transform as RectTransform;
-			RectTransform srcRt = src.transform as RectTransform;
-			rt.anchoredPosition = srcRt.anchoredPosition + new Vector2(Plugin.ShiftBarX, Plugin.ShiftBarY);
+			gridRoot = clone;
+			list = clonedList;
+			cellAtBuild = CellSize(src);
+			layout.cellSize = cellAtBuild;
+			// center the clone in the widget; size the widget to fit the row
+			RectTransform crt = clone.transform as RectTransform;
+			crt.anchorMin = new Vector2(0.5f, 0.5f);
+			crt.anchorMax = new Vector2(0.5f, 0.5f);
+			crt.anchoredPosition = Vector2.zero;
+			RectTransform rt = base.transform as RectTransform;
+			rt.sizeDelta = new Vector2(slots * (cellAtBuild.x + 2f) + 12f, cellAtBuild.y + 12f);
 			// same wiring as WidgetCurrentTool.RebuildSlots, aimed at the other page
 			clonedList.Clear();
 			clonedList.callbacks = new UIList.Callback<Thing, ButtonGridDrag>
@@ -180,8 +160,23 @@ namespace ElonaKeys
 			dirty = true;
 		}
 
-		private void Tick()
+		private void Update()
 		{
+			WidgetCurrentTool src = WidgetCurrentTool.Instance;
+			bool haveSrc = src != null && (bool)src;
+			if (gridRoot == null || list == null)
+			{
+				if (haveSrc)
+				{
+					TryBuildGrid();
+				}
+				return;
+			}
+			if (haveSrc && cellAtBuild != CellSize(src))
+			{
+				TryBuildGrid(); // hotbar icon size changed: match it
+				return;
+			}
 			refreshTimer -= Time.unscaledDeltaTime;
 			int other = OtherPage();
 			if (!dirty && other == shownPage && refreshTimer > 0f && !WidgetCurrentTool.dirty)
@@ -198,23 +193,6 @@ namespace ElonaKeys
 			catch (Exception ex)
 			{
 				Plugin.Log?.LogError("ElonaKeys shift bar refresh failed: " + ex);
-			}
-		}
-
-		public void OnDrag(PointerEventData e)
-		{
-			RectTransform rt = transform as RectTransform;
-			rt.anchoredPosition += e.delta;
-		}
-
-		public void OnEndDrag(PointerEventData e)
-		{
-			RectTransform rt = transform as RectTransform;
-			WidgetCurrentTool src = WidgetCurrentTool.Instance;
-			if (src != null && (bool)src)
-			{
-				Vector2 off = rt.anchoredPosition - (src.transform as RectTransform).anchoredPosition;
-				Plugin.SaveShiftBarPos(off.x, off.y);
 			}
 		}
 	}

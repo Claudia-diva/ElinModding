@@ -127,7 +127,7 @@ namespace ElonaKeys
 			instance = null;
 		}
 
-		private static Font FindFont()
+		internal static Font FindFont()
 		{
 			Text existing = UnityEngine.Object.FindObjectOfType<Text>();
 			if (existing != null && existing.font != null)
@@ -188,7 +188,7 @@ namespace ElonaKeys
 			dh.target = container;
 		}
 
-		private GameObject MakeDiamond(Transform parent, Font f, string label, bool isLink, Vector2 pos, bool center = false)
+		internal static GameObject MakeDiamond(Transform parent, Font f, string label, bool isLink, Vector2 pos, bool center = false)
 		{
 			GameObject go = new GameObject("slot");
 			go.transform.SetParent(parent, worldPositionStays: false);

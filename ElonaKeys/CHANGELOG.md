@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.14.0 - 2026-07-05
+
+- Elona's window-family bar, as a real widget: while an item/equipment/chara/spell window is open, a row of diamond tabs appears (near the top by default) showing the whole family with the current window highlighted gold, key letters beneath, and the Tab [change] hint. Clicking a diamond jumps to that window. Hides when the windows close.
+- Both the family bar (EKFamilyBar) and the shift-page hotbar (EKShiftBar) are now REAL Elin widgets: they appear in the game's widget manager with native toggle, drag, lock, anchor and context menu, and their positions save/load with your widget themes. In widget-edit mode the family bar shows a sample so it can be placed.
+- ShiftBarOffsetX/Y config entries retired (the widget system owns the position now); ShiftBarVisible and the new FamilyBarVisible only set the first-time enabled state.
+- The z wheel stays a summonable overlay (drag its center diamond; position still saved to config), since it only exists while open.
+
 ## 1.13.0 - 2026-07-05
 
 - Elona window cycling: Tab walks the related-window family from your current position. Item menus cycle X(examine) → d → e → r → q → Z → t → o → B → T; the equipment window and the character sheet cycle into each other (feats are a tab inside the sheet, z/x); v (spells) and a (actions) cycle into each other.

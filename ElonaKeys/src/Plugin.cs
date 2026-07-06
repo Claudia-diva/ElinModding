@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.13.0";
+		public const string Version = "1.14.0";
 
 		internal static ManualLogSource Log;
 
@@ -61,8 +61,7 @@ namespace ElonaKeys
 		private static ConfigEntry<float> wheelPosX;
 		private static ConfigEntry<float> wheelPosY;
 		private static ConfigEntry<bool> shiftBarVisible;
-		private static ConfigEntry<float> shiftBarX;
-		private static ConfigEntry<float> shiftBarY;
+		private static ConfigEntry<bool> familyBarVisible;
 		private static ConfigEntry<bool> keyboardContainers;
 		private static ConfigEntry<bool> keyboardCrafters;
 		private static ConfigEntry<string> macro1;
@@ -90,8 +89,7 @@ namespace ElonaKeys
 		internal static float WheelPosY => wheelPosY.Value;
 
 		internal static bool ShiftBarVisible => shiftBarVisible.Value;
-		internal static float ShiftBarX => shiftBarX.Value;
-		internal static float ShiftBarY => shiftBarY.Value;
+		internal static bool FamilyBarVisible => familyBarVisible.Value;
 		internal static bool KeyboardContainers => keyboardContainers.Value;
 		internal static bool KeyboardCrafters => keyboardCrafters.Value;
 		internal static string Macro1 => macro1.Value;
@@ -104,11 +102,6 @@ namespace ElonaKeys
 			wheelPosY.Value = y;
 		}
 
-		internal static void SaveShiftBarPos(float x, float y)
-		{
-			shiftBarX.Value = x;
-			shiftBarY.Value = y;
-		}
 		internal static List<Keybind> SuppressBinds { get; private set; } = new List<Keybind>();
 
 		private void Awake()
@@ -153,9 +146,9 @@ namespace ElonaKeys
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
 				"shift = shift+1..9 fires the NON-displayed quickslot page (plain digits stay native). off = disable. Assignment: select/hover an item or spell in a menu and press 1-9 (shift+digit = other page).");
 			shiftBarVisible = Config.Bind("Hotkeys", "ShiftBarVisible", true,
-				"Show a second hotbar with the other quickslot page's slots (what shift+1..9 fires). Cloned from the real hotbar widget, so it matches its size and skin.");
-			shiftBarX = Config.Bind("Hotkeys", "ShiftBarOffsetX", 0f, "Shift-bar offset from the main hotbar (drag its empty space to move; saved automatically).");
-			shiftBarY = Config.Bind("Hotkeys", "ShiftBarOffsetY", 76f, "Shift-bar offset from the main hotbar (drag its empty space to move; saved automatically).");
+				"Whether the second hotbar (other quickslot page, what shift+1..9 fires) starts ENABLED the first time. It is a real Elin widget: toggle/drag/lock it in the game's widget manager afterwards; position saves with your widget theme.");
+			familyBarVisible = Config.Bind("Menus", "FamilyBarVisible", true,
+				"Whether the Elona-style window-family bar (diamond tabs shown while item/chara/spell windows are open; Tab cycles them) starts ENABLED the first time. Also a real Elin widget: manage it in the widget manager.");
 			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
 				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Locked chests and surprise packages stay native.");
 			keyboardCrafters = Config.Bind("Menus", "KeyboardCrafters", true,

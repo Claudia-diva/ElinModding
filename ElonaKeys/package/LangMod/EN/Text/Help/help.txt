@@ -36,6 +36,7 @@ $Keys
 {pair|x|Reopen the last-used item menu (Elona x)}
 {pair|shift+x|Examine inventory: full list with totals, Enter/x = stat card}
 {pair|Tab in a menu|Cycle the window family: items X,d,e,r,q,Z,t,o,B,T / equipment↔chara / spells↔actions}
+{pair|Family bar|Elona-style diamond tabs shown while family windows are open (current = gold, click to jump). A real widget: toggle/drag/lock it in the widget manager, like the shift-page hotbar}
 
 {topic|Action Keys}
 {pair|v|Spells (mana): favorites first, sprites + native tooltips, cost(orig) and casts left}
@@ -77,6 +78,10 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.14.0}
+・ Elona-style window-family bar (diamond tabs, gold = current, click to jump, Tab hint).
+・ Family bar + shift-page hotbar are real Elin widgets now: manage them in the widget manager; positions save with widget themes.
+
 {topic|1.13.0}
 ・ Tab cycles window families (items X,d,e,r,q,Z,t,o,B,T / equipment↔chara / spells↔actions); x reopens the last item menu.
 ・ Quest boards: ↑↓ scroll, ←→ tabs, r rerolls.
