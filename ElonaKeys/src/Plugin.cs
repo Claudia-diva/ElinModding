@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.12.0";
+		public const string Version = "1.13.0";
 
 		internal static ManualLogSource Log;
 
@@ -188,6 +188,10 @@ namespace ElonaKeys
 			Def("Interact", "i", Handlers.Interact, "Interaction menu for a direction (talk, give, trade...).");
 			Def("Search", "s", Handlers.SearchHere, "Do things on your own tile: search the ground, harvest, collect, dig treasure...");
 			Def("Chara", "c", Handlers.ShowChara, "Character sheet, classic Elona c.");
+			Def("LastMenu", "x", delegate
+			{
+				(MenuCycle.lastItemMenu ?? (Action)Handlers.ExamineInventory)();
+			}, "Reopen the last-used item menu (examine/drop/eat/read/quaff/zap/tool/open/blend/throw), classic Elona x.");
 			Def("Context", "space", Handlers.ContextAll, "Everything interactable on and around you; a single action fires instantly (Elona Space).");
 			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
 			Def("Party", "shift+q", Handlers.Party, "Party menu: character sheets, browse and take members' items.");

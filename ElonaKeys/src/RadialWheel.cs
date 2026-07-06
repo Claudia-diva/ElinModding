@@ -69,7 +69,12 @@ namespace ElonaKeys
 		private GameObject centerGo;
 		private int openFrame;
 		private Font font;
-		private Vector2 prevAxis;
+		private Vector2 pending;   // last held direction; fires on release
+		private bool armed;        // axis must be seen at zero once after opening
+		private int highlighted = -1;
+
+		private static readonly Color BorderNormal = new Color(0.7f, 0.65f, 0.55f, 0.7f);
+		private static readonly Color BorderPending = new Color(1f, 0.9f, 0.45f, 0.95f);
 
 		public static void Toggle(List<Ring> rings)
 		{
@@ -104,7 +109,7 @@ namespace ElonaKeys
 			instance.rings = _rings;
 			instance.font = FindFont();
 			instance.openFrame = Time.frameCount;
-			instance.prevAxis = Vector2.one; // require release before first flick
+			instance.armed = false; // ignore whatever is held while opening
 			GameObject cont = new GameObject("container");
 			cont.transform.SetParent(root.transform, worldPositionStays: false);
 			instance.container = cont.AddComponent<RectTransform>();
@@ -136,6 +141,8 @@ namespace ElonaKeys
 
 		private void BuildRing()
 		{
+			highlighted = -1;
+			pending = Vector2.zero;
 			for (int i = 0; i < slots.Length; i++)
 			{
 				if (slots[i] != null && (bool)slots[i].go)
@@ -253,7 +260,52 @@ namespace ElonaKeys
 			}
 		}
 
-		// called from InputRouter every frame while active
+		private static int SlotFromAxis(Vector2 a)
+		{
+			int sx = Math.Sign(a.x);
+			int sy = Math.Sign(a.y);
+			for (int i = 0; i < dirs.Length; i++)
+			{
+				if ((int)dirs[i].x == sx && (int)dirs[i].y == sy)
+				{
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		// gold border + slight scale on the slot that will fire on release
+		private void SetPendingHighlight(int idx)
+		{
+			if (highlighted == idx)
+			{
+				return;
+			}
+			highlighted = idx;
+			for (int i = 0; i < slots.Length; i++)
+			{
+				Slot s = slots[i];
+				if (s == null || !s.go)
+				{
+					continue;
+				}
+				bool on = i == idx;
+				Transform dia = s.go.transform.Find("diamond");
+				if (dia != null)
+				{
+					Image border = dia.GetComponent<Image>();
+					if ((bool)border)
+					{
+						border.color = on ? BorderPending : BorderNormal;
+					}
+				}
+				s.go.transform.localScale = on ? new Vector3(1.12f, 1.12f, 1f) : Vector3.one;
+			}
+		}
+
+		// called from InputRouter every frame while active. Direction confirms
+		// on RELEASE: holding up then adding right composes to NE; nothing
+		// fires while keys are still going down (mispresses are correctable).
 		public static void HandleKeys()
 		{
 			RadialWheel w = instance;
@@ -263,7 +315,6 @@ namespace ElonaKeys
 			}
 			if (Time.frameCount - w.openFrame < 2)
 			{
-				w.prevAxis = Vector2.one;
 				return; // ignore the keystroke that opened the wheel
 			}
 			if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Z) || Input.GetMouseButtonDown(1))
@@ -271,23 +322,31 @@ namespace ElonaKeys
 				CloseWheel();
 				return;
 			}
-			// instant 8-way selection on a fresh direction press
 			Vector2 a = EInput.axis;
-			if (a != Vector2.zero && w.prevAxis == Vector2.zero)
+			if (!w.armed)
 			{
-				int sx = Math.Sign(a.x);
-				int sy = Math.Sign(a.y);
-				for (int i = 0; i < dirs.Length; i++)
+				if (a == Vector2.zero)
 				{
-					if ((int)dirs[i].x == sx && (int)dirs[i].y == sy)
-					{
-						w.prevAxis = a;
-						w.Trigger(i);
-						return;
-					}
+					w.armed = true;
+				}
+				return;
+			}
+			if (a != Vector2.zero)
+			{
+				w.pending = a;
+				w.SetPendingHighlight(SlotFromAxis(a));
+				return;
+			}
+			if (w.pending != Vector2.zero)
+			{
+				Vector2 p = w.pending;
+				w.pending = Vector2.zero;
+				int i = SlotFromAxis(p);
+				if (i != -1)
+				{
+					w.Trigger(i);
 				}
 			}
-			w.prevAxis = a;
 		}
 	}
 }

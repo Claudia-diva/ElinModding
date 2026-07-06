@@ -4,6 +4,82 @@ using UnityEngine;
 
 namespace ElonaKeys
 {
+	// Elona window families: Tab cycles the related windows in order
+	// (items X,d,e,r,q,Z,t,o,B,T / equipment-chara / spells-actions);
+	// x reopens the last-used item menu. Each verb handler registers its
+	// position when it opens; MenuSystem/PopupNav call Next() on Tab.
+	internal static class MenuCycle
+	{
+		private static string group;
+		private static int index;
+		private static int setFrame = -1;
+
+		internal static Action lastItemMenu;
+
+		internal static string Group => group;
+
+		private static (string name, Action open)[] Cycle(string g)
+		{
+			switch (g)
+			{
+			case "items":
+				return new (string, Action)[]
+				{
+					("examine", Handlers.ExamineInventory), ("drop", Handlers.Drop), ("eat", Handlers.Eat),
+					("read", Handlers.ReadItem), ("quaff", Handlers.Quaff), ("zap", Handlers.Zap),
+					("tool", Handlers.HoldTool), ("open", Handlers.Open), ("blend", Handlers.Blend), ("throw", Handlers.Throw)
+				};
+			case "chara":
+				return new (string, Action)[] { ("equipment", Handlers.Wear), ("chara", Handlers.ShowChara) };
+			case "ability":
+				return new (string, Action)[] { ("spells", Handlers.Cast), ("actions", Handlers.ActionList) };
+			default:
+				return null;
+			}
+		}
+
+		public static void Set(string g, int i)
+		{
+			group = g;
+			index = i;
+			setFrame = Time.frameCount;
+			if (g == "items")
+			{
+				lastItemMenu = Cycle(g)[i].open;
+			}
+		}
+
+		// menus outside any family (Give, containers...) drop the cycle so a
+		// stale Tab can't jump somewhere surprising
+		public static void ClearUnlessJustSet()
+		{
+			if (setFrame != Time.frameCount)
+			{
+				group = null;
+			}
+		}
+
+		public static bool Next()
+		{
+			(string name, Action open)[] c = (group != null) ? Cycle(group) : null;
+			if (c == null)
+			{
+				return false;
+			}
+			int ni = (index + 1) % c.Length;
+			MenuSystem.Close();
+			try
+			{
+				c[ni].open(); // the opener re-registers its own position
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys menu cycle failed: " + ex);
+			}
+			return true;
+		}
+	}
+
 	// Implementations of each classic Elona action on top of Elin's systems.
 	// All menus go through MenuSystem (paginated, keyboard-navigable, weight
 	// column, z-sort, shift = back, count spinner on stacks).
@@ -233,6 +309,7 @@ namespace ElonaKeys
 
 		public static void Eat()
 		{
+			MenuCycle.Set("items", 2);
 			ItemMenu("Eat what?", (Thing t) => t.trait.CanEat(pc) && !t.isEquipped,
 				delegate(Thing t) { t.DoAct(new AI_Eat { cook = false, target = t }); },
 				"You have nothing to eat.");
@@ -240,6 +317,7 @@ namespace ElonaKeys
 
 		public static void Quaff()
 		{
+			MenuCycle.Set("items", 4);
 			ItemMenu("Quaff what?", (Thing t) => t.trait.CanDrink(pc),
 				delegate(Thing t) { t.DoAct(new AI_Drink { target = t }); },
 				"You have nothing to drink.",
@@ -248,6 +326,7 @@ namespace ElonaKeys
 
 		public static void ReadItem()
 		{
+			MenuCycle.Set("items", 3);
 			ItemMenu("Read what?", (Thing t) => t.trait.CanRead(pc),
 				delegate(Thing t) { t.DoAct(new AI_Read { target = t }); },
 				"You have nothing to read.");
@@ -255,6 +334,7 @@ namespace ElonaKeys
 
 		public static void Zap()
 		{
+			MenuCycle.Set("items", 5);
 			ItemMenu("Zap which rod?", (Thing t) => t.trait is TraitRod,
 				delegate(Thing t)
 				{
@@ -273,6 +353,7 @@ namespace ElonaKeys
 		// Elona drop: pick item, spinner picks the count, menu stays open.
 		public static void Drop()
 		{
+			MenuCycle.Set("items", 1);
 			ItemMenu("Drop what?", (Thing t) => !t.isEquipped,
 				null,
 				"You have nothing to drop.",
@@ -285,6 +366,7 @@ namespace ElonaKeys
 		// change it. Footer stats live in the caption.
 		public static void Wear()
 		{
+			MenuCycle.Set("chara", 0);
 			MenuSystem.Show(EquipTitle(), BuildEquipRows(), delegate
 			{
 				MenuSystem.SetRows(BuildEquipRows());
@@ -403,6 +485,7 @@ namespace ElonaKeys
 
 		public static void HoldTool()
 		{
+			MenuCycle.Set("items", 6);
 			ItemMenu("Hold which tool?", (Thing t) => (t.trait is TraitTool && !(t.trait is TraitCatalyst) && !t.isEquipped) || t == pc.held,
 				delegate(Thing t) { ToggleHold(t); },
 				"You have no tools.");
@@ -439,6 +522,7 @@ namespace ElonaKeys
 
 		public static void Blend()
 		{
+			MenuCycle.Set("items", 8);
 			ItemMenu("Dip or blend with what?", (Thing t) => t.trait.IsBlendBase,
 				delegate(Thing t) { LayerDragGrid.Create(new InvOwnerBlend(t)); },
 				"You have nothing to blend with (potions, blessed water and other liquids).");
@@ -446,6 +530,7 @@ namespace ElonaKeys
 
 		public static void Throw()
 		{
+			MenuCycle.Set("items", 9);
 			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld && !(t.trait is TraitToolBelt),
 				delegate(Thing t)
 				{
@@ -661,6 +746,7 @@ namespace ElonaKeys
 
 		public static void Open()
 		{
+			MenuCycle.Set("items", 7);
 			List<MenuRow> rows = new List<MenuRow>();
 			foreach (Thing thing in pc.things.List((Thing t) => Safe((Thing x) => x.trait.CanOpenContainer || (x.trait is TraitCrafter && x.trait.CanUse(pc)), t), onlyAccessible: true))
 			{
@@ -1320,6 +1406,7 @@ namespace ElonaKeys
 
 		public static void ShowChara()
 		{
+			MenuCycle.Set("chara", 1);
 			EClass.ui.ToggleLayer<LayerChara>()?.SetChara(pc);
 		}
 
@@ -1383,11 +1470,13 @@ namespace ElonaKeys
 		// management, native targeting via ButtonAbility.TryUse, digit hotkeys.
 		public static void Cast()
 		{
+			MenuCycle.Set("ability", 0);
 			AbilityMenu(spells: true, bucket: null, favOnly: false);
 		}
 
 		public static void ActionList()
 		{
+			MenuCycle.Set("ability", 1);
 			AbilityMenu(spells: false, bucket: null, favOnly: false);
 		}
 
@@ -1801,6 +1890,7 @@ namespace ElonaKeys
 		// the caption carries the total item count and weight
 		public static void ExamineInventory()
 		{
+			MenuCycle.Set("items", 0);
 			List<MenuRow> rows = new List<MenuRow>();
 			foreach (Thing thing in pc.things.List((Thing t) => !(t.trait is TraitAbility), onlyAccessible: true))
 			{

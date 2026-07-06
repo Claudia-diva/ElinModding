@@ -64,6 +64,7 @@ namespace ElonaKeys
 
 		public static void Show(string _title, List<MenuRow> rows, Action _refreshSource = null, bool keepLayers = false)
 		{
+			MenuCycle.ClearUnlessJustSet(); // Tab only cycles inside a window family
 			if (Alive && current != null)
 			{
 				history.Add(current); // shift returns here
@@ -537,6 +538,11 @@ namespace ElonaKeys
 					top.Close();
 				}
 				shiftHeld = false;
+				return;
+			}
+			// Tab cycles the window family (items / equipment-chara / spells-actions)
+			if (Input.GetKeyDown(KeyCode.Tab) && MenuCycle.Next())
+			{
 				return;
 			}
 			// x examines the hovered/selected row (press again to close)

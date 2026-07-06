@@ -96,6 +96,8 @@ namespace ElonaKeys
 					// generic window: build all group kinds. LayerCraftFloat (quick
 					// craft) is non-modal but still wants keyboard navigation.
 					target = topLayer;
+					// quest board: lists only (left/right = tabs, r = reroll)
+					bool listsOnly = topLayer is LayerQuestBoard;
 					// virtualized lists first (crafting recipes): navigate the DATA,
 					// select-on-move gives the native click preview
 					foreach (UIDynamicList dl in topLayer.GetComponentsInChildren<UIDynamicList>(includeInactive: false))
@@ -113,6 +115,10 @@ namespace ElonaKeys
 						{
 							groups.Add(g);
 						}
+					}
+					if (listsOnly)
+					{
+						goto doneGroups;
 					}
 					Group grids = new Group { grid = true };
 					foreach (ButtonGrid bg in topLayer.GetComponentsInChildren<ButtonGrid>(includeInactive: false))
@@ -153,6 +159,7 @@ namespace ElonaKeys
 					{
 						groups.Add(loose);
 					}
+					doneGroups:;
 				}
 			}
 			groups.RemoveAll((Group gr) => gr.dyn == null && gr.buttons.Count == 0 && gr.drops.Count == 0);
@@ -242,6 +249,37 @@ namespace ElonaKeys
 		private static void HandleKeys(Layer topLayer)
 		{
 			Group g = (groups.Count > 0) ? groups[groupIndex] : null;
+			// Elona window family: Tab on the character sheet hops to the
+			// equipment window (and back from there via MenuSystem's Tab)
+			if (Input.GetKeyDown(KeyCode.Tab) && topLayer is LayerChara && MenuCycle.Group == "chara")
+			{
+				topLayer.Close();
+				MenuCycle.Next();
+				return;
+			}
+			// quest board: left/right switch tabs, r hits the reroll button
+			if (topLayer is LayerQuestBoard)
+			{
+				bool tabF = Input.GetKeyDown(KeyCode.RightArrow);
+				bool tabB = Input.GetKeyDown(KeyCode.LeftArrow);
+				if (tabF || tabB)
+				{
+					try
+					{
+						topLayer.windows[0].NextTab(tabF ? 1 : -1);
+					}
+					catch
+					{
+					}
+					index = -1;
+					return;
+				}
+				if (Input.GetKeyDown(KeyCode.R))
+				{
+					ClickMenuRight(topLayer);
+					return;
+				}
+			}
 			// z / x cycle the window's tabs, Elona style (Tab stays native for
 			// chat). x keeps its examine meaning while an item grid is focused.
 			bool hasTabs = topLayer != null && topLayer.windows != null && topLayer.windows.Count > 0;
@@ -393,6 +431,30 @@ namespace ElonaKeys
 					b.onClick.Invoke();
 				}
 				EInput.Consume();
+			}
+		}
+
+		// first live button in the window's right-side menu (quest reroll)
+		private static void ClickMenuRight(Layer topLayer)
+		{
+			try
+			{
+				WindowMenu mr = topLayer.windows[0].menuRight;
+				if (mr == null || mr.layout == null)
+				{
+					return; // WindowMenu is a plain holder; its buttons live under layout
+				}
+				foreach (UIButton b in mr.layout.GetComponentsInChildren<UIButton>(includeInactive: false))
+				{
+					if (b.interactable && b.gameObject.activeInHierarchy)
+					{
+						b.onClick.Invoke();
+						return;
+					}
+				}
+			}
+			catch
+			{
 			}
 		}
 

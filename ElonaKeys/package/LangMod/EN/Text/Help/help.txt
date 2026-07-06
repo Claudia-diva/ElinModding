@@ -10,7 +10,8 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
 ・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
 ・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
-・ Native windows: ↑↓ move, ←→ switch group (list/grid/dropdowns/buttons), z/x switch window tabs (character sheet, quest board, crafting), Enter acts, x examines in item grids. Tab stays native (chat).
+・ Native windows: ↑↓ move, ←→ switch group (list/grid/dropdowns/buttons), z/x switch window tabs (character sheet, quest board, crafting), Enter acts, x examines in item grids. Tab stays native (chat) except inside window families.
+・ Quest boards: ↑↓ scroll the requests, ←→ switch tabs, r = reroll.
 ・ Quick craft: arrows walk the recipe list (WASD still moves you), Enter on an ingredient dropdown opens its options.
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
@@ -32,7 +33,9 @@ $Keys
 {pair|B|Dip/blend: pick a liquid, then mix items into it}
 {pair|T|Throw: pick item, then the free cursor (auto-fires at your remembered HOSTILE target)}
 {pair|A (shift+a)|Load compatible ammo into your ranged weapon}
+{pair|x|Reopen the last-used item menu (Elona x)}
 {pair|shift+x|Examine inventory: full list with totals, Enter/x = stat card}
+{pair|Tab in a menu|Cycle the window family: items X,d,e,r,q,Z,t,o,B,T / equipment↔chara / spells↔actions}
 
 {topic|Action Keys}
 {pair|v|Spells (mana): favorites first, sprites + native tooltips, cost(orig) and casts left}
@@ -51,7 +54,7 @@ $Keys
 {pair|O|Offer at an adjacent altar}
 {pair|G|Give to an adjacent character (one per pick from stacks)}
 {pair|shift+q|Party member sheets and inventories}
-{pair|z|Action circles: ←→ switch ring (Info/Action/Etc/Items), ↑↓ rotate, Enter picks, z closes; last ring remembered}
+{pair|z|Action circles: hold a direction (diagonals compose), RELEASE fires the glowing diamond; east/west link rings, z/Esc closes; last ring remembered}
 
 {topic|Movement shortcuts}
 {pair|Space|Menu of everything interactable around you (single action fires instantly)}
@@ -74,6 +77,11 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.13.0}
+・ Tab cycles window families (items X,d,e,r,q,Z,t,o,B,T / equipment↔chara / spells↔actions); x reopens the last item menu.
+・ Quest boards: ↑↓ scroll, ←→ tabs, r rerolls.
+・ z wheel confirms on key RELEASE (diagonals compose while holding); the pending diamond glows.
+
 {topic|1.12.0}
 ・ t holds via the hot-item system: shift+move with an axe chops trees; pick the tool again to put it away.
 ・ Free targeting cursor for throw and * (any visible tile, Space cycles characters); hostile acts never auto-target allies.

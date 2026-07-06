@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.13.0 - 2026-07-05
+
+- Elona window cycling: Tab walks the related-window family from your current position. Item menus cycle X(examine) → d → e → r → q → Z → t → o → B → T; the equipment window and the character sheet cycle into each other (feats are a tab inside the sheet, z/x); v (spells) and a (actions) cycle into each other.
+- x by itself reopens the last-used item menu (defaults to examine inventory), classic Elona x. New LastMenu bind in the config.
+- Quest boards simplified: up/down scroll the request list, left/right switch the board's tabs directly, and r presses the reroll button. No more group juggling there.
+- The z wheel no longer fires the instant a key goes down: the direction confirms when you RELEASE. Holding up and then adding right (while up is still held) picks the top-right diamond; the pending diamond glows gold and grows slightly so you can see what will fire.
+
 ## 1.12.0 - 2026-07-05
 
 - Tool holding fixed for real: t now holds through the game's hot-item system, so shift+direction with an axe chops trees (and harvests, tills, chops wood...) exactly like the pickaxe mines. Picking the held tool again puts it away.

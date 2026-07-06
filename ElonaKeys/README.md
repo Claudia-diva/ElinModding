@@ -41,13 +41,15 @@ Directional actions highlight the neighboring tiles and wait for a movement key;
 | s | Your tile: harvest/collect instantly, else menu + search the ground |
 | c | Character sheet |
 | * / ' | Free targeting cursor (any visible tile, Space cycles characters); hover info follows |
-| z | Action circles (Info/Action/Etc/Items rings) |
+| z | Action circles: hold a direction, release fires (diagonals compose) |
 | Space | Everything interactable on and around you |
 | i | Interact with a direction (talk, trade, everything) |
 | p / O | Pray / Offer at an altar |
 | G | Give to an adjacent character (one per pick) |
 | Shift+Q | Party member sheets and inventories |
+| x | Reopen the last-used item menu (Elona x) |
 | Shift+X | Examine inventory: full list with totals |
+| Tab | Cycle window families: items X,d,e,r,q,Z,t,o,B,T / equipment-chara / spells-actions |
 | Shift+0-9 | Fire hotkey slots 1-10 (also F1-F8 natively) |
 | Shift+move | Use held tool on the adjacent tile |
 
