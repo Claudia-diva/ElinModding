@@ -246,8 +246,26 @@ namespace ElonaKeys
 				img.enabled = true;
 				img.transform.SetAsLastSibling();
 				img.material = null; // pooled row may carry the item shader
-				ab.SetImage(img);
-				img.color = Color.white;
+				// Act.SetImage = the real ability sprite (+element tint);
+				// Element.SetImage would draw the scaling-stat icon instead
+				bool drawn = false;
+				try
+				{
+					Act a2 = ACT.Create(ab.source);
+					if (a2 != null)
+					{
+						a2.SetImage(img);
+						drawn = true;
+					}
+				}
+				catch
+				{
+				}
+				if (!drawn)
+				{
+					ab.SetImage(img);
+					img.color = Color.white;
+				}
 				RectTransform art = img.rectTransform;
 				art.pivot = new Vector2(0.5f, 0.5f);
 				art.anchoredPosition = Vector2.zero;

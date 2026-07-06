@@ -59,6 +59,7 @@ namespace ElonaKeys
 				}
 				MenuSystem.HandleKeys();
 				PopupNav.OnUpdate();
+				ShiftOverlay.OnUpdate();
 				UpdateAssignKey();
 			}
 			catch (Exception ex)
@@ -157,7 +158,7 @@ namespace ElonaKeys
 					what = item.Name;
 				}
 				WidgetCurrentTool.dirty = true;
-				WidgetEKShiftBar.SetDirty();
+				ShiftOverlay.SetDirty();
 				SE.Equip();
 				Msg.SayRaw(what + " set to quickslot " + (slot + 1) + (EInput.isShiftDown ? " (other page)." : "."));
 			}

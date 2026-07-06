@@ -130,6 +130,7 @@ namespace ElonaKeys
 					}
 					if (grids.buttons.Count > 0)
 					{
+						SortByPosition(grids.buttons);
 						groups.Add(grids);
 					}
 					Group drops = new Group();
@@ -157,6 +158,7 @@ namespace ElonaKeys
 					}
 					if (loose.buttons.Count > 0)
 					{
+						SortByPosition(loose.buttons);
 						groups.Add(loose);
 					}
 					doneGroups:;
@@ -205,6 +207,22 @@ namespace ElonaKeys
 				dd.Hide();
 				EInput.Consume();
 			}
+		}
+
+		// reading order (top-to-bottom rows, left-to-right) so arrows follow the
+		// visual layout instead of the hierarchy (chara sheet was chaotic)
+		private static void SortByPosition(List<UIButton> buttons)
+		{
+			buttons.Sort(delegate(UIButton a, UIButton b)
+			{
+				Vector3 pa = a.transform.position;
+				Vector3 pb = b.transform.position;
+				if (Mathf.Abs(pa.y - pb.y) > 8f)
+				{
+					return pb.y.CompareTo(pa.y);
+				}
+				return pa.x.CompareTo(pb.x);
+			});
 		}
 
 		private static bool InAnyGroup(UIButton b)

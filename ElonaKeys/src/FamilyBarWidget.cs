@@ -18,17 +18,16 @@ namespace ElonaKeys
 		private int builtIndex = -1;
 		private GameObject content;
 		private Font font;
-
-		public override bool ShowStyleMenu => false; // no SkinRoot on runtime widgets
+		private UIImage bg;
 
 		public override void OnActivate()
 		{
 			font = RadialWheel.FindFont();
-			// fresh config sits at screen center: park the bar near the top
-			RectTransform rt = base.transform as RectTransform;
-			if (config.x == 0f && config.y == 0f)
+			// fresh config sits at screen center: park the bar top-center
+			if (config.x == 0f && config.y == 0f && config.userAnchor == RectPosition.Auto)
 			{
-				rt.anchoredPosition = new Vector2(0f, (float)Screen.height * 0.5f - 90f);
+				SetAnchor(RectPosition.TopCenter);
+				(base.transform as RectTransform).anchoredPosition = new Vector2(0f, -70f);
 			}
 		}
 
@@ -149,40 +148,39 @@ namespace ElonaKeys
 			o.effectDistance = new Vector2(1.2f, -1.2f);
 		}
 
-		// native-skin strip borrowed from the hotbar's background
+		// the game's own sliced skin panel: a UIImage of type BG_Window bound to
+		// this widget's SkinRoot; the native style menu (skin/size/color/decos)
+		// then works exactly like on built-in widgets
 		private void BuildBg(RectTransform parent, float width)
 		{
+			GameObject go = new GameObject("bg");
+			go.transform.SetParent(parent, worldPositionStays: false);
+			bg = go.AddComponent<UIImage>();
+			bg.imageType = ImageType.BG_Window;
+			bg.skinRoot = base.skinRoot;
+			bg.raycastTarget = false;
+			RectTransform r = bg.rectTransform;
+			r.anchorMin = new Vector2(0.5f, 0.5f);
+			r.anchorMax = new Vector2(0.5f, 0.5f);
+			go.transform.SetAsFirstSibling();
 			try
 			{
-				WidgetCurrentTool src = WidgetCurrentTool.Instance;
-				UIRawImage bg = (src != null && (bool)src) ? src.GetComponentInChildren<UIRawImage>(includeInactive: true) : null;
-				if (bg != null)
-				{
-					GameObject copy = UnityEngine.Object.Instantiate(bg.gameObject, parent);
-					copy.name = "bg";
-					RawImage ri = copy.GetComponent<RawImage>();
-					ri.raycastTarget = false;
-					RectTransform r = copy.transform as RectTransform;
-					r.anchorMin = new Vector2(0.5f, 0.5f);
-					r.anchorMax = new Vector2(0.5f, 0.5f);
-					r.anchoredPosition = new Vector2(0f, 8f);
-					r.sizeDelta = new Vector2(width, 78f);
-					copy.transform.SetAsFirstSibling();
-					return;
-				}
+				// SkinRoot sizes BG_Window as skin-default + sizeFix (+ cfg.bgSize)
+				SkinAsset_BG b = config.skin.BG;
+				bg.sizeFix = new Vector2(width, 100f) - new Vector2(b.size.x, b.size.y);
 			}
 			catch
 			{
+				bg.sizeFix = new Vector2(width - 320f, -140f);
 			}
-			GameObject fb = new GameObject("bg");
-			fb.transform.SetParent(parent, worldPositionStays: false);
-			Image img = fb.AddComponent<Image>();
-			img.color = new Color(0.05f, 0.04f, 0.03f, 0.45f);
-			img.raycastTarget = false;
-			RectTransform frt = img.rectTransform;
-			frt.anchoredPosition = new Vector2(0f, 8f);
-			frt.sizeDelta = new Vector2(width, 78f);
-			fb.transform.SetAsFirstSibling();
+			try
+			{
+				ApplySkin();
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys family bar skin failed: " + ex);
+			}
 		}
 
 		private void Jump(int i)

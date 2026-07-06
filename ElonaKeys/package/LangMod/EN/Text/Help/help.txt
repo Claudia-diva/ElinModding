@@ -39,8 +39,8 @@ $Keys
 {pair|Family bar|Elona-style diamond tabs shown while family windows are open (current = gold, click to jump). A real widget: toggle/drag/lock it in the widget manager, like the shift-page hotbar}
 
 {topic|Action Keys}
-{pair|v|Spells (mana): favorites first, sprites + native tooltips, cost(orig) and casts left}
-{pair|a|Special actions (stamina): favorites first, cost and potential %}
+{pair|v|Spells: favorites first; columns = Lv, cast chance %, damage dice, P power, cost(original), x casts left}
+{pair|a|Special actions: same columns with sp cost and potential % instead of casts}
 {pair|* (keypad) or '|Free targeting cursor: arrows/numpad move (any visible tile), Space next character, Enter confirm; hover info follows the cursor}
 {pair|c|Character sheet}
 {pair|i|Interact with a direction: keyboard menu of everything there}
@@ -65,7 +65,7 @@ $Keys
 {topic|Hotkeys and extras}
 {pair|1-9 in a menu|Assign the selected item/spell to that quickslot}
 {pair|shift+1-9 in a menu|Assign to the OTHER quickslot page}
-{pair|shift + 1-9|Fire the other quickslot page (second hotbar shows it; cloned from the real one, drag items onto it to assign)}
+{pair|shift + 1-9|Fire the other quickslot page (shown as small corner icons on the hotbar's slots; ShiftBarVisible config)}
 {pair|MacroKey1-3|Cast the Macro1-3 ability sequences (config)}
 {pair|F1-F8|Fire the Extra bar natively}
 {pair|shift + move|Use held tool on the adjacent tile (mine/chop/till)}
@@ -78,6 +78,11 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.15.0}
+・ Other quickslot page = corner icons on the real hotbar (second bar removed). Family bar uses the real widget skin + full style menu.
+・ Tab fixed in equipment; native-window arrows walk in reading order.
+・ Spell/action rows: ability sprites + Lv / chance / dice / power / cost / casts-left columns (x8 = casts left).
+
 {topic|1.14.0}
 ・ Elona-style window-family bar (diamond tabs, gold = current, click to jump, Tab hint).
 ・ Family bar + shift-page hotbar are real Elin widgets now: manage them in the widget manager; positions save with widget themes.

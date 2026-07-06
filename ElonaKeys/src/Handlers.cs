@@ -65,11 +65,13 @@ namespace ElonaKeys
 			}
 		}
 
-		// menus outside any family (Give, containers...) drop the cycle so a
-		// stale Tab can't jump somewhere surprising
+		// fresh menus outside any family (Give, containers...) drop the cycle so
+		// a stale Tab can't jump somewhere surprising. Submenus of an OPEN family
+		// window (equip slot pickers, ability filters...) inherit it instead:
+		// clearing there was the "Tab dead after browsing equipment slots" bug.
 		public static void ClearUnlessJustSet()
 		{
-			if (setFrame != Time.frameCount)
+			if (setFrame != Time.frameCount && !MenuSystem.Alive)
 			{
 				group = null;
 			}
@@ -80,9 +82,17 @@ namespace ElonaKeys
 			(string name, Action open)[] c = (group != null) ? Cycle(group) : null;
 			if (c == null)
 			{
+				if (Plugin.DebugLog)
+				{
+					Plugin.Log?.LogInfo("ElonaKeys: Tab ignored, no window family registered");
+				}
 				return false;
 			}
 			int ni = (index + 1) % c.Length;
+			if (Plugin.DebugLog)
+			{
+				Plugin.Log?.LogInfo("ElonaKeys: Tab cycle " + group + " -> " + c[ni].name);
+			}
 			MenuSystem.Close();
 			try
 			{
@@ -1592,9 +1602,20 @@ namespace ElonaKeys
 		private static MenuRow AbilityRow(Element e, bool spells)
 		{
 			bool fav = EClass.player.favAbility.Contains(e.id);
+			string stat = "";
+			try
+			{
+				if (!e.source.aliasParent.IsEmpty())
+				{
+					stat = " · " + e.source.aliasParent;
+				}
+			}
+			catch
+			{
+			}
 			return new MenuRow
 			{
-				label = (fav ? "★ " : "") + e.source.GetName() + " <size=13><color=#8f8f7a>" + TypeBucket(e) + "</color></size>",
+				label = (fav ? "★ " : "") + e.source.GetName() + " <size=13><color=#8f8f7a>" + TypeBucket(e) + stat + "</color></size>",
 				rightText = AbilityCostText(e, spells),
 				actSrc = e.source,
 				ability = e,
@@ -1602,10 +1623,47 @@ namespace ElonaKeys
 			};
 		}
 
-		// "12(10)mp x34" for spells (current cost, original in parens when
-		// different, x = casts left / stock); "8sp 120%" for actions (potential)
+		// Elona-ish stat columns: level, cast chance (spells), damage dice,
+		// power, current(original) cost, and x = casts left (spell stock) or
+		// potential % for actions. The tooltip keeps the full card.
 		private static string AbilityCostText(Element e, bool spells)
 		{
+			string s = "";
+			try
+			{
+				s += "Lv" + e.DisplayValue + " ";
+			}
+			catch
+			{
+			}
+			try
+			{
+				if (e is Spell)
+				{
+					s += pc.CalcCastingChance(e) + "% ";
+				}
+			}
+			catch
+			{
+			}
+			try
+			{
+				Dice d = Dice.Create(e, pc);
+				if (d != null)
+				{
+					s += "<color=#d6a26f>" + d.ToString() + "</color> ";
+				}
+			}
+			catch
+			{
+			}
+			try
+			{
+				s += "P" + e.GetPower(pc) + " ";
+			}
+			catch
+			{
+			}
 			int orig = (e.source.cost != null && e.source.cost.Length > 0) ? e.source.cost[0] : 0;
 			int cur = orig;
 			try
@@ -1616,16 +1674,15 @@ namespace ElonaKeys
 			catch
 			{
 			}
-			string s = "";
 			if (cur > 0 || orig > 0)
 			{
-				s = cur + ((orig > 0 && orig != cur) ? ("(" + orig + ")") : "") + (spells ? "mp" : "sp");
+				s += cur + ((orig > 0 && orig != cur) ? ("(" + orig + ")") : "") + (spells ? "mp" : "sp");
 			}
 			try
 			{
 				if (e.PotentialAsStock)
 				{
-					s += " <color=#9fd6ff>x" + e.vPotential + "</color>"; // spell stock
+					s += " <color=#9fd6ff>x" + e.vPotential + "</color>"; // casts left
 				}
 				else
 				{
@@ -1635,7 +1692,7 @@ namespace ElonaKeys
 			catch
 			{
 			}
-			return s.Trim();
+			return "<size=12>" + s.Trim() + "</size>";
 		}
 
 		private static void FilterMenu(bool spells)

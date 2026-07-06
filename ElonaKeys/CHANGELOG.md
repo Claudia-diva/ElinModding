@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.15.0 - 2026-07-05
+
+- Second hotbar replaced with corner overlays on the REAL hotbar (as suggested): each slot shows the other page's item as a small top-right icon, so alignment/skin/theming are automatic. ShiftBarVisible toggles it; the EKShiftBar widget is gone (the game cleans its config up on its own).
+- Family bar wears the game's actual skin now: its background is a native skinned window panel bound to the widget's skin config, and the FULL widget style menu works (background style slider, size, color picker, decorations) alongside anchor/pivot/lock/close.
+- Tab no longer dies in the equipment window: browsing a slot submenu was silently dropping the window-family registration; submenus of an open family window now inherit it.
+- Character sheet (and other native windows): arrow keys walk buttons in reading order (top-to-bottom, left-to-right) instead of internal hierarchy order.
+- Spell/action rows: the proper ability sprite (the scaling stat moved into the gray text tag, e.g. "attack · WIL"), plus Elona-style columns: Lv, cast chance % (spells), damage dice, P power, current(original) cost, and x = casts LEFT for spells (that's the x8/x12: spell stock) or potential % for actions. The tooltip stays for the full detail.
+
 ## 1.14.0 - 2026-07-05
 
 - Elona's window-family bar, as a real widget: while an item/equipment/chara/spell window is open, a row of diamond tabs appears (near the top by default) showing the whole family with the current window highlighted gold, key letters beneath, and the Tab [change] hint. Clicking a diamond jumps to that window. Hides when the windows close.

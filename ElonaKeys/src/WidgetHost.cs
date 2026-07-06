@@ -14,12 +14,11 @@ namespace ElonaKeys
 	// ids to build the widget GameObjects at runtime.
 	internal static class WidgetHost
 	{
-		internal const string IdShiftBar = "EKShiftBar";
 		internal const string IdFamilyBar = "EKFamilyBar";
 
 		internal static bool Owns(string id)
 		{
-			return id == IdShiftBar || id == IdFamilyBar;
+			return id == IdFamilyBar;
 		}
 
 		internal static void InjectMetas()
@@ -35,7 +34,6 @@ namespace ElonaKeys
 					break;
 				}
 			}
-			AddMeta(metas, IdShiftBar, Plugin.ShiftBarVisible, mode);
 			AddMeta(metas, IdFamilyBar, Plugin.FamilyBarVisible, mode);
 		}
 
@@ -62,7 +60,8 @@ namespace ElonaKeys
 			GameObject root = new GameObject("Widget" + id);
 			root.transform.SetParent(manager.transform, worldPositionStays: false);
 			root.AddComponent<RectTransform>();
-			Widget w = (id == IdShiftBar) ? (Widget)root.AddComponent<WidgetEKShiftBar>() : root.AddComponent<WidgetEKFamilyBar>();
+			root.AddComponent<SkinRoot>(); // binds to config.skin via Widget : ISkinRoot
+			Widget w = root.AddComponent<WidgetEKFamilyBar>();
 			GameObject dragGo = new GameObject("dragPanel");
 			dragGo.transform.SetParent(root.transform, worldPositionStays: false);
 			RectTransform drt = dragGo.AddComponent<RectTransform>();

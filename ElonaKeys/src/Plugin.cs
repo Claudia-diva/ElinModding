@@ -12,7 +12,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.14.0";
+		public const string Version = "1.15.0";
 
 		internal static ManualLogSource Log;
 
@@ -146,7 +146,7 @@ namespace ElonaKeys
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
 				"shift = shift+1..9 fires the NON-displayed quickslot page (plain digits stay native). off = disable. Assignment: select/hover an item or spell in a menu and press 1-9 (shift+digit = other page).");
 			shiftBarVisible = Config.Bind("Hotkeys", "ShiftBarVisible", true,
-				"Whether the second hotbar (other quickslot page, what shift+1..9 fires) starts ENABLED the first time. It is a real Elin widget: toggle/drag/lock it in the game's widget manager afterwards; position saves with your widget theme.");
+				"Show the OTHER quickslot page (what shift+1..9 fires) as small corner icons on the real hotbar's slots.");
 			familyBarVisible = Config.Bind("Menus", "FamilyBarVisible", true,
 				"Whether the Elona-style window-family bar (diamond tabs shown while item/chara/spell windows are open; Tab cycles them) starts ENABLED the first time. Also a real Elin widget: manage it in the widget manager.");
 			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
