@@ -3,6 +3,7 @@
 ## 1.19.2 - 2026-07-06
 - Fixed: pressing Space in a menu could silently activate things and stop the arrow keys from working. Space now simply confirms, like Enter.
 - Menu windows show their page, item count and total weight at the bottom (like Elona), with a key-hint line under every menu. Titles are clean again.
+- Ctrl+1-9 also binds hotkeys in menus, for Elona muscle memory (plain 1-9 still works; shift+1-9 uses them).
 
 ## 1.19.1 - 2026-07-05
 - Crafting menu: switch category tabs with z/x, like everywhere else.

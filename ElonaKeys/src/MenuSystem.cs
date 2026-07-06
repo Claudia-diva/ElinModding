@@ -587,7 +587,7 @@ namespace ElonaKeys
 				{
 					keys += "   Tab window";
 				}
-				keys += "   1-9 bind   Shift back";
+				keys += "   1-9/Ctrl+1-9 bind   Shift back";
 			}
 			hintText.text = (hintInfo.Length > 0) ? (hintInfo + "\n" + keys) : keys;
 		}

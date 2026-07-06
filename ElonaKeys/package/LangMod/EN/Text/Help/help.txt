@@ -65,7 +65,7 @@ $Keys
 {pair|bump + held tool|Running into a tree with an axe chops it, wall with pickaxe mines it (no shift needed)}
 
 {topic|Hotkeys and extras}
-{pair|1-9 in a menu|Bind the selected item/spell to that quickbind slot (mod's own registry; the game's quickslot bar stays native)}
+{pair|1-9 or Ctrl+1-9 in a menu|Bind the selected item/spell to that quickbind slot (mod's own registry; the game's quickslot bar stays native)}
 {pair|shift + 1-9|Fire the quickbind: resolves at press time, so any matching item works (a fresh rod replaces the burnt one automatically). Corner icons on the hotbar show the bindings}
 {pair|MacroKey1-3|Cast the Macro1-3 ability sequences (config)}
 {pair|F1-F8|Fire the Extra bar natively}

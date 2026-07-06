@@ -119,7 +119,9 @@ namespace ElonaKeys
 		private static void UpdateAssignKey()
 		{
 			int digit = GetDigitDown();
-			if (digit == -1 || digit >= 9 || EInput.isCtrlDown || EInput.isAltDown)
+			// plain digit, ctrl+digit (Elona style) and shift+digit all BIND
+			// inside menus; only alt stays out (native alt combos)
+			if (digit == -1 || digit >= 9 || EInput.isAltDown)
 			{
 				return; // quickbind slots are 1-9
 			}
