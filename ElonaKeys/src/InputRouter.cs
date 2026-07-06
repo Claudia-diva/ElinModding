@@ -454,7 +454,7 @@ namespace ElonaKeys
 	// Tab's inventory toggle is HARDCODED raw input in ActionMode.UpdateInput
 	// (ActionMode.cs:739), not an EInput action: block it at the destination.
 	// Mouse clicks on the inventory button pass (no Tab keydown that frame).
-	[HarmonyPatch(typeof(UI), nameof(UI.ToggleInventory), new Type[] { })]
+	[HarmonyPatch(typeof(UI), nameof(UI.ToggleInventory), new Type[] { typeof(bool) })]
 	internal static class Patch_ToggleInventory
 	{
 		private static bool Prefix()

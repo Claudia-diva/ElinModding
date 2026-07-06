@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.19.2";
+		public const string Version = "1.19.3";
 
 		internal static ManualLogSource Log;
 
@@ -247,7 +247,16 @@ namespace ElonaKeys
 			DefNative("Fire", "f", EAction.Fire, "Fire your ranged weapon (native Fire action).");
 			Rebuild();
 			Config.SettingChanged += delegate { Rebuild(); };
-			new Harmony(Guid).PatchAll();
+			try
+			{
+				new Harmony(Guid).PatchAll();
+			}
+			catch (Exception ex)
+			{
+				// a single bad patch target aborts PatchAll and leaves the mod
+				// half-applied (menus without weights, dead widgets...): scream
+				Log.LogError("ElonaKeys PATCHING FAILED - the mod is broken until this is fixed: " + ex);
+			}
 			Log.LogInfo("ElonaKeys " + Version + " loaded, " + entries.Count + " binds active.");
 		}
 
