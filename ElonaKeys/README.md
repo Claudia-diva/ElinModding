@@ -50,6 +50,8 @@ Directional actions highlight the neighboring tiles and wait for a movement key;
 | x | Reopen the last-used item menu (Elona x) |
 | Shift+X | Examine inventory: full list with totals |
 | Tab | Cycle window families: items X,d,e,r,q,Z,t,o,B,T / equipment-chara / spells-actions |
+
+While family windows are open, an Elona-style diamond tab bar shows the whole family (current = gold, click to jump). The bar and the shift-page hotbar are real Elin widgets: toggle, drag, lock and anchor them in the game's widget manager; positions save with widget themes.
 | Shift+0-9 | Fire hotkey slots 1-10 (also F1-F8 natively) |
 | Shift+move | Use held tool on the adjacent tile |
 
