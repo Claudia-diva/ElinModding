@@ -1,254 +1,72 @@
 # Changelog
 
 ## 1.19.2 - 2026-07-06
-
-- Space no longer breaks menu navigation: Unity's UI focus was letting Space "click" the focused row invisibly (often opening the count spinner, after which arrows do ±1/±10). Focus is cleared while our menus are open and Space now explicitly acts as Enter, including in the spinner.
-- Captions cleaned up, Elona style: the title bar shows ONLY the title (plus sort marker); page number, item count and total weight moved to the bottom line above the key hints. Also removed leaked rich-text tags from the browser/craft titles and the "·" character the caption font can't render.
-- New release pipeline (release.ps1): builds, zips the mod package, tags ElonaKeys-vX.Y.Z, and publishes a GitHub release with the zip attached; -Backfill creates note-only releases for past versions.
+- Fixed: pressing Space in a menu could silently activate things and stop the arrow keys from working. Space now simply confirms, like Enter.
+- Menu windows show their page, item count and total weight at the bottom (like Elona), with a key-hint line under every menu. Titles are clean again.
 
 ## 1.19.1 - 2026-07-05
-
-- Crafting menu: z/x switch recipe category tabs (All / each present category), the same keys as everywhere else. The category shows in the caption.
-- Every menu window carries an Elona-style key hint line at the bottom (context-aware: navigation, z/x tabs vs z sort / x examine, Tab window, 1-9 bind, spinner keys). MenuKeyHints config to hide.
-- The z/x source/tab hook is stored per window, so shift-backing from a submenu restores it correctly.
+- Crafting menu: switch category tabs with z/x, like everywhere else.
+- Every menu now lists its usable keys at the bottom (turn off with MenuKeyHints).
 
 ## 1.19.0 - 2026-07-05
-
-- ELONA-STYLE CRAFTING: stations and the quick-craft action open a keyboard recipe list (craftable recipes first with skill and max count, uncraftable grayed). Enter a recipe: each ingredient row shows what's assigned and how much you own; Enter cycles through EVERY owned candidate (inventory AND home storage, the same search the game itself uses). The Craft row takes a count spinner and executes through the game's own craft task. The native window stays one row away ("open the native window..."), and KeyboardCrafting=false restores it entirely.
-- Inventory browser: shift+x (and x last-menu) now cycles inventories with z/x: You → each party member → Home stock (owned storage in your base). Party/home rows take items with the count spinner; your own rows open the stat card.
-- Item processors also list home-storage materials when you're in your base, like the native drag grid does.
+- Crafting is now Elona-style: stations and quick craft open a recipe list (craftable first, with skill and how many you can make). Pick a recipe, swap each material through everything you own (including home storage), set a count, craft. The old window is still one row away.
+- Inventory browser (shift+x): flip between your pack, each party member, and your home storage with z/x; take items with the count picker.
+- Item processors can use materials from your home storage while you're at your base.
 
 ## 1.18.0 - 2026-07-05
-
-- QUICKBINDS: hotkeys are now the mod's own registry, fully separate from the game's quickslot bar (which is back to 100% native). Press 1-9 on any item or spell in a mod menu to bind that slot; shift+digit fires it. Bindings are by KIND, resolved at press time: bind a rod of identify and when it burns out, the next rod of identify in your inventory fires automatically. Bound rows show a [n] tag; the hotbar corner icons now display these bindings. Stored in the config (Quickbinds), rebindable without any breakage.
-- The caps-lock vanilla lock now actually blocks Tab (the inventory toggle is hardcoded raw input in the game, outside the normal key action system; it is now intercepted at the destination), and no longer eats Escape/Enter.
-- Hotbar restored in the widget editor: the editor aborts silently when any widget's edit-cover throws, hiding every widget after it. All covers are exception-guarded now.
-- Layout: weight column narrowed to ~4 digits (WeightWidth config, long weights scroll inside it); name columns are computed from the real window and weight widths, so the equipment window stops scrolling everything endlessly (only genuinely long names move, and small overflows don't scroll at all: NameScrollSlack); "Light Source" slot reads "Light" and long slot names are trimmed; window width configurable (MenuWidth).
+- New hotkey system: press 1-9 on any item or spell in a menu to bind it, shift+digit to use it. Bindings are smart: bind a rod of identify and any rod of identify you carry will fire, including ones you pick up later. Small icons on the hotbar corners show your bindings; bound items show a [n] tag in menus. The game's own hotbar is untouched.
+- The CapsLock key lock now really blocks Tab, and no longer interferes with Escape or Enter.
+- Fixed the hotbar disappearing from the widget editor.
+- Slimmer weight column, no more endlessly scrolling names in the equipment window, "Light" instead of "Light Source". Window and column widths are configurable.
 
 ## 1.17.1 - 2026-07-05
-
-- OverrideGameKeys fixed properly: it used to suppress the vanilla action only when our handler actually ran, so in every in-between state (float windows open, gates skipping) the vanilla key leaked through. Now the instant a pressed key matches one of our binds, the native action is dead, gates or not. (Native-passthrough binds like Fire are exempt.)
-- CapsLock = vanilla lock toggle (new SuppressAllKey config): while ON, NO vanilla key action fires at all: only this mod's keys, movement, and digit quickslots work. No need to unbind anything in Elin's settings. CapsLock is unused by the game; rebind or set 'none' to disable.
+- Mod keys now always win over the game's keys when they clash, in every situation.
+- CapsLock toggles a full vanilla-key lock: while on, only mod keys, movement and the hotbar digits do anything. No need to unbind keys in the game's settings.
 
 ## 1.17.0 - 2026-07-05
-
-- Tab can no longer fall through to the native inventory: while our menus (or any modal window) are open, the game's own Tab action is neutralized at the input stage. That was the "Tab quits the menu and opens the Elin inventory" bug.
-- Bump-to-work: RUNNING into a tile with your held tool now works it when nothing else is there: tree with an axe = chop, wall with a pickaxe = mine, no shift needed (always-run friendly). Doors still open instead of getting chopped; shift+move stays for precision.
-- Hold toggle hardened: the held item is pinned as the first row of the t menu ("(held) put away"), matching by uid instead of object identity (stack merges/splits could orphan the old check). Hold/unhold now log to BepInEx/LogOutput.log for diagnosis.
-- Family bar: size slider ("Bar size", 0.4-1.5, default 0.75 = smaller than before) and "Show Tab hint" toggle in the bar's right-click menu (also FamilyBarScale/FamilyBarHint configs). Skin decorations were already available under the style submenu. All bar updates are exception-guarded and widget activation is logged, so if it misbehaves again the log will say why.
+- Fixed Tab sometimes closing a menu and opening the game's inventory instead.
+- Run into a tree with an axe (or a wall with a pickaxe) and you'll chop/mine it, no shift needed. Doors still just open.
+- The t menu pins your held item at the top as "(held) put away".
+- Family bar: size slider and hint toggle in its right-click menu.
 
 ## 1.16.1 - 2026-07-05
-
-- Long names scroll their TEXT CONTENT (Elona style) instead of sliding the label over the sprite and letter badge; the name stays inside its own column.
-- Caption totals count unique entries, not stack sizes (a million gold coins = 1 item).
+- Long item names scroll within their own space instead of sliding over the icons.
+- Item counts in the window header count entries, not stack sizes.
 
 ## 1.16.0 - 2026-07-05
-
-- GENERIC held-item interactions: whatever you hold (brush, whip, syringe, any of the game's tools, mods included) now offers its full right-click act set through the keyboard: i toward a target, Space around you, s on your own tile. One engine-level merge instead of per-item handlers: the game only injected held-item acts into mouse right-click plans; our plans now pull them in too. Holding via t prints a hint.
-- Hold-to-repeat: keeping an arrow key held keeps scrolling: menus, count spinners, native window navigation, dropdowns, quest board tabs, the targeting cursor. 0.35s delay, then 14 steps/second.
-- Container settings menu now carries the FULL native option set: sort mode cycle + ascending + always sort, distribution priority (-5..20), only-rottable (cooler), refuse rotten, advanced distribution toggle, per-category allow/block list, autodump mode cycle, and the distribution name filter (opens the game's text input).
-- Fixed the caption printing literal size tags; totals now show as plain "· 123 items 24.4s".
+- Held items now work generically: hold anything (brush, whip, syringe, any tool), then i toward a target, Space around you, or s on yourself, and its actions are there. Works for every item in the game and other mods.
+- Hold an arrow key to keep scrolling through menus and lists.
+- Container settings menu now has everything the game offers: sort options, distribution priority, cooler mode, category filters, autodump, name filter.
+- Inventory examine list (shift+x) with totals.
 
 ## 1.15.0 - 2026-07-05
-
-- Second hotbar replaced with corner overlays on the REAL hotbar (as suggested): each slot shows the other page's item as a small top-right icon, so alignment/skin/theming are automatic. ShiftBarVisible toggles it; the EKShiftBar widget is gone (the game cleans its config up on its own).
-- Family bar wears the game's actual skin now: its background is a native skinned window panel bound to the widget's skin config, and the FULL widget style menu works (background style slider, size, color picker, decorations) alongside anchor/pivot/lock/close.
-- Tab no longer dies in the equipment window: browsing a slot submenu was silently dropping the window-family registration; submenus of an open family window now inherit it.
-- Character sheet (and other native windows): arrow keys walk buttons in reading order (top-to-bottom, left-to-right) instead of internal hierarchy order.
-- Spell/action rows: the proper ability sprite (the scaling stat moved into the gray text tag, e.g. "attack · WIL"), plus Elona-style columns: Lv, cast chance % (spells), damage dice, P power, current(original) cost, and x = casts LEFT for spells (that's the x8/x12: spell stock) or potential % for actions. The tooltip stays for the full detail.
+- The second hotbar became small corner icons on the real hotbar (always aligned, always your skin).
+- The family bar uses the game's real window skin, with the full style menu (background, size, color, decorations).
+- Fixed Tab dying in the equipment window. Character sheet buttons navigate in reading order.
+- Spell and action lists show the real ability icons plus level, cast chance, damage dice, power, cost, and casts left.
 
 ## 1.14.0 - 2026-07-05
-
-- Elona's window-family bar, as a real widget: while an item/equipment/chara/spell window is open, a row of diamond tabs appears (near the top by default) showing the whole family with the current window highlighted gold, key letters beneath, and the Tab [change] hint. Clicking a diamond jumps to that window. Hides when the windows close.
-- Both the family bar (EKFamilyBar) and the shift-page hotbar (EKShiftBar) are now REAL Elin widgets: they appear in the game's widget manager with native toggle, drag, lock, anchor and context menu, and their positions save/load with your widget themes. In widget-edit mode the family bar shows a sample so it can be placed.
-- ShiftBarOffsetX/Y config entries retired (the widget system owns the position now); ShiftBarVisible and the new FamilyBarVisible only set the first-time enabled state.
-- The z wheel stays a summonable overlay (drag its center diamond; position still saved to config), since it only exists while open.
+- The window-family bar: Elona-style diamond tabs shown while item/equipment/spell windows are open. Click to jump; Tab cycles.
+- The family bar and the second hotbar became real Elin widgets: toggle, drag, lock and anchor them in the widget manager; positions save with widget themes.
 
 ## 1.13.0 - 2026-07-05
-
-- Elona window cycling: Tab walks the related-window family from your current position. Item menus cycle X(examine) → d → e → r → q → Z → t → o → B → T; the equipment window and the character sheet cycle into each other (feats are a tab inside the sheet, z/x); v (spells) and a (actions) cycle into each other.
-- x by itself reopens the last-used item menu (defaults to examine inventory), classic Elona x. New LastMenu bind in the config.
-- Quest boards simplified: up/down scroll the request list, left/right switch the board's tabs directly, and r presses the reroll button. No more group juggling there.
-- The z wheel no longer fires the instant a key goes down: the direction confirms when you RELEASE. Holding up and then adding right (while up is still held) picks the top-right diamond; the pending diamond glows gold and grows slightly so you can see what will fire.
+- Tab cycles related windows from your current one: examine → drop → eat → read → drink → zap → tool → open → mix → throw; equipment ↔ character sheet; spells ↔ actions.
+- x reopens the last item menu you used, like Elona.
+- Quest boards: up/down scroll, left/right switch tabs, r rerolls.
+- The z wheel picks on key RELEASE, so you can roll onto diagonals without misfires; the pending slot glows.
 
 ## 1.12.0 - 2026-07-05
+- Chests and containers open the keyboard menu no matter how you open them. Item processors (mill, seed maker...) get a keyboard ingredient picker.
+- s harvests or collects whatever you stand on instantly; otherwise it opens the tile menu with "Search the ground".
+- c opens the character sheet. Favorites appear first in the spell/action lists.
+- Targeting (*) shows the same hover info card as the mouse, so hover mods work with it.
 
-- Tool holding fixed for real: t now holds through the game's hot-item system, so shift+direction with an axe chops trees (and harvests, tills, chops wood...) exactly like the pickaxe mines. Picking the held tool again puts it away.
-- Targeting rework: throw and * now move a FREE tile cursor anywhere within your vision (arrows and numpad, iso-aware); Space jumps between characters (hostiles first), Enter confirms, and the hover info card follows the cursor. Throws no longer stick to a remembered ally: hostile acts only auto-target hostiles.
-- Quick craft (float crafting window) fully keyboard-driven: the recipe list walks properly (position now derives from the list's own selection instead of resetting each frame), arrows navigate while WASD still walks, and ingredient/material dropdowns are reachable: Enter opens the option list, up/down pick, Enter/Esc close.
-- Window tabs on z and x, Elona style (z back, x forward; x still examines when an item grid is focused). Works on the character sheet too. Tab is no longer consumed: it stays native for chat/input.
-- Spell and action menus finally show each ability's sprite and its full native tooltip (same one as the ability window), plus current cost with the original in parentheses when they differ, casts left (spell stock) for spells, and potential % for actions.
-- Item menus (read, quaff, zap, drop...) show Elona-style totals in the caption: piece count and total weight.
-- shift+x is a real examine-inventory list now (everything you carry, equipped marked, Enter/x opens the stat card, totals in the caption) instead of toggling the native inventory.
-- The toolbelt no longer appears in the wear screen.
+## 1.11.x - 2026-07-04
+- True in-world targeting: no windows in combat. Spells and throws fire at your remembered target instantly; otherwise a light targeting mode with a tile highlight opens. * sets the target.
+- Casting respects each spell's real targeting (self, party, single target, ground).
+- Digit hotkeys, spell macros (Macro1-3), and a bar showing the other hotkey page.
+- Native windows (quest boards, crafting, dialogs, talk choices) navigable by keyboard.
+- Fixed item icons rendering with wrong colors on some saves.
 
-## 1.11.4 - 2026-07-04
-
-- The shift-page bar is now a clone of the real hotbar widget instead of a hand-drawn strip: same slot size, skin, icon rendering and shortcut numbers, and it follows the hotbar's icon-size setting. Slots are real hotbar slots (drag items onto them to assign to the other page). Position is saved as an offset from the main hotbar (drag the bar's empty space to move it); config keys renamed to ShiftBarOffsetX/Y, default is right above the hotbar.
-
-## 1.11.3 - 2026-07-04
-
-- Chests and containers now open the keyboard take/put menu no matter how you open them (walking into them, space, mouse click...). Locked chests still lockpick natively and surprise packages still spring their mimic. KeyboardContainers config to turn off.
-- Item processors (mill, seed maker, grindstone, cooking tools...) open a keyboard ingredient picker on top of the native window; picking the ingredient(s) starts the craft exactly like a mouse transfer would. Esc leaves the native window for mouse use. KeyboardCrafters config.
-- s on your own tile harvests/collects instantly when something is growing there (game's own harvest logic, tool-aware); otherwise it shows the tile menu with a "Search the ground" row (medal spots), so s always does something.
-- c opens the character sheet, classic Elona style.
-- Spell (v) and action (a) menus list your starred favorites first with no extra key press; the filter/favorites/native-window rows moved to the bottom. Left/right switch pages as before.
-- Targeting mode (*) now feeds the selected character into the game's real mouse-hover pipeline every frame, so the mouseover info card and hover mods (e.g. Betterhovertext's level/stats/hobbies) display for the keyboard selection just like a mouse hover.
-
-## 1.11.2 - 2026-07-04
-
-- Crafting: recipe list finally keyboard-driven; up/down walk the FULL virtualized recipe list (auto-scrolls, selects each recipe like a click so the product panel updates live), left/right still switch to material slots and buttons, Tab still switches categories.
-- Quickslot assignment now evicts an occupying ITEM back to the inventory before placing a spell (no more ghost item firing on shift+digit); activation prefers the ability when duplicates share a slot.
-- Ranged ground-targeted spells (ice arrow and friends) no longer fall into the adjacent-direction prompt: they use the remembered target / targeting mode aimed at characters' tiles, with the direction prompt only as a last resort.
-- Targeting mode shows target details (level, HP, distance, hostility) in a two-line strip; the Target key is also on the apostrophe (') for keyboards without a numpad.
-
-## 1.11.1 - 2026-07-04
-
-- Targeting flow rework: no windows in combat. Chara-targeted spells and throws fire INSTANTLY at your remembered target; without one, a light in-world targeting mode opens (slight dim, tile highlight, name strip, arrows cycle by distance, Enter confirms, Esc cancels). Confirming remembers the target.
-- New Target key (classic *, default keypad-multiply): set/change the remembered target without acting.
-- Party buffs cast on the whole party immediately (no member picker).
-- Toolbelt protected: shown as (fixed) in the equipment window, cannot be removed there, excluded from throw.
-
-## 1.11.0 - 2026-07-04
-
-- Item colors fixed for real: menus now use the game's canonical UI item material (CoreRef.matUIObj) instead of borrowing from a live button whose state varied per save (the darkening).
-- Casting honors each spell's real targeting: self spells cast instantly; party buffs offer "Cast on the whole party" (native multi-cast) or a single member; chara-targeted spells open a target menu (range/LOS enforced, hostiles/party marked); ground spells use the iso-aware direction prompt.
-- Spell macros: Macro1-3 config sequences + MacroKey1-3 binds; casts each ability in order (self/party by type, targeted ones hit your current enemy).
-- Digit hotkeys now use the QUICKSLOT bar: assignment (digit in menus/ability window) writes real toolbelt entries; plain digit = shown page, shift+digit = other page. shift+1..9 fires the other page without flipping. A draggable mini-bar shows the other page's icons (ShiftBarVisible).
-- Native window navigation v4: up/down within a group, left/right between groups (lists / item grids / side buttons), Tab cycles window tabs (quest board, crafting categories), lists auto-scroll to the selection, drama talk choices navigable (native 1-9 selection also still works), quest reroll reachable via the side-button group.
-- Space menu labels each action with its target ("Talk - Poppy").
-- Equipment window: slot names stay static; only the item name scrolls.
-
-## 1.10.0 - 2026-07-03
-
-- Iso-aware aiming: direction prompts target the tile that LOOKS that way on screen (Elin's grid is rotated 45°; pressing down now hits visual south instead of grid-south/screen-southwest). IsoAim config, on by default; movement/bump keep native grid behavior.
-- a = special actions (stamina, ABILITY group), v = spells (mana, SPELL group). Both lists: ★ favorites view, type filter (attack/buff/hex/heal/other via the game's own abilityType data), favorite management (Enter toggles the star), cost column with mp/sp, digit hotkeying, native window still one row away.
-- Ammo stays on shift+a.
-
-## 1.9.0 - 2026-07-03
-
-- Wheel diamonds fixed (1.8.0 never assigned the label text) and restyled: transparent fill with a simple border.
-- Containers: picking an item now offers Take / Drop at your feet / Move to another container (each with a count spinner), and "[ Container settings... ]" edits the game's own flags: cooler mode (only rottable), refuse rotten, always sort, distribution priority.
-- Space = Elona context action: menu of everything interactable on and around you; a single action fires instantly (fountains, gacha machines, boards next to you).
-- Bump-to-talk: walking into a friendly NPC talks to them (party members still swap). BumpToTalk config.
-- Bump-to-use: walking into a solid interactable (quest board, gacha, fountain) uses it. BumpToUse config.
-
-## 1.8.1 - 2026-07-03
-
-- Containers (chests, boxes, bags) opened via o now use a keyboard take/put menu: item rows with count spinner to take, "[ Put items in... ]" opens your inventory with a spinner to store; shift walks back through the chain.
-- Native windows that still open (crafting stations, mouse-opened containers) got grid navigation: arrows walk the item grid, Enter performs the transfer/use (what right-click does), x examines the item.
-
-## 1.8.0 - 2026-07-03
-
-- Wheel slots wear Elona-style diamonds (rotated plates with edge trim); the whole wheel is a draggable widget: drag the center diamond, position saved to config (WheelPosX/Y).
-- Fixed native menus (e.g. the ability window) leaking through while a direction prompt was waiting: prompts are now fully modal.
-- v opens the mod's own castable spell/ability list: everything the PC knows with cost column and category tag, Enter/letter casts through the game's targeting flow, digits hotkey the selected spell, native window reachable from the last row.
-
-## 1.7.1 - 2026-07-03
-
-- Wheel selection is instant 8-way: press a direction, that diamond fires; east/west diamonds switch rings. Misc ring added (rings hold max 6 verbs).
-
-## 1.7.0 - 2026-07-03
-
-- z wheel reworked into Elona's linked circles: Info / Action / Etc / Items rings, left/right (or clicking the side links) switches ring, up/down rotates, Enter fires, and the last-used ring is remembered like Elona. Each ring's verbs configurable (WheelInfo/WheelAction/WheelEtc/WheelItems); new verbs Help, Chara, Journal, Log, Fire.
-
-## 1.6.3 - 2026-07-03
-
-- Row layout matches Elona: sprite at far left, letter badge (revived, with its letter) next, name, weight as a true right-aligned column. Letters select through the game's own badge matching.
-
-## 1.6.2 - 2026-07-03
-
-- Attempted icon fix (superseded by 1.6.3).
-
-## 1.6.0 - 2026-07-03
-
-- z now opens a true radial action wheel (custom circle UI): arrows rotate, Enter/Space or click activates, z/Escape closes. WheelVerbs config picks what's on it (default 12 classic verbs); WheelStyle=list brings the window back.
-- Bash rewired to Elona behavior: kick characters to shove them, kick closed doors open (locked doors thud), smash block-pass objects, kick the air otherwise.
-
-## 1.5.3 - 2026-07-03
-
-- Fixed a null tooltip-slot call that aborted every menu build after row one (broken Wear window, stale ghost rows). Row building is now exception-proof per row; weight renders inside the row text.
-
-## 1.5.2 - 2026-07-03
-
-- Native popups are keyboard-navigable: right-click context menus, yes/no dialogs and native list windows respond to arrows + Enter (arrows move a highlight, Enter clicks; untouched until you press an arrow, so mouse and default-Enter behavior stay intact).
-
-## 1.5.1 - 2026-07-03
-
-- Fixed Cast/Zap both bound to shift+z in upgraded configs (Cast is v); config repair script covers it.
-- Wheel added to existing config files; all key descriptions and Mod Help refreshed to match current behavior.
-
-## 1.5.0 - 2026-07-03
-
-- Elona-style equipment window on w: body slot rows (Head/Body/Hand/...), "-" for empty, pick a slot to see candidates or remove; equip weight and DV/PV in the caption.
-- Weight column on the right of every item menu.
-- z inside a menu cycles sort: original / name / weight.
-- Shift (released without being used as a modifier) goes back to the previous window, Elona style; window chains (wheel, give, categories, throw) keep a back-stack.
-- Drop and Give use an inline count spinner like Elona's Input box: Enter on a stack, left/right ±1, up/down ±10, Enter confirms; defaults to all.
-- Party items browse in our window: take items (with count) from members; character sheet entry kept.
-- Preset quantity submenu removed (replaced by the spinner).
-
-## 1.4.1 - 2026-07-03
-
-- Item sprites finally render in menu rows (RenderRow.SetImage assumes the inventory-grid shader material and render pivots; sprites are now normalized: centered pivot, white color, scaled to the slot).
-- Stat tooltip stays open while keyboard-browsing (TooltipManager.disableHide), instead of flashing for one frame.
-- Quantity menu for stacks on Drop and Give: 1 / 5 / 10 / half / all rows, letters work; single items skip the question.
-- z = action wheel: every mod verb in one menu, classic Elona style.
-
-## 1.4.0 - 2026-07-03
-
-- Throw offers a target list (visible characters sorted by distance, hostiles marked) before the direction fallback.
-- Give reworked into a pure keyboard flow using the game's gift logic (refusals, affinity, cursed handling); one per pick from stacks.
-- Fixed ping-pong name scrollers stacking up on pooled menu rows (jitter over time).
-- Docs synced everywhere: README, in-game Mod Help ($About/$Keys/$Changelog), this file.
-
-## 1.3.2 - 2026-07-03
-
-- Key-chip badges deactivated entirely; selection letters live inside row labels.
-- Item stat tooltip follows the keyboard cursor (ShowTooltipForced on selection).
-- s and i open keyboard menus built from the tile's ActPlan instead of the mouse context popup.
-- Direction prompts: tile highlights, held-movement-key release guard.
-- Menus ignore the keystroke that opened them (no more instant self-selection like 'd' dropping row d).
-- Repaired stale user config (OverrideGameKeys, Close/Zap/ExamineInventory binds).
-
-## 1.3.1 - 2026-07-03
-
-- Fixed abandoned direction prompts silently disabling all mod keys (now processed centrally with timeout and modal bail-out).
-- Ability/spell hotbar placeholders excluded from all item menus (TraitAbility is a TraitTool subclass).
-- Letters merged into row labels; cursor-based selection.
-
-## 1.3.0 - 2026-07-03
-
-- New menu system: fixed rows per page (MenuPageSize, default 15) so everything fits on screen, left/right arrows switch pages, up/down + Enter navigate and act, letters per page, icon-letter-name layout with the icon leftmost.
-- x examine and 0-9 hotkey assignment now also work on the keyboard-selected row, not just mouse hover.
-- Drop/wear menus refresh in place instead of closing and reopening.
-- g pickup uses the game's own pickable-list for the tile (plants, installed pickables).
-- New s key: menu of everything doable on your own tile (search spots, harvest, dig treasure, gather).
-- New shift+a: load compatible ammo into your ranged weapon via menu.
-- New shift+q: party member character sheets and inventories.
-- Shift+direction with a held tool applies it to the adjacent tile like drag-right-click (ShiftDirTool, default on).
-- SuppressNativeKeys config: swallow game keys entirely (e.g. 'z' examine-target if it annoys you).
-
-## 1.2.1 - 2026-07-03
-
-- Single-stage input routing with per-gate diagnostics (DebugLog on by default), narrower UI gates: keys no longer die when the mouse rests on widgets or after alt-tab.
-
-## 1.1.0 - 2026-07-03
-
-- Item selection reworked: scrollable Elona-style list menus (LayerList) with item icons and letter hotkeys, replacing the drag-grid "transfer box".
-- Wear menu toggles equip/unequip, marks equipped items, stays open; favorited gear no longer blocked.
-- Defaults corrected against the classic Elona key list: Zap=Z, Cast=v, Close=C; added Dig=D, Give=G, numpad-0 get; Tool=t is now the use-item menu.
-- Quaff lists nearby wells/fountains via the game's own actDrink logic.
-- Open now handles containers (with lockpicking) plus doors.
-- Mod keys take priority over conflicting native keys (OverrideGameKeys, default on).
-- Removed the redundant stairs keys.
-- Multiple alternative keys per action supported in config (comma-separated).
-- Added Mod Help panel pages (About / Keys / Changelog).
-
-## 1.0.0 - 2026-07-03
-
-- Initial release.
-- Classic Elona keys: e/q/r/z/g/d/w/t/u/o/c/b/f/p/i/x, Shift+Z cast, Shift+T throw, Shift+O offer, Shift+./, stairs.
-- Native item-selection UI (LayerDragGrid) for eat/quaff/read/zap/drop/wear/hold/use/throw.
-- Direction prompts for zap/bash/throw/interact/open/close (when ambiguous).
-- All binds configurable in BepInEx/config/elin.elonakeys.cfg; native game keybinds take priority on conflict.
+## 1.10.0 and earlier - 2026-07-03
+- The core set: classic Elona keys for everything (e/q/r/Z/g/d/w/t/u/B/T/o/C/s/i/p/O/G and more), Elona-style paginated menus with letters, icons, weight column and sorting, equipment window with body slots, direction prompts that match what you see on screen, the z action circles, bump-to-talk and bump-to-use, and every key rebindable in the config.
