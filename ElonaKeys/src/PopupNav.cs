@@ -6,9 +6,11 @@ namespace ElonaKeys
 {
 	// Keyboard navigation for Elin's NATIVE windows: context menus, dialogs,
 	// drama talk choices, list windows, quest boards, crafting stations,
-	// containers. Up/down move within the current group, LEFT/RIGHT switch
-	// navigation groups (lists / item grids / side buttons), TAB cycles the
-	// window's tabs, Enter activates (grids act like right-click), x examines.
+	// containers, quick-craft, ingredient dropdowns. Up/down move within the
+	// current group, LEFT/RIGHT switch navigation groups (lists / item grids /
+	// dropdowns / side buttons), z and x cycle the window's tabs (Elona style;
+	// Tab stays native for chat), Enter activates (grids act like right-click,
+	// dropdowns open their option list), x examines when an item grid is focused.
 	public static class PopupNav
 	{
 		private class Group
@@ -16,8 +18,8 @@ namespace ElonaKeys
 			public readonly List<UIButton> buttons = new List<UIButton>();
 			public bool grid;
 			public UIList list;        // for auto-scroll
-			public UIDynamicList dyn;  // virtualized lists (crafting recipes): data-index navigation
-			public int dataIndex;
+			public UIDynamicList dyn;  // virtualized lists (crafting recipes): data navigation
+			public readonly List<UIDropdown> drops = new List<UIDropdown>();
 		}
 
 		private static Object lastTarget;
@@ -29,6 +31,12 @@ namespace ElonaKeys
 		{
 			if (MenuSystem.Alive || EInput.isInputFieldActive || EInput.isCtrlDown || EInput.isAltDown)
 			{
+				return;
+			}
+			// an open dropdown option list (ingredient/material pickers) owns the keys
+			if ((bool)UIDropdown.activeInstance)
+			{
+				HandleDropdownPopup(UIDropdown.activeInstance);
 				return;
 			}
 			groups.Clear();
@@ -83,9 +91,10 @@ namespace ElonaKeys
 						groups.Add(g);
 					}
 				}
-				else if (topLayer != null && EClass.ui.BlockActions)
+				else if (topLayer != null && (EClass.ui.BlockActions || topLayer is LayerCraftFloat))
 				{
-					// generic modal window: build all group kinds
+					// generic window: build all group kinds. LayerCraftFloat (quick
+					// craft) is non-modal but still wants keyboard navigation.
 					target = topLayer;
 					// virtualized lists first (crafting recipes): navigate the DATA,
 					// select-on-move gives the native click preview
@@ -117,6 +126,18 @@ namespace ElonaKeys
 					{
 						groups.Add(grids);
 					}
+					Group drops = new Group();
+					foreach (UIDropdown dd in topLayer.GetComponentsInChildren<UIDropdown>(includeInactive: false))
+					{
+						if (dd.interactable && dd.gameObject.activeInHierarchy)
+						{
+							drops.drops.Add(dd);
+						}
+					}
+					if (drops.drops.Count > 0)
+					{
+						groups.Add(drops);
+					}
 					Group loose = new Group();
 					foreach (UIButton b in topLayer.GetComponentsInChildren<UIButton>(includeInactive: false))
 					{
@@ -134,8 +155,16 @@ namespace ElonaKeys
 					}
 				}
 			}
-			groups.RemoveAll((Group gr) => gr.dyn == null && gr.buttons.Count == 0);
-			if (target == null || groups.Count == 0)
+			groups.RemoveAll((Group gr) => gr.dyn == null && gr.buttons.Count == 0 && gr.drops.Count == 0);
+			// windows with tabs stay navigable (z/x) even with no button groups
+			// (e.g. the character sheet)
+			bool tabbable = topLayer != null && topLayer.windows != null && topLayer.windows.Count > 0
+				&& (EClass.ui.BlockActions || topLayer is LayerCraftFloat);
+			if (target == null && tabbable)
+			{
+				target = topLayer;
+			}
+			if (target == null || (groups.Count == 0 && !tabbable))
 			{
 				lastTarget = null;
 				index = -1;
@@ -148,8 +177,27 @@ namespace ElonaKeys
 				index = -1;
 				groupIndex = 0;
 			}
-			groupIndex = Mathf.Clamp(groupIndex, 0, groups.Count - 1);
+			groupIndex = Mathf.Clamp(groupIndex, 0, Mathf.Max(0, groups.Count - 1));
 			HandleKeys(topLayer);
+		}
+
+		// keys for an OPEN dropdown option list: up/down apply the previous/next
+		// option directly (the game refreshes live), Enter/Escape close it
+		private static void HandleDropdownPopup(UIDropdown dd)
+		{
+			if (Input.GetKeyDown(KeyCode.DownArrow))
+			{
+				dd.Next();
+			}
+			else if (Input.GetKeyDown(KeyCode.UpArrow))
+			{
+				dd.Prev();
+			}
+			else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Escape))
+			{
+				dd.Hide();
+				EInput.Consume();
+			}
 		}
 
 		private static bool InAnyGroup(UIButton b)
@@ -193,13 +241,38 @@ namespace ElonaKeys
 
 		private static void HandleKeys(Layer topLayer)
 		{
-			Group g = groups[groupIndex];
-			// Tab cycles the window's tabs (quest board, crafting categories)
-			if (Input.GetKeyDown(KeyCode.Tab) && topLayer != null && topLayer.windows != null && topLayer.windows.Count > 0)
+			Group g = (groups.Count > 0) ? groups[groupIndex] : null;
+			// z / x cycle the window's tabs, Elona style (Tab stays native for
+			// chat). x keeps its examine meaning while an item grid is focused.
+			bool hasTabs = topLayer != null && topLayer.windows != null && topLayer.windows.Count > 0;
+			bool gridFocused = g != null && g.grid && index >= 0 && index < g.buttons.Count;
+			if (hasTabs && Input.GetKeyDown(KeyCode.Z))
 			{
-				topLayer.windows[0].NextTab(-1);
+				try
+				{
+					topLayer.windows[0].NextTab(-1);
+				}
+				catch
+				{
+				}
 				index = -1;
 				return;
+			}
+			if (hasTabs && !gridFocused && Input.GetKeyDown(KeyCode.X))
+			{
+				try
+				{
+					topLayer.windows[0].NextTab(1);
+				}
+				catch
+				{
+				}
+				index = -1;
+				return;
+			}
+			if (g == null)
+			{
+				return; // tab-only window (character sheet)
 			}
 			bool next = Input.GetKeyDown(KeyCode.DownArrow);
 			bool prev = Input.GetKeyDown(KeyCode.UpArrow);
@@ -220,7 +293,9 @@ namespace ElonaKeys
 				prev = groupPrev;
 			}
 			// virtualized list group (crafting recipes): walk the DATA, selecting
-			// each entry as we go (same as clicking it: product panel updates)
+			// each entry as we go (same as clicking it: product panel updates).
+			// Position derives from the list's own selectedObject: the window
+			// rebuilds freely without resetting our place.
 			if (g.dyn != null)
 			{
 				if (next || prev)
@@ -230,8 +305,17 @@ namespace ElonaKeys
 					{
 						return;
 					}
-					g.dataIndex = (g.dataIndex + (next ? 1 : -1) + count) % count;
-					object o = g.dyn.objects[g.dataIndex];
+					int cur = g.dyn.objects.IndexOf(g.dyn.selectedObject);
+					int ni;
+					if (cur == -1)
+					{
+						ni = next ? 0 : (count - 1);
+					}
+					else
+					{
+						ni = (cur + (next ? 1 : -1) + count) % count;
+					}
+					object o = g.dyn.objects[ni];
 					try
 					{
 						g.dyn.Scroll(Mathf.Max(0, g.dyn.GetIndex(o)));
@@ -243,6 +327,31 @@ namespace ElonaKeys
 					}
 				}
 				return; // Enter not needed: selection already invoked
+			}
+			// dropdown group (ingredient/material pickers): up/down move between
+			// dropdowns, Enter opens the option list (then arrows pick inside)
+			if (g.drops.Count > 0)
+			{
+				g.drops.RemoveAll((UIDropdown d) => !d);
+				if (g.drops.Count == 0)
+				{
+					return;
+				}
+				if (next || prev)
+				{
+					index = (Mathf.Max(index, 0) + (next ? 1 : -1) + g.drops.Count) % g.drops.Count;
+					for (int i = 0; i < g.drops.Count; i++)
+					{
+						g.drops[i].transform.localScale = (i == index) ? new Vector3(1.06f, 1.06f, 1f) : Vector3.one;
+					}
+					return;
+				}
+				if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && index >= 0 && index < g.drops.Count)
+				{
+					g.drops[index].Show();
+					EInput.Consume();
+				}
+				return;
 			}
 			if (next || prev)
 			{
@@ -335,6 +444,13 @@ namespace ElonaKeys
 				if ((bool)b)
 				{
 					b.DoNormalTransition();
+				}
+			}
+			foreach (UIDropdown d in g.drops)
+			{
+				if ((bool)d)
+				{
+					d.transform.localScale = Vector3.one;
 				}
 			}
 		}

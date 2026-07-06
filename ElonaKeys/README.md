@@ -25,13 +25,13 @@ Directional actions highlight the neighboring tiles and wait for a movement key;
 | d | Drop menu (stays open; whole stacks) |
 | e / q / r | Eat / Quaff / Read menus (quaff includes wells) |
 | Z | Zap a rod, then a direction (wait = self) |
-| v | Cast: spell list, favorites first, hotkeyable with digits |
-| a | Special actions (stamina), favorites first |
+| v | Cast: spell list, favorites first, sprites/tooltips/cost/casts left |
+| a | Special actions (stamina), favorites first, potential shown |
 | w | Wear/wield; picking an equipped item removes it |
 | t | Hold a tool |
 | u | Use an item |
 | B | Dip/blend liquids with items |
-| T | Throw: pick item, then target list or direction |
+| T | Throw: pick item, then free cursor (auto-fires at remembered hostile) |
 | Shift+A | Load compatible ammo into your ranged weapon |
 | f | Fire (native action) |
 | b | Bash a direction |
@@ -40,14 +40,14 @@ Directional actions highlight the neighboring tiles and wait for a movement key;
 | C | Open or close a door in a chosen direction |
 | s | Your tile: harvest/collect instantly, else menu + search the ground |
 | c | Character sheet |
-| * / ' | Set the remembered target; hover info card follows the selection |
+| * / ' | Free targeting cursor (any visible tile, Space cycles characters); hover info follows |
 | z | Action circles (Info/Action/Etc/Items rings) |
 | Space | Everything interactable on and around you |
 | i | Interact with a direction (talk, trade, everything) |
 | p / O | Pray / Offer at an altar |
 | G | Give to an adjacent character (one per pick) |
 | Shift+Q | Party member sheets and inventories |
-| Shift+X | Inventory |
+| Shift+X | Examine inventory: full list with totals |
 | Shift+0-9 | Fire hotkey slots 1-10 (also F1-F8 natively) |
 | Shift+move | Use held tool on the adjacent tile |
 

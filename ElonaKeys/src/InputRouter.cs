@@ -69,6 +69,13 @@ namespace ElonaKeys
 			{
 				return; // direction prompt is eating input this frame
 			}
+			// quick-craft float window: ARROW keys navigate its recipe list
+			// (PopupNav), not the player; WASD still walks
+			if (EClass.ui.TopLayer is LayerCraftFloat
+				&& (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)))
+			{
+				EInput.axis = Vector2.zero;
+			}
 			if (queuedNative != EAction.None)
 			{
 				EInput.action = queuedNative;
@@ -138,6 +145,12 @@ namespace ElonaKeys
 			if (EClass.ui.BlockActions)
 			{
 				Gate(entry, "modal layer open (ui.BlockActions)");
+				return;
+			}
+			if (EClass.ui.TopLayer is LayerCraftFloat)
+			{
+				// quick-craft is non-modal but PopupNav owns z/x/arrows there
+				Gate(entry, "quick craft window open");
 				return;
 			}
 			if (EClass.ui.contextMenu != null && EClass.ui.contextMenu.isActive)

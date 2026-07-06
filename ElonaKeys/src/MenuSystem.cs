@@ -22,6 +22,7 @@ namespace ElonaKeys
 		public int maxAmount;                // >1 enables the count spinner
 		public Action<int> onAmount;         // called with the chosen count
 		public SourceElement.Row actSrc;     // ability rows: enables digit hotkeying
+		public Element ability;              // ability rows: element icon + native tooltip
 		public string fixedPrefix;           // static text (slot names); label scrolls separately
 	}
 
@@ -223,6 +224,46 @@ namespace ElonaKeys
 				b.button1.SetTooltip("note", delegate(UITooltip tt)
 				{
 					tip.WriteNote(tt.note);
+				});
+			}
+			else if (r.ability != null)
+			{
+				// spell/action rows: element sprite (plain UI sprite, no item
+				// shader) + the game's own ability tooltip (ButtonAbility recipe)
+				Element ab = r.ability;
+				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
+				iconParent.SetActive(enable: true);
+				iconParent.anchoredPosition = new Vector2(16f, 0f);
+				Image img = b.button1.icon;
+				foreach (Image sib in iconParent.GetComponentsInChildren<Image>(includeInactive: true))
+				{
+					if (sib != img)
+					{
+						sib.enabled = false;
+					}
+				}
+				img.enabled = true;
+				img.transform.SetAsLastSibling();
+				img.material = null; // pooled row may carry the item shader
+				ab.SetImage(img);
+				img.color = Color.white;
+				RectTransform art = img.rectTransform;
+				art.pivot = new Vector2(0.5f, 0.5f);
+				art.anchoredPosition = Vector2.zero;
+				img.transform.localScale = new Vector3(Mathf.Abs(img.transform.localScale.x), img.transform.localScale.y, 1f);
+				Vector2 asz = art.sizeDelta;
+				float amax = Mathf.Max(asz.x, asz.y);
+				if (amax > 34f || amax <= 0f)
+				{
+					art.sizeDelta = (amax > 0f) ? (asz * (34f / amax)) : new Vector2(30f, 30f);
+				}
+				b.button1.SetTooltip("note", delegate(UITooltip tt)
+				{
+					ab.WriteNote(tt.note, EClass.pc.elements, delegate
+					{
+						Act a = ACT.Create(ab.source);
+						ab._WriteNote(tt.note, EClass.pc, a);
+					});
 				});
 			}
 			if (!badge)
@@ -431,6 +472,21 @@ namespace ElonaKeys
 			{
 				caption += (sortMode == 1) ? " [name]" : " [weight]";
 			}
+			// Elona-style totals for item lists: piece count + total weight
+			int pieces = 0;
+			int grams = 0;
+			foreach (MenuRow r in view)
+			{
+				if (r.icon != null)
+				{
+					pieces += Mathf.Max(1, r.icon.Num);
+					grams += r.sortWeight;
+				}
+			}
+			if (pieces > 0)
+			{
+				caption += "  <size=13>" + pieces + " items  " + (grams / 1000f).ToString("0.0") + "s</size>";
+			}
 			layer.windows[0].SetCaption(caption);
 			ShowSelTooltip();
 		}
@@ -441,7 +497,7 @@ namespace ElonaKeys
 			try
 			{
 				TooltipManager.Instance.HideTooltips(immediate: true);
-				if (sel < 0 || sel >= pageRows.Count || pageRows[sel].icon == null || layer.list.buttons == null || sel >= layer.list.buttons.Count)
+				if (sel < 0 || sel >= pageRows.Count || (pageRows[sel].icon == null && pageRows[sel].ability == null) || layer.list.buttons == null || sel >= layer.list.buttons.Count)
 				{
 					return;
 				}

@@ -10,7 +10,8 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
 ・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
 ・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
-・ Native windows: ↑↓ move, ←→ switch group (list/grid/buttons), Tab switches window tabs, Enter acts, x examines.
+・ Native windows: ↑↓ move, ←→ switch group (list/grid/dropdowns/buttons), z/x switch window tabs (character sheet, quest board, crafting), Enter acts, x examines in item grids. Tab stays native (chat).
+・ Quick craft: arrows walk the recipe list (WASD still moves you), Enter on an ingredient dropdown opens its options.
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
 {pair|Source and issues|github.com/Claudia-diva/ElinModding}
@@ -26,17 +27,17 @@ $Keys
 {pair|r|Read menu}
 {pair|Z|Zap a rod, then a direction (wait key = self)}
 {pair|w|Equipment window: body slots, pick one to equip/remove}
-{pair|t|Hold a tool in your hands}
+{pair|t|Hold a tool (through the game's hot-item system; pick it again to put it away)}
 {pair|u|Use an item}
 {pair|B|Dip/blend: pick a liquid, then mix items into it}
-{pair|T|Throw: pick item, then a target from the list or a direction}
+{pair|T|Throw: pick item, then the free cursor (auto-fires at your remembered HOSTILE target)}
 {pair|A (shift+a)|Load compatible ammo into your ranged weapon}
-{pair|shift+x|Inventory}
+{pair|shift+x|Examine inventory: full list with totals, Enter/x = stat card}
 
 {topic|Action Keys}
-{pair|v|Spells (mana): favorites listed first, ←→ pages, digit = hotkey}
-{pair|a|Special actions (stamina): favorites first, ←→ pages, digit = hotkey}
-{pair|* (keypad) or '|Set the remembered target; the hover info card (mouseover widget, hover mods) follows the selection}
+{pair|v|Spells (mana): favorites first, sprites + native tooltips, cost(orig) and casts left}
+{pair|a|Special actions (stamina): favorites first, cost and potential %}
+{pair|* (keypad) or '|Free targeting cursor: arrows/numpad move (any visible tile), Space next character, Enter confirm; hover info follows the cursor}
 {pair|c|Character sheet}
 {pair|i|Interact with a direction: keyboard menu of everything there}
 {pair|s|Your own tile: harvests/collects instantly if something grows here, else menu + search the ground}
@@ -73,6 +74,12 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.12.0}
+・ t holds via the hot-item system: shift+move with an axe chops trees; pick the tool again to put it away.
+・ Free targeting cursor for throw and * (any visible tile, Space cycles characters); hostile acts never auto-target allies.
+・ Quick craft + ingredient dropdowns keyboard-navigable; z/x switch window tabs (Tab back to native chat).
+・ Spell menus: sprites, native tooltips, cost(orig), casts left, potential. Item menus show totals. shift+x = examine list. Toolbelt hidden from wear.
+
 {topic|1.11.4}
 ・ Shift-page bar rebuilt as a clone of the real hotbar widget: identical size/skin, real slots (drag to assign), sits above the hotbar by default.
 

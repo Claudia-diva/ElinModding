@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.12.0 - 2026-07-05
+
+- Tool holding fixed for real: t now holds through the game's hot-item system, so shift+direction with an axe chops trees (and harvests, tills, chops wood...) exactly like the pickaxe mines. Picking the held tool again puts it away.
+- Targeting rework: throw and * now move a FREE tile cursor anywhere within your vision (arrows and numpad, iso-aware); Space jumps between characters (hostiles first), Enter confirms, and the hover info card follows the cursor. Throws no longer stick to a remembered ally: hostile acts only auto-target hostiles.
+- Quick craft (float crafting window) fully keyboard-driven: the recipe list walks properly (position now derives from the list's own selection instead of resetting each frame), arrows navigate while WASD still walks, and ingredient/material dropdowns are reachable: Enter opens the option list, up/down pick, Enter/Esc close.
+- Window tabs on z and x, Elona style (z back, x forward; x still examines when an item grid is focused). Works on the character sheet too. Tab is no longer consumed: it stays native for chat/input.
+- Spell and action menus finally show each ability's sprite and its full native tooltip (same one as the ability window), plus current cost with the original in parentheses when they differ, casts left (spell stock) for spells, and potential % for actions.
+- Item menus (read, quaff, zap, drop...) show Elona-style totals in the caption: piece count and total weight.
+- shift+x is a real examine-inventory list now (everything you carry, equipped marked, Enter/x opens the stat card, totals in the caption) instead of toggling the native inventory.
+- The toolbelt no longer appears in the wear screen.
+
 ## 1.11.4 - 2026-07-04
 
 - The shift-page bar is now a clone of the real hotbar widget instead of a hand-drawn strip: same slot size, skin, icon rendering and shortcut numbers, and it follows the hotbar's icon-size setting. Slots are real hotbar slots (drag items onto them to assign to the other page). Position is saved as an offset from the main hotbar (drag the bar's empty space to move it); config keys renamed to ShiftBarOffsetX/Y, default is right above the hotbar.

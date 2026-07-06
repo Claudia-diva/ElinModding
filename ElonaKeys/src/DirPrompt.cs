@@ -95,7 +95,7 @@ namespace ElonaKeys
 		// Elin renders isometric: the grid is rotated 45° from the screen, so a
 		// "down" press should aim at the tile that LOOKS south (grid south-east).
 		// One compass step of rotation maps screen direction to grid direction.
-		private static Vector2 IsoRotate(Vector2 v)
+		internal static Vector2 IsoRotate(Vector2 v)
 		{
 			int x = Math.Sign(v.x);
 			int y = Math.Sign(v.y);

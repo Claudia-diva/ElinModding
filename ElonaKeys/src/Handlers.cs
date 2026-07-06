@@ -326,18 +326,19 @@ namespace ElonaKeys
 				BodySlot slot = bodySlot;
 				string slotName = SlotName(slot);
 				Thing eq = slot.thing;
-				bool locked = eq != null && eq.trait is TraitToolBelt; // holds the quickslots
+				if (eq != null && eq.trait is TraitToolBelt)
+				{
+					continue; // the toolbelt holds the quickslots; keep it out of wear
+				}
 				rows.Add(new MenuRow
 				{
 					fixedPrefix = slotName + ":",
-					label = ((eq != null) ? DetailName(eq) : "-") + (locked ? " <size=12>(fixed)</size>" : ""),
+					label = (eq != null) ? DetailName(eq) : "-",
 					icon = eq,
 					rightText = (eq != null) ? WeightText(eq.ChildrenAndSelfWeight) : "-",
 					sortWeight = (eq != null) ? eq.ChildrenAndSelfWeight : 0,
 					closeOnAct = false,
-					act = locked
-						? (Action)delegate { Msg.SayRaw("The toolbelt stays on; it holds your quickslots."); }
-						: delegate { SlotMenu(slot, slotName); }
+					act = delegate { SlotMenu(slot, slotName); }
 				});
 			}
 			return rows;
@@ -402,9 +403,24 @@ namespace ElonaKeys
 
 		public static void HoldTool()
 		{
-			ItemMenu("Hold which tool?", (Thing t) => t.trait is TraitTool && !(t.trait is TraitCatalyst) && !t.isEquipped,
-				delegate(Thing t) { pc.HoldCard(t); },
+			ItemMenu("Hold which tool?", (Thing t) => (t.trait is TraitTool && !(t.trait is TraitCatalyst) && !t.isEquipped) || t == pc.held,
+				delegate(Thing t) { ToggleHold(t); },
 				"You have no tools.");
+		}
+
+		// Hold through the hot-item system so held-tool acts (chop, mine, till,
+		// harvest...) appear in action plans; plain pc.HoldCard leaves
+		// player.currentHotItem as NoItem and the plan never sees the tool.
+		// Picking the currently held thing un-holds it.
+		internal static void ToggleHold(Thing t)
+		{
+			if (pc.held == t)
+			{
+				EClass.player.ResetCurrentHotItem();
+				Msg.SayRaw("You put " + t.Name + " away.");
+				return;
+			}
+			EClass.player.SetCurrentHotItem(new HotItemHeld(t));
 		}
 
 		public static void Use()
@@ -416,8 +432,8 @@ namespace ElonaKeys
 
 		public static void Hold()
 		{
-			ItemMenu("Hold what in your hands?", (Thing t) => t.trait.CanBeHeld && !t.isEquipped,
-				delegate(Thing t) { pc.HoldCard(t); },
+			ItemMenu("Hold what in your hands?", (Thing t) => (t.trait.CanBeHeld && !t.isEquipped) || t == pc.held,
+				delegate(Thing t) { ToggleHold(t); },
 				"You have nothing you can hold.");
 		}
 
@@ -449,19 +465,9 @@ namespace ElonaKeys
 							targets.Add(c);
 						}
 					}
-					targets.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
-					if (targets.Count == 0)
+					TargetMode.Begin("Throw " + t.Name, targets, delegate(Point p, Chara c)
 					{
-						DirPrompt.Ask("Throw in which direction?", self: false, delegate(Point p)
-						{
-							ActThrow.Throw(pc, p, t);
-							EClass.player.EndTurn();
-						});
-						return;
-					}
-					TargetMode.Begin("Throw " + t.Name, targets, delegate(Chara c)
-					{
-						ActThrow.Throw(pc, c.pos, t);
+						ActThrow.Throw(pc, p, t);
 						EClass.player.EndTurn();
 					});
 				},
@@ -1069,7 +1075,7 @@ namespace ElonaKeys
 					Msg.SayRaw("You need a digging tool.");
 					return;
 				}
-				pc.HoldCard(tool);
+				EClass.player.SetCurrentHotItem(new HotItemHeld(tool));
 			}
 			Thing held = tool;
 			DirPrompt.Ask("Dig in which direction?", self: false, delegate(Point p)
@@ -1481,15 +1487,50 @@ namespace ElonaKeys
 		private static MenuRow AbilityRow(Element e, bool spells)
 		{
 			bool fav = EClass.player.favAbility.Contains(e.id);
-			string cost = (e.source.cost != null && e.source.cost.Length > 0 && e.source.cost[0] > 0)
-				? (e.source.cost[0] + (spells ? " mp" : " sp")) : "";
 			return new MenuRow
 			{
 				label = (fav ? "★ " : "") + e.source.GetName() + " <size=13><color=#8f8f7a>" + TypeBucket(e) + "</color></size>",
-				rightText = cost,
+				rightText = AbilityCostText(e, spells),
 				actSrc = e.source,
+				ability = e,
 				act = delegate { CastAbility(e); }
 			};
+		}
+
+		// "12(10)mp x34" for spells (current cost, original in parens when
+		// different, x = casts left / stock); "8sp 120%" for actions (potential)
+		private static string AbilityCostText(Element e, bool spells)
+		{
+			int orig = (e.source.cost != null && e.source.cost.Length > 0) ? e.source.cost[0] : 0;
+			int cur = orig;
+			try
+			{
+				Act a = ACT.Create(e.source);
+				cur = a.GetCost(pc).cost;
+			}
+			catch
+			{
+			}
+			string s = "";
+			if (cur > 0 || orig > 0)
+			{
+				s = cur + ((orig > 0 && orig != cur) ? ("(" + orig + ")") : "") + (spells ? "mp" : "sp");
+			}
+			try
+			{
+				if (e.PotentialAsStock)
+				{
+					s += " <color=#9fd6ff>x" + e.vPotential + "</color>"; // spell stock
+				}
+				else
+				{
+					s += " <color=#8f8f7a>" + e.Potential + "%</color>";
+				}
+			}
+			catch
+			{
+			}
+			return s.Trim();
 		}
 
 		private static void FilterMenu(bool spells)
@@ -1527,6 +1568,7 @@ namespace ElonaKeys
 				rows.Add(new MenuRow
 				{
 					label = (fav ? "★ " : "☆ ") + e.source.GetName(),
+					ability = e,
 					closeOnAct = false,
 					act = delegate
 					{
@@ -1603,27 +1645,15 @@ namespace ElonaKeys
 						spots.Add(c);
 					}
 				}
-				spots.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
-				if (spots.Count > 0)
+				TargetMode.Begin(act.GetText(), spots, delegate(Point p, Chara c)
 				{
-					TargetMode.Begin(act.GetText(), spots, delegate(Chara c)
-					{
-						if (pc.UseAbility(act, null, c.pos))
-						{
-							EClass.player.EndTurn();
-						}
-					});
-					return;
-				}
-				DirPrompt.Ask("Aim " + act.GetText() + " where? (wait key = your tile)", self: true, delegate(Point p)
-				{
-					if (pc.UseAbility(act, null, p))
-					{
-						EClass.player.EndTurn();
-					}
-					else
+					if (!SafeCanPerformAt(act, p))
 					{
 						Msg.SayRaw("You cannot aim there.");
+					}
+					else if (pc.UseAbility(act, null, p))
+					{
+						EClass.player.EndTurn();
 					}
 				});
 				return;
@@ -1640,9 +1670,13 @@ namespace ElonaKeys
 				}
 				return;
 			}
-			TargetMode.Begin(act.GetText(), CastCandidates(act, tt), delegate(Chara c)
+			TargetMode.Begin(act.GetText(), CastCandidates(act, tt), delegate(Point p, Chara c)
 			{
-				if (pc.UseAbility(act, c, c.pos))
+				if (c == null)
+				{
+					Msg.SayRaw("There is no one there.");
+				}
+				else if (pc.UseAbility(act, c, c.pos))
 				{
 					EClass.player.EndTurn();
 				}
@@ -1699,11 +1733,17 @@ namespace ElonaKeys
 					targets.Add(c);
 				}
 			}
-			targets.Sort((Chara a, Chara b) => pc.pos.Distance(a.pos) - pc.pos.Distance(b.pos));
-			TargetMode.Begin("Target", targets, delegate(Chara c)
+			TargetMode.Begin("Target", targets, delegate(Point p, Chara c)
 			{
-				TargetMode.Remember(c);
-				Msg.SayRaw("Targeting " + c.Name + ".");
+				if (c == null)
+				{
+					Msg.SayRaw("No one to remember there.");
+				}
+				else
+				{
+					TargetMode.Remember(c);
+					Msg.SayRaw("Targeting " + c.Name + ".");
+				}
 			});
 		}
 
@@ -1757,9 +1797,28 @@ namespace ElonaKeys
 
 		// ---------- simple toggles ----------
 
+		// Elona x: the full inventory as a browsable list (Enter/x = stat card);
+		// the caption carries the total item count and weight
 		public static void ExamineInventory()
 		{
-			EClass.ui.ToggleInventory();
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (Thing thing in pc.things.List((Thing t) => !(t.trait is TraitAbility), onlyAccessible: true))
+			{
+				Thing t = thing;
+				rows.Add(new MenuRow
+				{
+					label = t.Name + (t.isEquipped ? " <size=12><color=#90d090>(equipped)</color></size>" : ""),
+					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
+					closeOnAct = false,
+					act = delegate
+					{
+						EClass.ui.AddLayerDontCloseOthers<LayerInfo>().SetThing(t);
+					}
+				});
+			}
+			RunRows("Inventory", rows, "You carry nothing.");
 		}
 	}
 }

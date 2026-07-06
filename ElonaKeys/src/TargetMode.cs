@@ -5,41 +5,53 @@ using UnityEngine.UI;
 
 namespace ElonaKeys
 {
-	// Elona-style in-world targeting: no window. Light screen dim, the candidate's
-	// tile is highlighted, its name shown at the bottom; arrows cycle targets by
-	// distance, Enter confirms, Escape/right-click cancels. The confirmed target
-	// is REMEMBERED so later casts/throws fire instantly while it stays valid.
+	// Elona-style in-world targeting: no window. A free tile CURSOR moves with
+	// the arrow keys (iso-aware) and numpad diagonals, anywhere within vision;
+	// Space jumps between character candidates (hostiles first), Enter confirms
+	// the tile, Escape/right-click cancels. While active, the cursor tile is fed
+	// into the game's mouse-hover pipeline, so the hover info card follows it.
+	// A confirmed character is REMEMBERED so later casts/throws fire instantly.
 	public static class TargetMode
 	{
 		private static Chara lastTarget;
 
+		private static Point cursor;
 		private static List<Chara> candidates;
-		private static int index;
-		private static Action<Chara> onPick;
+		private static Action<Point, Chara> onPick;
 		private static string verb;
 		private static GameObject overlay;
 		private static Text label;
 
 		public static bool Active => onPick != null;
 
-		// instantly usable remembered target (or current enemy) for this act
 		public static Point SelectedPos()
 		{
-			if (Active && candidates != null && candidates.Count > 0 && index >= 0 && index < candidates.Count)
-			{
-				return candidates[index].pos;
-			}
-			return null;
+			return Active ? cursor : null;
 		}
 
+		// instantly usable remembered target (or current enemy) for this act;
+		// act == null means a hostile intent (throw)
 		public static Chara QuickTarget(Act act)
 		{
+			bool needHostile = act == null || SafeHostileAct(act);
 			Chara c = lastTarget;
-			if (!Valid(c, act))
+			if (!Valid(c, act, needHostile))
 			{
 				c = EClass.pc.enemy;
 			}
-			return Valid(c, act) ? c : null;
+			return Valid(c, act, needHostile) ? c : null;
+		}
+
+		private static bool SafeHostileAct(Act act)
+		{
+			try
+			{
+				return act.IsHostileAct;
+			}
+			catch
+			{
+				return true;
+			}
 		}
 
 		public static void Remember(Chara c)
@@ -47,11 +59,15 @@ namespace ElonaKeys
 			lastTarget = c;
 		}
 
-		private static bool Valid(Chara c, Act act)
+		private static bool Valid(Chara c, Act act, bool needHostile)
 		{
 			if (c == null || c.isDead || !c.IsAliveInCurrentZone || !EClass.pc.CanSee(c))
 			{
 				return false;
+			}
+			if (needHostile && (!EClass.pc.IsHostile(c) || c.IsPCParty))
+			{
+				return false; // never auto-throw/nuke a friend remembered from a heal
 			}
 			if (act == null)
 			{
@@ -67,27 +83,34 @@ namespace ElonaKeys
 			}
 		}
 
-		public static void Begin(string _verb, List<Chara> _candidates, Action<Chara> _onPick)
+		public static void Begin(string _verb, List<Chara> _candidates, Action<Point, Chara> _onPick)
 		{
 			Cancel();
-			if (_candidates == null || _candidates.Count == 0)
+			candidates = _candidates ?? new List<Chara>();
+			// hostiles first, then by distance: Space cycles in this order
+			candidates.Sort(delegate(Chara a, Chara b)
 			{
-				Msg.SayRaw("No valid target in range.");
-				return;
-			}
-			candidates = _candidates;
+				bool ha = EClass.pc.IsHostile(a);
+				bool hb = EClass.pc.IsHostile(b);
+				if (ha != hb)
+				{
+					return ha ? -1 : 1;
+				}
+				return EClass.pc.pos.Distance(a.pos) - EClass.pc.pos.Distance(b.pos);
+			});
 			onPick = _onPick;
 			verb = _verb;
-			index = 0;
-			// start on the remembered target when it's among the candidates
-			if (lastTarget != null)
+			// cursor: remembered target, else nearest hostile, else nearest, else self
+			Chara start = null;
+			if (lastTarget != null && !lastTarget.isDead && lastTarget.IsAliveInCurrentZone && EClass.pc.CanSee(lastTarget))
 			{
-				int i = candidates.IndexOf(lastTarget);
-				if (i >= 0)
-				{
-					index = i;
-				}
+				start = lastTarget;
 			}
+			if (start == null && candidates.Count > 0)
+			{
+				start = candidates[0];
+			}
+			cursor = ((start != null) ? start.pos : EClass.pc.pos).Copy();
 			BuildOverlay();
 			RefreshLabel();
 		}
@@ -96,6 +119,7 @@ namespace ElonaKeys
 		{
 			onPick = null;
 			candidates = null;
+			cursor = null;
 			if (overlay != null)
 			{
 				UnityEngine.Object.Destroy(overlay);
@@ -136,24 +160,90 @@ namespace ElonaKeys
 			o.effectDistance = new Vector2(1.5f, -1.5f);
 		}
 
-		private static void RefreshLabel()
+		private static Chara CursorChara()
 		{
-			if (!(bool)label || candidates == null || candidates.Count == 0)
-			{
-				return;
-			}
-			Chara c = candidates[index];
-			string tag = EClass.pc.IsHostile(c) ? " <color=#ff9090>(hostile)</color>" : (c.IsPCParty ? " <color=#90d090>(party)</color>" : "");
-			string details = "";
 			try
 			{
-				details = "Lv" + c.LV + "   HP " + c.hp + "/" + c.MaxHP + "   dist " + EClass.pc.pos.Distance(c.pos);
+				return cursor?.FirstVisibleChara();
 			}
 			catch
 			{
+				return null;
 			}
-			label.text = "► " + verb + ": " + c.Name + tag + "   " + (index + 1) + "/" + candidates.Count
-				+ "\n<size=16>" + details + "   |   arrows cycle, Enter confirm, Esc cancel</size>";
+		}
+
+		private static void RefreshLabel()
+		{
+			if (!(bool)label || cursor == null)
+			{
+				return;
+			}
+			Chara c = CursorChara();
+			string line1;
+			string line2;
+			if (c != null)
+			{
+				string tag = EClass.pc.IsHostile(c) ? " <color=#ff9090>(hostile)</color>" : (c.IsPCParty ? " <color=#90d090>(party)</color>" : "");
+				line1 = "► " + verb + ": " + c.Name + tag;
+				string details = "";
+				try
+				{
+					details = "Lv" + c.LV + "   HP " + c.hp + "/" + c.MaxHP + "   dist " + EClass.pc.pos.Distance(c.pos);
+				}
+				catch
+				{
+				}
+				line2 = details;
+			}
+			else
+			{
+				line1 = "► " + verb + ": (tile)";
+				line2 = "dist " + EClass.pc.pos.Distance(cursor);
+			}
+			label.text = line1 + "\n<size=16>" + line2 + "   |   arrows move, Space next target, Enter confirm, Esc cancel</size>";
+		}
+
+		// screen-direction key → tile delta (iso-aware like the direction prompts)
+		private static Vector2 ReadDir()
+		{
+			Vector2 v = Vector2.zero;
+			if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.Keypad4))
+			{
+				v = new Vector2(-1f, 0f);
+			}
+			else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.Keypad6))
+			{
+				v = new Vector2(1f, 0f);
+			}
+			else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Keypad8))
+			{
+				v = new Vector2(0f, 1f);
+			}
+			else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.Keypad2))
+			{
+				v = new Vector2(0f, -1f);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad7))
+			{
+				v = new Vector2(-1f, 1f);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad9))
+			{
+				v = new Vector2(1f, 1f);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad1))
+			{
+				v = new Vector2(-1f, -1f);
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad3))
+			{
+				v = new Vector2(1f, -1f);
+			}
+			if (v != Vector2.zero && Plugin.IsoAim)
+			{
+				v = DirPrompt.IsoRotate(v);
+			}
+			return v;
 		}
 
 		// called every frame from InputRouter while Active (input is fenced there)
@@ -163,18 +253,11 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			// prune dead/vanished candidates live
 			candidates.RemoveAll((Chara c) => c == null || c.isDead || !c.IsAliveInCurrentZone);
-			if (candidates.Count == 0)
-			{
-				Cancel();
-				return;
-			}
-			index = Mathf.Clamp(index, 0, candidates.Count - 1);
-			// highlight the selected target's tile every frame
+			// highlight the cursor tile every frame
 			try
 			{
-				candidates[index].pos.SetHighlight(8);
+				cursor.SetHighlight(8);
 			}
 			catch
 			{
@@ -184,27 +267,62 @@ namespace ElonaKeys
 				Cancel();
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+			Vector2 d = ReadDir();
+			if (d != Vector2.zero)
 			{
-				index = (index + 1) % candidates.Count;
+				Point np = cursor.Copy();
+				np.x += (int)d.x;
+				np.z += (int)d.y;
+				bool ok = np.IsValid;
+				if (ok)
+				{
+					try
+					{
+						ok = EClass.pc.CanSeeSimple(np);
+					}
+					catch
+					{
+						ok = false;
+					}
+				}
+				if (ok)
+				{
+					cursor = np;
+					RefreshLabel();
+				}
+				else
+				{
+					SE.BeepSmall(); // can't target outside your vision
+				}
+				return;
+			}
+			if (Input.GetKeyDown(KeyCode.Space) && candidates.Count > 0)
+			{
+				// jump to the next candidate after the one under the cursor
+				int cur = -1;
+				Chara here = CursorChara();
+				if (here != null)
+				{
+					cur = candidates.IndexOf(here);
+				}
+				Chara next = candidates[(cur + 1) % candidates.Count];
+				cursor = next.pos.Copy();
 				RefreshLabel();
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.UpArrow))
+			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
 			{
-				index = (index - 1 + candidates.Count) % candidates.Count;
-				RefreshLabel();
-				return;
-			}
-			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
-			{
-				Chara c = candidates[index];
-				Action<Chara> cb = onPick;
+				Point p = cursor.Copy();
+				Chara c = CursorChara();
+				Action<Point, Chara> cb = onPick;
 				Cancel();
-				lastTarget = c;
+				if (c != null)
+				{
+					lastTarget = c;
+				}
 				try
 				{
-					cb(c);
+					cb(p, c);
 				}
 				catch (Exception ex)
 				{
