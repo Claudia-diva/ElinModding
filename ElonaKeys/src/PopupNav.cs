@@ -470,6 +470,19 @@ namespace ElonaKeys
 				}
 				Highlight(g);
 				EnsureVisible(g);
+				// crafting recipe list: SELECT on move so the product panel
+				// follows the cursor (full native selection, live preview)
+				if (topLayer is LayerCraft && g.drops.Count == 0 && !g.grid && index >= 0 && index < g.buttons.Count)
+				{
+					try
+					{
+						g.buttons[index].onClick.Invoke();
+					}
+					catch (System.Exception ex)
+					{
+						Plugin.Log?.LogError("ElonaKeys craft select failed: " + ex);
+					}
+				}
 				return;
 			}
 			if (index < 0 || index >= g.buttons.Count)

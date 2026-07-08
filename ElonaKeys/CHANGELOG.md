@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.20.0 - 2026-07-06
+- Crafting uses the game's normal window again, now fully keyboard-driven: up/down walk the recipes with the product panel following live, +/- set the count (shift for 10s), Enter crafts, left/right reach the material pickers (Enter opens, arrows choose), z/x switch categories. Fewer keypresses than the mouse, with all the window's info intact.
+- The list-style crafting menu from 1.19 is still available: set CraftingStyle=menu in the config.
+
 ## 1.19.6 - 2026-07-06
 - Space waits again: when there's nothing around you to interact with, Space passes through to the game's wait, and holding it keeps waiting, like vanilla. With something nearby it still opens the interaction menu. (Numpad 5 and left-clicking yourself always worked.)
 

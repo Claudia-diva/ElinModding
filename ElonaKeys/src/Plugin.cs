@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.19.6";
+		public const string Version = "1.20.0";
 
 		internal static ManualLogSource Log;
 
@@ -73,7 +73,7 @@ namespace ElonaKeys
 		private static ConfigEntry<string> quickbinds;
 		private static ConfigEntry<bool> keyboardContainers;
 		private static ConfigEntry<bool> keyboardCrafters;
-		private static ConfigEntry<bool> keyboardCrafting;
+		private static ConfigEntry<string> craftingStyle;
 		private static ConfigEntry<string> macro1;
 		private static ConfigEntry<string> macro2;
 		private static ConfigEntry<string> macro3;
@@ -121,7 +121,7 @@ namespace ElonaKeys
 		}
 		internal static bool KeyboardContainers => keyboardContainers.Value;
 		internal static bool KeyboardCrafters => keyboardCrafters.Value;
-		internal static bool KeyboardCrafting => keyboardCrafting.Value;
+		internal static string CraftingStyle => craftingStyle.Value;
 		internal static string Macro1 => macro1.Value;
 		internal static string Macro2 => macro2.Value;
 		internal static string Macro3 => macro3.Value;
@@ -198,8 +198,8 @@ namespace ElonaKeys
 				"Show the 'Tab [change]' hint line under the family bar.");
 			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
 				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Locked chests and surprise packages stay native.");
-			keyboardCrafting = Config.Bind("Menus", "KeyboardCrafting", true,
-				"Crafting (stations and the quick-craft action) opens the keyboard recipe menu (Elona style) instead of the native window; the native window stays reachable from the last row.");
+			craftingStyle = Config.Bind("Menus", "CraftingStyle", "native",
+				"native = the game's crafting window, fully keyboard-driven (arrows pick recipes with live preview, +/- count, Enter crafts, left/right reach the material pickers). menu = replace it with the mod's list-style menu.");
 			keyboardCrafters = Config.Bind("Menus", "KeyboardCrafters", true,
 				"Item processors (mill, seed maker, grindstone, cooking tools...) open a keyboard ingredient picker on top of the native window; picking ingredients starts the craft. Esc leaves the native window for the mouse.");
 			macro1 = Config.Bind("Macros", "Macro1", "", "Comma-separated ability aliases cast in sequence (self/party per spell; targeted spells hit your current enemy). Find aliases via the spell list names or the ability window.");
