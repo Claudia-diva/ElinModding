@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.19.5";
+		public const string Version = "1.19.6";
 
 		internal static ManualLogSource Log;
 

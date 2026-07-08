@@ -59,7 +59,7 @@ $Keys
 {pair|z|Action circles: hold a direction (diagonals compose), RELEASE fires the glowing diamond; east/west link rings, z/Esc closes; last ring remembered}
 
 {topic|Movement shortcuts}
-{pair|Space|Menu of everything interactable around you (single action fires instantly)}
+{pair|Space|Interact with everything around you; nothing there = wait (hold to keep waiting)}
 {pair|bump NPC|Walking into a friendly NPC talks to them (BumpToTalk)}
 {pair|bump object|Walking into a solid interactable uses it (BumpToUse)}
 {pair|bump + held tool|Running into a tree with an axe chops it, wall with pickaxe mines it (no shift needed)}

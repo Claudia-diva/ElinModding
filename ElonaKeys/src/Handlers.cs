@@ -844,6 +844,13 @@ namespace ElonaKeys
 					});
 				}
 			}
+			if (rows.Count == 0)
+			{
+				// Elona Space: nothing to interact with = WAIT (and since only the
+				// first press-frame is claimed, HOLDING space keeps waiting natively)
+				InputRouter.QueueNative(EAction.Wait);
+				return;
+			}
 			RunRows("Around you", rows, "There is nothing to interact with here.");
 		}
 

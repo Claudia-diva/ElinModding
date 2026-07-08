@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.19.6 - 2026-07-06
+- Space waits again: when there's nothing around you to interact with, Space passes through to the game's wait, and holding it keeps waiting, like vanilla. With something nearby it still opens the interaction menu. (Numpad 5 and left-clicking yourself always worked.)
+
 ## 1.19.5 - 2026-07-06
 - Crafting menu catches up to the native window's info: recipes show their skill and how many you own next to the name (the right column is just the craftable count now, no more garbled text), hovering or selecting a recipe shows a full tooltip (skill vs yours, stamina cost and whether it will drain you, craftable count, owned, every material with have/need), and the recipe view opens with an info line (skill, stamina in red when it would hurt, owned).
 - Switching crafting categories or browser inventories no longer piles up history: shift exits the window instead of replaying every tab you visited.
