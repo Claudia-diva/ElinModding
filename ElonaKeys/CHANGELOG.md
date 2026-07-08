@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.24.2 - 2026-07-08
+- The column headers were RENDERING at last, just in the wrong place: the window's own layout system grabbed them and stacked them at the bottom (that vertical Lv/Pow/Hit/Dmg/Cost/Left pile in the corner). They're exempt from the window layout now and sit in the header strip next to "Name", over their columns. The footer line stays put at the bottom-left of the rows for the same reason.
+- Item and equipment windows get a "Weight" header over the weight column, so every window has labeled columns, not just the ability lists.
+- Abilities whose scaling stat has no icon (piety...) no longer draw a white square in the stat slot.
+
 ## 1.24.1 - 2026-07-08
 - Column headers, fourth try, different foundation: they now anchor to the first ROW's actual on-screen position and use its font. (The previous anchor, the window's sort button, turned out not to exist on these windows at all; the log finally said so.) Column ORDER is configurable: AbilityColumns in the config, reorder or remove entries.
 - The menus grew an Elona-style bottom line: page, item count, total weight, and for containers the SLOTS (used/free), built on the same row-anchored technique.

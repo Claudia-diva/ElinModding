@@ -83,6 +83,9 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.24.2}
+・ Column headers actually sit over their columns now (the window layout had been stacking them at the bottom). Weight header on item/equipment windows. No more white square for icon-less scaling stats.
+
 {topic|1.24.1}
 ・ Column headers anchored to the rows themselves (+ AbilityColumns order config). Bottom line with page/items/weight/slots. Escape cancels any running action. Category view sorts and shows weights. Wide lists only true party casts. * sets the game's own target marker. Tab from equipment reaches the char sheet.
 

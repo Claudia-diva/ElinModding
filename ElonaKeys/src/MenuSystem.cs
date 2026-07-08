@@ -599,15 +599,16 @@ namespace ElonaKeys
 			}
 		}
 
-		// header labels for the column block, in the window's header strip
+		// header labels for the column block, in the window's header strip.
+		// mode: 0 = none, 1 = ability columns, 2 = single Weight header
 		private static readonly List<Text> headerCols = new List<Text>();
 
-		private static void RefreshColsHeader(bool show)
+		private static void RefreshColsHeader(int mode)
 		{
 			try
 			{
 				headerCols.RemoveAll((Text t) => t == null || !t);
-				if (!show)
+				if (mode == 0)
 				{
 					foreach (Text t in headerCols)
 					{
@@ -632,13 +633,18 @@ namespace ElonaKeys
 				RectTransform winRt = layer.windows[0].transform as RectTransform;
 				RectTransform btnRt = first.button1.transform as RectTransform;
 				Bounds bb = RectTransformUtility.CalculateRelativeRectTransformBounds(winRt, btnRt);
+				// what this page shows: the ability block, or just the weight column
 				int[] order = ColOrder();
-				if (headerCols.Count == 0)
+				int slots = (mode == 1) ? order.Length : 1;
+				if (headerCols.Count < slots)
 				{
-					for (int i = 0; i < order.Length; i++)
+					for (int i = headerCols.Count; i < slots; i++)
 					{
 						GameObject go = new GameObject("EKColHead" + i);
 						go.transform.SetParent(winRt, worldPositionStays: false);
+						// the window root runs a layout group: without this the
+						// labels get STACKED at the window bottom (the 1.24.1 bug)
+						go.AddComponent<LayoutElement>().ignoreLayout = true;
 						Text ht = go.AddComponent<Text>();
 						ht.font = first.button1.mainText.font;
 						ht.fontSize = 12;
@@ -652,18 +658,36 @@ namespace ElonaKeys
 						Plugin.Log?.LogInfo("ElonaKeys cols header v4: created from row geometry (rowTop=" + bb.max.y + ", rowRight=" + bb.max.x + ")");
 					}
 				}
-				for (int i = 0; i < headerCols.Count && i < order.Length; i++)
+				for (int i = 0; i < headerCols.Count; i++)
 				{
 					Text ht = headerCols[i];
-					ht.text = ColNames[order[i]];
+					if (i >= slots)
+					{
+						ht.enabled = false;
+						continue;
+					}
+					float w;
+					float x;
+					if (mode == 1)
+					{
+						ht.text = ColNames[order[i]];
+						w = ColW[order[i]];
+						x = colSlotX[i];
+					}
+					else
+					{
+						ht.text = "Weight";
+						w = Mathf.Max(Plugin.WeightWidth, 52f);
+						x = -14f;
+					}
 					RectTransform rt = ht.rectTransform;
 					// anchoredPosition space == the window's local space when the
 					// anchors sit on the parent's pivot
 					rt.anchorMin = winRt.pivot;
 					rt.anchorMax = winRt.pivot;
 					rt.pivot = new Vector2(1f, 0f);
-					rt.sizeDelta = new Vector2(ColW[order[i]], 16f);
-					rt.anchoredPosition = new Vector2(bb.max.x + colSlotX[i], bb.max.y + 2f);
+					rt.sizeDelta = new Vector2(w, 16f);
+					rt.anchoredPosition = new Vector2(bb.max.x + x, bb.max.y + 2f);
 					ht.enabled = true;
 				}
 			}
@@ -704,6 +728,11 @@ namespace ElonaKeys
 				si.enabled = true;
 				si.material = null;
 				ability.SetImage(si); // base painter = the scaling-stat icon
+				if (si.sprite == null)
+				{
+					si.enabled = false; // no stat sprite (piety...): hide, don't show a white box
+					return;
+				}
 				RectTransform rt = si.rectTransform;
 				rt.pivot = new Vector2(1f, 0.5f);
 				rt.anchoredPosition = new Vector2(statX, 0f); // right beside the column
@@ -981,6 +1010,7 @@ namespace ElonaKeys
 			caption += abilityMenu ? "  [x aim / w party / z sort]" : "  [z sort / x info]";
 			layer.windows[0].SetCaption(caption);
 			bool colsPage = false;
+			bool weightPage = false;
 			foreach (MenuRow r1 in pageRows)
 			{
 				if (r1.cols != null)
@@ -988,8 +1018,12 @@ namespace ElonaKeys
 					colsPage = true;
 					break;
 				}
+				if (!string.IsNullOrEmpty(r1.rightText))
+				{
+					weightPage = true;
+				}
 			}
-			RefreshColsHeader(colsPage);
+			RefreshColsHeader(colsPage ? 1 : (weightPage ? 2 : 0));
 			RefreshFooter(pieces, grams);
 			ShowSelTooltip();
 		}
@@ -1020,6 +1054,7 @@ namespace ElonaKeys
 				{
 					GameObject go = new GameObject("EKFooter");
 					go.transform.SetParent(winRt, worldPositionStays: false);
+					go.AddComponent<LayoutElement>().ignoreLayout = true; // window layout group must not place it
 					footer = go.AddComponent<Text>();
 					footer.font = first.button1.mainText.font;
 					footer.fontSize = 13;
