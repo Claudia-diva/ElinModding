@@ -1,0 +1,1194 @@
+id,filter,group,color,logColor,sound,effect,text_JP,text
+string,string,string,string,string,string,string,string,string
+,,,,,,,,
+weather_Rain,,,,,,,雨が降り出した。,It begins to rain.
+weather_RainHeavy,,,,,,,どしゃ降りだ！,It is pouring with rain!
+weather_Storm,,,,,,,嵐だ！,A storm is coming!
+weather_Snow,,,,,,,雪が降り始めた。,Snow starts to fall.
+weather_SnowHeavy,,,,,,,吹雪だ！,A blizzard strikes.
+weather_Cloudy,,,,,,,空はどんよりと曇っている。,The sky looks gloomy.
+weather_Ether,,,,,,,辺りの大気にエーテルが満ち始めた。,The air begins to fill with ether.
+weather_Fine,,,,,,,良い天気だ。,It's a fine weather.
+welcome_intro,,sys,,,,,Lafrontier presents Elin version #1,Lafrontier presents Elin version #1
+welcome,,sys,,,,,"Welcome, wanderer! Press '?' for help.","Welcome, wanderer! Press '?' for help."
+endDay,,,,,,,一日が終わりを告げた。,A day passes.
+temp,,misc,,,,,テンポラルメッセージ。,Temporal message.
+startSiege,,,dead,,,,襲撃が始まった。,Siege has started.
+endSiege,,,,,,,襲撃は終わった。,Siege has ended.
+saved,,,save,,,,*保存*,*Saved*
+tutorial_added,,,save,,,,冒険の書に新しい項目が追加された。,A new entry has been added to Adventure Log.
+story_added,,,save,,,,新しい物語が追加された。,A new story has been added.
+earthquake,,,,,,,ゴゴゴゴゴ…,WHRRRR….
+guestArrive,,,,,,,#1が来訪した。,#1 have/has arrived.
+stack_thing,,,,,,,#1を#2にまとめた。,You add #1 to #2.
+pick_thing,,,,,,,#1は#2を拾った。,#1 picks up #2.
+pick_thing_pc,,,,,,,#2を拾った。,You pick up #2.
+pick_held,,,,,,,#1は#2をバックパックにしまった。,#1 store #2 into backpack.
+pick_held_pc,,,,,,,#2をバックパックにしまった。,You store #2 in your backpack.
+backpack_full,,,,,,,それはバックパックに入らない！,You can't put that in your backpack!
+backpack_full_drop,,,,,,,#1はバックパックから溢れて地面に落ちた。,#1 overflow(s) from your backpack and fall(s) to the ground.
+ding_skill,,,ding,,,,#1は#2の技術の向上を感じた。 ,#your #2 skill increases.
+dec_skill,,,negative,,,,#1は#2の技術の衰えを感じた。,#your #2 skill decreases.
+kick,,,,,,,#1は#2を蹴った。,#1 kick(s) #2.
+bash,,,,,,,#1は#2に体当りした。,#1 bash(es) #2.
+cooked,,,,,,,#1がこんがり焼き上がった。,#1 have/has been baked.
+massage_start,,,,,,,#1は#2の肩を揉み始めた。,#1 begin(s) to massage #his2 shoulders.
+massage_end,,,,,,,#1はマッサージを終えた。,#1 finish(es) the massage.
+armpillow_start,,,,,,,#1は#2の腕にしおらしく頭を預けた。,#1 gently rest(s) #his head on #his2 arm.
+armpillow_end,,,,,,,#1は#2の腕からそっと離れた。,#1 softly pull(s) away from #his2 arm.
+selfHarm_start,act,,,,,,#1は自分を傷つけ始めた。,#1 start(s) to hurt #himself.
+selfHarm_end,act,,,,,,#1は我に返った。,#1 come(s) to #his sense.
+meditate_start,act,,,,,,#1は腰を下ろし目を閉じた。,#1 sit(s) down and close(s) #his eyes.
+meditate_end,act,,,,,,#1は休憩を終えた。,#1 finish(es) resting.
+passTime_start,act,,,,,,#1は妄想にふけりはじめた。,#1 start(s) to daydream.
+passTime_end,act,,,,,,#1は妄想を終えた。,#1 finish(es) daydreaming.
+fish_miss,,,ono,,,,"何も釣れなかった…
+魚に逃げられた。
+魚たちにスルーされた。
+魚たちは今日はお休みのようだ。
+あなたはため息をついた。
+あなたは空を見上げた。
+誰かが釣り餌に透明化の魔法をかけたらしい。
+魚たちは隠れんぼが得意だ！
+あっ、糸が切れた！","Nothing was caught...
+The fish escapes.
+Fish ignore you.
+It seems like the fish are taking a day off today.
+You sigh.
+You look up at the sky.
+Someone must have cast an invisibility spell on the bait.
+Fish are good at hide and seek!
+Oh, the line broke!"
+fish_ehe,,,ono,,,,…と思ったが、魚はどこかに消えてしまったようだ。,Or so it seems. The fish somehow vanishes without a trace.
+fish_ehe2,,,save,,,,みゅ… ,Mew... 
+fish_ehe3,,,nice,,,,あなたは小さな幸運の気配を感じ取った。,You sense a faint sign of good fortune.
+fish_get,,,nice,,,,#1は#2を釣り上げた！,#1 catch(es) #2!
+fish_start,act,,,,,,#2で釣りを始めた。,#1 start(s) to fish with #2.
+fish_start2,act,,,,,,#1は釣りを始めた。,#1 start(s) to fish.
+mine_start,act,,,,,,#2で壁を掘り始めた。,#1 start(s) to mine wall with #2.
+dig_start,act,,,,,,#2で地面を掘り始めた。,#1 start(s) to dig ground with #2.
+drawWater_start,act,,,,,,#2に水を汲み始めた。,#1 start(s) to draw water into #2.
+pourWater_start,act,,,,,,#2の水を地面に注ぎ始めた。,#1 start(s( to pour water from #2 onto the ground.
+chopwood_start,act,,,,,,#2を割り始めた。,#1 start(s) to chop #2.
+till_start,act,,,,,,#2で地面を耕し始めた。,#1 start(s) to plow soil with #2.
+till_invalid,act,,,,,,その床は耕せない。,You can't plow this floor.
+disassemble_start,act,,,,,,#2で#3の解体を始めた。,#1 start(s) to disassemble #3 with #2.
+harvest_start,act,,,,,,#2で#3の採取を始めた。,#1 start(s) to harvest #3 with #2.
+harvestHand_start,act,,,,,,#1は素手で#2の採取を始めた。,#1 start(s) to harvest #2 with #his hand.
+harvestHand_start_pc,act,,,,,,素手で#2の採取を始めた。,#1 start(s) to harvest #2 with #his hand.
+not_hungry,,,,,,,まだ腹が減っていない。,You are not hungry yet.
+eat_start,act,,,,,,#1は#2を口に運んだ。,#1 start(s) to eat #2.
+eat_end,act,,,,,,#1は#2を食べ終えた。,#1 finish(es) eating #2.
+eat_full,act,,,,,,満腹でもうこれ以上食べられない！,You are too full to eat any more!
+eat_poison,,,negative,,,,これは毒されている！#1はもがき苦しみのたうちまわった！,It's poisoned! #1 writhe(s) in agony!
+slime_start,act,,,,,,#1は#2を体内に取り込んだ。,#1 engulf(s) #2.
+suck_start,act,,,,,,#1は#2の首筋に噛みついた。,#1 seize(s) #your2 neck with a sharp bite.
+fuck_start,act,,,,,,#1は服を脱ぎ始めた。,#1 start(s) to take #his clothes off.
+tame_start,act,,,,,,#1は#2をブラシでこすり始めた。,#1 start(s) to brush #2.
+tame_end,act,,,,,,#1はさっぱりした。,#1 are/is well groomed.
+brush_success,act,,ono,,,,#1は嬉しそうだ。,#1 look(s) happy.
+brush_fail,,,ono,,,,#1は不満げにあなたを見た。,#1 give(s) you a dissatisfied look.
+tame_success,act,,positive,,,,#2の調教に成功した。,#1 have/has successfully tamed #2.
+tame_fail,act,,negative,,,,#2の調教に失敗した。,#1 fail(s) to tame #2.
+tame_send,act,,,,,,#1は#2へと旅立った。,#1 are/is headed to #2.
+lockpick_start,act,,,,,,#2の解錠を始めた。,#1 start(s) to open #2.
+lockpick_start_pick,act,,,,,,#1を使って#2の解錠を始めた。,You start to open #2 with #1.
+lockpick_end,act,,,,,,#2の解錠を諦めた。,#1 give(s) up opening #2.
+lockpick_success,act,,,,,,#1は#2の解錠に成功した！,#1 successfully unlock(s) #2.
+pry_damage,act,,ono,,,,"何かが壊れる音がした。
+*ガシャン*
+嫌な感触がした。
+おっと！
+*ゴツン*
+#1は悪態をついた。","#1 hear(s) something break. 
+*Crash*
+#1 feel(s) something unpleasant. 
+Watch it!
+*Thunk*
+#1 curse(s). "
+pry_start,act,,,,,,#2をこじ開け始めた。,#1 start(s) to pry open #2.
+pry_end,act,,,,,,#2をこじ開けるのを諦めた。,#1 give(s) up pry opening #2.
+pry_success,act,,,,,,#1は#2を力ずくでこじ開けた！,#1 successfully pry open #2.
+drink,act,,,,,,#1は#2を飲んだ。,#1 drink(s) #2.
+steal_chara_nothing,act,,,,,,#2はもう何も持っていないようだ。,It seems #2 has nothing to steal.
+steal_chara,act,,,,,,#1は#2から盗む機会をうかがった。,#1 begin(s) to steal from #2.
+steal_thing,act,,,,,,#1は#2を盗む機会をうかがった。,#1 begin(s) to steal #2.
+steal_invalid,act,,,,,,それは盗めない。,It's impossible.
+steal_end,act,,,,,,#1は#2を盗んだ！,#1 steal/steals #2!
+steal_container,,,,,,,#1から#2を盗んだ！,You steal #2 from #1!
+shear_start,act,,,,,,#1は#2の毛を刈り始めた。,#1 start(s) to shear #2.
+shear_end,act,,,,,,#1は#2から#3を刈り取った。,#1 shear(s) #3 from #2.
+shear_penalty,,,negative,,,,この生物からは上手く毛が刈れない。,The fur can't be sheared properly from this creature.
+claimRoom,,,,,,,#1は部屋の権利を主張した。,#1 have/has claimed a room.
+getItem,,,,,,,#1を獲得した。,You acquired #1.
+useItem,,,,,,,#1を使った。,You used #1.
+tutorialStart,,,,,,,チュートリアルが開放された。,Tutorial has been unlocked.
+dropItem,,,,,,,#1を地面においた。,You drop #1.
+read,,,,,,,#1は#2を読んだ。,#1 read(s) #2.
+read_start,,,,,,,#1は#2を読み始めた。,#1 start(s) to read #2.
+read_end,,,,,,,#1は#2を読み終えた。,#1 have/has finished reading #2.
+tooDark,,,,,,,ワァオー、真っ暗で何も見えない！,It's too dark here!
+torch_start,,,,,,,#2に火を灯した。,You light #2.
+torch_end,,,,,,,松明の火は消えた。,Your torch burns out.
+rot,,,negative,,,,#1は腐った。,#1 rot(s).
+rotInv,,,negative,,,,バックパックの中の#1は腐った。,#1 in your backpack rot(s).
+rottingInv,,,bad,,,,#1は腐りかけている。,#1 are/is rotting.
+diebye,,,,,,,さようなら。遺言は？,Farewell. What is your last word?
+journalUpdate,,,save,,,,ジャーナルが更新された。,Your journal has been updated.
+journalUpdate2,,,save,,,,ジャーナル「#1」が更新された。,"Your journal ""#1"" has been updated."
+questExpired,,,dead,,,,依頼「#1」は期限が過ぎて失敗した。,"The quest ""#1"" has been expired. You have failed the quest."
+questAbandon,,,dead,,,,依頼「#1」を破棄した。,"You abandon the quest ""#1""."
+gainFameLimit,,,,,,,今の冒険者ライセンスではこれ以上名声は得られない。,No more fame can be gained with the current adventurer's license.
+gainFame,,,ding,,,,#1の名声を得た。,You gain #1 fame.
+looseFame,,,dead,,,,#1の名声を失った。,You lose #1 fame.
+claimedZone,,,ding,,,,土地を手に入れた。,You claimed the land.
+invalidClaimZone,,,,,,,この土地は所有できない。,This land cannot be claimed.
+worship,god,,ding,,,,あなたは#1の信者になった。,You become a servant of #1.
+worship2,god,,,,,,あなたは信仰を捨てた。,You abandon faith.
+worship3,god,,,,,,#2は#1の庇護下に入った。,#2 receives the blessing of #1.
+god_offer,god,,,,,,あなたは#1に#2を捧げた。,You place #2 on the altar as an offering.
+god_offerEyth,god,,,,,,あなたは神を信仰していない。,You don't believe in God.
+god_offer1,god,,positive,,,,#1はまばゆく輝いて消えた。,#1 shine(s) all around and disappear(s).
+god_offer2,god,,positive,,,,#1は輝いて消え、四つ葉のクローバーがふってきた。,#1 shine(s) for a moment and disappear(s). A four leaf clover falls from the altar.
+god_offer3,god,,positive,,,,#1は一瞬輝いて消えた。,#1 shine(s) for a moment and disappear(s).
+god_offer4,god,,,,,,#1は消えた。,#1 disappear(s).
+god_limitPiety,god,,,,,,あなたの神はもう贈り物に関心を示さない。,Your God becomes indifferent to your offerings.
+hire,,,save,,,,#1が仲間に加わった。,#1 joins you.
+identified,,,positive,,,,#1は#2だと判明した。,#1 is identified as #2.
+identified2,,,positive,,,,#1には上位の鑑定が必要だ。,#1 requires higher level identification.
+identified3,,,positive,,,,バックパックの中の#1は#3だという感じがする。,You sense #1 in your backpack is #3.
+seeZone,,,,,,,#1が見える。,You see #1.
+seeZoneDanger,,,,,,,#1(危険度#2階相当)が見える。,You see #1(Danger Level #2).
+debuff_resist,,,,,,,#1は抵抗した。,#1 resist(s).
+cast,combat,,ability,,,,#1は#3#2を詠唱した。,#1 cast(s) #2#3.
+cast_hand_ally,combat,,ability,,,,#2は#3で#1に#4。,#1 #4 #2 with #his #3.
+cast_hand,combat,,ability,,,,#1は#3で#2を#4。,#1 #4 #2 with #his #3.
+castSpider,combat,,ability,,,,#1は#3糸を吐いた。,#1 spit(s) cobweb#3.
+castSpill,combat,,ability,,,,#1は#3体液をまき散らした。,#1 spread(s) body fluid#3.
+castTentacle,combat,,ability,,,,#1は#3触手を伸ばした。,#1 put(s) out a tentacle#3.
+castGaze,combat,,ability,,,,#1は#3鋭く睨んだ。,#1 gaze(s)#3.
+castSpore,combat,,ability,,,,#1は#3胞子を飛ばした。,#1 scatter(s) spores#3.
+castMachine,combat,,ability,,,,#1は#3振動した。,#1 vibrate(s)#3.
+cast_silence,combat,,,,,,沈黙の霧が詠唱を阻害した。,The mist of silence interrupts a spell.
+gaze_dim,combat,,ability,,,,#1は#2を睨みつけた。,#1 gaze(s) #2.
+gaze_insane,combat,,ability,,,,"#2は#1の腹の亀裂から蛆虫が沸き出るのを見た。
+#2は#1が屍を貪る姿を目撃した。
+#2は#1の恐ろしい瞳に震えた。
+#2は#1の触手に絡まる臓物に吐き気を感じた。","#2 see(s2) maggots breed in the rent stomach of #1.
+#2 see(s2) #1 chow(s) dead bodies.
+#2 shudder(s2) at #your terrifying eyes.
+#2 feel(s2) sick at entrails caught in #your tentacles."
+gaze_insult,combat,,ability,,,,#1は#2を罵倒した。,#1 insult(s) #2.
+a_drop_mine,combat,,,,,,#1は地面に何かを埋めた。,#1 bury/buries something in the ground.
+a_scream,combat,,ability,,,,#1は絶叫した。,#1 scream(s).
+a_drain_blood,combat,,ability,,,,#1は#2の血を吸った。,#1 drain(s) #his2 blood.
+spell_sword_hit,combat,,,,,,#1は#3の剣で#2を斬った。,#1 slash(es) #2 with a #3 sword.
+spell_hand_miss,combat,,,,,,#1は空気を触った。,#1 touch(es) the air.
+spell_spear,combat,,,,,,#1は#2の槍を放った。,#1 unleash(es) a spear of #2.
+spell_spear_hit,combat,,,,,,槍は#2を貫いた。,The spear impales #2.
+spell_arrow,combat,,,,,,#1は#2の矢を射た。,#1 shoot(s) an arrow of #2.
+spell_arrow_hit,combat,,,,,,矢は#2に命中した。,The arrow hits #2.
+spell_funnel,combat,,,,,,#1は#2の兵器を具現化させた。,#1 materialize(s) a weapon of #2.
+spell_breathe,combat,,ability,,,,#1は#2のブレスを吐いた。,#1 bellow(s) breath of #2.
+spell_breathe_hit,combat,,,,,,ブレスは#2に命中した。,The breath hits #2.
+spell_ball,combat,,,,,,#1は#2の渦を放った。,#1 discharge(s) a vortex of #2.
+spell_ball_hit,combat,,,,,,渦は#2を飲み込んだ。,The vortex swallows #2.
+spell_bolt,combat,,,,,,#1は#2の光線を放った。,#1 blast(s) a bolt of #2.
+spell_bolt_hit,combat,,,,,,光は#2を貫いた。,The bolt penetrates #2.
+spell_earthquake,combat,,,,,,#1は#2の波動を放った。,#1 unleash(es) a wave of #2 energy.
+spell_earthquake_hit,combat,,,,,,波は#2を飲み込んだ。,The wave engulfs #2.
+summon_ally,,,,,,,#1は仲間を呼んだ。,#1 call(s) an ally.
+summon_ally_fail,,,,,,,しかし助けは来なかった…,But no help comes...
+suicide_hit,combat,,,,,,#2は爆風に巻き込まれた。,#2 are/is caught in the blast.
+zapRod,,,,,,,#1は#2を振った。,#1 zap(s) #2.
+nothingHappens,,,,,,,何もおこらなかった…,Nothing seems to happen...
+grow_hair,,,save,,,,ワァオー、#1に毛が生えた！,"Wow, #1 grow(s) hair! "
+grow_hair_fail,,,save,,,,ワァオー、#1に毛が生えた！…と思ったが気のせいだった。,"Wow, #1 grow(s) hair! ...But it was just your imagination."
+teleported,,,,,,,#1は突然消えた。,#1 disappear(s) suddenly.
+antiTeleport,,,,,,,#1の周りの空気が震えた。,The air around #1 vibrates.
+exileClosed,,,,,,,不思議な結界があなたの侵入を拒んだ。,A mysterious barrier denies your entry.
+voidClosed,,,,,,,この場所を探索するには特別な許可証が必要だ。,You need a special license to explore this place.
+zoneClosed,,,,,,,それは不思議な力で封印されている。,A mysterious power holds it under seal.
+zoneNoEntrance,,,,,,,ここからは入れない。,You can't enter the zone from here.
+zoneBlocked,,,,,,,行く手は塞がれている。,The path is blocked.
+cantEditPlaylist,,,,,,,この場所の音楽は変更できない。,Musics can't be edited in this zone.
+music_start,,,,,,,#1は#2で演奏を始めた。,#1 start(s) to play #2.
+music_reward,,,positive,,,,合計#2オレンのおひねりを貰った。,The audience gives #1 total of #2 orens.
+frown,,,,,,,#2は嫌な顔をした。,#2 frown(s2) at #1.
+setHome,,,ding,,,,ホームゾーンが設定された。,The land is your home zone now.
+setSpawn,,,,,,,#1はあなたの存在を記憶した。,#1 memorize(s) you.
+unsetSpawn,,,,,,,#1はあなたの存在を忘れた。,#1 lose(s) your memory.
+invalidAction,,,,,,,"それはできない。
+無理だ！","You can't do that here.
+Impossible!"
+cancel_act_pc,,,,,,,行動を中断した。,You are interrupted.
+cancel_act,,,,,,,#1は#2を睨みつけた。,#1 glare(s) at #2.
+cancel_act2,,,,,,,#1は行動を中断した。,#1 is interrupted.
+calledGuard,,,negative,,,,#1はガードを呼んだ！,#1 call(s) guards!
+spotHidden,,,positive,,,,#1は#2を見つけた。,#1 spot(s) #2.
+spotMedal,,,positive,,,,なんと小さなメダルを見つけた！,You find a small medal!
+spotMedalStep,,,save,,,,*キラン*,*twinkle*
+spotMedalNear,,,,,,,この辺りには何かがありそうな気がする…,You sense something.
+toggle_fire,,,,,,,#1は#2に火を灯した。,#1 light(s) #2.
+toggle_ele,,,,,,,#1は#2を作動させた。,#1 turn(s) on #2.
+evade,combat,,,,,,#1は#2の攻撃を避けた。,#1 evade(s) #2.
+evade_pc,combat,,,,,,#2の攻撃を避けた。,You evade #2.
+evadePlus,combat,,,,,,#1は#2の攻撃を華麗に避けた。,#1 skillfully evade(s) #2.
+evadePlus_pc,combat,,,,,,#2の攻撃を華麗に避けた。,You skillfully evade #2.
+evade2,combat,,,,,,#1の攻撃はかわされた。,#1 miss(es) #2.
+evade2_pc,combat,,,,,,#2に攻撃をかわされた。,#1 miss(es) #2.
+evadePlus2,combat,,,,,,#1の攻撃は華麗にかわされた。,#1 miserably miss(es) #2.
+evadePlus2_pc,combat,,,,,,#2に攻撃を華麗にかわされた。,#1 miserably miss(es) #2.
+attackMeleeToPC,combat,,,,,,#1に#3,#1 #3 #2 and
+attackMelee,combat,,,,,,#1は#2#3,#1 #3 #2 and
+attackMelee_pc,combat,,,,,,#2#3,#1 #3 #2 and
+attack_air,combat,,,,,,#1の攻撃は空を切った。,#1 strike(s) the air.
+attack_air_range,combat,,,,,,#1は空気を射った。,#1 shoot(s) the air.
+dmgMelee0,combat,,dmg0,,,,かすり傷をつけた。, make(s) a scratch.
+dmgMelee1,combat,,dmg1,,,,軽い傷を負わせた。, slightly wound(s) #him2.
+dmgMelee2,combat,,dmg2,,,,傷つけた。, moderately wound(s) #him2.
+dmgMelee3,combat,,dmg3,,,,深い傷を負わせた。, severely wound(s) #him2.
+dmgMelee4,combat,,dmg4,,,,致命傷を与えた。, critically wound(s) #him2.
+dmgMelee5,combat,,dmg5,,,,瀕死の状態にした。, render(s) #him2 nearly dead.
+dmgMelee0pc,combat,,dmg0,,,,かすり傷を負った。, make(s) a scratch.
+dmgMelee1pc,combat,,dmg1,,,,軽い傷を負った。, slightly wound(s) #him2.
+dmgMelee2pc,combat,,dmg2,,,,傷つけられた。, moderately wound(s) #him2.
+dmgMelee3pc,combat,,dmg3,,,,深い傷を負った。, severely wound(s) #him2.
+dmgMelee4pc,combat,,dmg4,,,,致命傷を与えられた。, critically wound(s) #him2.
+dmgMelee5pc,combat,,dmg5,,,,瀕死の状態にされた。, render(s) #him2 nearly dead.
+dmg0,combat,,dmg0,,,,-,-
+dmg1,combat,,dmg1,,,,#1は軽い傷を負った。,#1 suffer(s) a minor injury.
+dmg2,combat,,dmg2,,,,#1は痛手を負った。,#1 are/is hurt.
+dmg3,combat,,dmg3,,,,#1は苦痛にもだえた。,#1 writhe(s) in agony.
+dmg4,combat,,dmg4,,,,#1は悲痛な叫び声をあげた。,#1 scream(s) in deep pain.
+dmg5,combat,,dmg5,,,,#1は悲痛な叫び声をあげた。,#1 scream(s) in deep pain.
+dmg_eleFire,combat,,dmgEle,,,,#1は燃え上がった。,#1 are/is burnt.
+dmg_eleCold,combat,,dmgEle,,,,#1は凍えた。,#1 are/is frozen.
+dmg_eleLightning,combat,,dmgEle,,,,#1に電流が走った。,#1 are/is shocked.
+dmg_eleDarkness,combat,,dmgEle,,,,闇が#1に触れた。,Darkness touches #1.
+dmg_eleHoly,combat,,dmgEle,,,,#1は光に包まれた。,#1 are/is enveloped in light.
+dmg_eleMind,combat,,dmgEle,,,,#1の精神は蝕まれた。,#your mind is eroded.
+dmg_elePoison,combat,,dmgEle,,,,#1は吐き気を催した。,#1 feel(s) nauseous.
+dmg_eleNether,combat,,dmgEle,,,,冥界の冷気が#1を包んだ。,The nether touches #1.
+dmg_eleSound,combat,,dmgEle,,,,轟音の衝撃が#1を襲った。,A roaring sonic blast hits #1.
+dmg_eleNerve,combat,,dmgEle,,,,#1の神経は蝕まれた。,#your nerves are corroded.
+dmg_eleChaos,combat,,dmgEle,,,,混沌が#1を揺さぶった。,Chaos shocks #1.
+dmg_eleAcid,combat,,dmgEle,,,,#1は酸に焼かれた。,#1 are/is burnt by acid.
+dmg_eleCut,combat,,dmgEle,,,,#1は切り刻まれた。,#1 are/is slashed.
+dmg_eleMagic,combat,,dmgEle,,,,魔力が#1を吹き飛ばした。,The magical force blasts #1 away.
+dmg_eleEther,combat,,dmgEle,,,,#1の存在は揺らいだ。,#your existence wavers.
+dmg_eleImpact,combat,,dmgEle,,,,,
+kill_attack,combat,,dead,Bad,,,"殺した。
+粉々の肉片に変えた。
+ミンチにした。
+破壊した。"," transform(s) #him2 into several pieces of meat.
+ kill(s) #him2.
+ destroy(s) #him2.
+ mince(s) #him2."
+kill_eleFire,combat,,dead,Bad,,,"燃やし尽くした。
+消し炭に変えた。"," burn(s) #him2 to death
+ turn(s) #him2 to ashes."
+kill_eleCold,combat,,dead,Bad,,,氷の塊に変えた。, transform(s) #him2 to an ice sculpture.
+kill_eleLightning,combat,,dead,Bad,,,焦げカスにした。, electrocute(s) #him2 to death.
+kill_eleDarkness,combat,,dead,Bad,,,闇に飲み込んだ。, let(s) the depths swallow #him2.
+kill_eleHoly,combat,,dead,Bad,,,昇天させた。, send(s) #him2 to heaven.
+kill_eleMind,combat,,dead,Bad,,,再起不能にした。, completely disable(s) #him2.
+kill_elePoison,combat,,dead,Bad,,,毒殺した。, kill(s) #him2 with poison.
+kill_eleNether,combat,,dead,Bad,,,冥界に墜とした。, send(s) #him2 to hell.
+kill_eleSound,combat,,dead,Bad,,,聴覚を破壊し殺した。, shatter(s) #him2 to atoms.
+kill_eleNerve,combat,,dead,Bad,,,神経を破壊し殺した。, destroy(s) #his2 nerves.
+kill_eleChaos,combat,,dead,Bad,,,混沌の渦に吸い込んだ。, let(s) the chaos consume #him2.
+kill_eleAcid,combat,,dead,Bad,,,ドロドロに溶かした。, melt(s) #him2 away.
+kill_eleCut,combat,,dead,Bad,,,千切りにした。, cut(s) #him2 into thin strips.
+kill_eleMagic,combat,,dead,Bad,,,マナを枯渇させた。, deplete(s) #his2 mana.
+kill_eleEther,combat,,dead,Bad,,,エーテル漬けにした。, soak(s) #him2 in ether.
+dead_in,combat,,dead,,,,#1で, in #1
+dead_by,combat,,dead,,,,#1は#2#3に殺された。,#1 were/was killed by #3#2.
+dead,combat,,dead,Bad,,,#1は#2息絶えた。,#1 died#2.
+dead_attack,combat,,dead,Bad,,,#1は#2殺された。,#1 were/was killed#2.
+dead_eleFire,combat,,dead,Bad,,,#1は#2燃えカスになった。,#1 were/was burnt to ashes#2.
+dead_eleCold,combat,,dead,Bad,,,#1は#2氷の彫像になった。,#1 were/was frozen and turned into an ice sculpture#2.
+dead_eleLightning,combat,,dead,Bad,,,#1は#2雷に打たれ死んだ。,#1 were/was struck by lightning and died#2.
+dead_eleDarkness,combat,,dead,Bad,,,#1は#2闇に蝕まれて死んだ。,#1 were/was consumed by darkness#2.
+dead_eleHoly,combat,,dead,Bad,,,#1は#2昇天した。,#1 went to heaven#2.
+dead_eleMind,combat,,dead,Bad,,,"#1は#2発狂して死んだ。
+#1は狂って自決した。","#1 lost #his mind and committed a suicide#2.
+#1 lost #his mind and kill(s) #himself#2."
+dead_elePoison,combat,,dead,Bad,,,#1は#2毒に蝕まれて死んだ。,#1 were/was poisoned to death#2.
+dead_eleNether,combat,,dead,Bad,,,#1は#2冥界に墜ちた。,#1 went to hell#2.
+dead_eleSound,combat,,dead,Bad,,,#1は#2朦朧となって死んだ。,#1 resonated and broke up#2.
+dead_eleNerve,combat,,dead,Bad,,,#1は#2神経を蝕まれて死んだ。,#1 died from neurofibroma#2.
+dead_eleChaos,combat,,dead,Bad,,,#1は#2混沌の渦に吸収された。,#1 were/was drawn into a chaotic vortex#2.
+dead_eleAcid,combat,,dead,Bad,,,#1は#2酸に焼かれ溶けた。,#1 melted#2.
+dead_eleCut,combat,,dead,Bad,,,#1は#2千切りになった。,#1 were/was cut into thin strips#2.
+dead_eleMagic,combat,,dead,Bad,,,#1は#2廃人になった。,#1 were/was ruined#2.
+dead_eleEther,combat,,dead,Bad,,,#1は#2エーテルの流れに溺れた。,#1 were/was down in ether#2.
+dead_mana,combat,,dead,Bad,,,#1は#2マナの反動で死んだ。,#1 died from over-casting#2.
+dead_Hunger,combat,,dead,Bad,,,#1は#2餓死した。,#1 were/was starved to death#2.
+dead_Fatigue,combat,,dead,Bad,,,#1は#2過労死した。,#1 died from overwork#2.
+dead_Hang,combat,,dead,Bad,,,#1は#2首を吊った。,#1 hanged #himself#2.
+dead_Wrath,combat,,dead,Bad,,,#1は#2#3の怒りに触れて死んだ。,#1 perished#2 after incurring #3's wrath.
+dead_Burden,combat,,dead,Bad,,,#1は#2荷物に押しつぶされて死んだ。,#1 were/was squashed by #his luggage#2.
+dead_Fall,combat,,dead,Bad,,,#1は#2落下して死んだ。,#1 fell to #his death#2.
+dead_BurdenStairs,combat,,dead,Bad,,,#1は#2階段から転げ落ちて死んだ。,#1 tumbled down the staircase and died#2.
+dead_BurdenFallDown,combat,,dead,Bad,,,#1は#2転倒して死んだ。,#1 fell and died#2.
+vopal,combat,,save,,,,*シャキーン*,*vorpal*
+materialChanged,,,,,,,#1の素材は#2に変化した。,#1 transform(s) into #2.
+ball_hit,,,ono,,,,"*ポヨン*
+*パシッ*
+*ぽいん*","*boing*
+*thwap*
+*bounce*"
+quaff,,,ono,,,,*ごくごく*,*quaff*
+drinkGood,,,,,,,うまい！,Yummu!
+drinkRamune,,,ono,,,,*シュワシュワ*,*fizz*
+drinkMilk,,,,,,,濃厚な味だ。,The taste is very thick.
+drinkSaltWater,,,,,,,ペッペッこれは塩水だ。,Yuck! This is saltwater.
+drinkSaltWater_snail,,,negative,,,,塩だ！#1は溶け始めた。,It's a salt! #1 start(s) to melt.
+drinkWell,,,,,,,#1は#2の水をすくって飲んだ。,#1 drink(s) water from #2.
+drinkWater_clear,,,,,,,この水は清涼だ！,"Phew, this water is so refreshing!"
+drinkWater_dirty,,,,,,,うわぁ！この水は汚染されている！,Yikes! This water is contaminated!
+drinkWell_empty,,,,,,,#2は涸れている。,#2 is dried up.
+drinkWell_dry,,,,,,,#2は干上がった。,#2 dries up.
+mapCrumble,,,negative,,,,#1は触れると崩れ落ちた。,#1 crumble(s) as you touch.
+spellbookCrumble,,,,,,,#1は塵となって崩れ落ちた。,#1 fall(s) apart.
+tooHeavy,,,,,,,#1はあなたには重すぎる。,#1 are/is too heavy for you to lift.
+sold,shop,,,,,,#1を#2で売った。,You sell #1 for #2.
+bought,shop,,,,,,#1を#2で買った。,You buy #1 for #2.
+get_quest_item,,,,,,,依頼の品を渡された。,You receive the quest object.
+completeQuest,quest,,ding,,,,依頼「#1」を達成した。,"You complete the quest ""#1""."
+dropReward,,,,,dropReward,,何かが足元に転がってきた。,Something is put on the ground.
+dropRewardAir,,,,,dropReward,,空から何かが降ってきた。,Something falls down from the sky.
+upgradeLoytelMart,,,nice,,dropReward,,ロイテル・マートの改造レベルが上がった。,The Loytel Mart is upgraded.
+noSpellStock,,,,,,,魔法のストックは枯渇している。,The spell stock is depleted.
+deliverItem,,,,,,,#1を納入した。,You deliver #1.
+notSleepy,,,,,,,まだ眠たくない。,You are not sleepy.
+notEnoughMoney,,,,,,,所持金が足りない。,You don't have enough money.
+notEnoughTicket,,,,,,,チケットが足りない。,You don't have enough tickets.
+notEnoughInfluence,,,,,,,影響力が足りない。,You don't have enough influence.
+notEnoughFood,,,,,,,旅糧が足りない。,You don't have enough travel rations.
+payBill,,,,,,,#1を支払った。,You pay #1.
+depositMoney,,,,,,,#1を#2に投入した。,You put #1 into #2.
+travel,,,,,,,#2に#1を発ってから、#3日と#4時間の旅を終えた。,#3 day(s) and #4 hour(s) have passed since you left #1.
+travel2,,,,,,,#2は#1マイルを歩き、経験を積んだ。,#2 have walked around #1 miles and have gained experience.
+regionAbortMove,,,bad,,,,あなたは危険を感じ移動を中断した。,You sense danger and abort your move.
+noLogForTorch,,,,,,,必要な素材を持っていない。,You don't have required resource.
+crawlup,,,,,,,あなたは這い上がった。,You crawled up.
+overWeightLimit,,,,,,,#1は重すぎて入らない。,#1 is too heavy to put.
+crafted,,,,,,,#1を作成した。,You crafted #1.
+disassembled,,,,,,,#1を分解した。,You disassembled #1.
+installed,,,,,,,#1を設置した。,You placed #1.
+movedToEquip,,,,,,,#1を#2から出して装備した。,You pick #1 from #2 and equip.
+equip,,,,,,,#1は#2を装備した。,#1 equip(s) #2.
+book_secret,,,save,,,,<i>酬いてあげる…</i>,<i>I shall reward you...</i>
+book_secret2,,,save,,,,<i>もう…ダメだよ…</i>,<i>You are...at your limit...</i>
+dingExp,,,ding,,,,#1は経験を積んだ。,#1 gain(s) experience.
+dingExp_pc,,,ding,,,,あなたは経験を積みフィートポイントを獲得した。,You have gained experience and acquired a feat point.
+wishFail,,,ono,,,,何かは冷ややかに笑った。,Something laughs scornfully.
+wishNet,,,,,,,(#1が与えられた),(#1 were/was given.)
+wish,,,save,,,,#1は狂喜して叫んだ。「#2！！」,"#1 shout(s) wildly with joy, ""#2!!"""
+wishHappen,,,save,,,,何を願う？,What do you wish?
+affinityPlus,,,positive,,,,#1は#2に好感を覚えた。,#1 like(s) #2.
+affinityMinus,,,negative,,,,#1は#2に嫌悪感を抱いた。,#1 dislike(s) #2.
+affinityNone,,,ono,,,,#1は肩をすくめた。,#1 shrug(s) at #2.
+craft_fail,,,negative,,,,#2の製作に失敗した。,#1 fail(s) to craft #2.
+disassemble_fail,,,negative,,,,#2の分解に失敗した。,#1 fail/fails to disassemble #2.
+lostResource,,,negative,,,,#1を失った。,#1 has/have been lost.
+tooHardToDig,,,,,,,#2は硬すぎる！,#2 is too hard to dig!
+tooHardToMine,,,,,,,#2は硬すぎる！,#2 is too hard to mine!
+tooHardToHarvest,,,,,,,#2の採取は難しい。,#2 is too difficult to harvest.
+tooHardToDisassemble,,,,,,,#2の解体は難しい。,#2 is too difficult to disassemble.
+karmaUp,,,save,,,,カルマ変動(+#1) ,Karma(+#1) 
+karmaDown,,,negative,,,,カルマ変動(#1) ,Karma(#1) 
+gatherLimit,,,,,,,#2ではこれ以上採取できない。,You need a better tool.
+gatherLimitHand,,,,,,,素手ではこれ以上採取できない。,You need a better tool.
+harvest_fail,,,,,,,何も採取できなかった。,You fail to harvest.
+mobFromTree,,,,,,,#1が降ってきた！,#1 falls from the tree.
+noGachaCoin,,,,,,,ガチャチケットを持っていない。,You don't have a gacha ticket.
+playedGacha,,,,,,,ガチャを#1回まわした。,You draw #1 gacha ball(s).
+gachaAdd,,,,,,,#1の個人情報をハースストーンに記憶した。,You store #1's personal information in the hearth stone.
+dump,,,,,,,#1を#2に放り込んだ。,You dump #1 into #2.
+newDay,branch,,,Topic,,,新しい一日を迎えた。,A new day begins.
+reportWork,branch,,,,,,#1が仕事成果を報告した。 #2,#1 reports #1's work results. #2
+bTax,branch,,,Good,,,#2は#1オレンを納税した。,#2 pays a tax of #1 orens/oren.
+bDing,branch,,,,,,#1の#2の技術が成長した。,#1 develop(s) #2 skill.
+bExpeditionStart,branch,,,,,,#1が#2に出発した。,#1 starts an exploration for #2.
+bExpeditionEnd,branch,,,,,,#1が#2から帰還した。,#1 returns from an exploration for #2.
+bNurse,branch,,,,,,#1は#2を蘇生した。,#1 revive(s) #2.
+bRevive,branch,,,Good,,,#1は生き返った。,#1 return(s) to life.
+newKnownCraft,,,,,,,新しい製法を発見した！,You discover a new production!
+learnRecipeIdea,,,,,,,レシピを閃いた！,You come up with a recipe!
+learnRecipeSleep,,,,,,,夢の中でレシピを思いついた。,You come up with a recipe in your dream.
+learnRecipe,,,nice,,,,#1のレシピを強化した(#2)。,"You improve the recipe of ""#1""(#2)."
+learnRecipeNew,,,nice,,,,#1の作り方を覚えた。,"You learn how to make ""#1""."
+noRecipes,,,,,,,知っているレシピがない。,You don't know any recipes.
+canOnlyCarry,,,,,,,#1はバックパックに収納できない。,#1 can't be stored into your backpack.
+discoverZone,,,positive,,,,#1を発見した！,You discover the location of #1!
+noBait,,,,,,,釣り餌を持っていない！,You don't have baits!
+noAmmo,,,,,,,矢弾を持っていない！,You don't have ammo!
+equipItem,,,,,,,#1は#2を装備した。,#1 equip #2.
+equipCursed,,,,,,,#1は急に寒気を感じた。,#1 suddenly feel(s) a chill.
+unequipItem,,,,,,,#1は#2を外した。,#1 unequip #2.
+unequipCursed,,,,,,,#1は抵抗した。,#1 resist(s).
+unrestrained,,,,,,,#1の拘束は解かれた。,#1 are/is unrestrained.
+restrained,,,,,,,#1は拘束された！,#1 are/is restrained!
+errorUnemptyContainer,,,,,,,コンテナが空ではない。,The container must be empty.
+errorWrongType,,,,,,,この種類のアイテムは入れることができない。,The item type is inappropriate for the container.
+errorOverweight,,,,,,,重すぎてこれ以上入らない。,The container is overweight.
+errorOverweightTravel,,,,,,,重すぎて無理だ！,Too heavy to do that!
+fuelFull,,,,,,,燃料は既に一杯だ。,The fuel is already full.
+reserveLimit,,,,,,,これ以上盟約の石に保存できない。,The hearth stone can't store any more residents.
+returnBegin,,,,,,,周囲の大気がざわめきはじめた。,The air around you starts to tense up.
+returnNowhere,,,,,,,ここから帰還できる場所を知らない。,You know nowhere to return from here.
+returnAbort,,,,,,,辺りの空気の緊張が解けた。,The air relaxes.
+returnOverweight,,,ono,,,,どこからか声が聞こえた。「悪いが重量オーバーだ」,"Someone shouts, ""Sorry, overweight."""
+tooHeavyToMove,,,,,,,潰れていて動けない！,You are squashed!
+returnFail,,,,,,,あなたは何かに掴まれたように感じたが気のせいだった。,You imagine something pulls your neck.
+returnComplete,,,,,,,あなたは不思議な力に引っ張り上げられた。,A strange force pulls you up.
+bills,,,,,,,現在#1枚の納税書を滞納している。,You have #1 unpaid tax bill#(s).
+getBill,,,,,,,あなたに#1の納税書が発行された。朝には届くだろう。,A tax invoice of #1 has been issued to you. It should arrive by morning.
+bankIncome,,,save,,,,銀行に#1が振り込まれた。,Your bank account receives a deposit of #1.
+payBillBank,,,save,,,,銀行から#1オレンが引き落とされた（預金残り #2オレン）。,You pay #1 orens from your bank deposit (Remaining: #2 orens).
+getSalary,,,save,,,,感謝の贈り物がミシリアから発送された。,Mysilia sends you a token of gratitude.
+getResidentTax,,,save,,,,合計#1の住民税が納められた。,A total of #1 of resident tax was sent to you.
+getRankIncome,,,save,,,,合計#1のランク報酬が納められた。,A total of #1 of home rank income was sent to you.
+getFactionSalary,,,save,,,,合計#1の給与が納められた。,A total of #1 of salary was sent to you.
+getIncomeInn,,,save,,,,#2は#1の宿代を計上した。,#2 generates a lodging income of #1.
+getIncomeTourism,,,save,,,,#2は#1の観光収入を計上した。,#2 generates a tourism income of #1.
+getIncomeShop,,,save,,,,#2は#1の商品の売り上げを計上した。,#2 generates a shop income of #1.
+becomeCriminal,,,negative,,,,あなたは今や罪人だ。,You are a criminal now.
+becomeNonCriminal,,,positive,,,,あなたの罪は軽くなった。,You are no longer a criminal.
+claimBed,,,,,,,#1は自分の寝床を見つけた。,#1 find(s) #his bed.
+openLockFail,,,,,,,鍵の解錠に失敗した。,You fail to pick lock.
+openLockFail2,,,,,,,この鍵は手に負えない！,The lock is too difficult to pick!
+newMeeting,,,nice,,,,来客があるようだ。,Someone wants to see you.
+digTreasure,,,save,,ding_skill,,財宝を掘り当てた！,You dig up the treasure！
+indulgence,,,,,,,#1の罪は許された。,#1 are/is cleansed of #his sins.
+skillbook_noSkill,,,,,,,#1には難しすぎる内容だ。,It's too difficult for you to understand.
+skillbook_learn,,,,,,,#1は#2のスキルの知識を得た。,#1 gain(s) knowledge of #2.
+skillbook_learnPlan,,,,,,,#1は#2の計画を学んだ！,#1 learn(s) the plan of #2!
+skillbook_invalidZone,,,,,,,それは拠点で読む必要がある。,You have to read it in your home.
+skillbook_knownSkill,,,,,,,この拠点は既にその知識を持っている。,It is already known.
+notEnoughMoney2,,,,,,,金塊が足りない！,You don't have enough gold!
+upgradeCrystal,,,save,,,,盟約の石のレベルが上がった！,The hearth stone has been upgraded!
+learnSkill,,,positive,,,,#1は#2のスキルを習得した！,#1 learn(s) #2!
+trainSkill,,,positive,,,,#1は#2のスキルを訓練した。,#1 train(s) #2.
+potentialInc,,,positive,,,,#1の#2の潜在能力が上昇した。,The potential of #your #2 increases.
+potentialDec,,,negative,,,,#1の#2の潜在能力が減少した。,The potential of #your #2 decreases.
+learnSkillBranch,,,positive,,,,拠点は#2のスキルを習得した！,Your home learns #2!
+dingSkillBranch,,,ding,,,,#1の「#2」は向上した。 ,"The base gains a new level in ""#2""."
+notEnoughFuel,,,,,,,燃料が足りない！,There is not enough fuel!
+fueled,,,,,,,#1を燃料に追加した。,You add #1 to the fuel.
+brew,,,,,,,#1は#2に醸成された。,#1 ferment(s) into #2.
+driedFood,,,,,,,#1は#2に干し上がった。,#1 dry/dries out and become(s) #2.
+agedFood,,,,,,,#1は#2に熟成された。,#1 are/is aged to become #2.
+dye,,,,,,,#1を染めた。,You dye #1.
+askPaint,,,,,,,何を描く？,What do you want to paint?
+askPhoto,,,,,,,何を撮る？,What do you want to shoot?
+songAdded,,,,,,,楽曲No.#2「#1」をコレクションに加えた。,"You added ""No.#2 #1"" to your music collection."
+songAlreayKnown,,,,,,,その曲は既に収集している。,You already have the song in your collection.
+openDoor,,,,,,,#1は#2を開けた。,#1 open/opens #2.
+openDoor_pc,,,,,,,#2を開けた。,#1 open/opens #2.
+leaveZone,,,,,,,#1を後にした。,You leave #1.
+enterZone,,,,,,,#1に入った。,You enter #1.
+stairsUp,,,,,,,階段を昇った。,You ascend the stairs.
+stairsDown,,,,,,,階段を降りた。,You descend the stairs.
+noTargetFound,,,,,,,ターゲットが見当たらない。,There is nothing to target.
+targetSet,,,,,,,#1をターゲットした。,You target #1.
+noDeathPenalty,,,ding,,,,エリンの加護が#1を死の懲罰から守った。,The blessing of Elin protects #1 from the punishment of death.
+noDeathPenalty2,,,ding,,,,遺言書が#1を死の懲罰から守った。,The letter of will protects #1 from the punishment of death.
+panaltyMoney,,,loose,,,,#1は#2オレンを失った。,#1 lose(s) #2 Orens.
+die_card,,,loose,,,,#1は壊れた。,#1 are/is destroyed.
+destroyed,,,loose,,,,#1は破壊された。,#1 are/is destroyed.
+destroyed_ground_,,,loose,,,,#1は破壊された。,#1 are/is destroyed.
+destroyed_inv_,,,loose,,,,#2の#1は破壊された。,#your2 -#1 are/is destroyed.
+destroyed_ground_eleFire,,,loose,,,,地面の#1は灰と化した。,#1 on the ground turn(s) to dust.
+destroyed_inv_eleFire,,,loose,,,,#2の#1は灰と化した。,#your2 -#1 turn(s) to dust.
+destroyed_ground_eleCold,,,loose,,,,地面の#1は粉々に砕けた。,#1 on the ground shatter(s).
+destroyed_inv_eleCold,,,loose,,,,#2の#1は粉々に砕けた。,#your2 -#1 shatter(s).
+damage_groundItem,,,loose,,,,地面の#1が破壊された。,#1 on the ground are/is destroyed.
+damage_invItem,,,loose,,,,#2の#1が破壊された。,#your2 -#1 are/is destroyed.
+cook_groundItem_cold,,,nice,,,,地面の#1はコチコチに凍って#3になった！,#1 on the ground are/is frozen into #3!
+cook_invItem_cold,,,nice,,,,#2の#1はコチコチに凍って#3になった！,#your2 -#1 are/is frozen into#3!
+cook_groundItem,,,nice,,,,地面の#1は#3に焼きあがった！,#1 on the ground are/is baked into #3!
+cook_invItem,,,nice,,,,#2の#1は#3に焼きあがった！,#your2 -#1 are/is baked into#3!
+damage_protectCore,,,nice,,,,盟約の石が#1を保護した。,The hearth stone protects #1.
+throw,,,,,,,#1は#2を投げた。,#1 throw(s) #2.
+throw_hit,,,,,,,#1は#2に命中した。,#1 hit(s) #2.
+replace_pc,,,,,,,#2と入れ替わった。,You displace #2.
+displace,,,,,,,#1は#2を押しのけた。,#1 push(es) #2 away.
+displace_pc,,,,,,,#2を押しのけた。,#1 push(es) #2 away.
+cuddle,,,,,,,#1は#2をなでた。,#1 cuddle(s) #2.
+hug,,,,,,,#1は#2に抱きついた。,#1 hug(s) #2.
+slap,,,ability,,,,#1は#2の頬をぶった。,#1 slap(s) #your2 cheek.
+headpat,,,,,,,#1は#2の頭をなでた。,#1 headpat(s) #2.
+drunk_mess,,,ono,,,,#1は酔っ払って#2にからんだ。,#1 get(s) the worse for drink and catch(es) #2.
+drunk_counter,,,ono,,,,#1はカチンときた。,#1 are/is pretty annoyed with the drunkard.
+vomit,,,negative,,,,#1は吐いた。,#1 vomit(s).
+slept,,,positive,,,,#1時間眠った。あなたはリフレッシュした。,You have slept for #1 hours. You are refreshed.
+weight_gain,,,,,,,#1は太った。,#1 gain(s) weight.
+weight_lose,,,,,,,#1は痩せた。,#1 lose(s) weight.
+height_gain,,,,,,,#1の身長は伸びた。,#1 grow(s) taller.
+height_lose,,,,,,,#1の身長は縮んだ。,#1 grow(s) smaller.
+clean,,,,,,,#1は地面を清掃した。,#1 clean(s) the ground.
+angry,,,negative,,,,#1は激怒した。,#1 get(s) furious.
+guild_join,,,ding,,,,#1に加入した！,You have joined the #1!
+notEnoughFeatPoint,,,,,,,フィートポイントが足りない。,You don't have enough feat points.
+gainFeat,,,ding,,,,#1はフィート「#2」を獲得した！,"#1 acquire/acquires a new feat ""#2""."
+tooHeavyToEquip,,,,,,,#1は装備するには重すぎる。,#1 is too heavy to equip.
+mana_overflow,,,,,,,マナの反動が#1の精神を蝕んだ！,Mana overflow hurts #1!
+slot_noMoney,,,,,,,もうカジノチップを持っていない。,You have no casino chips.
+slot_spin,,,,,,,あなたはスロットを回した。,You pull the lever.
+slot_lose,,,ono,,,,"*ガン*
+*ガスン*
+*ボカッ*
+*ドン*","*bang*
+*crash*
+*bam*
+*thump*"
+slot_win,,,positive,,,,あなたは#1を勝ち取った。,You win #1.
+slot_end,,,,,,,あなたはスロットを止めた。,You stop playing the slots.
+slot_start,,,,,,,あなたはスロットの台についた。,You start playing the slots.
+gainInfluence,,,positive,,,,#1への影響力が上昇した。,Your influence on #1 increases.
+gainDevelopment,,,positive,,,,#1の発展度が上昇した。,The development level of #1 increases.
+heal_light,,,nice,,,,#1は気分が良くなった。,#1 feel(s) good.
+heal_heavy,,,nice,,,,#1の傷は回復した。,#your wounds are healed.
+heal_jure,,,nice,,,,#1は癒しの女神の抱擁を感じた。,#1 feel(s) the embrace of the goddess of healing.
+destory_feather,,,,,,,羽は輝きを放ちながら散っていった。,The feather shines and scatters.
+identify_nothing,,,,,,,鑑定できるものがなかった…,There is nothing to identify.
+identify_what,,,,,,,何を鑑定する？,Which item do you want to identify?
+changeMaterial_what,,,,,,,何を変化させる？,Which item do you want to change?
+offer_what,,,,,,,何を捧げる？,Which item do you want to offer?
+recycle_what,,,,,,,何をリサイクルする？,Which item do you want to recycle?
+deliver_what,,,,,,,何を納入する？,Which item do you want to deliver?
+target_what,,,,,,,何を対象にする？,Which item do you want to target?
+uncurseEQ,,,,,,,#1の装備品は白い光に包まれた。,#your equipment are surrounded by a white aura.
+uncurseEQ_bless,,,,,,,#1の装備品は聖なる光に包まれた。,#your equipment are surrounded by a holy aura.
+uncurseEQ_curse,,,,,,,#1は悪魔が笑う声を聞いた。,#1 hear(s) devils laugh.
+uncurseEQ_success,,,nice,,,,#1は白く輝いた。,#1 glow(s) white.
+uncurseEQ_fail,,,,,,,幾つかのアイテムは抵抗した。,Several items resist the aura and remain cursed.
+sell_resident,,,,,,,#1はあなたを蔑んだ。,#1 despise(s) you.
+curse,combat,,ability,,,,#1は#2を指さして呪いの言葉を呟いた。,#1 point(s) #2 and mutter(s) a curse.
+curse_nullify,combat,,,,,,#1は祈祷を捧げ呪いを打ち消した。,#your prayer nullifies the curse.
+curse_hit,,,bad,,,,#1の#2は黒く輝いた。,#your -#2 glows black.
+waterBless,,,positive,,,,#1は銀色に輝いた。,#1 shine(s) silvery.
+waterCurse,,,negative,,,,#1は黒いオーラに包まれた。,#1 are/is wrapped by a dark aura.
+acid_hit,,,negative,,,,#1は酸を浴びた。,#1 are/is exposed to acid.
+acid_rust,,,negative,,,,#1の#2は錆びた。,#your #2 rust(s2).
+acid_nullify,,,,,,,#1は酸の影響を受けなかった。,#1 are/is not affected by acid.
+forgetItems,,,negative,,,,#1の記憶は突然あやふやになった。,Suddenly #your memory became hazy.
+nullify,,,nice,,,,#2が#1の#3を打ち消した。,#2 nullifies #your #3.
+pc_pain,pc,,,,,,ぐわぁぁ！,Arrrrg!
+drink_acid,,,negative,,,,酸が#1を溶かした。,The sulfuric acid melts #1.
+enc,,,nice,,,,#1は黄金の光に包まれた。,#1 are/is surrounded by a golden aura.
+enc_resist,,,,,,,#1は抵抗した。,#1 resist(s).
+enc_curse,,,bad,,,,#1は輝きを失った。,#1 become(s) dull.
+faith,,,nice,,,,#1は#2の暖かい眼差しを感じた。,#1 feel(s) as if #2 is watching #him.
+faith_bless,,,positive,,,,空から三つ葉のクローバーがふってきた。,A three-leaved falls from the sky.
+faith_curse,,,negative,,,,#1は#2の怒りを感じた。,#1 feel(s) the anger of #2.
+lighten,,,nice,,,,#1は羽が生えたように軽くなった。,#1 become(s) light as a feather.
+reconstruct,,,nice,,,,#1は再構築された。,#1 are/is reconstructed.
+lighten_curse,,,bad,,,,#1はずしりと重くなった。,#1 become(s) heavy.
+levitating,,,ono,,,,*ふわ*,*float*
+gainAlly,,,save,,,,援軍がやってきた！,Your reinforcement is on the way!
+use_mahjong,,,ono,,,,#1は牌を切った。,#1 discard(s) a tile.
+use_pool,,,ono,,,,#1は球を突いた。,#1 hit(s) a ball.
+use_slot,,,ono,,,,#1はスロットを回した。,#1 play(s) a slot.
+use_card,,,ono,,,,#1はカードで遊んだ。,#1 play(s) cards.
+spell_gain,,,nice,,,,#1は#2の知識を得た。,#1 gain(s) knowledge of #2.
+idle_cast,,,,,,,#1は魔法を詠唱した。,#1 chant(s) a spell.
+idle_bartender,,,ono,,,,*シャカシャカ*,*shake*
+idle_baker,,,ono,,,,"#1は軽快にパン生地をこねた。
+#1はオーブンからふかふかのパンを取り出した。","#1 knead(s) a bread dough with ease.
+#1 take(s) out a fluffy loaf of bread from an oven."
+idle_butcher,,,ono,,,,#1は嬉しそうに肉を捌いた。,#1 process(es) the meat with joy.
+idle_banker,,,ono,,,,#1は金貨を数えた。,#1 count(s) #his coins.
+idle_fisher,,,ono,,,,#1は手際よく魚を捌いた。,#1 fillet(s) a fish.
+idle_janitor,,,ono,,,,#1は床を掃いた。,#1 sweep(s) the floor.
+buffStats,,,nice,,,,#1の#2は強化された。,#your #2 is strengthened.
+buffStats_curse,,,bad,,,,#1の#2は衰えた。,#your #2 is weakened.
+killcat,,,bad,,,,あなたの心は痛んだ。,Your heart aches.
+revive,,,save,,,,#1は復活した！,#1 are/is resurrected!
+changePermission,,,,,,,コンテナの権限を「#2」に変えた。,"The container is now ""#2""."
+food_blood,,,ono,,,,この血はまるで#1のような風味だ。,This blood carries a flavor reminiscent of #1.
+food_bad,food,,,,,,"まずい！
+うぅ…腹を壊しそうだ。
+ひどい味だ！","It tasted awful!
+Ugh! Yuk!
+Awful taste!!"
+food_average,food,,,,,,"まあまあの味だ。
+悪くない味だ。","Uh-uh, the taste is so so.
+The taste is not bad."
+food_soso,food,,,,,,"かなりいける。
+それなりに美味しかった。","It tasted good.
+Decent meal."
+food_good,food,,,,,,"美味しい！
+これはいける！
+いい味だ！","Delicious!
+Gee what a good taste!
+It tasted pretty good!"
+food_great,food,,,,,,"最高に美味しい！
+まさに絶品だ！
+天にも昇る味だ！
+これは病みつきになる味だ！","It tasted like seventh heaven!
+Yummy! Absolutely yummy!
+Wow! Terrific food!
+This tastes addictive!"
+food_bad2,food,,ono,,,,"#1は苦い顔をした。
+#1は吐きそうな顔をした。","#1 make(s) a bitter face.
+#1 feel(s) like #he are/is about to throw up."
+food_average2,food,,ono,,,,"#1は物足りなそうな顔で腹をさすった。
+#1はため息をついた。",#1 rub(s) #his stomach with an unsatisfied look. #1 sigh(s).
+food_soso2,food,,ono,,,,"#1は腹をさすった。
+#1は少し嬉しそうな顔をした。","#1 rub(s) #his belly.
+#1 show(s) a contented face."
+food_good2,food,,ono,,,,"#1は舌鼓を打った。
+#1は幸せそうな表情を浮かべた。","#1 smack(s) #his lips.
+#1 smile(s) happily."
+food_great2,food,,ono,,,,"#1は恍惚の表情を浮かべた。
+#1は満足げに腹をさすった。","#1 make(s) a blissful expression.
+#1 rub(s) #his stomach with deep satisfaction."
+food_undead,food,,negative,,,,この食べ物は穢れている！,This food is filthy!
+food_rot,food,,negative,,,,うげっ！腐ったものを食べてしまった…うわ…,Ugh! Rotten food!
+food_poison,food,,negative,,,,まずい！本当にまずい！,Awful! Truly awful!
+food_mind,food,,negative,,,,"何かおかしい…
+ぐるぐる…世界が回っている…
+うわっ！足元が溶けてくる！","Something is wrong...
+Spinning... the world is spinning...
+Whoa! The ground is melting!"
+food_raw_meat,food,,,,,,生肉だ…,Ugh...Raw meat...
+food_raw_powder,food,,,,,,粉の味がする…,It has a powdery taste...
+food_raw_fish,foot,,,,,,食べられないことはないが…,"It's not inedible, but..."
+food_human_pos,food,,,,,,これはあなたの大好きな人肉だ！,It's your favorite human flesh!
+food_human_neg,food,,,,,,これは人肉だ…うぇぇ！,Eeeek! It's human flesh!
+food_human_whine,food,,,,,,人肉の方が好みだが…,You would've rather eaten human flesh.
+insane_act,,,ono,,,,"#1は突然踊りだした。
+#1は着ていたものを脱ぎだした。
+#1はぐるぐる回りだした。
+#1は奇声を発した。
+#1は独り笑いを浮かべた。","#1 suddenly start(s) dancing.
+#1 start(s) to take #his cloths off.
+#1 start(s) to spin around in circles.
+#1 make(s) strange noises.
+#1 laugh(s) to #himself."
+fear,,,bad,,,,#1は怖気づいた。,#1 are/is frightened.
+fear_break,,,ono,,,,"#1は勇気を取り戻した。
+#1は恐怖を振り払った。
+#1は覚悟を決めた。","#1 regains courage.
+#1 shocks off fear.
+#1 steels up."
+banish,,,,,,,#1は#2から去っていった。,#1 leaves #2.
+newIng,,,nice,,,,これは初めて目にするアイテムだ。,It's a new item.
+newIngs,,,nice,,,,#1個の新しいアイテムを発見した。,You find #1 new items.
+dump_noExist,,,,,,,#1はもう存在しない。,#1 do/does not exist any more.
+dump_tooFar,,,,,,,#1は遠すぎる。,#1 are/is too far away.
+dump_invalid,,,,,,,自動整頓はあなたの土地でしか使えない。,Auto dump can be only used in your lands.
+dump_item,,,,,,,#1をしまった。,You store #1.
+dump_dumped,,,,,,,#2に#1種類のアイテムをしまった。,You store #1 kinds/kind of items in #2.
+dump_end,,,,,,,自動整頓を終えた。,You finish dumping.
+transGender,,,nice,,,,#1の肉体は変化した。#1は内なる#2に目覚めた。,#your body changes. #1 are/is awakened to #his inner #2.
+transBlood,,,nice,,,,#1の血液は入れ替わった。,#your blood is renewed.
+ageUp,,,bad,,,,#1は年老いて疲れた気分になった。,#1 feel(s) old and tired.
+ageDown,,,nice,,,,#1は若返った気分になった！,#1 feel(s) young!
+summon_vanish,,,,,,,#1は消え去った。,#1 vanish(es).
+dmgBurden,,,bad,,,,#1は荷物に圧迫されもがいた。,#your backpack is squashing you!
+dmgBurdenStairs,,,bad,,,,うわああ！#1は階段から足を踏み外した。,Noooo! #1 lose(s) #his step and roll down!
+dmgBurdenFallDown,,,bad,,,,うわああ！#1はバランスを失って転んだ。,Noooo! #1 lose(s) balance and  tumble(s).
+addedCards,,,nice,,,,#1枚のカードをコレクションに加えた！,You added #1 card(s) to your collection.
+noCard,,,,,,,収集できるカードを持っていない。,You don't have cards to add to your collection.
+trap,,,,,,,#1は#2を作動させた。,#1 trigger(s) #2.
+disarm_success,,,,,,,#1は#2の解体に成功した。,#1 successfully disarm(s) #2.
+disarm_fail,,,,,,,#1は#2の解体に失敗した。,#1 fail(s) to disarm #2.
+trap_banana,,,ono,,,,*ツルッ*,*slip*
+trap_acid,,,bad,,,,酸が噴出した。,Acid erupts.
+trap_teleport,,,negative,,,,#1の周りの空間が歪んだ。,The space around #1 distorts.
+trap_curse,,,negative,,,,不気味な声が響き渡った。,A creepy voice echoes throughout.
+trap_sleep,,,negative,,,,催眠ガスが噴き出した。,Sleeping gas spreads.
+trap_spear,,,negative,,,,槍が地面から飛び出した。,Several spears fly out from the ground.
+trap_blind,,,negative,,,,墨が噴き出した。,Gallons of ink spreads.
+trap_paralysis,,,negative,,,,刺激的な匂いがただよう。,Stimulative gas spreads.
+trap_mine,,,dmg5,,,,*チュドーン！*,*kabooom*
+trap_sister,,,negative,,,,辺りに恐ろしい悲鳴が響き渡った。,A chilling shriek resonated all around.
+trap_spear_nullify,,,,,,,しかし#1には届かなかった。,But they don't reach #1.
+backerLantern_read,backer,,,,,,あなたはランタンに綴られた文字を読んだ。,You read the words on the lantern.
+backerLantern,backer,,ono,,,,#1,#1 
+backerRemain_read,backer,,,,,,あなたは亡骸に残された遺言を読んだ。,You read the will left behind in the remain.
+backerRemain,backer,,ono,,,,#1,#1 
+backerTree_read,backer,,,,,,あなたは木に刻まれた文字を読んだ。,You read the words carved into the tree.
+backerTree,backer,,ono,,,,#1,#1 
+daggerGrave,backer,,ono,,,,#1に捧げられし風の短剣、ここに永遠に眠る。,"The Wind Dagger Dedicated to #1, Here Lies Eternally."
+add_sketch,,,nice,,,,画集に「スケッチ##1」が追加された。,Sketch ##1 has been added to your gallery.
+add_sketch_special,,,nice,,,,画集に特別な絵の数々が追加された。,Several special sketches have been added to your gallery.
+open,,,,,,,#1は#2を開いた。,#1 open(s) #2.
+close,,,,,,,#1は#2を閉じた。,#1 close(s) #2.
+lever,,,,,,,#1は#2を引いた。,#1 pull(s) #2.
+generator_start,,,,,,,#1は稼働し始めた。,#1 start(s) operating.
+generator_stop,,,,,,,#1は停止した。,#1 stop(s) operating.
+notEnoughElectricity,,,,,,,#1を作動させるには電力が足りない！,Not enough electricity to activate #1.
+phone_boss,,,ono,,,,*トゥルルルルルルル*,*RINGA LINGA LINGA LINGA LING*
+electricity_short,,,negative,,,,#1はショートした。,#1 short(s) out.
+electricity_recover,,,ono,,,,#1は復旧した。,#1 start(s) to work again.
+daggerCursed,,,ono,,,,剣にふりかかった呪いがあなたの祈りを妨げた。,The curse that befell the dagger hinderes your prayers.
+skyFall,,,ono,,,,#1は#2から落ちた。,#1 fall(s) from #2.
+encounter,,,bad,,,,襲撃だ！,It's an ambush!
+cloth_remove,,,ono,,,,#1は服を脱いだ。,#1 take(s) off clothes.
+cloth_wear,,,ono,,,,#1は服を着た。,#1 put(s) on clothes.
+read_fortune,,,,,,,#1はクッキーの中のおみくじを読んだ。,#1 read(s) the paper fortune.
+dip,,,,,,,#1は#2を#3に混ぜた。,#1 dip(s) #2 into #3.
+unpolluted,,,positive,,,,#1は浄化された。,#1 are/is cleansed.
+polluted,,,negative,,,,#1は汚染された。,#1 is polluted.
+coated,,,,,,,#1はコーティングされた。,#1 are/is coated.
+shatter,,,ono,,,,*ガシャーン*,*shatter*
+drawWater,,,,,,,#1に水をすくった。,You draw water into #1.
+pickedMelilithTreasure,,,nice,,,,メリリスの宝物を手に取った。もうこの部屋の物には触れない方がいいだろう。,You obtain the Melilith's treasure. You feel like you should avoid touching other things in this room.
+stomp,,,ono,,,,"*ドスン*
+*ズシン*","*stomp*
+*thump*"
+defense_bonus,,,nice,,,,報酬が上がった。,The reward increases.
+defense_start,,,warning,,,,戦いの角笛が鳴り響いた。,The war horn sounds.
+defense_retreat,,,warning,,,,あなたは撤退の合図を送った。,You send the signal for retreat.
+defense_wave,,,warning,,,,敵の第#1波が到来した！(危険度 #2階相当) ,The enemies arrive! (Wave #1 Danger Lv.#2)
+defense_boss,,,warning,,,,気をつけろ！敵陣の主、#1が突っ込んでくるぞ！,"Beware! The enemy's leader, #1 is approaching!"
+alarm,,,ono,,,,*ウーウー！ ウーウー！ ウーウー！*,*BEEP-BEEP-BEEP! BEEP-BEEP-BEEP!*
+alarm2,,,warning,,,,けたたましい警報が鳴り響いた！,A shrill alarm blares through the air!
+beware,,,warning,,,,気をつけろ！この階は#1の主、#2によって守られている！,"Beware! This floor is guarded by the master of #1, #2!"
+boss_win,,,save,,,,#1を制覇した！,You conquer #1!
+boss_win_void,,,warning,,,,深淵の底で、「それ」はあなたの存在を知覚した。,"In the depths of the Void, ""it"" senses your presence."
+calmDown,,,ono,,,,#1は落ち着いた。,#1 calm(s) down.
+shoes_on,,,ono,,,,#1は靴を履いた。,#1 put(s) on #his shoes.
+shoes_off,,,ono,,,,#1は靴を脱いだ。,#1 take(s) off #his shoes.
+open_shoji,,,ono,,,,"*スッ*
+*ススッ*
+*スス*","*swish*
+*shoosh*
+*whoosh*"
+tail_free,,,ono,,,,#1の尻尾は元気よく揺れた。,#your tail wags energetically.
+tail_covered,,,ono,,,,#1はシュンとなった。,#1 become(s) dejected.
+gain_bodyparts,,,save,,,,#1の体に#2が生えた！,#1 grow(s) a new #2!
+lose_bodyparts,,,save,,,,#2は#1の体からもげた。,#1 lose(s) a #2.
+book_decode,,,,,,,#1は#2を解読した。,#1 decipher (s) #2.
+alreadyDecoded,,,,,,,それは既に解読済みだ。,It is already deciphered.
+blinded,,,,,,,#1は何も見えない。,#1 can see nothing.
+spell_fail_teleport,,,negative,,,,#1は奇妙な力に捻じ曲げられた！,A dimension door opens in front of #1!
+spell_fail_monster,,,negative,,,,魔力の渦が何かを召喚した！,Several creatures are summoned from a vortex of magic!
+spell_fail_confuse,,,negative,,,,難解だ！,It's too difficult!
+spell_fail_mana,,,negative,,,,#1はマナを吸い取られた！,#your mana is absorbed!
+musicGood,,,ono,,,,"#1はうっとりした。
+#1は目を輝かせた。
+#1は歓声を上げた。
+#1は#2の演奏を褒め称えた。","#1 clap(s).
+#1 listen(s) to #your2 music joyfully.
+#1 are/is excited!
+#1 praise(s) #your2 performance."
+musicBad,,,ono,,,,"#1は悪態をついた。
+#1は耳をふさいだ。
+#1は#2の演奏をけなした。","#1 curse(s).
+#1 cover(es) #his ears.
+#1 criticize(s) #your2 performance."
+ride,,,,,,,#1は#2に乗った。,#1 ride(s) #2.
+ride_unride,,,,,,,#1は#2から降りた。,#1 get(s) off #2.
+ride_broom,,,positive,,,,これは魔女にふさわしいホウキだ！,This is a broom fit for a witch!
+ride_good,,,,,,,この生物は乗馬用にちょうどいい！,This creature is good to ride!
+ride_bad,,,,,,,この生物はあなたを乗せるには非力すぎる。,This creature is too weak to carry you.
+parasite,,,,,,,#2は#1に寄生した。,#2 parasitizes on #1.
+parasite_unride,,,,,,,#2は#1に寄生するのをやめた。,#2 stops parasitizing on #1.
+parasite_fail,,,negative,,,,"#1は小刻みに震えた。
+#1は#2の頭を叩いた。
+#1は#2を貶した。
+#1は躊躇した。
+#1はためらった。
+#1は苛立った。
+#1は#2に罵声を浴びせた。","#1 tremble(s) slightly.
+#1 hit(s) #2 on the head.
+#1 belittle(s) #2.
+#1 hesitate(s).
+#1 is reluctant.
+#1 get(s) irritated.
+#1 shout(s) at #2."
+rush,,,ability,,,,#1は#2に目掛けて突進した！,#1 charge(s) towards #2!
+burn_mana,,,ability,,,,#1はマナを燃やした！,#1 burn(s) #his mana!
+abMissileBarrage,,,special,,,,#1はミサイルを乱射した！,#1 unleash(es) a barrage of missiles!
+abCatSniff,,,ability,,,,#1は#2を吸った。,#1 sniff(s) #2.
+abShutterHex,,,ability,,,,#1の呪いは砕け散った。,#your hexes shatter.
+abDraw,,,ability,,,,#1は#2を引き寄せた。,#1 draw(s) #2.
+abCrab,,,ability,,,,#1は大きなハサミで#2を掴み地面に叩きつけた！,#1 grab(s) #2 with large scissors and slam(s) #him2 to the ground!
+abSuicide,,,ability,,,,#1は爆発した。,#1 explode(s).
+abBubble,,,ability,,,,#1は泡を吐いた。,#1 foam(s) at the ground.
+abSoulcry,,,ability,,,,#1は嘆きの慟哭をあげた。,#1 let(s) out the cry of a soul damned and despairing.
+abSadcry,,,ability,,,,#1は物悲しい鳴き声をあげた。,#1 let(s) out a sad cry.
+abWhirlwind,,,ability,,,,#1は高速で回転した。,#1 spin(s) rapidly.
+abMistOfDarkness,,,ability,,,,辺りを濃い霧が覆った。,The air is wrapped in a dense fog.
+abMistOfDarkness_step,,,ability,,,,#1は影の中に消えた。,#1 fade(s) into the shadow.
+abMistOfDarkness_miss,,,,,,,#1は霧の中の幻影を攻撃した。,#1 attack(s) an illusion in the mist.
+abWeb,,,ability,,,,蜘蛛の巣が辺りを覆った。,The ground is covered with thick webbing.
+abWeb_pass,,,,,,,#1は蜘蛛の巣を振り払った。,#1 destroy(s) the cobweb.
+abWeb_caught,,,negative,,,,#1は蜘蛛の巣にひっかかった。,#1 are/is caught in a cobweb.
+entangled,,,negative,,,,#1は拘束されている。,#1 are/is entangled.
+abMagicMap,,,positive,,,,周辺の地形の知識が#1の頭に浮かび上がってきた。,#1 gain(s) a grasp of the terrain around #him.
+abMagicMap_curse,,,negative,,,,#1は方向感覚を失った。,#1 lose(s) #his sense of direction.
+abSteal,,,ability,,,,#1は#2から#3を盗んだ。,#1 steal(s) #3 from #2.
+abStealEscape,,,ono,,,,盗人は笑って逃げた。,The thief escapes laughing.
+abStealNothing,,,ono,,,,#1は#2を憐れむような眼差しで見た。,#1 look(s) at #2 with a gaze of pity.
+abStealNegate,,,,,,,#1は盗人から自分の持ち物を守った。,#1 guard(s) #his backpack from a thief.
+abStealNegateMoney,,,,,,,#1は盗人から自分の財布を守った。,#1 guard(s) #his wallet from a thief.
+abort_lowHP,,,,,,,体力が少なくなったので戦闘を中断した。,You cease combat due to low health.
+abort_allyDead,,,,,,,仲間が死んだため戦闘を中断した。,You cease combat due to the death of your ally.
+abort_allyDying,,,,,,,瀕死の仲間がいるため戦闘を中断した。,You cease combat as your ally is critically injured.
+abort_enemyDead,,,,,,,戦闘を中断した。,You cease combat.
+abort_damage,,,,,,,致命傷を受けたので戦闘を中断した。,You cease combat as you sustain a fatal injury.
+abort_damgeAlly,,,,,,,仲間が致命傷を受けたので戦闘を中断した。,You cease combat as your ally sustains a fatal injury.
+abort_itemLoss,,,,,,,アイテムが破壊されたので戦闘を中断した。,You cease combat as an item was destroyed.
+abort_sentense,,,,,,,死が迫っているので戦闘を中断した。,You cease combat as your death is approaching.
+abort_idle,,,,,,,戦闘を中断した。,You cease combat.
+callHelp,,,,,,,#1は助けを呼んだ！,#1 call(s) help!
+takeAmmo,,,,,,,#1をバックパックから取り出した。,You pull #1 from your backpack.
+noRide,,,,,,,騎乗していない。,You have no ride.
+shakeHead,,,negative,,,,#1は頭を振った。,#1 shake(s) #his head.
+stagger,,,negative,,,,#1はふらふらした。,#1 stagger(s).
+allyDead,,,ono,,,,あなたは悲しくなった。,You feel sad for a moment.
+reflect_thorne,,,negative,,,,棘が#1に刺さった！,#1 are/is stuck by several thorns.
+reflect_acid,,,negative,,,,酸が#2に飛び散った！,Acid splatter(s) onto #2!
+blanketGround_eleFire,,,,,,,#1が炎から地面のアイテムを守った。,#1 protect(s) an item on the ground from fire.
+blanketInv_eleFire,,,,,,,#1が#2の持ち物を炎から守った。,#1 protect(s) #your2 item from fire.
+blanketGround_eleCold,,,,,,,#1が冷気から地面のアイテムを守った。,#1 protect(s) an item on the ground from cold.
+blanketInv_eleCold,,,,,,,#1が#2の持ち物を冷気から守った。,#1 protect(s) #your2 item from cold.
+cannnotEquip,,,,,,,今は#1に装備することができない。,You can't equip an item on your #1 currently.
+poisonDrip,,,negative,,,,#1の手から毒が滴った。,Poison drips from #your hands.
+absorbRod,,,negative,,,,#1の手は#2から魔力を吸い取った。,#your hands absorb magic from #2.
+drawRain,,,nice,,,,#1は雨雲を引き寄せた。,#1 draw(s) a rain cloud.
+intercept,,,ability,,,,#1は#2を庇った。,#1 protect(s) #2.
+intercept_loyal,,,ability,,,,#1が駆けつけた！,#1 rush(es) over in the nick of time!
+fury_critical,,,critical,,,,渾身の一撃！,Furious hit!
+fury_critical_enemy,,,dead,,,,渾身の一撃！,Furious hit!
+critical,,,critical,,,,会心の一撃！,Critical hit!
+critical_enemy,,,dead,,,,痛恨の一撃！,Critical hit!
+attack_chaser,,,ability,,,,追尾！,Pursuit!
+attack_chaser_enemy,,,enemy,,,,追尾！,Pursuit!
+attack_flurry,,,ability,,,,連撃！,Flurry!
+attack_flurry_enemy,,,enemy,,,,連撃！,Flurry!
+attack_reflect,,,ability,,,,反射！,Deflected!
+attack_reflect_enemy,,,enemy,,,,反射！,Deflected!
+dreambug,,,ono,,,,何かが#2の所持品に紛れ込んだ。#1はくすりと口元を歪めた。,Something slips into #your2 inventory. A sly smile plays on #your lips.
+dreambug_teleport,,,ono,,,,#1は恍惚とした表情で#2の床に忍び込んだ。,#1 stealthily approach(es) #2 with an ecstatic expression.
+dreambug_destroy,,,,,,,夢蟲の抜け殻が#hisの足元に落ちて崩れた。,The shed skin of a dream larva crumbled at #his feet.
+succubus_exp,,,nice,,,,#1の#2は鍛えられた。,#your #2 is honed.
+restoreBody,,,,,,,#1の肉体は力を取り戻した。,#your body is restored.
+enhanceBody,,,,,,,#1の肉体は強化された。,#your body is enchanted.
+damageBody,,,,,,,#1の肉体は蝕まれた。,#your body is damaged.
+restoreMind,,,,,,,#1の精神は聡明さを取り戻した。,#your mind is restored.
+enhanceMind,,,,,,,#1の精神は強化された。,#your mind is enchanted.
+damageMind,,,,,,,#1の精神は蝕まれた。,#your mind is damaged.
+drunk_dwarf,,,ono,,,,"#1は踊り狂った。
+「ぷはぁ！」#1は目を閉じて満足げに息をついた。
+#1の顔は生き生きとした喜びに満ちた。","#1 dance(s) wildly.
+""Phew!"" #1 close(s) #his eyes and sigh(s) contentedly.
+#your face is brimming with lively joy."
+shipped,,,save,,,,合計#1個の品を出荷し、#2を受け取った。,You ship a total of #1 items/item and receive #2.
+shipped_none,,,save,,,,合計#1個の品を出荷したが、何ももらえなかった…,You ship a total of #1 items/item but receive nothing in return...
+shipped_collect,,,save,,,,出荷箱のアイテムが回収された。,The contents of your shipping chest have been collected.
+water_draw,,,,,,,#1は#2に水を汲んだ。,#1 draw(s) water into #2.
+water_clear,,,,,,,#1は#2の水を捨てた。,#1 dump(s) water from #2.
+water_ground,,,,,,,#1は水をばらまいた。,#1 spill(s) water.
+water_evade,,,,,,,#1は避けた。,#1 evade(s).
+water_farm,,,,,,,#1は#2に水をまいた。,#1 water(s) the #2.
+water_deplete,,,,,,,もう水がない！,You are out of water!
+pray,,,,,,,#1は自分に祈りを捧げた。,#1 offer(s) a prayer to #himself.
+pray2,,,,,,,#1は#2に祈りをささげた。,#1 pray(s) to #2.
+pray_ignore,,,,,,,"#2は#1を無視した。
+#1の声はむなしく周囲に消えた。
+何も起こらない…
+沈黙が#1の祈りに応えた。
+#1は空虚な気分になった。","#2 ignores #1.
+#your voice fades emptily into the surrounding.
+Nothing seems to happen...
+Silence answers #your prayers.
+#1 feel(s) a sense of emptiness."
+pray_answer,,,nice,,,,"#1は突然、世界が完全であると感じた。
+#1の全身が歓喜に震えた。
+#1は完璧な調和を感じた。
+#1は全てが一体となる感覚に包まれた。","Suddenly, #1 feel(s) that the world is perfect.
+#your whole body trembles with joy.
+#1 feel(s) a perfect harmony.
+#1 are/is enveloped in a sensation of everything becoming one."
+pray_heal,,,nice,,,,#1は完全に回復した。,#1 are/is completely healed.
+dominate_plant,,,special,,,,#1は#2をなだめた。,#1 calm(s) #2.
+dominate_machine,,,special,,,,#1は#2のAIを制御した。,#1 hijack(s) control of #2's AI.
+absorbMana,,,ability,,,,#1は周囲からマナを吸い取った。,#1 absorb(s) mana from the surrounding air.
+cantDrop,,,,,,,#1は取り外すことができない！,#1 can't be removed!
+piety0,,,nice,,,,#1は#2の存在を遠くに感じた。,#1 feel(s) #his #2 is distant.
+piety1,,,nice,,,,#1は#2との距離が縮まるのを感じた。,#1 feel(s) the distance to #his #2 lessening.
+piety2,,,nice,,,,#1は心の平穏を感じた。,#1 feel(s) a sense of peace.
+piety3,,,nice,,,,#1は#2がすぐ傍にいるように感じた。,#1 feel(s) as if your #2 is right beside #him.
+piety4,,,nice,,,,#1は#2との一体感を感じた。,#1 feel(s) a sense of oneness with #his #2.
+takeover_empty,,,special,,,,#1が空白の祭壇の権利を主張した。,#1 claims the empty altar.
+takeover_versus,,,,,,,異様な霧が現れ、#1と#2の幻影がせめぎあった。,Strange fogs surround all over the place. You see shadows of #1 and #2 make a fierce dance.
+takeover_success,,,,,,,あなたの#1の幻影は、次第に色濃くなった。,The shadow of your #1 slowly gets bolder.
+takeover_success2,,,special,,,,#1は祭壇を支配した。,#1 takes over the altar.
+takeover_fail,,,negative,,,,#1は祭壇を守りきった。,#1 keeps the altar.
+monsterball_invalid,,,,,,,その生物は捕獲できない。,The creature can't be captured.
+monsterball_lv,,,,,,,その生物を捕獲するには、より高レベルのモンスターボールが必要だ。,Power level of the ball is not enough to capture the creature.
+monsterball_hp,,,,,,,捕獲するためにはもっと弱らせる必要がある。,You need to further weaken the creature to capture it.
+monsterball_capture,,,nice,,,,#2をモンスターボールに捕獲した。,#1 capture(s) #2.
+resistMutation,,,,,,,#1は変異を受け付けなかった。,#1 resist(s) the threat of mutation.
+rain_confuse,,,negative,,,,"雨が激しすぎてどこを歩いているかもわからない！
+あまりにも視界が悪すぎる。
+豪雨のせいで前が全く見えない。","The rain is so intense!
+You lose your way.
+You can't see a thing!"
+party_train,,,ono,,,,#1は#2オレンを支払いトレーナーから訓練を受けた。,#1 pay(s) #2 Orens and receive(s) training from a trainer.
+party_sell,,,ono,,,,#1はバックパックの中の戦利品を売りさばき#2オレンを獲得した。,#1 sell(s) the loot from #his backpack and earn(s) #2 orens.
+give_erohon,,,ono,,,,#1の頬は真っ赤になった。,#his cheeks turn bright red.
+give_ring,,,ono,,,,#1は顔を赤らめた。,#1 blush/blushes.
+give_love,,,ono,,,,#1は激怒して#2を地面に叩きつけた。,#1 throw(s) it on the ground angrily.
+cureCorruption,,,nice,,,,エーテルの抗体が#1の体内に行き渡った。,Ether antibodies are now spreading throughout #your body.
+cureCorruption_curse,,,bad,,,,エーテルが#1の体を満たした。,#your body is filled with ether.
+cropSpoiled,,,negative,,,,この#2はやせ細っていて使い物にならない！,It is too shriveled to be of any use!
+seedSpoiled,,,negative,,,,#1の種はボロボロになって崩れ落ちた。,The seed crumbles as you pick.
+mutation_gain,,,mutation,,,,#1の体は変異した。,#your body mutates.
+mutation_loose,,,positive,,,,#1の体の変異は治った。,#your mutation is cured.
+blend_love,,,,,,,あなたはうしろめたさを感じた…,You feel little guilty...
+blend_poison,,,,,,,あなたはにやりと笑った。,You grin.
+blend_curse,,,negative,,,,#1は錆びてしまった…,#1 rust(s).
+love_ground,,,ono,,,,#1は恋の予感がした。,#1 sense(s) a hint of love.
+love_chara,,,ono,,,,#2は#1を熱いまなざしで見つめた。,#2 stare(s) at #1 with burning eyes.
+love_curse,,,negative,,,,#2は#1が無性に嫌いになった。,#2 start(s) to hate #1 for no reason.
+love_curse_self,,,negative,,,,#1は無性に自分が嫌いになった。,#1 start(s) to hate #himself for no reason.
+use_leash,,,,,,,あなたは#2で#1を繋いだ。,You put #2 on #1.
+use_leash2,,,,,,,あなたは#1を解放した。,You let #1 go.
+use_whip,,,,,,,#1は#3で#2を打った。,#1 whip(s) #2 with #3.
+use_scope,,,,,,,あなたは#1に#2を当てた。,You place #2 on #1.
+use_scope2,,,ono,,,,#1は顔を赤らめた。,#1 blush/blushes.
+use_whip4,,,ono,,,,#1の人格は変わった。,#your personality change(s).
+use_whip2,,,ono,,,,#1は#2と#3に目覚めた。,#1 are/is awakened to the fields of #2 and #3.
+use_whip3,,,,,,,#1は#2を鞭で打った。,#1 whip(s) #2.
+regenerateZone,,,,,,,#1は前に訪れた時とは違う感じがする。,#1 feels different from when you visited before.
+npc_rescue,,,,,,,#1を保護した。無事に連れて帰らなければ。,You rescue #1. You must return #him safely.
+noteFav,,,nice,,,,あなたは#1の好物を記憶した。,You memorize #your favorite.
+deliver_arrive,,,nice,,,,#1個の宅配便が届いた。,#1 packages/package arrive(s).
+package_chara,,,,,,,箱の中から#1が飛び出てきた！,#1 jump(s) out of the box!
+targetTooFar,,,,,,,遠すぎる！,Too far away!
+escape,,,ono,,,,#1は逃げ出した。,#1 escape(s).
+wrongAmmo,,,,,,,#1は#2に装填できない。,#1 cannot be loaded into #2.
+isReloading,,,,,,,既にリロード中だ。,You are already reloading.
+finish,combat,,dmg5,,,,*ブシュッ*,*Gash*
+finish2,combat,,,,,,#1は#2の首をちょんぎった。,#1 cut(s) #your2 head off.
+badidea,,,,,,,それは賢明とはいえない。,That's a bad idea.
+seedLvLimit,,,,,,,#1の品種改良にはもっと農業の知識が必要だ。,You need more farming knowledge to enhance #1.
+bossLeave,,,special,,,,#1は#2から去っていた。,#1 leaves #2.
+learn_weakspot,,,nice,,,,#1は#2の弱点を学んだ。,#1 learn(s) #2's weakspot.
+bury,,,,,,,あなたは#1を#2に埋葬した。,You bury #1 beneath #2.
+renewNefia,,,special,,,,この大陸に大きな地殻変動が起こった。,A sudden diastrophism hits the continent.
+haul,,,,,,,#1は#2を片づけた。,#1 put(s) away #2.
+removeHex,,,nice,,,,#1の#2は浄化された。,#your #2 is cleansed.
+removeHex_fail,,,bad,,,,#1の呪いは浄化を拒んだ。,#your hex refuses to fade.
+split,,,ability,,,,#1は増殖した！,#1 split(s)!
+split_fail,,,,,,,#1はブルブルと震えた。,#1 tremble(s) intensely.
+pillow,,,ono,,,,#1は#2をギュッと抱きしめた。,#1 wrap(s) #his arms tightly around #2.
+diary_littleOne,,,nice,,,,リトルシスターがあなたの手をそっと握った。,A little sister silently slips her hand into yours.
+diary_sister,,,nice,,,,なんと、あなたには生き別れた血の繋がっていない妹がいた！,You suddenly realize you have a non-blood-related younger sister who had been living apart from you!
+diary_sister_cat,,,nice,,,,なんと、あなたには生き別れた血の繋がっていないぬこの妹がいた！,You suddenly realize you have a non-blood-related younger cat sister who had been living apart from you!
+diary_younglady,,,nice,,,,お嬢さんが空から降ってきた！,A young lady falls from the sky!
+rebirth,,,special,,,,#1は灰の中から蘇った。,#1 rise(s) from the ashes.
+layhand,,,special,,,,#1は叫んだ。「この者にジュアの加護を。レイハンド！」,"#1 shout(s), ""Lay hand!""."
+modded,,,nice,,,,#1に#2を取り付けた。,You attach #2 to #1.
+reboot,,,ability,,,,#1は再起動した。,#1 reboot(s).
+lick,,,ability,,,,#1は#2をぺろぺろと舐めた。,#1 lick(s) #2.
+lick2,,,ability,,,,#1は#2の#3をぺろぺろと舐めた。,#1 lick(s) #your2 #3.
+fairy_vomit,,,ability,,,,#1は#2を吐き出した。,#1 spew(s) up #2.
+draw_curse,,,ability,,,,#1は#2から力を引き出した。,#1 draw(s) strength from #2.
+draw_curse2,,,nice,,,,#2の能力に経験値を得た。,#1 gain(s) experience in #2.
+time_warn,,,,,,,Elinをはじめてから#1時間が経過しています。,You have been playing Elin for #1 hour#(s).
+time_warn_1,,,save,,,,フィアマ「がんばれ～」,"Fiama cheers, ""Way to go!"""
+time_warn_2,,,save,,,,エイシュランド「ほどほどにな」,"Ashland shrugs, ""Take it easy."""
+time_warn_3,,,save,,,,クミロミ「…大丈夫…だよね？」,"Kumiromi worries, ""Are you...okay..?"""
+time_warn_4,,,save,,,,ルルウィ「あら、思いの外がんばるのね」,"Lulwy sneers, ""You're tougher than I thought, little kitty."""
+time_warn_5,,,save,,,,フィアマ「いけない。このままでは…手遅れになってしまうわ…」,"Fiama cries, ""No...before it is too late..."""
+time_warn_6,,,save,,,,エイシュランド「まいったな。また倒れないでくれよ」,"Ashland sighs, ""Try not to collapse again, alright?"""
+time_warn_7,,,save,,,,ルルウィ「休憩しなさい。壊れちゃったら、私の役にたてないじゃない」,"Lulwy warns you, ""Have a rest, kitty. If you are broken, you're no use to me."""
+time_warn_8,,,save,,,,ルルウィ「何を言っても無駄のようね。好きにするといいわ」,"Lulwy laughs, ""I guess there's no use warning you. Alright. Do as you please, kitty."""
+time_warn_12,,,save,,,,オパートス「フハハハハッフハー」,"Opatos laughs, ""Muwahahahahahaha!"""
+time_warn_24,,,save,,,,エヘカトル「死にゃにゃいで！死にゃにゃいって約束して！」,"Ehekatl hugs you,""Don't die! Promise you don't die!"""
+statue_pick,,,statue,,,,あなたは胸騒ぎを覚えた。,You feel a sense of unease.
+statue_install,,,statue,,,,（…そんな所に置いていいのか？）,(...Are you sure it's alright to leave it there?)
+statue_sell,,,statue,,,,（…後悔はしないな？）,(...Was it right to let it go?)
+plant_pop,,,ono,,,,#1の死体は芽吹いた。,#your body sprouts.
+little_pop,,,ono,,,,ビッグダディの肩から、リトルシスターが滑り落ちた。「Mr Bubbles！！」,"The little sister slips from Big Daddy's shoulder, ""Mr.Bubbles!!"""
+shark_pop,,,ono,,,,妹鮫の口から、妹シャークが滑り落ちた。,The younger shark sister slips from the younger sister shark's mouth.
+little_eat,,,special,,,,#1は進化した。,#1 evolve(s).
+little_adam,,,special,,,,#1はアダムの遺伝子を取り込んだ。,#1 absorb(s) the genes of Adam.
+sign_bigdaddy,,,sign,,warcry_daddy,,大きな唸り声が聞こえた。,You hear a loud roar.
+talisman,,,,,,,#1に#2を装填した。,You load #2 into #1.
+get_keyItem,,,nice,,,,「#1」を大切なものに加えた。,"""#1"" has been added to the Key Items."
+lose_keyItem,,,bad,,,,「#1」を大切なものから失った。,"""#1"" has been removed from the Key Items."
+shrine_power,,,save,,,,#1はまばゆく輝いた。,#1 shine(s) brightly.
+contribute,,,nice,,,,#2への貢献度が上昇した。,Your contribution to #2 increases.
+faction_promote,,,nice,,,,あなたは昇進した！,You are promoted!
+bounty,,,nice,,,,賞金首を倒して#2オレンの懸賞金を受け取った。,The Fighters Guild pays you #2 oren(s2) for the bounty target.
+subdue_complete,,,nice,,,,付近の魔物を一掃した！,You have wiped out the nearby monsters!
+party_end,,,,,,,パーティーが終了した。あなたの演奏は#1得点を記録した。,The party has ended. Your performance scored #1 music points. 
+party_end2,,,,,,,合計で#1オレンを獲得した。,You earn a total of #1 orens. 
+party_end3,,,,,,,祝宴は終わりを告げた。,The celebration came to an end.
+harvest_end,,,,,,,収穫が終わった。あなたは合計#1の重さの作物を納入した。,The harvest has ended. You delivered crops weighing a total of #1. 
+farm_chest,,,nice,,,,重さ#2の#1を納入した。,You deliver #1 weighing #2.
+perfume,,,,,,,#1はいい匂いに包まれた。,#1 are/is wrapped in a nice fragrance.
+reward_bonus,,,,,,,ボーナスとして報酬に#1オレンが追加された。,A bonus of #1 oren#(s) is added to the reward.
+takeSharedItem,,,,,,,#1は#3から#2を取り出した。,#1 take(s) #2 from #3.
+putSharedItem,,,,,,,#1は#3に#2を納めた。,#1 store(s) #2 in #3.
+homerank_up,,,nice,,,,ホームランクの最高記録が#1に更新された。,The highest ranking of your home has been updated to '#1'.
+upgrade_hearth,,,save,,,,#2の盟約の石がレベル#1に成長した！,The hearth stone in #2 has grown to level #1!
+shop_buy,,,ono,,,,#1は#2を#3で購入した。,#1 buy(s) #2 for #3.
+dream_spell,,,,,,,あなたは#1の夢を見た。,You had a dream of #1.
+blessing,,,nice,,,,#1は祝福された。,#1 are/is blessed.
+level_song,,,,,,,曲が上達した。,The song gets better.
+noBedFound,,,,,,,バックパックの中にベッドが見つからない。アビリティの「休憩」を使えば睡眠は取れるが…,There’s no bed in your backpack. You can use Rest Ability to sleep but...
+incubate,,,nice,,,,#1が卵から孵化した。,#1 hatch(es) from an egg.
+harvest_confiscate,,,bad,,,,幾つかの農作物が依頼主に見つかって没収された。,Some crops were confiscated by the client.
+ride_req,,,,,,,魅力が足りない。,You need more charisma.
+upgrade,,,nice,,,,#1を#2で改造した。,You upgrade #1 with #2.
+noMoreUpgrade,,,,,,,それは#2ではこれ以上改造できない。,It cannnot be upgraded with #2 any more.
+put_ecomark,,,nice,,,,#1にエコマークを貼った。,You put an eco mark on #1.
+policy_cull,,,negative,,,,運営力が足りないため、#2の#1のポリシーは解除された。,#1 policy has been turned off as there are no enough admin points in #2.
+exterminate,,,ono,,,,「お掃除よ～♪」,"""Time to clean up♪"""
+scavenge,,,nice,,,,#1から#2を回収した。,You scavenge #2 from #1.
+changeFaith,,,save,,,,#1は#2に改宗した！,#1 convert(s) to #2!
+faith_stands,,,save,,,,#1の信仰は揺るがない！,#your faith is unshakable!
+noNetwork,,,,,,,Error 479: ネットワークで繋がっていない。,Error 479: Not connected to the network.
+hasInvalidQuest,,,,,,,Error 543: 護衛と配達の依頼のための利用は禁止されている。,Error 543: Use for escort and delivery requests is prohibited.
+globalmap_item,,,,,,,それはグローバルマップで使う必要がある。,It can be only used in global map.
+cannot_use_here,,,,,,,ここでは使えない。,It can't be used here.
+base_relocate,,,save,,,,#1は移転した！,#1 has been relocated!
+minigame_notSupported,,,,,,,Modが有効化されていない。,Mod is disabled.
+trapJammed,,,,,,,罠は故障した。,The trap is jammed.
+trapJammed2,,,,,,,罠は故障している。,The trap is jammed.
+enemyInMap,,,,,,,敵対生物が対象の近くにいる時は移動できない。,You can't do that while there's an enemy nearby the target.
+polish,,,,,,,#1は#2を研いだ。,#1 sharpen(s) #2.
+markedImportant,,,,,,,それは大事なものに指定されている。,It is marked as important.
+shield_bash,,,negative,,,,#1は盾で#2を殴りつけた。,#1 bash(es) #2 with #his shield.
+whistle,,,ono,,,,#1は#2を吹いた。,#1 blow(s) #2.
+whistle_peace,,,,,,,辺りは和やかな空気になった。,Peacefulness fills the air around.
+whistle_peace_end,,,,,,,和やかな空気は消えた。,The peacefulness is no more.
+recipeReqLv,,,,,,,#1の知識がもっとあれば何か閃きそうだ。,Improving your #1 might lead to a new recipe.
+claimCooldown,,,,,,,土地の権利を手放すには一カ月間が経過している必要がある。,A period of one month must have passed to abandon your land.
+claimCooldown2,,,,,,,この土地は再生成されるまで権利を主張することはできない。,You cannot claim rights to this land until it has been regenerated.
+gambleChest_loss,,,,,,,スカ！,A loss!
+gambleChest_win,,,nice,,,,#1が当たった！,You win #1!
+gambleChest_broke,,,loose,,,,#1は壊れた。,#1 is destroyed.
+notGood,,,,,,,それはよくない！,That's not right!
+feelgood,,,nice,,,,#1は元気になった！,#1 feel(s) very good!
+demoLimit,,,special,,,,体験版ではフィートポイントをこれ以上獲得できない。,You cannot earn any more feat points in the demo version.
+demoLimit2,,,special,,,,体験版では盟約の石はこれ以上成長できない。,You cannot upgrade the Hearth Stone any further in the demo version.
+craftDupError,,,,,,,素材が重複して使われている。,The ingredients are being used redundantly.
+returnHome,,,,,,,#1は#2に帰った。,#1 return(s) to #2.
+grow_baby,,,nice,,,,#1は成長した。,#1 grow(s).
+grow_adult,,,nice,,,,#1は大人になった。,#1 grow(s) up into an adult.
+gene_modify,,,,,,,#1の体は#2を取り込み始めた。,#1 begin(s) to take in #2.
+gene_finish,,,nice,,,,#1は#2を取り込んだ！,#1 absorb(s) #2!
+tooManyGene,,,,,,,#1はこれ以上遺伝子を取り込めない。,#1 are/is unable to take in any more genes.
+invalidGeneFeat,,,,,,,#2はこれ以上習得できない。,#1 cannot learn #2 any further.
+invalidGeneAction,,,,,,,#2は既に覚えている。,#1 already know(s) #2.
+invalidGeneBrain,,,,,,,脳細胞はこれ以上取り込めない。,#1 cannot process any more brain cells.
+jure_hug,,,,,,,あなたは女神の抱擁を感じた。,You feel embraced by the Goddess.
+jure_hug2,,,save,,,,<i>…は、早く離しなさいよ！馬鹿！</i>,<i>Q-Quit holding on! Stupid!</i>
+bug_hal,,,special,,,,待て…これはきっと幻覚だ！,Wait... this must be a hallucination!
+enemy_spotted,,,,,,,敵を発見した。,Enemy spotted.
+stairs_locked,,,,,,,"開かない！
+ビクともしない！
+この先への道は固く閉ざされている。","It won’t open!
+It won’t budge an inch!
+The path ahead is firmly sealed shut."
+stairs_open,,,save,,,,#1を開けた。,You open #1.
+deliver_funny,,,,,,,おかしい…届け先がどこにも存在しないぞ！,Strange... the destination doesn't seem to exist anywhere!
+fizzle,,,,,,,#1は詠唱に失敗した。,#1 fail(s) to cast.
+cull_life,,,,,,,#2の命を収穫した。,You harvest the life of #2.
+pick_valuable,,,,,,,それを置いていくなんてとんでもない！,Leaving that behind is absolutely unthinkable!
+pick_valuable2,,,ono,,,,#1はあなたのバックパックに滑り込んだ。,#1 slip(s) into your backpack.
+syringe,,,ability,,,,#1は#3を#2に刺した。,#1 inject(s) #2 with #3.
+isIn,,,,,,,#1は#2にいる。,#1 is in #2.
+goto_heaven,,,save,,,,#1は天に召された。,#1 are/is taken to heaven. 
+sleep_beside,,,ono,,,,#1は#2にぴったり寄り添った。,#1 closely accompany/accompanies #2.
+firstTimeCraft,,,nice,,,,これは初めてクラフトするアイテムだ。,It's a new craft item.
+recipe_factory,,,nice,,,,それは「#1」でクラフトできる。,It can be crafted at #1.
+recipe_nofactory,,,nice,,,,それは「簡易制作」でクラフトできる。,It can be crafted by Quick Craft.
+summon_god,,,warning,,,,なんと愚かな！,How foolish!
+summon_god２,,,,,,,#1が冥界から召喚された！,#1 is summoned from the Underworld!
+lucky_month,,,save,Good,,,#1に幸運の月が訪れた！,A month of fortune visits #1!
+party_join,,,,,,,#1をパーティーに加えた。,#1 joins your party.
+beep,,,,,,,ピッ！,Beep!
+detect_suerFar,,,,,,,ピ…,Beep...
+detect_veryFar,,,,,,,ピ…,Beep...
+detect_far,,,,,,,ピ…,Beep...
+detect_detected,,,special,,,,ピピピッ！,BEEEEEP!
+umi,,,save,,,,<i>うみみゃああ！</i>,<i>Umimyaaa!</i>
+error_save,,,warning,,,,保存に失敗しました。ディスク容量の不足、ファイルへのアクセス違反などのため、ファイルが正常に書き込めません。もう一度保存してください。,Failed to save. The file could not be written properly due to issues such as insufficient disk space or access violations. Please try saving again.
+rune_tooHard,,,,,,,#1の硬度が足りない。,#1 are/is not hard enough.
+ntr,,,negative,,,,"#1は淫らな手で#2を触った。
+#1はくねくねした。
+#1は妖艶な視線で#2を誘った。
+#1は激しく喘いだ。
+#1のおぞましい触手が#2の身体を撫で回した。
+#1は快感に打ち震えた。","#1 touch(es) #2 with sinful hands.
+#1 writhe(s).
+#1 lure(s) #2 with a seductive gaze.
+#1 gasp(s) intensely.
+#your grotesque tentacles caresse #his2 body.
+#1 tremble(s) with pleasure."
+pushed_money,,,negative,,,,"#1は財布が軽くなった気がした。
+#2はずる賢く笑った。
+#2はくすりと微笑んだ。","#1 feel(s) like #his wallet is lighter.
+#2 grins cunningly.
+#2 flashes a sneaky smile."
+recharge_stamina,,,positive,,,,#1の疲れはとれた。,#1 recover(s) from #his fatigue.
+recharge_stamina_fail,,,,,,,それはもう疲労には効果がないようだ。,It no longer relieves fatigue.
+recharge_stamina_negative,,,negative,,,,#1は疲れを感じた。,#1 feel(s) tired.
+noMoreSlice,,,,,,,それはもう切り身にできる部分がない！,There's nothing left to slice from it!
+trainingDPS,,,,,,,訓練を終えた。( #1<size=12>ターンのDPS</size> #2  <size=12>ヒット</size> #3  <size=12>ダメージ</size> #4 ),Finished training. ( <size=12>Turns</size> #1  <size=12>DPS</size> #2  <size=12>Hits</size> #3  <size=12>Damage</size> #4 )
+tambourine,,,ono,,,,"「ヘイ！」
+「ヘヘイ！」
+「タンバリン倶楽部！」","""Hey!""
+""He-Hey!""
+""Tambourine Club!"""
+fishingFever,,,save,,,,あなたは幸運の女神の熱い視線を感じた。,You feel the intense gaze of the goddess of luck.
+bigCatch,,,positive,,,,"大漁だ！
+ワァオー！
+引きが強い！
+幸運だ！","What a catch! 
+Wow!
+Jackpot! 
+Lucky!"
+item_drop,,,,,,,#1が地面に転がった。,#1 fall(s) to the ground.
+wall_bond,,,ability,,,,#1は血の代償を払った。, #1 sacrifice(s) #his blood.
+wall_flesh,,,ability,,,,#1の体は揺れた。, #your body quivers.
+wall_knightly,,,ability,,,,#1が庇った。, #1 selflessly defend(s) #him2.
+warhorn,,,warning,,,,"*ヴォゥオォーオゥゥゥ*
+*ヴォオオォォォォゥ*
+*ヴゥォーオォォォゥ*","*BWRRROOOHHH*
+*BWRROOOOOHHHH*
+*BWRRUUHHHHOOHHHH* "
+eternalYouth1,,,save,,,,ワァオー！#1は永遠の若さを手に入れた！,Wow! #1 attain(s) eternal youth!
+eternalYouth2,,,negative,,,,#1の肉体は再び老化し始めた。,#your body once again starts to wither with age.
+guts,,,ability,,,,#1は不屈の意志で持ちこたえた！,1 endure(s) with an indomitable will!
+parry,,,critical,,,,パリィ！,Parry!
+parry_enemy,,,enemy,,,,パリィ！,Parry!
+counter,,,ability,,,,反撃！,Counter!
+counter_enemy,,,enemy,,,,反撃！,Counter!
+fate,,,save,,,,運命が#1の死を拒んだ。,Fate denies #your death.
+little_migration,,,save,,,,#1人のリトルシスター達は新天地を求めて旅立っていった。,#1 Little Sisters/Sister depart(s) in search of a new home.
+cat_migration,,,save,,,,#1匹のシルバーキャット達は新天地を求めて旅立っていった。,#1 Silver Cats/Cat depart(s) in search of a new home.
+self_dupe,,,,,,,#1は#2を組み立てた。,#1 assemble(s) #2.
+update_deepest,,,save,,,,最深到達層が#1階に更新された。,The deepest reached level has been updated to #1.
+update_deepest_void,,,save,,,,すくつの最深到達層が#1階に更新された。,The deepest reached level of the Void has been updated to #1.
+transform_seen,,,negative,,,,誰かが#1の正体に気づいた！,Someone figures out who #1 really are/is!
+egghatch,,,negative,,,,コクーンの殻を破り何かが這い出した。,A cocoon splits open as something crawls out.
+egglay,,,negative,,,,#1は腹を震わせ粘りつく卵塊を産み落とした。,#1 tremble(s) its abdomen and release(s) a sticky cocoon.
+negateCondition,,,,,,,#1は#2から保護されている。,#1 are/is protected.from #2.
+death_sentense,,,special,,,,死は#1を抱きしめた。,Death embraces #1.
+unseal,,,,,,,#1は#2を開封した。,#1 unseal(s) #2.
+empty,,,,,,,何も入っていなかった…,It is empty...
+dna_loss,,,negative,,,,#1から#2は失われた。,#1 has lost #2.
+attuned,,,special,,,,#1は#2に属化された。,#1 are/is now attuned to #2.
+tender_hug,,,ono,,,,#1はそっと#2を抱きしめた。,"#1 hold(s) #2 close, ever so gently."
+divorce,,,negative,,,,#1は#2と離婚した。,#1 divorce #2.
+married,,,special,,,,#1と#2は結婚した！,#1 and #2 are now married!
+chu,,,ono,,,,*チュッ*,*kiss*
+num_little,,,,,,,ここには#1人のリトルシスターがいる。,There are/is #1 little sisters/sister here.
+num_silvercat,,,,,,,ここには#1匹のシルバーキャットがいる。,There are/is #1 silver cats/cat here.

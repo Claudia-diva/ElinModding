@@ -1,0 +1,1162 @@
+id,alias,name_JP,name,altname_JP,altname,aliasParent,aliasRef,aliasMtp,parentFactor,lvFactor,encFactor,encSlot,mtp,LV,chance,value,cost,geneSlot,sort,target,proc,type,group,category,categorySub,abilityType,tag,thing,eleP,cooldown,charge,radius,max,req,idTrainer,partySkill,tagTrainer,levelBonus_JP,levelBonus,foodEffect,note,langAct,detail_JP,detail,textPhase_JP,textPhase,textExtra_JP,textExtra,textInc_JP,textInc,textDec_JP,textDec,textAlt_JP,textAlt,adjective_JP,adjective
+int,string,string,string,string,string,string,string,string,float,int,int,string,int,int,int,int,int[],int,int,string,string[],string,string,string,string,string[],string[],string,int,int,int,float,int,string[],string,int,string,string,string,string[],,string[],string,string,string,string,string,string,string,string,string,string,string[],string[],string[],string[]
+,,,,,,,,,,,100,,1,1,1000,,0,1,,,,Element,,,,,,,50,,10,5,,,,,,,,,,,,,,,,,,,,,,,,
+0,_void,無,Void,"無,ヴォイド,無の","void,void,void",,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+1,lv,レベル,Level,,,,,,,,,,,,,,,,,,,Level,ELEMENT,,,,hidden,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2,quality,品質,Quality,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,アイテム品質,Item Quality,,,,,"品質,粗悪品,普通の出来,まあまあの出来,良い出来,素晴らしい出来,極上品","Quality,Tarnished,Common Quality,Fair Quality,Fine Quality,Premium Quality,Royal Quality",,
+3,d,d,d,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5,socket,ソケット,Socket,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+10,nutrition,栄養,Nutrition,,,,,,,,,global,,,0,,,,,,,,ELEMENT,,,,"common,hidden",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+11,weight,重さ,Weight,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+12,size,大きさ,Size,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+13,hardness,硬さ,Hardness,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+14,growth,成長,Growth,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+15,water,水分,Water,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+16,heat,熱,Fire,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+17,decay,腐敗,Decay,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+18,taste,味,Taste,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,hidden,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+20,poison,毒,Poison,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+21,fire,火炎,Fire,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+22,cut,鋭利,Cold,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+23,old_detox,解毒,Antidote,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+24,old_heal,治癒,Healing,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+25,old_antidote,解毒,Antidote,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+26,cure,キュア,Cure,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+29,race,種族の特徴,Racial Traits,,,,,,,,,,,,,,,,,,,RaceBonus,ELEMENT,,,,,,,,,,,,,,,,,,,,イルヴァの種族が代々受け継いできた種族的な性質。,The inherent traits that the races in Ylva have passed down through generations. ,,,,,,,,,,,,
+30,head,頭,Head,,,,,,,,,,,,,,,,110,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+31,neck,首,Neck,,,,,,,,,,,,,,,,200,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+32,torso,胴体,Torso,,,,,,,,,,,,,,,,120,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+33,back,背中,Back,,,,,,,,,,,,,,,,130,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+34,arm,腕,Arm,,,,,,,,,,,,,,,,145,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+35,hand,手,Hand,,,,,,,,,,,,,,,,100,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+36,finger,指,Finger,,,,,,,,,,,,,,,,210,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+37,waist,腰,Waist,,,,,,,,,,,,,,,,140,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+38,leg,脚,Leg,,,,,,,,,,,,,,,,150,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+39,foot,足,Feet,,,,,,,,,,,,,,,,160,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+40,tool,道具,Tool,,,,,,,,,,,,,,,,,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+41,range,射撃,Ranged,,,,,,,,,,,,,,,,,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+42,ammo,矢弾,Ammo,,,,,,,,,,,,,,,,,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+43,token,トークン,Token,,,,,,,,,,,,,,,,,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+44,toolbelt,ツールベルト,Toolbelt,,,,,,,,,,,,,,,,,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+45,lightsource,光源,Light Source,,,,,,,,,,,,,,,,190,,,,SLOT,slot,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+50,fireproof,耐熱,Fireproof,,,,,,,0,0,,,,,,,,2000,,,Skill,SKILL,,,,flag,,,,,,,,,,,,,,,,,,それは燃えない。,It is fireproof.,,,,,,,,,,
+51,acidproof,耐酸,Acidproof,,,,,,,0,0,,,,,,,,2001,,,Skill,SKILL,,,,flag,,,,,,,,,,,,,,,,,,それは酸で傷つかない。,It is acidproof.,,,,,,,,,,
+55,PDR,物理軽減,Physical Damage Reduction,,,,,,,0,0,,,,0,,,,4,,,Skill,SKILL,attribute,,,ratio,,,,0,,,,,,,,,,,,物理ダメージを軽減する能力。,Ability to reduce physical damages.,,,,,,,,,,,,
+56,EDR,属性軽減,Elemental Damage Reduction,,,,,,,0,0,,,,0,,,,4,,,Skill,SKILL,attribute,,,ratio,,,,0,,,,,,,,,,,,属性ダメージを軽減する能力。,Ability to reduce elemental damages.,,,,,,,,,,,,
+57,evasionPerfect,完全回避,Perfect Evasion,,,,,,,0,0,,,,0,,,,4,,,Skill,SKILL,attribute,,,ratio,,,,0,,,,,,,,,,,,物理攻撃を完全に回避する能力。,Ability to completely evade physical attacks.,,,,,,,,,,,,
+60,life,生命力,Life,,,,,r_life,,0,0,,,,0,,,,1,,,AttbSpecial,SKILL,attribute,,,,,,,0,,,,,,,,,,,,生命力の強さ。,Abundance of life force.,,,,,#1は生命力の上昇を感じた。,#your life force increases.,#1は生命力の衰えを感じた。,#your life force decreases.,,,,
+61,mana,マナ,Mana,,,,,r_mana,,0,0,,,,0,,,,2,,,AttbSpecial,SKILL,attribute,,,,,,,0,,,,,,,,,,,,マナの豊かさ。,Abundance of mana.,,,,,#1はマナの向上を感じた。,#your mana increases.,#1はマナの衰えを感じた。,#your mana decreases.,,,,
+62,vigor,活力,Vigor,,,,,,,0,0,,,,0,,,,3,,,AttbSpecial,SKILL,attribute,,,,,,,0,,,,,,,,,,,,スタミナや持久力。,Abundance of stamina.,,,,,#1は活力に満ち溢れた。,#your vigor increases.,#1は活力の衰えを感じた。,#your vigor decreases.,,,,
+64,DV,DV,DV,,,,,r_DV,,0,50,,,,,,,,4,,,Skill,SKILL,attribute,,,,,,,,,,,,,,,,,,,物理的な攻撃を回避する能力。,Ability to dodge physical attacks.,,,,,,,,,,,,
+65,PV,PV,PV,,,,,r_PV,,0,50,,,,,,,,5,,,Skill,SKILL,attribute,,,,,,,,,,,,,,,,,,,物理的なダメージを軽減する能力。,Ability to protect you from physical damage.,,,,,,,,,,,,
+66,HIT,命中修正,Hit Modifier,,,,,,,0,30,,2,1,500,20,,,6,,,AttbWeapon,SKILL,attribute,,,"modRanged,modCane,modMelee",,,,,,,,,,,,,,,,物理的な攻撃の命中率を増加させる能力。,Ability to increase the accuracy of physical attacks.,,,,,,,,,,,,
+67,DMG,ダメージ修正,Damage Modifier,,,,,,,0,30,,3,1,500,20,,,7,,,AttbWeapon,SKILL,attribute,,,"modRanged,modCane,modMelee",,,,,,,,,,,,,,,,物理的な攻撃のダメージを増加させる能力。,Ability to increase the damage of physical attacks.,,,,,,,,,,,,
+68,FPV,致命傷防御,Fatal PV,,,,,,,0,30,,,,0,150,,,7,,,Skill,SKILL,attribute,,,,,,,,,,,,,,,,,,,致命的なダメージを軽減する能力。,Ability to mitigate fatal damage.,,,,,,,,,,,,
+70,STR,筋力,Strength,,,,,,,50,80,all,2,1,,30,,,10,,,AttbMain,SKILL,attribute,,,primary,,,,,,,,,,,,,exp,,,身体的な力の強さ。,Physical power of a body.,,,筋力,STR,#1はより強くなった。,#your muscles feel stronger.,#1は少し贅肉が増えたような気がした。,#your muscles soften.,"脂味,パサパサ,しっとり,てかてか,脂たっぷり,ジューシー,じゅわっと溢れる脂","Fat,Dry,Slightly Moist,Moist,Fatty,Juicy,Bursting with Juice",,
+71,END,耐久,Endurance,,,,,,,50,80,all,2,1,,30,,,11,,,AttbMain,SKILL,attribute,,,primary,,,,,,,,,,,,,exp,,,しぶとさや打たれ強さ。,Toughness and fortitude.,,,耐久,END,#1は我慢することの快感を知った。,#1 begin/begins to feel good when being hit hard.,#1は我慢ができなくなった。,#1 lose/loses patience.,"大きさ,妖精サイズ,プチサイズ,かぼちゃサイズ,お化けサイズ,マンモスサイズ,巨人サイズ","Size,Fairy-sized,Putit-sized,Pumpkin-sized,Monster-sized,Mammoth-sized,Titan-sized",,
+72,DEX,器用,Dexterity,,,,,,,50,80,all,2,1,,30,,,12,,,AttbMain,SKILL,attribute,,,primary,,,,,,,,,,,,,exp,,,手先や体を思うように動かす能力。,The ability to move your body as desired.,,,器用,DEX,#1は器用になった。,#1 become/becomes dexterous.,#1は不器用になった。,#1 become/becomes clumsy.,"活きのよさ,死んでいる,動きそう,動く,活きがいい,ピチピチ,生きている","Freshness,Dead,Almost Moving,Moving,Lively,Very Lively,Alive",,
+73,PER,感覚,Perception,,,,,,,50,80,all,2,1,,30,,,13,,,AttbMain,SKILL,attribute,,,primary,,,,,,,,,,,,,exp,,,五感の鋭さや感受性の強さ。,Acuteness of the five senses.,,,感覚,PER,#1は世界をより身近に感じるようになった。,#1 feel/feels more in touch with the world.,#1は感覚のずれを感じた。,#1 are/is getting out of touch with the world.,"匂い,くさい,ほのかな香り,いい匂い,かぐわしい,香り高い,天上の香り","Scent,Stinky,Faint Aroma,Pleasant Smell,Fragrant,Highly Fragrant,Heavenly Scent",,
+74,LER,学習,Learning,,,,,,,50,80,all,2,1,,30,,,14,,,AttbMain,SKILL,attribute,,,primary,,,,,,,,,,,,,exp,,,学習能力や意欲。,The ability and desire to learn.,,,学習,LER,#1は急に色々なことを学びたくなった。,#1 feel/feels studious.,#1の学習意欲は低下した。,#1 lose/loses curiosity.,"珍しさ,つまらない,少し珍しい,珍しい,レア,スーパーレア,ウルトラレア","Rarity,Boring,Slightly Unusual,Unusual,Rare,Super Rare,Ultra Rare",,
+75,WIL,意志,Will,,,,,,,50,80,all,2,1,,30,,,15,,,AttbMain,SKILL,attribute,,,primary,,,,,,,,,,,,,exp,,,精神の強さ。,Strength of spirit.,,,意志,WIL,#1の意志は固くなった。,#your will hardens.,#1は何でもすぐ諦める。,#your will softens.,"コシの強さ,コシがない,少しコシがある,粘り強い,もちもち,伸びる,どこまでも伸びる","Stickiness,Lacks Firmness,Slightly Firm,Resilient,Chewy,Stretchy,Infinitely Stretchy",,
+76,MAG,魔力,Magic,,,,,,,50,80,all,2,1,,30,,,16,,,AttbMain,SKILL,attribute,,,primary,,,,,,,,,,,,,exp,,,魔法や霊的な能力。,Magical and spiritual power.,,,魔力,MAG,#1は魔力の上昇を感じた。,#your magic improves.,#1は魔力の衰えを感じた。,#your magic degrades.,"甘さ,苦い,ほんのり甘い,甘い,はっきり甘い,激甘,砂糖爆弾","Sweetness,Bitter,Slightly Sweet,Sweet,Clearly Sweet,Extremely Sweet,Sugar Bomb",,
+77,CHA,魅力,Charisma,,,,,,,50,80,all,2,1,,30,,,17,,,AttbMain,SKILL,attribute,,,primary,,,,,,,,,,,,,exp,,,人の心をひきつける能力。,Ability to attract people.,,,魅力,CHA,#1は周囲の視線を心地よく感じる。,#1 enjoy/enjoys showing off #his body.,#1は急に人前に出るのが嫌になった。,#1 start/starts to avoid eyes of people.,"見た目,不格好,少し気になる,気になる,綺麗,かわいい,きもかわいい","Appearance,Ugly,Concerning,Eye-Catching,Beautiful,Cute,Creepy Cute",,
+78,LUC,運,Luck,,,,,,,0,0,all,5,1,0,50,,,18,,,AttbMain,SKILL,attribute,,,,,,,0,,,,,,,,,,,,運の強さ。,Strength of luck.,,,運,LUC,#1は幸運になった。,#1 become/becomes lucky.,#1は不幸になった。,#1 become/becomes unlucky.,,,,
+79,SPD,速度,Speed,,,,,,,0,2,all,,1,0,200,,,19,,,AttbMain,SKILL,attribute,,,noRune,,,,0,,,,,,,,,,,,動きの速さ。,Speed of movement.,,,速度,SPD,#1は周りの動きが遅く見えるようになった。,#your speed increases.,#1は遅くなった。,#your speed decreases.,,,,
+80,INT,知力,Intelligence,,,,,,,0,0,,,1,0,30,,,20,,,AttbMain,SKILL,attribute,,,,,,,,,,,,,,,,,,,,,,,,,#1の頭の回転は速くなった。,#your intelligence increases.,#1は愚かになった。,#1 become/becomes dumb.,,,,
+85,piety,信仰心,Piety,,,WIL,,,,0,0,,,1,0,30,,,,,,Piety,ELEMENT,attribute,,,,,,,0,,,,,,,,,,,,信仰心の深さ。,Depth of belief in faith.,,,,,,,,,,,,
+90,critical,クリティカル,Critical,,,,,,,0,50,weapon,,20,100,100,,,,,,Skill,SKILL,enchant,,,"ratio,weaponEnc,modRanged,modCane,modMelee",,,,,,,,,,,,,,,,,,それはクリティカルヒットの機会を増やす。,It increases your chance to deliver critical hits.,,,,,,,,,,
+91,vopal,ヴォーパル,Vorpal,,,,,,,0,50,weapon,,20,50,100,,,,,,Skill,SKILL,enchant,,,"ratio,weaponEnc,modRanged,modCane,modMelee",,,,,,,,,,,,,,,,,,それは完全貫通攻撃発動の機会を増やす。,It gives you a chance to throw an absolute piercing attack.,,,,,,,,,,
+92,penetration,貫通,Penetration,,,,,,,0,25,all,,1,0,100,,,,,,Skill,SKILL,attribute,,,ratio,,,,,,,,,,,,,,,,,,それは攻撃を貫通させる。,It makes your attacks penetrate armors.,,,,,,,,,,
+93,antiMagic,反魔法,Anti Magic,,,,,,,0,25,all,,20,200,100,,,,,,Skill,SKILL,attribute,,,"ratio,modMelee",,,,,,,,,,,,,,,,,,それは反魔法粒子を帯びている。,It is imbued with anti-magic particles.,,,,,,,,,,
+94,dmgDealt,全ダメージ,All Damage,,,,,,,0,0,,,1,0,300,,,,,,Skill,SKILL,attribute,,,ratio,,,,,,,,,,,,,,,,,,それは与えるダメージを上昇させる。,It increases the damage dealt.,,,,,,,,,,
+100,martial,格闘,Martial Art,,,STR,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,,,,,,,,,combat,,,,,,,,格闘の技術。,Indicates your skill while fighting unarmed.,,,,,,,,,,,,
+101,weaponSword,長剣,Long Sword,,,STR,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,,,,,,,,,,,,,,,,,刃渡りの長い剣を扱う技術。,Indicates your skill with long swords.,,,,,,,,,,,,
+102,weaponAxe,斧,Axe,,,STR,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,,,,,,,,,,,,,,,,,斧を扱う技術。,Indicates your skill with axes.,,,,,,,,,,,,
+103,weaponStaff,杖,Staff,,,END,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,,,,,,,,,,,,,,,,,杖を扱う技術。,Indicates your skill with staves.,,,,,,,,,,,,
+104,weaponBow,弓,Bow,,,DEX,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,ranged,,,,,,,,,,,,,,,,弓を扱う技術。,Indicates your skill with bows.,,,,,,,,,,,,
+105,weaponGun,銃,Gun,,,PER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,"ranged,guild,thief",,,,,,,,,,,,,,,,銃器を扱う技術。,Indicates your skill with firearms.,,,,,,,,,,,,
+106,weaponPolearm,槍,Polearm,,,END,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,,,,,,,,,,,,,,,,,槍を扱う技術。,Indicates your skill with polearms.,,,,,,,,,,,,
+107,weaponDagger,短剣,Short Sword,,,DEX,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,,,,,,,,,,,,,,,,,刃渡りの短い剣を扱う技術。,Indicates your skill with short swords.,,,,,,,,,,,,
+108,throwing,投擲,Throwing,,,DEX,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,,,,,,,,,,,,,,,,,投擲道具を扱う技術。,Indicates your skill with throwing objects.,,,,,,,,,,,,
+109,weaponCrossbow,クロスボウ,Crossbow,,,PER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,ranged,,,,,,,,,,,,,,,,クロスボウを扱う技術。,Indicates your skill with crossbows.,,,,,,,,,,,,
+110,weaponScythe,鎌,Scythe,,,STR,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,,,,,,,,,,,,,,,,,鎌を扱う技術。,Indicates your skill with scythes.,,,,,,,,,,,,
+111,weaponBlunt,鈍器,Mace,,,END,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,weapon,,,,,,,,,,,,,,,,,,鈍器を扱う技術。,Indicates your skill with blunt weapons.,,,,,,,,,,,,
+120,armorLight,軽装備,Light Armor,,,DEX,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,,,,,,,,,,,,,,,,,軽い装備を扱う技術。,Skill to effectively act while wearing light armor.,,,,,,,,,,,,
+122,armorHeavy,重装備,Heavy Armor,,,END,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,,,,,,,,,,,,,,,,,重い装備を扱う技術。,Skill to effectively act while wearing heavy armor.,,,,,,,,,,,,
+123,shield,盾,Shield,,,END,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,,,,,,,,,,,,"5,盾スタイル時に物理軽減 +10%
+10,シールドバッシュ(自動)","5,10% Reduced physical damage when using shield style
+10,Shield Bash (Passive)",,,,盾を扱う技術。,Increases the effectivness of using shields.,,,,,,,,,,,,
+130,twohand,両手持ち,Two Handed,,,STR,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,,,,,,,,,,,,"15,武器エンチャントの効果 +25%
+30,武器エンチャントの効果 +50%","15,Weapon enchantment effect +25%
+30,Weapon enchantment effect +50%",,,,両手で武器を扱う技術。,Used when wielding a weapon with both hands.,,,,,,,,,,,,
+131,twowield,二刀流,Dual Wield,,,DEX,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,"guild,fighter",,,,,,,,,,,"25,命中ペナルティ減少
+50,命中ペナルティ減少","25,Reduced accuracy penalty
+50,Reduced accuracy penalty",,,,複数の武器を扱う技術。,Used when wielding two weapons at the same time.,,,,,,,,,,,,
+132,tactics,戦術,Tactics,,,PER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,"guild,fighter",,,,,,,,,,,,"5,ActRush",,,,近接攻撃の威力をあげる。,Increases melee damage.,それは戦術の理解を深める。,It makes you a better tactician.,,,,,,,,,,
+133,marksman,射撃,Marksman,,,PER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,"guild,thief",,,,,,,,,,,,,,,,射撃の威力をあげる。,Increases shooting damage.,それは射撃の理解を深める。,It makes you a better marksman.,,,,,,,,,,
+134,eyeofmind,心眼,Eye of Mind,,,PER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,"guild,fighter",,,,,,,,,,,,,,,,クリティカル率を高める。,Increases your chance to deliver critical hits.,それは敵の弱点の発見を容易にする。,It makes it easier to spot weaknesses.,,,,,,,,,,
+135,strategy,戦略,Strategy,,,LER,,,0,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,noPet,,,,,,,,,,,,,,,,作戦の成功率をあげる。,Enhances the effectiveness of your strategy.,それは戦略の理解を深める。,It makes you a better strategist.,,,,,,,,,,
+150,evasion,回避,Evasion,,,PER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,,,,,,,,,,,,,,,,,攻撃を回避する。,Increases your chance of evading enemy attacks.,それは回避を容易にする。,It makes it easier to evade.,,,,,,,,,,
+151,evasionPlus,見切り,Greater Evasion,,,PER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,combat,,"guild,thief",,,,,,,,,,,,,,,,不正確な攻撃を確実に避ける。,Makes you able to evade inaccurate attacks.,それは見切りの腕をあげる。,It makes it easier to anticipate attacks.,,,,,,,,,,
+152,stealth,隠密,Stealth,,,PER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,,,,,,,,,,,,,,,,,周囲に気づかれず行動する。,Allows you to move quietly.,それは隠密能力を強化する。,It strengthens your ability to hide.,,,,,,,,,,
+200,swimming,水泳,Swimming,,,END,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,,,,,,,,,,,,,,,,,水中での移動を容易にする。,Allows you to move easier in water.,それは水中での移動を容易にする。,It makes you a better swimmer.,,,,,,,,,,
+207,weightlifting,重量上げ,Weightlifting,,,STR,,,10,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,,,,,,,,,,,,,,,,,重い荷物を持ち運ぶことを可能にする。,Allows you to carry more stuff.,それはより重い物の運搬を可能にする。,It makes you better at weight lifting.,,,,,,,,,,
+210,spotting,探索,Spot Hidden,,,PER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,stealth,,,,,,,,,,,1,,,,,,,隠された場所や罠を見つける。,Allows you to search hidden locations and traps.,それは探知能力を強化する,It strengthens your ability to detect objects.,,,,,,,,,,
+220,mining,採掘,Mining,,,STR,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,labor,,noPet,,,,,,,,,1,,,,,,,壁を掘る効率をあげる。,Shows how good of a miner you are.,それは採掘能力を強化する。,It enhances your mining skill.,,,,,,,,,,
+225,lumberjack,木こり,Lumberjacking,,,END,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,labor,,noPet,,,,,,,,,1,,,,,,,木を伐採する効率を上げる。,Shows how good of a lumberjacker you are.,それは伐採能力を強化する。,It enhances your lumberjacking skill.,,,,,,,,,,
+226,riding,乗馬,Riding,,,WIL,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,noPet,,,,,,,,,1,,,"1,ActRide",,,,上手に乗りこなす。,Allows you to ride creatures.,それは乗馬の腕をあげる。,It enhances your ability to ride.,,,,,,,,,,
+227,parasite,共生,Symbiosis,,,CHA,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,noPet,,,,,,,,,1,,,"1,ActParasite",,,,上手に寄生される。,Allows your ally to parasitize on you.,それは宿主の素質をあげる。,It enhances your ability to host.,,,,,,,,,,
+230,digging,穴掘り,Digging,,,STR,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,labor,,noPet,,,,,,,,,1,,,,,,,床や穴を掘る効率を上げる。,Shows how good of a digger you are.,それは穴掘り能力を強化する。,It enhances your digging skill.,,,,,,,,,,
+235,milking,乳搾り,Milking,,,WIL,,,20,100,50,,,1,20,20,,,,,,Skill,SKILL,skill,labor,,"unused,noPet",,,,,,,,,1,,,,,,,動物から乳を絞る。,Allows you to milk animals.,それは乳搾りの腕をあげる。,It makes you milk better.,,,,,,,,,,
+237,taming,調教,Taming,,,END,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,labor,,noPet,,,,,,,,,1,,,,,,,動物を育成する。,Allows you to nurse animals.,それは調教の腕をあげる。,It makes you understand animals better.,,,,,,,,,,
+240,travel,旅歩き,Travel,,,WIL,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,"guild,merchant,noPet",,,,,,,,,1,,,,,,,旅の進行を早め経験を深める。,Allows you to receive more EXP from traveling.,それは旅の熟練をあげる。,It makes you a better traveler.,,,,,,,,,,
+241,music,演奏,Music,,,CHA,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,general,,noPet,,,,,,,,,1,,,,,,,質の高い演奏を可能にする。,Shows how good of a performer you are.,それは演奏の質をあげる。,It makes your performance better.,,,,,,,,,,
+242,climbing,クライミング,Climbing,,,END,,,20,100,50,,,1,20,20,,,,,,Skill,SKILL,skill,general,,"unused,noPet",,,,,,,,,1,,,,,,,高い場所や山岳地の移動を容易にする。,Allows you to move easier in mountain or elavated terrain.,それは登頂を容易にする。,It makes you a better climber.,,,,,,,,,,
+245,fishing,釣り,Fishing,,,WIL,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,labor,,,,,,,,,,,1,,,,,,,釣りを可能にする。,Allows you to fish.,それは釣りの腕をあげる。,It makes you a better fisher.,,,,,,,,,,
+250,gathering,採取,Gathering,,,LER,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,labor,,noPet,,,,,,,,,1,,,,,,,採取の効率を上げる。,Shows how good of a gatherer you are.,それは採取能力を強化する。,It enhances your gathering skill.,,,,,,,,,,
+255,carpentry,木工,Carpentry,,,STR,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,craft,,noPet,,,,,,,,,1,,,,,,,木を加工し、アイテムを作り出す。,Skill to manufacture wood products.,それは木工の腕をあげる。,It makes you a better carpenter.,,,,,,,,,,
+256,blacksmith,鍛冶,Blacksmith,,,STR,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,craft,,noPet,,,,,,,,,1,,,,,,,金属を加工し、アイテムを作り出す。,Skill to manufacture metal products.,それは鍛冶の腕をあげる。,It makes you a better blacksmith.,,,,,,,,,,
+257,alchemy,錬金,Alchemy,,,LER,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,craft,,noPet,,,,,,,,,1,,,,,,,様々な材料を調合し、ポーションを作り出す。,Enables you to perform alchemy.,それは錬金の腕をあげる。,It grants you knowledge of alchemy.,,,,,,,,,,
+258,sculpture,彫刻,Sculpting,,,END,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,craft,,noPet,,,,,,,,,1,,,,,,,石を加工し、アイテムを作り出す。,Skill to carve and engrave stones.,それは彫刻の腕を上げる。,It makes you a better sculptor.,,,,,,,,,,
+259,jewelry,宝石細工,Jewelry,,,DEX,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,craft,,noPet,,,,,,,,,1,,,,,,,宝石を加工し、アイテムを作り出す。,Skill to process jewels and manufucture products.,それは宝石細工の腕をあげる。,It makes you a better jeweler.,,,,,,,,,,
+260,weaving,裁縫,Weaving,,,DEX,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,craft,,noPet,,,,,,,,,1,,,,,,,布や革を用い、アイテムを作り出す。,Skill to sew materials and manufucture products.,それは裁縫の腕をあげる。,It makes you a better tailor.,,,,,,,,,,
+261,handicraft,製作,Crafting,,,DEX,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,craft,,noPet,,,,,,,,,1,,,,,,,手芸品や作業台を作る。,Skill to craft basic stuff and workbenches.,それは製作の腕を上げる。,It makes you a better crafter.,,,,,,,,,,
+280,lockpicking,鍵開け,Lockpicking,,,DEX,,,15,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,stealth,,noPet,,,,,,,,,1,,,,,,,より高度な鍵の解錠を可能にする。,Allows you to pick more difficult locks.,それは鍵開けの能力を強化する。,It grants you the trick of lock picking.,,,,,,,,,,
+281,stealing,窃盗,Pickpocket,,,DEX,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,stealth,,"guild,thief,noPet",,,,,,,,,1,,,"1,AI_Steal",,,,気付かれずに貴重な物品を盗む。,Shows how good of a thief you are.,それは窃盗の腕をあげる。,It grants you the trick of pickpocketing.,,,,,,,,,,
+285,reading,読書,Literacy,,,LER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,,,,,,,,,,,,,,,,,難解な本の解読を可能にする。,Allows you to read difficult books.,それは本の理解を深める。,It makes you literate.,,,,,,,,,,
+286,farming,農業,Farming,,,END,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,labor,,noPet,,,,,,,,,1,,,,,,,植物や作物を育てて収穫する。,Skill to plant seeds and gather harvests.,それは農作業の腕をあげる。,It grants you knowledge of farming.,,,,,,,,,,
+287,cooking,料理,Cooking,,,LER,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,craft,,noPet,,,,,,,,,1,,,,,,,料理の腕を上げる。,Improves your skill to cook.,それは料理の腕を上げる。,It enhances your cooking skill.,,,,,,,,,,
+288,building,建築,Construction,,,END,,,20,100,,,,1,200,20,,,,,,Skill,SKILL,skill,craft,,"unused,noPet",,,,,,,,,1,,,,,,,建築の腕を上げる。,Improves your skill to build.,それは建築の腕を上げる。,It enhances your construction skill.,,,,,,,,,,
+289,appraising,鑑定,Appraising,,,LER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,"merchant,noPet",,,,,,,,,1,,"20,高品質の鑑定","20,Appraise Good Quality",,,,装備やアイテムを判別する。,Allows you to appraise stuff.,それは未鑑定の品の判別を容易にする。,It makes it easier to appraise stuff.,,,,,,,,,,
+290,anatomy,解剖学,Anatomy,,,LER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,,,,,,,,,,1,,,,,,,死体を残しやすくする。,Gives you a better chance of finding dead bodies.,それは死体を残しやすくする。,It grants you knowledge of anatomy.,,,,,,,,,,
+291,negotiation,交渉術,Negotiation,,,CHA,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,mind,,"guild,merchant",,,,,,,,,1,,,,,,,交渉や商談を有利に進める。,Convinces someone to give you better deals.,それは交渉を有利に進めさせる。,It grants you knowledge of negotiation.,,,,,,,,,,
+292,investing,投資,Investing,,,CHA,,,20,100,50,all,,1,20,20,,,,,,Skill,SKILL,skill,mind,,noPet,,,,,,,,,1,,,,,,,効果的に投資を行う。,Lowers the money needed to invest in shops.,それはより安い価格での投資を可能にする。,It grants you knowledge of investing.,,,,,,,,,,
+293,disarmTrap,罠解体,Disarm Trap,,,DEX,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,stealth,,,,,,,,,,,1,,,,,,,複雑な罠の解体を可能にする。,Allows you to disarm harder traps.,それは罠の解体を容易にする。,It grants you the trick of disarming traps.,,,,,,,,,,
+300,regeneration,自然治癒,Regeneration,,,END,,,10,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,general,,,,,,,,,,,,,,,,,,怪我を自然に治癒する。,Gradually heals your wounds.,それは再生能力を高める。,It accelerates regeneration of body.,,,,,,,,,,
+301,meditation,瞑想,Meditation,,,WIL,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,mind,,,,,,,,,,,,,,,,,,消耗したマナを回復させる。,Gradually restores your magic points.,それはマナ回復を強化する。,It enhances your meditation.,,,,,,,,,,
+302,controlmana,魔力制御,Control Magic,,,MAG,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,mind,,"guild,mage",,,,,,,,,,,,,,,,魔法による仲間のまきこみを軽減する。,Prevents your allies from getting hit by your spells.,それはより高度な魔力制御を可能にさせる。,It enhances your ability to control magics.,,,,,,,,,,
+303,manaCapacity,魔力の限界,Magic Capacity,,,MAG,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,mind,,"guild,mage",,,,,,,,,,,,,,,,マナの反動から身を守る。,Reduces kickback damage from over casting.,それは魔力の限界を上昇させる。,It strengthens your magic capacity.,,,,,,,,,,
+304,casting,詠唱,Casting,,,MAG,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,mind,,,,,,,,,,,,,,,,,,魔法詠唱の成功率をあげる。,Reduces the chance of casting failure.,それはより高度な詠唱を可能にさせる。,It enhances your casting ability.,,,,,,,,,,
+305,magicDevice,魔道具,Magic Device,,,MAG,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,stealth,,,,,,,,,,,,,,,,,,道具から魔力を効果的に引き出す。,Improves effectiveness of magic devices.,それは魔道具の効果をあげる。,It enhances power of magical devices.,,,,,,,,,,
+306,faith,信仰,Faith,,,WIL,,,20,100,50,all,,1,10,20,,,,,,Skill,SKILL,skill,mind,,,,,,,,,,,,,,,,,,神との距離を近める。,Gets you closer to god.,それは信仰を深める。,It makes you pious.,,,,,,,,,,
+307,memorization,暗記,Memorization,,,LER,,,20,100,,all,,1,200,20,,,,,,Skill,SKILL,skill,mind,,"guild,mage,noPet",,,,,,,,,,,,,,,,書物から得た知識を記憶する。,Helps you memorize additional spell stocks.,それは魔法の知識の忘却を防ぐ。,It enhances your memory.,,,,,,,,,,
+310,hygine,衛生,Hygine,,,,,,,,,,,,,,,,,,,Skill,SKILL,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+311,bladder,トイレ,Bladder,,,,,,,,,,,,,,,,,,,Skill,SKILL,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+312,fun,楽しさ,Fun,,,,,,,,,,,,,,,,,,,Skill,SKILL,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+313,env,環境,Environment,,,,,,,,,,,,,,,,,,,Skill,SKILL,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+380,counter,カウンター,Counter,,,,,,,0,0,shield,,1,300,40,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは近接攻撃を回避した時に反撃を可能にする。,It allows you to counter when you dodge a melee strike.,,,,,,,,,,
+381,basher,盾の暴君,Shield Tyrant,,,,,,,,,shield,,1,300,30,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それはシールドバッシュを強化する。,It strengthens your Shield Bash.,,,,,,,,,,
+382,rusher,突撃者,Rusher,,,,,,,,,shield,,1,500,20,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それは突進を強化する。,It strengthens your Rush.,,,,,,,,,,
+383,redirect_blaser,エネルギー反射,Energy Redirection,,,,,,,0,0,shield,,1,20,30,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは光弾を射撃手に跳ね返す。,It reflects the blaster bolt back at the shooter.,,,,,,,,,,
+400,negateTeleport,テレポート妨害,Anti-Teleport,,,,,,,0,0,all,,1,200,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはテレポートを妨害する。,It prevents teleportation.,,,,,,,,,,
+401,levitation,浮遊,Levitation,,,,,,,0,0,all,,1,200,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはあなたを浮遊させる。,It makes you float.,,,,,,,,,,
+402,searchRange,探知距離,Search Range,,,,,,,,,,,,,,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それはあなたの探知範囲を上昇させる。,It increases your search range.,,,,,,,,,,
+403,expMod,早覚え,Fast Learn,,,,,,,,,,,,,,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,フィートの獲得に必要な経験値の減少。,Decrease the exp required to gain feat.,それはあなたの成長を速くする。,It accelerates your growth.,,,,,,,,,,
+404,weightMod,重量軽減,Weight Reduction,,,,,,,,,,,,,,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それはあなたの所持品の重量を軽減する。,It reduces the weight of your belongings.,,,,,,,,,,
+405,slowDecay,腐敗防止,Slow Decay,,,,,,,,,,,,,,,,,,,Skill,ENC,enchant,,,foodEnc,,,,,,,,,,,,,slowDecay,,,,,それは腐敗の速度を遅くする。,It slows the process of decay.,,,,,,,"腐敗,腐りやすい,気持ち腐りにくい,少し腐りにくい,腐りにくい,腐りにくい,腐らない","Decay,Accelerate Decay,Slightly Slow Decay,Slightly Slow Decay,Slow Decay,Slow Decay,Never Decay",,
+406,resMutation,変異耐性,Resist Mutation,,,,,,,0,0,all,,10,200,100,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはあなたを変異から保護する。,It protects you from mutation.,,,,,,,,,,
+407,travelSpeed,旅速度上昇,Fast Journey,,,,,,,0,5,foot,,20,0,200,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それはあなたの旅の進行を速くする。,It speeds up your travel progress.,,,,,,,,,,
+408,resWeather,悪天候耐性,Protection from weather,,,,,,,,,"back,finger",,30,0,200,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは雷雨と雪による足止めを無効にする。,It negates the effect of being stranded by bad weather.,,,,,,,,,,
+409,corruption,エーテル活性化,Accelerate Ether,,,,,,,,,all,,1,0,0,,,,,,Skill,ENC,enchant,,,neg,,,,,,,,,,,,,,,,,,それはエーテル病の進行を早める。,It accelerates the progression of the Ether disease.,,,,,,,,,,
+410,throwReturn,ブーメラン,Boomerang,,,,,,,,,all,,1,0,0,,,,,,Skill,ENC,enchant,,,"flag,weaponEnc",,,,,,,,,,,,,,,,,,それは持ち主の手元に戻ってくる。,It returns to your hand.,,,,,,,,,,
+411,encSpell,魔法強化,Enhance Spell,,,,,,,0,25,all,,30,150,150,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それは魔法を強化する。,It enhances your spells.,,,,,,,,,,
+412,slowCorruption,エーテル鈍化,Slow Ether,,,,,,,,,,,1,0,0,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それはエーテル病の進行を遅くする。,It slows the progression of the Ether disease.,,,,,,,,,,
+414,encHit,慧眼,True Sight,,,,,,,0,25,all,,30,150,150,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それは攻撃の精度を高める。,It enhances attack accuracy.,,,,,,,,,,
+415,invisibility,透明化,Invisibility,,,,,,,0,0,all,,1,0,0,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはあなたを透明にする。,It makes you invisible.,,,,,,,,,,
+416,seeInvisible,透明可視,See Invisible,,,,,,,0,0,head,,15,100,100,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは透明なものを見ることを可能にする。,It lets you see invisible objects.,,,,,,,,,,
+417,loving,愛情促進,Loving,,,,,,,0,0,all,,15,10,100,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはあなたの愛への耐性を下げる。,It lowers your resistance to love.,,,,,,,,,,
+418,innocence,純潔,Innocence,,,,,,,0,0,all,,15,10,100,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはよこしまな欲望からあなたを守る。,It protects you from impure desires.,,,,,,,,,,
+419,encTail,動く尻尾,Moving Tail,,,,,,,0,0,waist,,40,0,100,,,,,,Skill,ENC,enchant,,,"flag,noRune",,,,,,,,,,,,,,,,,,それは移動の邪魔にならない。,It does not get in the way of movement.,,,,,,,,,,
+420,negatePoison,毒無効,Immunity to poison,,,,,,,0,0,all,,1,,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは毒を無効にする。,It negates the effect of poison.,,,,,,,,,,
+421,negateBlind,盲目無効,Immunity to blind,,,,,,,0,0,all,,1,,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは盲目を無効にする。,It negates the effect of blindness.,,,,,,,,,,
+422,negateParalysis,麻痺無効,Immunity to paralysis,,,,,,,0,0,all,,1,,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは麻痺を無効にする。,It negates the effect of paralysis.,,,,,,,,,,
+423,negateFear,恐怖無効,Immunity to fear,,,,,,,0,0,all,,1,,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは恐怖を無効にする。,It negates the effect of fear.,,,,,,,,,,
+424,negateSleep,睡眠無効,Immunity to sleep,,,,,,,0,0,all,,1,,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは睡眠を無効にする。,It negates the effect of sleep.,,,,,,,,,,
+425,negateConfusion,混乱無効,Immunity to confusion,,,,,,,0,0,all,,1,,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは混乱を無効にする。,It negates the effect of confusion.,,,,,,,,,,
+426,negateSteal,盗難無効,Immunity to pickpocket,,,,,,,0,0,all,,1,500,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはアイテムを盗まれなくする。,It protects you from thieves.,,,,,,,,,,
+427,negateNeckHunt,首狩り無効,Immunity to neck hunt,,,,,,,0,0,"head,neck",,1,,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはあなたの首を保護する。,It protects your neck.,,,,,,,,,,
+428,allNeckHunt,収穫する者,Life Harvester,,,,,,,,,"head,neck",,1,0,50,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それはあらゆる攻撃で命を収穫する。,It harvests life with any attack.,,,,,,,,,,
+429,breathing,水中呼吸,Water Breathing,,,,,,,0,0,all,,1,200,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは水中での呼吸を可能にする。,It lets you breathe underwater.,,,,,,,,,,
+430,negateShockwave,衝撃波無効,Immunity to shockwave,,,,,,,0,0,foot,,75,50,100,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは衝撃波からあなたを守る。,It protects you from shockwave.,,,,,,,,,,
+431,negateSunburn,日焼け無効,Immunity to sunburn,,,,,,,0,0,head,,25,30,150,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは太陽の光からあなたを守る。,It protects you from sunlight.,,,,,,,,,,
+432,sanctified,清浄,Sanctified,,,,,,,0,0,,,15,10,100,,,,,,Skill,ENC,enchant,,,"flag,itemEnc",,,,,,,,,,,,,,,,,,それは吸血鬼からあなたを守る。,It protects you from vampires,,,,,,,,,,
+435,defense_range,射撃防御,Ranged Defense,,,,,,,,,shield,,1,200,30,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それは射撃や投擲からあなたを守る。,It protects you from ranged and thrown attacks.,,,,,,,,,,
+436,guts,不屈,Guts,,,,,,,,,shield,,1,200,100,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それは体力が半分以上ある時に敵からの致死攻撃を防ぐ。,It prevents lethal attacks from enemies when your health is above half.,,,,,,,,,,
+437,parry,パリィ,Parry,,,,,,,,,shield,,1,200,40,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それは敵の近接攻撃を受け流し反撃を可能にする。,It enables you to deflect and counter the enemy’s melee attack.,,,,,,,,,,
+438,knightly,騎士道精神,Knightly Spirit,,,,,,,,,shield,,1,200,50,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはあなたより傷ついた仲間への攻撃を肩代わりする。,It intercepts attacks aimed at allies more wounded than you.,,,,,,,,,,
+439,negateParry,影抜き,Shadow Slip,,,,,,,0,0,arm,,1,50,100,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは敵に受け流しや反撃を許さない。,It forbids enemy retaliation.,,,,,,,,,,
+440,sustain_STR,筋力維持,Sustain Strength,,,,,,,0,0,all,,1,,20,,,,,,Skill,ENC,enchant,,,"flag,foodpot",,,,,,,,,,,,,"pot,STR",,,,,それはあなたの筋力を維持する。,It sustains your Strength.,筋力潜在,STR Potency,,,,,"コク,淡白,独特の味,クリーミー,まろやか,濃厚,こくまろ","Richness,Bland,Creamy,Mellow,Thick,Rich,Velvety",,
+441,sustain_END,耐久維持,Sustain Endurance,,,,,,,0,0,all,,1,,20,,,,,,Skill,ENC,enchant,,,"flag,foodpot",,,,,,,,,,,,,"pot,END",,,,,それはあなたの耐久を維持する。,It sustains your Endurance.,耐久潜在,END Potency,,,,,"密度,すかすか,ちょっとぎっしり,ぎっしり,みっちり,パンパン,濃縮,超特濃縮","Density,Hollow,Somewhat Dense,Dense,Very Dense,Bursting,Concentrated,Ultra Concentrated",,
+442,sustain_DEX,器用維持,Sustain Dexterity,,,,,,,0,0,all,,1,,20,,,,,,Skill,ENC,enchant,,,"flag,foodpot",,,,,,,,,,,,,"pot,DEX",,,,,それはあなたの器用を維持する。,It sustains your Dexterity.,器用潜在,DEX Potency,,,,,"繊細さ,無骨,おおざっぱ,華奢,繊細,非常に繊細,極めて繊細","Delicacy,Coarse,Rough,Slightly Rough,Delicate,Extremely Delicate,Utterly Delicate",,
+443,sustain_PER,感覚維持,Sustain Perception,,,,,,,0,0,all,,1,,20,,,,,,Skill,ENC,enchant,,,"flag,foodpot",,,,,,,,,,,,,"pot,PER",,,,,それはあなたの感覚を維持する。,It sustains your Perception.,感覚潜在,PER Potency,,,,,"色彩,曇った色,薄い色,カラフル,鮮やか,鮮烈,万色","Color,Dull Color,Pale Color,Colorful,Bright,Vivid,Rainbow Color",,
+444,sustain_LER,学習維持,Sustain Learning,,,,,,,0,0,all,,1,,20,,,,,,Skill,ENC,enchant,,,"flag,foodpot",,,,,,,,,,,,,"pot,LER",,,,,それはあなたの学習を維持する。,It sustains your Learning.,学習潜在,LER Potency,,,,,"ビタミン,有害物質,ビタミン微量,ビタミン少量,ビタミン中量,ビタミン大量,ビタミン豊富,ビタミンの宝庫","Vitamins,Harmful Substance,Trace Vitamins,Small Vitamins,Moderate Vitamins,Large Vitamins,Abundant Vitamins,Treasure Trove Vitamins",,
+445,sustain_WIL,意志維持,Sustain Will,,,,,,,0,0,all,,1,,20,,,,,,Skill,ENC,enchant,,,"flag,foodpot",,,,,,,,,,,,,"pot,WIL",,,,,それはあなたの意志を維持する。,It sustains your Will.,意志潜在,WIL Potency,,,,,"歯ごたえ,ふにゃふにゃ,ポリポリ,シャキシャキ,サクサク,ザクザク,カリカリ","Mushy,Soggy,Flaky,Crispy,Very Crispy,Snappy",,
+446,sustain_MAG,魔力維持,Sustain Magic,,,,,,,0,0,all,,1,,20,,,,,,Skill,ENC,enchant,,,"flag,foodpot",,,,,,,,,,,,,"pot,MAG",,,,,それはあなたの魔力を維持する。,It sustains your Magic.,魔力潜在,MAG Potency,,,,,"刺激,退屈,やや刺激的,刺激的,スパイシー,とてもスパイシー,恐ろしくスパイシー","Spiciness,Tasteless,Somewhat Spicy,Spicy,Very Spicy,Extremely Spicy,Intensely Spicy",,
+447,sustain_CHA,魅力維持,Sustain Charisma,,,,,,,0,0,all,,1,,20,,,,,,Skill,ENC,enchant,,,"flag,foodpot",,,,,,,,,,,,,"pot,CHA",,,,,それはあなたの魅力を維持する。,It sustains your Charisma.,魅力潜在,CHA Potency,,,,,"艶,ざらざら,僅かな光沢,つるつる,つやつや,艶やか,魅惑の光沢","Gloss,Sandy,Slightly Glossy,Glossy,Shiny,Lustrous,Bewitchingly Shiny",,
+450,sustain_figure,体型維持,Sustain Body Figure,,,,,,,0,0,all,,1,100,20,,,,,,Skill,ENC,enchant,,,"flag,freeRune",,,,,,,,,,,,,,,,,,それはあなたの体型を維持する。,It sustains your body figure.,,,,,,,,,,
+460,bane_dragon,竜特攻,Dragon Bane,,,,,,,,,weapon,,30,200,100,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは竜に対して絶大な威力を発揮する。,It inflicts massive damage to dragons.,,,,,,,,,,
+461,bane_undead,アンデッド特攻,Undead Bane,,,,,,,,,weapon,,1,400,50,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それはアンデッドに対して絶大な威力を発揮する。,It inflicts massive damage to undeads.,,,,,,,,,,
+462,bane_fairy,妖精特攻,Fairy Bane,,,,,,,,,weapon,,20,200,50,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは妖精に対して絶大な威力を発揮する。,It inflicts massive damage to fairies.,,,,,,,,,,
+463,bane_animal,動物特攻,Animal Bane,,,,,,,,,weapon,,1,800,50,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは動物に対して絶大な威力を発揮する。,It inflicts massive damage to animals.,,,,,,,,,,
+464,bane_man,人間特攻,Man Bane,,,,,,,,,weapon,,1,600,50,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは人間に対して絶大な威力を発揮する。,It inflicts massive damage to humanoids.,,,,,,,,,,
+465,bane_machine,機械特攻,Machine Bane,,,,,,,,,weapon,,20,500,50,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは機械に対して絶大な威力を発揮する。,It inflicts massive damage to machines.,,,,,,,,,,
+466,bane_god,神特攻,God Bane,,,,,,,,,weapon,,50,50,200,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは神に対して絶大な威力を発揮する。,It inflicts massive damage to gods.,,,,,,,,,,
+467,bane_fish,魚特攻,Fish Bane,,,,,,,,,weapon,,20,50,100,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは魚介類に対して絶大な威力を発揮する。,It inflicts massive damage to fishes.,,,,,,,,,,
+468,bane_all,全特攻,All Bane,,,,,,,,,weapon,,40,30,200,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは全ての存在に対して絶大な威力を発揮する。,It inflicts massive damage to all beings.,,,,,,,,,,
+480,strongStomach,鉄の胃袋,Iron Stomach,,,,,,,0,0,all,,1,,20,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは腐ったものを難なく消化させる。,It lets you digest rotten things.,,,,,,,,,,
+481,revealFaith,信仰感知,Detect Faith,,,,,,,0,0,head,,10,,20,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは他者の信仰を明らかにする。,It reveals the faith of others.,,,,,,,,,,
+482,force_weapon,理力,Force Weapon,,,,,,,0,0,weapon,,10,100,100,,,,,,Skill,ENC,enchant,,,"flag,weaponEnc",,,,,,,,,,,,,,,,,,それは理力によって振るわれる。,It is wielded by the power of the Force.,,,,,,,,,,
+483,optimizeMana,マナ運用,Mana Optimization,,,,,,,,,all,,25,100,100,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それはあなたのマナの消費を抑える。,It reduces your mana consumption.,,,,,,,,,,
+484,slot_rune,ルーンの器,Rune Vessel,,,,,,,0,0,all,,10,0,150,,,,,,Skill,ENC,enchant,,,noRune,,,,,,,,,,,,,,,,,,それは追加のルーンを刻印できる。,It can be infused with additional runes.,,,,,,,,,,
+485,nonLethal,慈悲の重み,Weight Of Compassion,,,,,,,0,0,weapon,,10,0,100,,,,,,Skill,ENC,enchant,,,"flag,weaponEnc,noRune",,,,,,,,,,,,,,,,,,それは殴った相手を殺さない。,It does not kill the target.,,,,,,,,,,
+486,safetyMeasure,事故防止,Safety Measure,,,,,,,0,0,weapon,,10,0,100,,,,,,Skill,ENC,enchant,,,"flag,noRune",,,,,,,,,,,,,,,,,,それは攻撃による発動効果や他の武器での攻撃を無効にする。,It disables on-hit effects and other weapon attacks.,,,,,,,,,,
+487,creativeChef,創作料理家,Creative Chef,,,,,,,0,0,head,,10,0,100,,,,,,Skill,ENC,enchant,,,"flag,noRune",,,,,,,,,,,,,,,,,,それは独創的な調理を可能にする。,It lets you cook creatively.,,,,,,,,,,
+488,deathagony,断末魔の叫び,Death Agony,,,,,,,0,25,,,10,0,100,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それは断末魔の叫びを上げる。,It screams in its death throes.,,,,,,,,,,
+489,music_drunk,魂の旋律,Melody of the Soul,,,,,,,0,100,,,10,0,100,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それは聴衆を酔わせる。,It mesmerizes the audience.,,,,,,,,,,
+490,farsee,千里眼,farseer,,,,,,,0,0,head,,40,0,300,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それはより遠くを見ることを可能にする。,It allows you to see farther.,,,,,,,,,,
+491,negateGravity,重力無効,Immunity to Gravity,,,,,,,0,0,,,1,0,100,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは重力からあなたを守る。,It protects you from gravity.,,,,,,,,,,
+600,mod_ammo,弾倉追加,Extra Magazine,,,,,,,,,,,1,,20,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged",,,,,,,,,,,,,,,,,,それは矢弾の最大装填数を増加させる。,It increases the maximum ammunition capacity.,,,,,,,,,,
+601,mod_reload,リロード加速,Fast Reload,,,,,,,,,,,1,,30,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged",,,,,,,,,,,,,,,,,,それは矢弾のリロード時間を短縮する。,It reduces the reload time for the weapon.,,,,,,,,,,
+602,mod_rapid,速射,Rapid Fire,,,,,,,,,,,1,200,100,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは連続で射撃を可能にする。,It makes the weapon fire multiple times.,,,,,,,,,,
+603,mod_ammo_knockback,ノックバック,Knockback,,,,,,,,,,,1,300,50,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは相手をノックバックさせる。,It knocks back the target when hit.,,,,,,,,,,
+604,mod_ammo_recover,弾回収,Ammo Recovery,,,,,,,,,,,1,500,40,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは射撃時に矢弾を回収する。,It recovers ammunition upon firing.,,,,,,,,,,
+605,mod_precision,精密射撃,Sharpshooter,,,,,,,,,,,1,300,60,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは射撃時の距離によるペナルティを抑える。,It minimizes the penalty for shooting at distance.,,,,,,,,,,
+606,mod_drill,突貫,Drill,,,,,,,,,,,1,0,50,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは被弾した相手を突き抜ける。,It drills through the target when hit.,,,,,,,,,,
+607,mod_scatter,拡散,Scatter,,,,,,,,,,,1,0,50,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは対象の周囲も攻撃する。,It strikes the area around the target.,,,,,,,,,,
+608,mod_splash,衝撃波,Shockwave,,,,,,,,,weapon,,1,300,50,,,,,,Skill,ENC,enchant,,,weaponEnc,,,,,,,,,,,,,,,,,,それは対象の地点に衝撃波を発生させる。,It generates a shockwave at the target's location.,,,,,,,,,,
+609,mod_talisman,護符節約,Charm Saving,,,,,,,,,weapon,,1,300,50,,,,,,Skill,ENC,enchant,,,"weaponEnc,modRanged,modCane",,,,,,,,,,,,,,,,,,それは霊符や唄の消費を減らす。,It reduces the consumption of talismans and intonations.,,,,,,,,,,
+620,mod_chaser,追尾,Chase,,,,,,,,,weapon,,1,300,50,,,,,,Skill,ENC,enchant,,,weaponEnc,,,,,,,,,,,,,,,,,,それは攻撃を回避した対象に追撃する。,It pursues the target that evades an attack.,,,,,,,,,,
+621,mod_flurry,連撃,Flurry,,,,,,,,,weapon,,1,300,50,,,,,,Skill,ENC,enchant,,,weaponEnc,,,,,,,,,,,,,,,,,,それは対象を連続して攻撃する。,It unleashes consecutive attacks on the target.,,,,,,,,,,
+622,mod_cleave,旋風,Cleave,,,,,,,,,weapon,,1,300,50,,,,,,Skill,ENC,enchant,,,weaponEnc,,,,,,,,,,,,,,,,,,それは対象に隣接する敵を攻撃する。,It attacks enemies adjacent to the target.,,,,,,,,,,
+623,mod_feint,牽制,Feint,,,,,,,,,weapon,,1,300,50,,,,,,Skill,ENC,enchant,,,weaponEnc,,,,,,,,,,,,,,,,,,それは対象の行動を阻害する。,It disrupts the target's actions.,,,,,,,,,,
+624,mod_frustration,逆襲,Frustration,,,,,,,,,weapon,,1,300,50,,,,,,Skill,ENC,enchant,,,weaponEnc,,,,,,,,,,,,,,,,,,それは攻撃を回避した対象に渾身の一撃を浴びせる。,It delivers a decisive blow to the target that evades an attack.,,,,,,,,,,
+640,r_life,生命力倍率,Life Multiplier,,,,life,,,,,,,,0,,,,,,,Skill,ENC,enchant,,,"multiplier,ratio",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+641,r_mana,マナ倍率,Mana Multiplier,,,,mana,,,,,,,,0,,,,,,,Skill,ENC,enchant,,,"multiplier,ratio",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+650,r_DV,DV倍率,DV Multiplier,,,,DV,,,,,,,,0,,,,,,,Skill,ENC,enchant,,,"multiplier,ratio",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+651,r_PV,PV倍率,PV Multiplier,,,,PV,,,,,,,,0,,,,,,,Skill,ENC,enchant,,,"multiplier,ratio",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+652,eco,エコ,Eco,,,,,,,,,all,,1,0,0,,,,,,Skill,ENC,enchant,,,"trait,noInherit",,,,,,,,,,,,,,,,,,,,軽量化,Lighten,,,,,"エコ,イルヴァに厳しい,イルヴァに優しい","Eco,Tough on Ylva,Gentle on Ylva",,
+653,living,生きている,Living,,,,,,,,,all,,1,0,200,,,,,,Skill,ENC,enchant,,,noRune,,,,,,,,,,,,,,,,,,それは生きている。,It is alive.,,,,,,,,,,
+654,noDamage,暴力禁止,Forbid Violence,,,,,,,0,0,all,,1,0,10,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはあなたの暴力を禁止する。,It forbids you from violence.,,,,,,,,,,
+655,onlyPet,仲間強化,Enhance Ally,,,,,,,0,0,all,,1,0,10,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それはあなたを強化しない。,It prevents you from receiving its enhancement.,,,,,,,,,,
+656,permaCurse,呪いの再帰,Recursive Curse,,,,,,,0,0,all,,1,0,10,,,,,,Skill,ENC,enchant,,,"flag,neg",,,,,,,,,,,,,,,,,,それは装備するたびに呪われる。,It curses itself every time it is equipped.,,,,,,,,,,
+660,absorbHP,生命吸収,Absorb Life,,,,,,,,,weapon,,1,0,100,,,,,,Skill,ENC,enchant,,,weaponEnc,,,,,,,,,,,,,,,,,,それは生命を吸収する。,It absorbs life.,,,,,,,,,,
+661,absorbMP,マナ吸収,Absorb Mana,,,,,,,,,weapon,,1,0,100,,,,,,Skill,ENC,enchant,,,weaponEnc,,,,,,,,,,,,,,,,,,それはマナを吸収する。,It absorbs mana.,,,,,,,,,,
+662,absorbSP,スタミナ吸収,Absorb Stamina,,,,,,,,,weapon,,1,0,100,,,,,,Skill,ENC,enchant,,,weaponEnc,,,,,,,,,,,,,,,,,,それはスタミナを吸収する。,It absorbs stamina.,,,,,,,,,,
+663,eheluck,毎日が幸運の日,Every Day Is Lucky Day,,,,,,,0,0,weapon,,1,0,100,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは運を倍増する。,It doubles your luck.,,,,,,,,,,
+664,boostMachine,アップグレード,Hardware Upgrade,,,,,,,,,all,,1,0,100,,,,,,Skill,ENC,enchant,,,,,,,,,,,,,,,,,,,,,それは機械系の種族をアップグレードする。,It upgrades machines.,,,,,,,,,,
+665,planter,命を蒔く者,Life Planter,,,,,,,0,0,all,,1,0,100,,,,,,Skill,ENC,enchant,,,flag,,,,,,,,,,,,,,,,,,それは収穫した命を再び芽吹かせる。,It replants the harvested life.,,,,,,,,,,
+666,meleeDistance,物理攻撃距離,Melee Distance,,,,,,,0,0,all,,1,0,100,,,,,,Skill,ENC,enchant,,,"weaponEnc,noRune",,,,,,,,,,,,,,,,,,それは離れた相手を攻撃することができる。,It can attack distant targets.,,,,,,,,,,
+667,encRagnarok,終末の宴,Feast of the End,,,,,,,0,0,weapon,,1,0,100,,,,,,Skill,ENC,enchant,,,"weaponEnc,noRune",,,,,,,,,,,,,,,,,,それは終末を呼ぶ。,It heralds the end.,,,,,,,,,,
+700,food_CHA,コラーゲン豊富,Rich Collagen,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,"exp,CHA,10",,,,,,,魅力,CHA,肌がつるつるになりそうだ。,It looks like it's good for your skin.,,,"コラーゲン,カチカチ,コラーゲン豊富","Collagen,Hard,Rich Collagen",,
+701,food_cat,猫,Cat,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,"karma,-10",,,,,,,,,,,猫を食べるなんて！,How can you eat a cat!!,",猫",",Cat",,
+702,food_poison,劇毒,Venom,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,poison,,,,,,,劇毒,Venom,,,,,",劇薬混入",",Venom Mix",,
+703,food_love,媚薬,Love,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,love,,,,,,,"発情, 複製不可","Excitement, Not Duplicable",,,,,",媚薬混入",",Aphrodisiac Mix",,
+704,food_bug,虫,Bug,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,love,,,,,,,"発情, 複製不可","Excitement, Not Duplicable",,,,,",,蟲混入",",,Bug Mix",,
+705,gainWeight,増量,Gain Weight,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,gainWeight,,,,,,,体重増加,Weight Gain,,,,,",,太る",",,Fatten up",,
+706,loseWeight,減量,Lose Weight,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,loseWeight,,,,,,,ダイエット,Weight Loss,,,,,",,痩せる",",,Slim Down",,
+707,kirimi,切り身,Sliced,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,sliced,,,,,,,発酵不可,Not fermentable,,,,,",,切り身",",,Sliced",,
+708,food_human,人肉,Human Flesh,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,-,,,,,,,,,,,,,",人肉",",Human Flesh",,
+709,food_undead,不浄,Tainted,,,,,,,,,,,,,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,-,,,,,,,,,,,,,",不浄",",Tainted",,
+710,food_blood,血の糧,Blood Meal,,,,,,,,,,,,0,,,,,,,Skill,FOOD,food,,,,,,,,,,,,,,,,-,,,,,,,吸血症時の食事効果倍率 (#1倍),Food effect multiplier when vampiric (x#1),,,,,",血の糧,血の糧",",Blood Meal,Blood Meal",,
+750,comfort,癒し,Comfort,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,"回復力, 寝心地","Healing, Bed Comfort",,,,,"癒し,気持ち悪い,少し癒される,癒される,気持ちいい,とても気持ちいい,最高に気持ちいい,死ぬほど気持ちいい","Comfort,Unsettling,Slightly Soothing,Soothing,Pleasant,Very Pleasant,Extremely Pleasant,Heavenly Pleasant",,
+751,rare,珍しさ,Rarity,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,"売値, 複製費用","Price, Copy Fee",,,,,"珍しさ,ありふれた,少し珍しい,珍しい,珍品,希少品,伝説の品","Rarity,Boring,Slightly Unusual,Unusual,Rare,Super Rare,Ultra Rare",,
+752,cute,見た目,Appearance,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,売値,Price,,,,,"見た目,不格好,少し気になる,気になる,綺麗,かわいい,きもかわいい","Appearance,Ugly,Concerning,Eye-Catching,Beautiful,Cute,Creepy Cute",,
+753,antidote,毒消し,Antidote,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,毒の治療,Cure Poison,,,,,"解毒,毒,毒消し","Antidote,Poison,Antidote",,
+754,nerve,安定作用,Tranquilizer,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,精神安定,Mental Serenity,,,,,"神経,幻覚作用,落ち着く","Nerve,Hallucinogenic,Calming",,
+755,blood,止血,Hemostasis,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,出血の治療,Cure Bleeding,,,,,"止血,出血,止血","Hemostasis,Bleeding,Hemostasis",,
+756,hotspring,温泉の香り,Hot Spring Scent,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,温泉効果,Hot Spring Effect,温泉の匂いがする！,It smells like a hot spring!,,,"温水,ヒエヒエ,ぽかぽか","Hot Spring,Icy,Warm",,
+757,justcooked,できたて料理,Just Prepared,,,,,,,,,,,,,,,,,,,,FOOD,food,,,"trait,noInherit",,,,,,,,,,,,,,,,,,,,"食事効果, 贈り物価値","Food Effect,Gift Value",,,,,"鮮度,作り置き,できたて料理","Freshness,Leftover,Just Prepared",,
+758,food_god,神肉,God,,,,,,,,,,,,0,,,,,,,,FOOD,food,,,trait,,,,,,,,,,,,,god,,,,,,,"全潜在, 信仰の失墜, 複製不可","All Potency, Weaken Faith, Not Duplicable",神を食べるなんて！,How dare you eat a god!,神を食べるなんて！,How dare you eat a god!,",神肉",",God Flesh",,
+759,purity,純度,Purity,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,"売値, 複製不可","Price, Not Duplicable",,,,,",,高純度",",,High Purity",,
+760,stimulant,刺激,Stimulant,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,眠気覚まし,Anti Sleep,,,,,"覚醒,眠くなる,目が覚める","Awakening,Drowsing,Waking",,
+761,recharge,疲労回復,Recharge,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,スタミナ回復,Stamina Recovery,,,,,"リチャージ,元気がなくなる,元気が出る","Recharge,Draining,Energizing",,
+762,roasted,焼き加減,Doneness,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,栄養上昇,Nutrition,,,,,"焼き加減,黒焦げ,こんがり","Doneness,Charred,Well Roasted",,
+763,air,空気,Air,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,空気,Air,,,,,"空気,呼吸していない,呼吸している","Air,Suffocating,Breathing",,
+764,creativeDish,創作料理,Creative Cuisine,,,,,,,,,,,,,,,,,,,,FOOD,food,,,"trait,noInherit",,,,,,,,,,,,,,,,,,,,"複製不可, 捧げ物不可","Not Duplicable, Not Offerable",,,,,",,創作料理",",,Creative Food",,
+765,difficulty,難易度,Difficulty,,,,,,,,,,,,,,,,,,,,ELEMENT,,,,trait,,,,,,,,,,,,,,,,,,,,"読書難易度上昇,暗記効果減少","Increased Reading Difficulty,Reduced Memorization Effect",,,,,",,難解",",,Cryptic",,
+800,domTest,ドメイン,Domain,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+801,domSurvival,生存,Survival,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+802,domFaith,信仰,Faith,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+803,domMiracle,奇跡,Miracle,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+804,domArcane,アーケン,Arcane,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+805,domComm,コム,Comm,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+806,domElement,元素,Element,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+807,domWind,風,Wind,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+808,domHarvest,収穫,Harvest,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+809,domMachine,機械,Machine,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+810,domLuck,幸運,Luck,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+811,domHealing,癒し,Healing,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+812,domEarth,大地,Earth,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+813,domOblivion,忘却,Oblivion,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+814,domEyth,無,Void,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+815,domHarmony,調和,Harmony,,,,,,,,,,,,,,,,,,,Element,DOMAIN,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+850,convertFire,火炎変換,Fire Conversion,,,,eleFire,,,0,0,weapon,,30,0,50,,,,,,Skill,ENC,enchant,eleConvert,,noRune,,,,,,,,,,,,,,,,攻撃を火炎属性に変換する。,Converts damage to fire.,それは燃えている。,It is burning.,,,,,,,,,,
+851,convertCold,冷気変換,Cold Conversion,,,,eleCold,,,0,0,weapon,,30,0,50,,,,,,Skill,ENC,enchant,eleConvert,,noRune,,,,,,,,,,,,,,,,攻撃を冷気属性に変換する。,Converts damage to cold.,それは凍っている。,It is freezing.,,,,,,,,,,
+852,convertLightning,電撃変換,Lightning Conversion,,,,eleLightning,,,0,0,weapon,,30,0,50,,,,,,Skill,ENC,enchant,eleConvert,,noRune,,,,,,,,,,,,,,,,攻撃を電撃属性に変換する。,Converts damage to lightning.,それは帯電している。,It is electrified.,,,,,,,,,,
+864,convertHoly,神聖変換,Holy Conversion,,,,eleHoly,,,0,0,weapon,,30,0,50,,,,,,Skill,ENC,enchant,eleConvert,,noRune,,,,,,,,,,,,,,,,攻撃を神聖属性に変換する。,Converts damage to holy.,それは光っている。,It is shining.,,,,,,,,,,
+865,convertImpact,衝撃変換,Impact Conversion,,,,eleImpact,,,0,0,weapon,,30,0,50,,,,,,Skill,ENC,enchant,eleConvert,,noRune,,,,,,,,,,,,,,,,攻撃を衝撃属性に変換する。,Converts damage to impact.,それは振動している。,It is vibrating.,,,,,,,,,,
+910,eleFire,火炎,Fire,"炎,レッド,燃える,ファイア","fire,red,burning,fire",MAG,resFire,,,,,weapon,,15,150,50,,,,,,Skill,SKILL,enchant,eleAttack,,"hand,bolt,ball,weapon,sword,flare",,100,,,,,,,,,,,,,,,,,,,,,,,,,,,
+911,eleCold,冷気,Cold,"氷,ブルー,冷たい,アイス","ice,blue,chilly,ice",MAG,resCold,,,,,weapon,,15,150,50,,,,,,Skill,SKILL,enchant,eleAttack,,"hand,arrow,bolt,ball,funnel,weapon",,100,,,,,,,,,,,,,,,,,,,,,,,,,,,
+912,eleLightning,電撃,Lightning,"雷,イエロー,放電する,ライトニング","lightning,yellow,electric,lightning",MAG,resLightning,,,,,weapon,,15,150,50,,,,,,Skill,SKILL,enchant,eleAttack,,"bolt,ball,funnel,weapon",,100,,,,,,,,,,,,,,,,,,,,,,,,,,,
+913,eleDarkness,暗黒,Darkness,"闇,ブラック,暗黒の,ダーク","shadow,black,gloomy,dark",MAG,resDarkness,,,,,weapon,,30,100,75,,,,,,Skill,SKILL,enchant,eleAttack,,"arrow,bolt,miasma,weapon,sword",,125,,,,,,,,,,,,,,,,,,,,,,,,,,,
+914,eleMind,幻惑,Mind,"狂気,マッド,幻惑の,マインド","mind,mad,disturbing,mind",CHA,resMind,,,,,weapon,,30,100,75,,,,,,Skill,SKILL,enchant,eleAttack,,"hand,bolt,funnel",,150,,,,,,,,,,,,,,,,,,,,,,,,,,,
+915,elePoison,毒,Poison,"毒,グリーン,毒の,ポイズン","poison,green,poisonous,poison",DEX,resPoison,,,,,weapon,,30,100,75,,,,,,Skill,SKILL,enchant,eleAttack,,"arrow,ball,miasma,sword",,125,,,,,,,,,,,,,,,,,,,,,,,,,,,
+916,eleNether,地獄,Nether,"死,ヘル,地獄の,ヘル","death,hell,infernal,nether",END,resNether,,,,,weapon,,30,100,100,,,,,,Skill,SKILL,enchant,eleAttack,,"hand,bolt,funnel,weapon",,175,,,,,,,,,,,,,,,,,,,,,,,,,,,
+917,eleSound,轟音,Sound,"轟音,サウンド,震える,サウンド","sound,sound,vibrating,sound",PER,resSound,,,,,weapon,,30,100,100,,,,,,Skill,SKILL,enchant,eleAttack,,"bolt,ball,funnel",,175,,,,,,,,,,,,,,,,,,,,,,,,,,,
+918,eleNerve,神経,Nerve,"神経,ナーヴ,痺れる,ナーヴ","nerve,nerve,numb,nerve",LER,resNerve,,,,,weapon,,15,150,75,,,,,,Skill,SKILL,enchant,eleAttack,,"arrow,bolt,miasma",,150,,,,,,,,,,,,,,,,,,,,,,,,,,,
+919,eleHoly,神聖,Holy,"光,ホワイト,輝く,ホーリー","light,white,shining,holy",WIL,resHoly,,,,,weapon,,50,50,125,,,,,,Skill,SKILL,enchant,eleAttack,,"high,hand,bolt,funnel,weapon",,200,,,,,,,,,,,,,,,,,,,,,,,,,,,
+920,eleChaos,混沌,Chaos,"混沌,カオス,混沌の,カオス","chaos,chaos,chaotic,chaos",MAG,resChaos,,,,,weapon,,50,50,125,,,,,,Skill,SKILL,enchant,eleAttack,,"bolt,ball,funnel,weapon",,200,,,,,,,,,,,,,,,,,,,,,,,,,,,
+921,eleMagic,魔法,Magic,"魔力,マジック,魔力を帯びた,マジック","magic,magic,magical,magic",MAG,resMagic,,,,,weapon,,50,50,125,,,,,,Skill,SKILL,enchant,eleAttack,,"arrow,ball,funnel,sword",,200,,,,,,,,,,,,,,,,,,,,,,,,,,,
+922,eleEther,エーテル,Ether,"エーテル,エーテル,エーテルの,エーテル","ether,ether,ethereal,ether",MAG,resEther,,,,,weapon,,50,25,125,,,,,,Skill,SKILL,enchant,eleAttack,,"high,bolt,ball,funnel",,200,,,,,,,,,,,,,,,,,,,,,,,,,,,
+923,eleAcid,酸,Acid,"酸,アシッド,酸の,アシッド","acid,acid,acid,acid",MAG,resAcid,,,,,weapon,,100,25,125,,,,,,Skill,SKILL,enchant,eleAttack,,"high,arrow,bolt,ball",,150,,,,,,,,,,,,,,,,,,,,,,,,,,,
+924,eleCut,出血,Cut,"血,ブラッド,出血の,ブラッド","blood,blood,bleeding,blood",STR,resCut,,,,,weapon,,100,10,150,,,,,,Skill,SKILL,enchant,eleAttack,,"high,hand,bolt,miasma",,200,,,,,,,,,,,,,,,,,,,,,,,,,,,
+925,eleImpact,衝撃,Impact,"衝撃,インパクト,爆発する,インパクト","impact,impact,exploding,impact",END,resImpact,,,,,weapon,,200,10,150,,,,,,Skill,SKILL,enchant,eleAttack,,high,,200,,,,,,,,,,,,,,,,,,,,,,,,,,,
+926,eleVoid,無,Void,"無,ヴォイド,滅びの,ヴォイド","void,void,doom,void",END,resDamage,,,,,,,300,0,150,,,,,,Skill,SKILL,enchant,eleAttack,,"high,bit",,200,,,,,,,,,,,,,,,,,,,,,,,,,,,
+950,resFire,火炎耐性,Fire Resistance,,,eleFire,,,,,30,all,5,1,200,50,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,熱や炎への耐性。,Resistance to fire.,,,,,,,,,,,,
+951,resCold,冷気耐性,Cold Resistance,,,eleCold,,,,,30,all,5,1,200,50,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,冷気や水への耐性。,Resistance to cold.,,,,,,,,,,,,
+952,resLightning,電撃耐性,Lightning Resistance,,,eleLightning,,,,,30,all,5,1,200,50,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,雷や電気への耐性。,Resistance to lightning.,,,,,,,,,,,,
+953,resDarkness,暗黒耐性,Darkness Resistance,,,eleDarkness,,,,,30,all,5,10,150,75,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,暗黒や盲目への耐性。,Resistance to darkness.,,,,,,,,,,,,
+954,resMind,幻惑耐性,Mind Resistance,,,eleMind,,,,,30,all,5,10,150,75,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,精神攻撃への耐性。,Resistance to mind.,,,,,,,,,,,,
+955,resPoison,毒耐性,Poison Resistance,,,elePoison,,,,,30,all,5,10,150,75,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,毒への耐性。,Resistance to poison.,,,,,,,,,,,,
+956,resNether,地獄耐性,Nether Resistance,,,eleNether,,,,,30,all,5,20,100,100,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,生命吸収への耐性。,Resistance to nether.,,,,,,,,,,,,
+957,resSound,轟音耐性,Sound Resistance,,,eleSound,,,,,30,all,5,20,100,100,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,音波や轟音への耐性。,Resistance to sound.,,,,,,,,,,,,
+958,resNerve,神経耐性,Nerve Resistance,,,eleNerve,,,,,30,all,5,10,150,75,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,睡眠や麻痺への耐性。,Resistance to nerve.,,,,,,,,,,,,
+959,resChaos,混沌耐性,Chaos Resistance,,,eleChaos,,,,,30,all,5,30,100,125,,,,,,Resistance,SKILL,resist,resist,,,,,,,,,,,,,,,,,,混沌の効果への耐性。,Resistance to chaos.,,,,,,,,,,,,
+960,resHoly,神聖耐性,Holy Resistance,,,eleHoly,,,,,30,all,5,50,0,125,,,,,,Resistance,SKILL,resist,resist,,high,,,,,,,,,,,,,,,,聖なる力への耐性。,Resistance to holiness.,,,,,,,,,,,,
+961,resMagic,魔法耐性,Magic Resistance,,,eleMagic,,,,,30,all,5,50,0,125,,,,,,Resistance,SKILL,resist,resist,,high,,,,,,,,,,,,,,,,魔法攻撃への耐性。,Resistance to magic.,,,,,,,,,,,,
+962,resEther,エーテル耐性,Ether Resistance,,,eleEther,,,,,30,all,5,50,0,125,,,,,,Resistance,SKILL,resist,resist,,high,,,,,,,,,,,,,,,,エーテルへの耐性。,Resistance to ether.,,,,,,,,,,,,
+963,resAcid,酸耐性,Acid Resistance,,,eleAcid,,,,,30,,5,,0,,,,,,,Resistance,SKILL,resist,resist,,high,,,,,,,,,,,,,,,,酸への耐性。,Resistance to acid.,,,,,,,,,,,,
+964,resCut,出血耐性,Cut Resistance,,,eleCut,,,,,30,,5,,0,,,,,,,Resistance,SKILL,resist,resist,,high,,,,,,,,,,,,,,,,切り傷への耐性。,Resistance to cut.,,,,,,,,,,,,
+965,resImpact,衝撃耐性,Impact Resistance,,,eleImpact,,,,,30,,5,,0,,,,,,,Resistance,SKILL,resist,resist,,high,,,,,,,,,,,,,,,,衝撃への耐性。,Resistance to impact.,,,,,,,,,,,,
+970,resDecay,腐敗耐性,Rot Resistance,,,,,,,,30,,5,,0,,,,,,,Resistance,SKILL,resist,resist,,hidden,,,,,,,,,,,,,,,,腐敗への耐性。,Resistance to decay.,,,,,,,,,,,,
+971,resDamage,ダメージ耐性,Damage Resistance,,,eleVoid,,,,,30,,5,,0,,,,,,,Resistance,SKILL,resist,resist,,hidden,,,,,,,,,,,,,,,,ダメージへの耐性。,Resistance to damage.,,,,,,,,,,,,
+972,resCurse,呪い耐性,Curse Resistance,,,,,,,,30,,5,,0,,,,,,,Resistance,SKILL,resist,resist,,hidden,,,,,,,,,,,,,,,,呪いへの耐性。,Resistance to curse.,,,,,,,,,,,,
+1200,featSlowFood,栄養満点,Efficient Feeder,,,,,,,0,0,,,,,,5,,,,,Feat,FEAT,feat,,,innate,,,,,,2,,,,,,,,,,ノマドの旅と生活の中で、あなたは少量の食事から栄養を摂取できるようになった。,"In your nomadic life and travels, you have become capable of taking enough nutrients from small amounts of food.",あなたは効率的に食事をする。,You eat effectively.,食事の効果増加,Increased Food Effects,,,,,,,,
+1201,featManaBond,マナとの絆,Bonded With Mana,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,幼い頃からマナに触れたあなたは、マナの反動から身を守るすべを身につけた。,"Having been exposed to mana from an early age, you have learned how to protect yourself from its reaction.",あなたはマナの反動を軽減できる。,You can supress mana overflow.,マナの反動を大幅に軽減,Greatly reduce the effect of mana overflow,,,,,,,,
+1202,featFastLearner,習得上手,Fast Learner,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,3,,,,,,,,,,新しい技術や発明に囲まれて育ったあなたは、物事の本質の発見に長けている。,"Having grown up surrounded by new technologies and inventions, you are adept at discovering the essence of things.",あなたは物覚えが早い。,You are quick to learn.,"フィートの獲得速度上昇,訓練時のプラチナ割引","Learn feats faster,Platinum coin discount when training",,,,,,,,
+1203,featGrowParts,変容する体,Mutating Body,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,ある朝、あなたがなにか気がかりな夢から目をさますと、自分が寝床の中で混沌の存在に変わっているのを発見した。,"When you awoke one morning from uneasy dreams, you found yourself in your bed transformed into a chaos-being.",あなたの肉体は刻々と進化する。,Your body is changing every moment.,"体の部位が少ない,体の部位が増える","Fewer body parts,Your body grows parts",,,,,,,,
+1204,featFairyWeak,小さい体,Tiny Body,,,,,,,0,0,,,,,,2,,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,あなたはその小さい体を有効に使い、すばしっこく動くことができる。,You can use your small body effectively and move quickly.,あなたはとても小さい。,You are very little.,"1s以上のアイテムを装備できない,回避性能へのボーナス","Cannot equip stuff weight more than 1s,Greatly increase evasion",,,,,,,,
+1205,featCannibalism,カンニバリズム,Cannibalism,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,"innate,neg",,,,,,5,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは人肉を食べることに抵抗がない。,You have no trouble eating human flesh.,人肉を食べても平気になる,Have no problem eating human flesh,#1は人肉の味の虜になった。,#1 are/is charmed by the flavor of human flesh.,#1は人肉の味を忘れた。,#1 are/is no longer addicted to human flesh.,,,,
+1206,featMelilithCurse,館の呪い,Curse of The Manor,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,"innate,neg",,,,,,1,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは呪われている。,You are cursed.,,,館の呪いが#1にふりかかった。,The curse of the manor has befallen #1.,館の呪いは解かれた。,The curse of the manor has been lifted.,,,,
+1207,featFoxBless,狐守,Fox Ward,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは狐に見守られている。,You are watched over by the fox.,"加護は仲間をさらに保護する,呪いは敵をさらに脆弱にする","Blessings further protect allies,Hexes further weaken enemies",,,,,,,,
+1208,featFoxLearn,古き狐の血統,Old Fox Lineage,,,,,,,0,0,,,,,,14,,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたの血脈は古い。,Your lineage is ancient.,"魔法の習得速度の上昇,魔法の手と魔法の剣の強化,長剣で攻撃時に命中率上昇","Increased spell learning speed,Enhanced Touch and Sword spells,To-Hit bonus when attacking with longswords",,,,,,,,
+1209,featFluffyTail,ふさふさの尻尾,Fluffy Tail,,,,,,,0,0,,,,,,2,,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたはふさふさの尻尾を持っている。,You have a fluffy tail.,"尻尾が動く,腰装備時に速度が減少","Your tail moves,Decreased speed when equipping waist gear",,,,,,,,
+1210,featUndead,アンデッド,Undead,,,,,,,0,0,,,,,,7,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたはアンデッドだ。,You are undead.,,,,,,,,,,
+1211,featSnail,かたつむり,Snaily,,,,,,,0,0,,,,,,1,,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたはかたつむりだ。,You are snaily.,塩で溶ける,Melt in salt,,,,,,,,
+1212,featFairyResist,精霊の鱗粉,Elemental Dust,,,,,,,0,0,,,,,,12,2,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは輝く鱗粉をまとっている。,You are protected.,,,,,,,,,,
+1213,featElea,古き森の民,Old Forest Dweller,,,,,,,0,0,,,,,,4,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたはエーテルの影響を受けない。,You are unaffected by the ether.,,,,,,,,,,
+1214,featManaPrecision,魔法の精度,Magic Precision,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたの詠唱は精密だ。,Your casting is precise.,範囲魔法が味方に当たりにくくなる,Reduce the chance area spells hitting friends,,,,,,,,
+1215,featDwarf,蜜酒の虜,Mead Blood,,,,,,,0,0,,,,,,2,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたの体には蜜酒の血が流れている。,Mead runs in your blood.,"泥酔時に様々なボーナスを受ける,酔ってもふらつかない,一時的能力上昇効果の増加","Receive various bonuses when drunk,Walk straight when drunk,Increase the effect of temporary attribute boosts",,,,,,,,
+1216,featSuccubus,月夜の眷属,Moonlit Kin,,,,,,,0,0,,,,,,10,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは気持ちいいことが大好きだ。,You love things that feel good.,"寝ている生物に悪さできる,気持ちいいことで成長する","Able to prey on sleeping creatures,Grow through pleasurable experiences",,,,,,,,
+1217,featGolem,魔導生命体,Arcane Core,,,,,,,0,0,,,,,,6,2,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは魔導によって動いている。,You are powered by arcane forces.,"朦朧状態にならない,出血しない","Immune to daze,Immune to bleeding",,,,,,,,
+1218,featMetal,メタル,Metal,,,,,,,0,0,,,,,,1,,,,,Feat,FEAT,feat,,,innate,,,,,,999,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは傷つかない。,You don't get hurt.,全てのダメージを大幅に軽減,Reduce all damage significantly,,,,,,,,
+1219,featElderCrab,カニバサミ,Crab Claw Grip,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは巨大なハサミを持っている。,You have gigantic scissors.,ハサミで攻撃対象を拘束する,Restrain the target with scissors,,,,,,,,
+1220,featFate,運命,Fate,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは運命に導かれている。,You are guided by fate.,スタミナが半分以上ある時死を回避,Avoid death when stamina is more than half,,,,,,,,
+1221,featSpike,トゲトゲ,Spiky,,,,,,,0,0,,,,,,4,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは身を守るトゲをまとっている。,You wear thorns to protect yourself.,トゲが攻撃者を傷つける,Thorns harm those who attack,,,,,,,,
+1222,featSplit,分裂生物,Splitter,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは分裂する。,You split.,傷つけられると分裂する,Split when hurt,,,,,,,,
+1223,featAcidBody,酸の身体,Acid Body,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたの身体には酸の血が流れている。,Your blood is acidic.,酸が攻撃者を傷つける,Acid burns those who attack,,,,,,,,
+1224,featShiva,シヴァの加護,Blessing of Shiva,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは氷の精霊の加護を受けている。,You are guarded by the spirit of ice.,,,,,,,,,,
+1225,featLoyal,忠誠心,Loyal,,,,,,,0,0,,,,,,2,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは忠誠心に厚い。,Your loyalty is deep.,仲間への攻撃をガードする,Guard allies,,,,,,,,
+1226,featUnderground,地底の住人,Underground Dweller,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは暗い地底での生活に適応している。,You are adapted to life in the dark underworld.,,,,,,,,,,
+1227,featServant,使徒,Servant,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは神の使いだ。,You are servant of God.,,,,,,,,,,
+1228,featDemigod,神秘の残光,Sacred Twilight,,,,,,,0,0,,,,,,9,2,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは半神だ。,You are demigod.,"信仰の上昇増加,神の加護によるボーナスの増加,無信仰の時に全主能力増加,神々から懲罰を受けない","Faster faith gain,More benefit from God's favour,Increases all attributes when faithless,Immune to divine punishment",,,,,,,,
+1229,featLittleOne,リトルワン,Little One,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,"innate,foodEnc",,,,,,5,,,,,,,little,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは成長しない。,You don't grow up.,,,,,,,"アダム,アダム,アダム","Adam,Adam,Adam",,
+1230,featAdam,アダム,Adam,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは進化している。,You are evolved.,,,,,,,,,,
+1231,featNirvana,悟り,Nirvana,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは罵倒されると喜ぶ。,You take pleasure in being insulted.,罵倒された時に高揚を付与,Gain Euphoric when insulted,#1は悟りを開いた。,#1 are/is enlightened.,#1は普通になった。,#1 become(s) normal.,,,,
+1232,featBaby,赤ちゃん,Baby,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは赤ちゃんだ。,You are baby.,"乳で成長する,刷り込みできる","Grow with milk,Capable of imprinting",,,,,,,,
+1233,featCosmicHorror,星界からの恐怖,Cosmic Horror,,,,,,,0,0,,,,,,22,2,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたの存在は恐怖をもたらす。,Your existence brings terror.,,,,,,,,,,
+1234,featHeavyEater,大食い,Heavy Eater,,,,,,,0,0,,,,,,2,,,,,Feat,FEAT,feat,,,innate,,,,,,3,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたの胃袋は底なしだ。,Your stomach is bottomless.,満腹度の上限上昇,Increased hunger cap,,,,,,,,
+1235,featLightEater,少食,Light Eater,,,,,,,0,0,,,,,,2,,,,,Feat,FEAT,feat,,,innate,,,,,,3,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたの胃袋は小さい。,Your stomach is small.,満腹度の上限減少,Decreased hunger cap,,,,,,,,
+1236,featNorland,北の国から,From North,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,3,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは北方で育った。,You grew up in the north.,"満腹度の上限上昇,冷気によるアイテム破壊からの保護","Increased hunger cap,Protected from item destruction by cold",,,,,,,,
+1237,featRoran,希少種,Rare Race,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは儚く尊い。,You are fleeting and precious.,"フィートの獲得速度上昇,遺伝適正","Learn feats faster,Gene suitability",,,,,,,,
+1238,featElder,古代種,Elder Race,,,,,,,0,0,,,,,,15,2,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは古い種族だ。,You are of an elder race.,上位の属性を扱える,Able to harness superior elements.,,,,,,,,
+1239,featDemon,悪魔,Demon,,,,,,,0,0,,,,,,18,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは悪魔だ。,You are demon.,,,,,,,,,,
+1240,featMassSummoner,群れの主,Leader of the Pack,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは群れを率いる。,You are the leader of the pack.,一度に召喚できるミニオンの数の増加,Increased number of minions summonable at once,,,,,,,,
+1241,featMeatCushion,肉の壁,Wall of Flesh,,,,,,,0,0,,,,,,6,1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは分厚い肉で攻撃を防ぐ。,You interpose thick flesh to stop the strike.,範囲内の味方へのダメージを肩代わりする,Take damage in place of nearby allies,,,,,,,,
+1242,featGeneSlot,可能性の獣,Beast of Possibility,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは可能性を秘めている。,You carry hidden potential.,遺伝子枠の上限 +#1,+#1 gene slot limit,,,,,,,,
+1243,featEternalYouth,永遠の若さ,Eternal Youth,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは永遠に若い。,You are eternally young.,加齢無効,Immunity to Aging,,,,,,,,
+1244,featCentaur,射手座,Sagittarius,,,,,,,0,0,,,,,,4,,1247,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは射手座に見守られている。,You are watched over by Sagittarius.,"遠隔武器と魔法の矢に貫通性能を付与,セブンセンシズに目覚めている時に攻撃が必中","Grants penetration to ranged weapons and magical arrows,Attacks never miss while awakened to the Seventh Sense",,,,,,,,
+1245,featSevenSense,セブンセンシズ,Seventh Sense,,,,,,,0,0,,,,,,10,,1244,,,Feat,FEAT,feat,,,innate,,,50,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは心に小宇宙を持っている。,You hold a cosmos inside your heart.,マナが尽きた時に能力が大幅に向上,Boost attributes when mana depletes,,,,,,,,
+1246,featPegasus,ペガサス座,Pegasus,,,,,,,0,0,,,,,,4,,1245,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたはペガサス座に見守られている。,You are watched over by Pegasus.,"格闘と魔法の手に貫通性能を付与,セブンセンシズに目覚めている時に攻撃が必中","Grants penetration to martial arts and magical hands,Attacks never miss while awakened to the Seventh Sense",,,,,,,,
+1247,featLibra,天秤座,Libra,,,,,,,0,0,,,,,,4,,1253,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは天秤座に見守られている。,You are watched over by Libra.,"近接武器と魔法の剣に貫通性能を付与,セブンセンシズに目覚めている時に攻撃が必中","Grants penetration to melee weapons and magical swords,Attacks never miss while awakened to the Seventh Sense",,,,,,,,
+1248,featMiscreation,できそこない,Miscreation,,,,,,,0,0,,,,,,1,-1,,,,Feat,FEAT,feat,,,innate,,,,,,10,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたはできそこないだ。,You are a miscreation.,???,???,,,,,,,,
+1249,featBloodBond,血の絆,Blood Bond,,,,,,,0,0,,,,,,6,,,,,Feat,FEAT,feat,,,innate,,,,,,2,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは仲間に攻撃を身代わりさせる。,You transfer your pain to your ally.,自分へのダメージを味方に肩代わりさせる,Redirects damage to your ally,,,,,,,,
+1250,featVampire,夜の支配者,Lord of the Night,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,2,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは夜を支配する。,You reign over the night.,"食事で栄養が取れない,夜間に能力上昇","Food provides no nutrition,Attributes rise at night",,,,,,,,
+1251,featAshborn,灰化体質,Ashborn,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは太陽の光を浴びると灰になる。,You turn to ash in sunlight.,太陽光で発火する,Ignite in sunlight,,,,,,,,
+1252,featAquatic,水棲,Aquatic,,,,,,,0,0,,,,,,1,,,,,Feat,FEAT,feat,,,innate,,,,,,10,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは水の中で素早く動ける。,You can move swiftly through water.,"水中で速度上昇,窒息無効","Boosted speed in water,Negate suffocation",,,,,,,,
+1253,featCancer,蟹座,Cancer,,,,,,,0,0,,,,,,4,,1246,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは蟹座に見守られている。,You are watched over by Cancer.,"物理攻撃に地獄属性の追加ダメージを付与,地獄属性のダメージに常に耐性貫通効果,セブンセンシズに目覚めている時に攻撃が必中","Grants physical attacks additional Nether damage,Nether damage always penetrates resistances,Attacks never miss while awakened to the Seventh Sense",,,,,,,,
+1270,featGoodKarma,善人,Good,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは善人だ。,You are good.,"祠や神像の出現率上昇,特定モンスターの出現率上昇,特定モンスターの友好化","Increased spawn rate of shrines and statues,Increased spawn rate of certain monsters,Certain monsters become friendly",あなたは徳に満ちた人生を送っている。,You are living a virtuous life.,あなたは前ほど善人ではない。,You are not as good a person as you used to be.,,,,
+1271,featBadKarma,悪人,Evil,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは悪人だ。,You are evil.,"レアモンスターの出現率上昇,特定モンスターの敵対化","Increased spawn rate of rare monsters,Certain monsters become hostile",あなたは業の深い人生を送っている。,You are living a life heavy with karma.,あなたは前ほど悪人ではない。,You are not as evil a person as you used to be.,,,,
+1272,featPeacemaker,仲裁者,Peacemaker,,,,,,,0,0,,,,,,4,3,,,,Feat,FEAT,feat,,,innate,,,,,,3,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは仲間の不仲を見過ごさない。,You step in when your companions fall out.,"パーティー内の使徒が起こす喧嘩の許容量 +#1,主人公もしくは調和のエリン信仰NPCのみ有効","Party servant quarrel threshold +#1,Effective only for the player or NPC under faith of Elin of Harmony",,,,,,,,
+1273,featBloom,絆の覚醒,Awakening of Bonds,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは深い絆で繋がれている。,You are bound by a deep bond.,"遺伝子枠の上限 +#1,交換日記の効果増大,経験値ボーナス増大","+#1 gene slot limit,Enhanced Shared Diary effect,Boosted Exp Bonus",,,,,,,,
+1274,featSlimeEvolution,捕食進化,Predatory Evolution,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,8,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは他の生き物を取り込むことができる。,You can absorb other living beings,"主人公にのみ適用,遺伝子を食べることで進化,「捕食」アビリティを習得,遺伝子枠の上限 +#1,遺伝子枠はレベルによって成長","Apply only to the player,Evolve by consuming genes,Learn ""Devour"" ability,+#1 gene slot limit,Gene slot limit increases as you level",,,,,,,,
+1275,featBelovedOne,愛するひと,Beloved One,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,3,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは大切なひとだ。,You are beloved one.,"いつでも気持ちいいことが可能
+いつでも気持ちいいことが可能,経験値ボーナス増大,就寝時に「再臨」付与","Always pleasurable
+Always pleasurable,Boosted Exp Bonus,Grant ""Rebirth"" on sleep",,,,,,,,
+1276,featHarem,両手に花,Flowers in Both Arms,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは愛に寛容だ。,You embrace love in all its forms.,パーティー内の婚約者が起こす喧嘩の許容量 +#1,Party love quarrel threshold +#1,,,,,,,,
+1290,featGoddess,女神性,Goddesshood,,,,,,,0,0,,,,,,1000,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは女神だ。,You are goddess.,"穢れた心からの保護,純潔がマイナスの時は無効","Protected from impurity,Ineffective if Innocence is negative",,,,,,,,
+1291,featSadCreature,悲しき獣,Sad Creature,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,innate,,,,,,5,,,,,,,,,,旅の途中で身につけた特性。,A trait acquired during your journey,あなたは愛に飢えている。,You are starved for love.,愛情への飢え,Hunger for love,,,,,,,,
+1300,featGod_element1,元素の加護,Favor of the Element,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは神の加護を受けている。,You are blessed by God.,,,,,,,,,,
+1305,featGod_earth1,大地の加護,Favor of the Earth,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは神の加護を受けている。,You are blessed by God.,全てのダメージを軽減する,Reduce all damage,,,,,,,,
+1310,featGod_wind1,風の加護,Favor of the Wind,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは女神の加護を受けている。,You are blessed by Goddess.,,,,,,,,,,
+1315,featGod_machine1,機械の加護,Favor of the Machine,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは神の加護を受けている。,You are blessed by God.,機械を支配する,Dominate machines,,,,,,,,
+1320,featGod_healing1,癒しの加護,Favor of the Healing,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは女神の加護を受けている。,You are blessed by Goddess.,,,,,,,,,,
+1325,featGod_harvest1,収穫の加護,Favor of the Harvest,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは神の加護を受けている。,You are blessed by God.,"腐った食料を種に変える,種の改良強化,作物の出荷額ボーナス,植物を友好化する","Extract seeds from rotten foods,Improve seeds,Bonus crop shipping value,Turn plants friendly",,,,,,,,
+1330,featGod_luck1,幸運の加護,Favor of the Luck,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは女神の加護を受けている。,You are blessed by Goddess.,"魔法とスタミナの消費がランダムになる,魚の出荷額ボーナス","Randomize mana and stamina cost,Bonus fish shipping value",,,,,,,,
+1335,featGod_harmony1,調和の加護,Favor of the Harmony,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは女神の加護を受けている。,You are blessed by Goddess.,,,,,,,,,,
+1340,featGod_oblivion1,忘却の加護,Favor of the Oblivion,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは女神の加護を受けている。,You are blessed by Goddess.,,,,,,,,,,
+1345,featGod_trickery1,悪戯の加護,Favor of the Trickery,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは神の加護を受けている。,You are blessed by God.,ダメージを与えれない時でも属性による状態異常が有効,Elemental status effects still trigger even without damage,,,,,,,,
+1350,featGod_moonshadow1,月影の加護,Favor of the Moonshadow,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは女神の加護を受けている。,You are blessed by Goddess.,近接攻撃は敵からマナを奪う,Melee attacks steal mana from enemy,,,,,,,,
+1355,featGod_strife1,戦禍の加護,Favor of the Strife,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,god,,innate,,,,,,5,,,,,,,,,,神から授かった恩恵。,A divine endowment.,あなたは神の加護を受けている。,You are blessed by God.,敵を倒すごとに物理攻撃が強化される,Physical attacks enhanced with each enemy defeated,,,,,,,,
+1400,featWarrior,武器の知識,Weapon Mastery,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは武器の扱いに習熟している。,You are skilled in handling weapons.,近接武器の威力増加,Increased effectiveness of melee weapons,,,,,,,,
+1401,featThief,盗賊の幸運,Thief's Luck,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは運を味方につけている。,You have luck on your side.,,,,,,,,,,
+1402,featWizard,魔術の心得,Magic Mastery,,,,,,,0,0,,,,,,3,-1,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは魔術の知識を身につけている。,You have knowledge of magic.,専門領域 +#1,+#1 Specialized Domain,,,,,,,,
+1403,featFarmer,農夫の足腰,Farming Legs,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたの足腰は鍛え上げられている。,Your legs and hips are well-trained.,スタミナ消費の軽減,Reduced stamina usage,,,,,,,,
+1404,featArcher,射撃の名手,Ranged Mastery,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは射撃に習熟している。,You are proficient in shooting.,遠隔武器の威力増加,Increased effectiveness of ranged weapons,,,,,,,,
+1405,featPianist,音楽家,Musician,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたには音楽のセンスがある。,You have a sense of music.,"演奏の質と楽曲の習得速度の上昇,演奏報酬へのボーナス","Enhanced performance quality,Bonus to performance reward",,,,,,,,
+1406,featTourist,観光気分,Vacation Vibe,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたはいつも観光気分だ。,You are always in a sightseeing mood.,"店の売り物価格上昇,店の在庫上昇","Increased store price,Increased store inventory",,,,,,,,
+1407,featPaladin,敬虔,Devout,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは敬虔だ。,You are devout.,神の加護によるボーナスの増加,More benefit from God's favour,,,,,,,,
+1408,featPaladin2,防衛本能,Defensive Instinct,,,,,,,0,0,,,,,,5,,,,,Feat,FEAT,feat,,,class,,,,,,1,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは仲間を守りたい。,You want to protect your allies.,ジュア信仰時にレイハンドが使用可能,Lay on Hands available when worshipping Jure,,,,,,,,
+1409,featBoost,ブースト,Boost,,,,,,,0,0,,,,,,13,2,,,,Feat,FEAT,feat,,,class,,,500,,,1,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは瀕死の時覚醒する。,You are awakened at the threshold of death.,瀕死時に能力が大幅に向上,Boost attributes when near death,,,,,,,,
+1410,featReboot,リブート,Reboot,,,,,,,0,0,,,,,,9,2,,,,Feat,FEAT,feat,,,class,,,50,,,1,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは自身を再起動できる。,You can reboot yourself.,死亡時に再起動,Reboot when dead,,,,,,,,
+1411,featEarthStrength,大地の力,Strength of Earth,,,,,,,0,0,,,,,,11,2,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは大地の力を授かっている。,You are granted the power of the earth.,"重いものを持てる,何でも文句を言わずに持つ,攻撃に重力を付与","Able to lift heavy objects,Carry anything without complaint,Inflict gravity upon attack",,,,,,,,
+1412,featLuckyCat,エヘカトルの祝福,Blessing of Ehekatl,,,,,,,0,0,,,,,,15,2,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは女神に愛されている。,You are loved by the Goddess.,ドロップした装備品を強化する,Enhance equipment dropped as loot,,,,,,,,
+1413,featFairysan,妖精のお腹,Fairy Stomach,,,,,,,0,0,,,,,,8,2,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは自然に優しい。,You are kind to nature.,食事後に種を吐き出す,Spit out seeds after eating,,,,,,,,
+1414,featWhiteVixen,巫女,Miko,,,,,,,0,0,,,,,,12,2,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは呪いを祓うことができる。,You can purify cursed equipment.,呪われた装備品から力を引き出す,Draw strength from cursed equipment,,,,,,,,
+1415,featFoxMaid,妖狐,Celestical Fox,,,,,,,0,0,,,,,,20,3,,,,Feat,FEAT,feat,,,class,,,,,,9,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたの尻尾は増える。,You grow tails.,尻尾が増える度に進化する,Evolve with each tail grown,#1に新しい尻尾が生えた。,#1 grow(s) a new tail.,,,,,,
+1416,featInquisitor,異端尋問,Inquisition,,,,,,,0,0,,,,,,4,,,,,Feat,FEAT,feat,,,class,,,,,,9,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは異端を憎んでいる。,You despise heresy.,「災い」は対象を破門する,"""Bane"" excommunicates the target",,,,,,,,
+1417,featWitch,魔女の生き方,Way of Witch,,,,,,,0,0,,,,,,,-1,,,,Feat,FEAT,feat,,,class,,,,,,9,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは魔女の暮らしが気に入っている。,You are fond of the witch's life.,"ポーションをより多く調合できる,ほうきに上手く騎乗できる","Can brew more potions,Skilled at broom riding",,,,,,,,
+1418,featSwordsage,霊符の知識,Talisman Mastery,,,,,,,0,0,,,,,,3,,,,,Feat,FEAT,feat,,,class,,,,,,9,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは霊符の知識を身につけている。,You have knowledge of talisman.,"霊符の効果の上昇,霊符の作成数の増加","Increased talisman effect,Increased talisman charges",,,,,,,,
+1419,featMilitant,前線指揮,Frontline Commander,,,,,,,0,0,,,,,,10,2,,,,Feat,FEAT,feat,,,class,,,,,,1,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは味方の士気を高める。,You boost the morale of your allies.,同階層の敵の数に応じて味方を強化,Strengthen allies per enemy count on the same level,,,,,,,,
+1420,featExecutioner,死の神髄,Heart of Death,,,,,,,0,0,,,,,,4,,,,,Feat,FEAT,feat,,,class,,,,,,5,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは死を身近に感じている。,You feel death close to you.,体力が減るほど物理クリティカル率が上昇,Physical critical rate increases as health decreases,,,,,,,,
+1421,featManaMeat,マナの体,Mana Body,,,,,,,0,0,,,,,,6,,,,,Feat,FEAT,feat,,,class,,,,,,4,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたはマナと同化している。,You are merging with mana.,"マナを体力として利用できる,マナが尽きるまで死なない,首狩りを無効
+マナを体力として利用できる,マナが尽きるまで死なない,首狩りを無効,体力が少ない時にマナの消費が半減","Mana can be used as health,Cannot die until mana is depleted,Immunity to Neck Hunt
+Mana can be used as health,Cannot die until mana is depleted,Immunity to Neck Hunt,Halves mana usage when health is low",,,,,,,,
+1422,featHealer,癒し本能,Healing Instinct,,,,,,,0,0,,,,,,4,,,,,Feat,FEAT,feat,,,innate,,,,,,3,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは仲間を癒やしたい。,You want to heal your allies.,使用する回復魔法が一つ上位の回復魔法に変化,Upgrade the healing spell used to the next tier,,,,,,,,
+1423,featPeaky,ピーキー,Peaky,,,,,,,0,0,,,,,,7,,,,,Feat,FEAT,feat,,,innate,,,,,,10,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたはピーキー過ぎる。,You are too peaky.,"最大速度上昇,攻撃を受けると速度ボーナス低下,騎乗難易度上昇,騎乗経験値への大きなボーナス","Increased speed limit,Reduced speed bonus when hit,Increased riding dificulty,Greatly increased riding EXP gain",,,,,,,,
+1424,featElite,エリート,Elite,,,,,,,0,0,,,,,,30,2,,,,Feat,FEAT,feat,,,class,,,,,,10,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたはエリートだ。,You are elite.,ブランド力 +1,Brand value +1,,,,,,,,
+1425,featMimic,擬態生態,Mimetic Ecology,,,,,,,0,0,,,,,,3,1,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは見つかりにくい。,You are hard to spot.,アイテムへの擬態,Item mimicry,,,,,,,,
+1426,featNeckHunter,首狩り本能,Beheading Instinct,,,,,,,0,0,,,,,,5,1,,,,Feat,FEAT,feat,,,innate,,,,,,10,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは首を見ると切り落としたくなる。,You feel an urge to cut off heads at a visible neck.,近接攻撃時に確率で首狩り,Chance to behead the target on melee attacks,,,,,,,,
+1427,featDisguise,偽りの仮面,False Face,,,,,,,0,0,,,,,,3,1,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは人の皮を被る。,You wear human skin.,擬人化,Human mimicry,,,,,,,,
+1428,featMurderer,殺人本能,Killing Instinct,,,,,,,0,0,,,,,,4,,,,,Feat,FEAT,feat,,,class,,,,,,3,,,,,,,,,,専門の職業に従事し、長い年月を経て獲得した特性。,A trait acquired over many years of working in a specialized profession.,あなたは殺しに快感を覚える。,You take pleasure in killing.,ランダムにNPCを殺害,Murder NPCs at random,,,,,,,,
+1429,featManyFace,千の異形,Thousand Faces,,,,,,,0,0,,,,,,6,2,,,,Feat,FEAT,feat,,,innate,,,,,,1,,,,,,,,,,種族により受け継がれた特性。,A trait inherited from race.,あなたは千の姿を持っている。,You take on a thousand forms.,形状変化,Metamorphosis,,,,,,,,
+1510,mutationSkin,鉄の皮膚,Iron Skin,,,mutationSkinN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,3,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの皮膚は硬い。
+あなたの皮膚はとても硬い。
+あなたは鉄のような皮膚を持っている。","Your skin is hard.
+Your skin is very hard.
+Your skin is as hard as iron.",,,#1の皮膚は硬くなった。,#your skin become/becomes harder.,#1の皮膚は薄くなった。,#your skin become/becomes pale.,,,,
+1511,mutationSkinN,アルビノ,Albino,,,mutationSkin,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,3,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの皮膚は白い。
+あなたの皮膚は脆い。
+あなたの皮膚は崩れている。","Your skin is white.
+Your skin is fragile.
+Your skin is collapsing.",,,#1の皮膚は硬くなった。,#your skin become/becomes harder.,#1の皮膚は薄くなった。,#your skin become/becomes pale.,,,,
+1512,mutationEye,鋭い目,Sharp Eye,,,mutationEyeN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,2,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたは猫の目を持っている。
+あなたは鷹の目を持っている。","You have the eyes of a cat.
+You have the eyes of a hawk.",,,#1の目は細くなった。,#your eyes glow.,#1の視力は低下した。,#your sight is weakened.,,,,
+1513,mutationEyeN,色弱,Color Blind,,,mutationEye,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,2,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたは色弱だ。
+あなたは片目がない。","You are partially color-blind.
+You are blind in one eye.",,,#1の目は細くなった。,#your eyes glow.,#1の視力は低下した。,#your sight is weakened.,,,,
+1514,mutationDex,しなやかな関節,Flexible Joints ,,,mutationDexN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,3,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの関節はしなやかだ。
+あなたの関節はとてもしなやかだ。
+あなたの関節は驚くほどしなやかだ。","Your joints are flexible.
+Your joints are very flexible.
+Your joints are incredibly flexible.",,,#1の関節はしなやかになった。,#your joints become flexible.,#1の関節は痛み出した。,#your joints creak.,,,,
+1515,mutationDexN,きしむ関節,Creaking Joint,,,mutationDex,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,3,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの関節はきしむ。
+あなたは関節痛に悩んでいる。
+あなたはひどい関節痛を抱えている。","Your joints creak.
+You are worrying about your joint creakings.
+You have terrible joint creakings.",,,#1の関節はしなやかになった。,#your joints become flexible.,#1の関節は痛み出した。,#your joints creak.,,,,
+1516,mutationRegen,トロールの血,Troll Blood,,,mutationRegenN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,2,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの傷跡は再生する。
+あなたの傷は瞬く間にふさがる。","Your wounds regenerate rapidly.
+Your wounds regenerate instantly.",,,#1の血液は緑っぽくなった。,Suddenly #your blood become greenish!,#1の血液は薄れた。,#your metabolism slows down.,,,,
+1517,mutationRegenN,貧血,Anemia,,,mutationRegen,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,2,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたは血の気が少ない。
+あなたの顔には血の気が全く無い。","You suffer from anemia.
+You constantly have an attack of anemia.",,,#1の血液は緑っぽくなった。,Suddenly #your blood become greenish!,#1の血液は薄れた。,#your metabolism slows down.,,,,
+1518,mutationSpeed,しなやかな脚,Lithe Leg,,,mutationSpeedN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,3,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの脚はしなやかだ。
+あなたの脚はとてもしなやかだ。
+あなたの脚は理想的な形をしている。","You have lithe legs.
+You have very lithe legs.
+You have ideal legs.",,,#1の脚はしなやかになった。,#your legs become lithe.,#1の脚はねじれた。,#your legs are twisted!,,,,
+1519,mutationSpeedN,ねじれた脚,Twisted Legs ,,,mutationSpeed,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,3,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの脚はねじれている。
+あなたの脚はとてもねじれている。
+あなたの脚は折れている。","Your legs are twisted.
+Your legs are very twisted.
+Your legs are broken.",,,#1の脚はしなやかになった。,#your legs become lithe.,#1の脚はねじれた。,#your legs are twisted!,,,,
+1520,mutationStr,強い腕,Strong Arm,,,mutationStrN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,3,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの腕はひきしまっている。
+あなたの腕は強力だ。
+あなたの腕は筋肉の塊だ。","You have well-knit arms.
+You have well-muscled arms.
+You have ideal arms.",,,#1の腕の筋肉が増えた。,#your arms grow stronger.,#1の腕の贅肉が増えた。,#your arms become thin.,,,,
+1521,mutationStrN,弱い腕,Weak Arm,,,mutationStr,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,3,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの腕はたるんでいる。
+あなたの腕はとてもたるんでいる。
+あなたの腕には筋肉がない。","Your arms are thin.
+Your arms are very thin.
+Your arms are just decorative.",,,#1の腕の筋肉が増えた。,#your arms grow stronger.,#1の腕の贅肉が増えた。,#your arms become thin.,,,,
+1522,mutationCha,美声,Sweet Voice,,,mutationChaN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,2,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたは美声を持っている。
+あなたの声は全てを魅了する。","Your voice is sweet.
+Your voice charms everyone.",,,#1の声はよく通る。,#your voice becomes lovely.,#1の声はかれた。,#your voice becomes scary.,,,,
+1523,mutationChaN,かれた声,Husky Voice,,,mutationCha,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,2,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの声はかれている。
+あなたが喋ると皆逃げる。","Your voice is husky.
+Everyone is frightened when you talk.",,,#1の声はよく通る。,#your voice becomes lovely.,#1の声はかれた。,#your voice becomes scary.,,,,
+1524,mutationBrain,脳内コンピュータ,Brain Computer,,,mutationBrainN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,2,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたの脳は機械化している。
+あなたの脳は完璧な機械だ。","Your brain is mechanized.
+Your brain is fully mechanized.",,,#1の脳は機械化した。,#your brain is mechanized!,#1の脳は原始化した。,#your brain degenerates.,,,,
+1525,mutationBrainN,痴呆,Stupid,,,mutationBrain,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,2,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,"あなたは少しぼけている。
+あなたは痴呆だ。","You are stupid.
+You are really stupid.",,,#1の脳は機械化した。,#your brain is mechanized!,#1の脳は原始化した。,#your brain degenerates.,,,,
+1526,mutationCold,熱がり,Heat Sensitivity ,,,mutationColdN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,1,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,あなたの血は滾っている。,Your blood is boiling.,,,#1の血は滾りだした。,#your blood starts to boil.,#1の皮膚は冷たくなった。,#1 feel(s) hot-headed.,,,,
+1527,mutationColdN,寒がり,Cold Sensitivity ,,,mutationCold,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,1,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,あなたの皮膚には霜が付いている。,Your skin is covered by frost.,,,#1の血は滾りだした。,#your blood starts to boil.,#1の皮膚は冷たくなった。,#1 feel(s) hot-headed.,,,,
+1528,mutationLightning,非伝導体,Non-Conductive ,,,mutationLightningN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,1,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,あなたは非電導体だ。,You are a non-conductor.,,,#1は非電導体になった。,#1 gain(s) resistance to lightning.,#1の身体は電気を良く通す。,#1 lose(s) resistance to lightning.,,,,
+1529,mutationLightningN,伝導体,Conductive ,,,mutationLightning,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,1,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,あなたの身体は電気を良く通す。,Your body conducts electricity well.,,,#1は非電導体になった。,#1 gain(s) resistance to lightning.,#1の身体は電気を良く通す。,#1 lose(s) resistance to lightning.,,,,
+1530,mutationBody,清らかな体,Pure Body ,,,mutationBodyN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,,,,,,,1,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,あなたの肉体は清められている。,Your body is purified.,,,#1の体は清らかになった。,#your body is purified.,#1の体は穢れた。,#your body is defiled.,,,,
+1531,mutationBodyN,穢れた体,Tainted Body ,,,mutationBody,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,neg,,,,,,1,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,あなたの肉体は穢れている。,Your body is defiled.,,,#1の体は清らかになった。,#your body is purified.,#1の体は穢れた。,#your body is defiled.,,,,
+1532,mutationHair,フサフサ,Thick Hair,,,mutationHairN,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,noRandomMutation,,,,,,1,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,あなたの毛はフサフサだ。,Your hair is thick.,毛がよく伸びる,Hair grows at a great pace,#1の肌はムズムズした。,#your skin feels tingly.,#1の毛は抜け落ちた。,#your hair falls off.,,,,
+1533,mutationHairN,ツルツル,Hairless,,,mutationHair,,,,,,,,,,,,-1,,,,Mutation,MUTATION,mutation,,,"neg,noRandomMutation",,,,,,1,,,,,,,,,,突然変異により生じた体の変化。,A physical alterations caused by a mutation.,あなたの毛はツルツルだ。,You are smooth as a baby.,毛が生えない,Hair never grows,#1の肌はムズムズした。,#your skin feels tingly.,#1の毛は抜け落ちた。,#your hair falls off.,,,,
+1550,etherGravity,"重力発生
+大きな重力
+とてつもない重力","Gravity Point
+Strong Gravity
+Immense Gravity",,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,3,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,"あなたは重力を生み出している。
+あなたは大きな重力を生み出している。
+あなたはとてつもない重力を生み出している。","You generate gravity.
+You generate heavy gravity.
+You generate massive gravity.",,,#1の周りの重力は軽減した。,#1 weight(s) less.,#1は重力を発するようになった。,#1 start to generate gravity.,,,,
+1551,etherUgly,"顔のただれ
+顔中の蕁麻疹
+崩れかけの顔","Scalding Face
+Facial Hives
+Crumbling Face",,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,3,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,"あなたの顔はただれている。
+あなたの顔中に蕁麻疹が出ている。
+あなたの顔は崩れかけている。","You have sores on your face.
+Your face is ulcerate.
+Your face is crumbling.",,,#1の顔のただれは軽くなった。,The swelling in #1 face decreases.,#1の顔はただれた。,#your face is festered.,,,,
+1552,etherFeet,蹄変化,Hoof Transformation,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたの足の裏は蹄になっている。,Your feet transformed into hooves.,足装備不可,Cannot wear foot gears,#1の足は元に戻った。,#your feet become normal.,#1の足の裏は蹄に変形した。,#your feet change into hooves.,,,,
+1553,etherEye,"第三の眼
+第四の眼","Third Eye
+Fourth Eye",,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,2,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,"あなたの目は3つある。
+あなたの目は4つある。","You have 3 eyes.
+You have 4 eyes.",,,#1の目は減った。,#your eyes become normal.,#1の目は増殖した。,#your eyes are multipling.,,,,
+1554,etherWing,"エーテルの片翼
+エーテルの両翼","Single Ether Wing
+Dual Ether Wings",,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,2,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,"あなたの背中には片翼がある。
+あなたの背中には両翼がある。","You have grown a single feather.
+You have grown dual feathers.",背中装備不可,Cannot wear back gears,#1の背中から羽が消えた。,#your feathers wilt.,#1の背中に羽が生えた。,Feathers come out from #your back.,,,,
+1555,etherNeck,太い首,Thick Neck,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたの首はもの凄く太い。,Your neck is extremely thick.,首装備不可,Cannot wear neck gears,#1の首は細くなった。,#your neck becomes thin.,#1の首は太くなった。,#your neck becomes extremely thick.,,,,
+1556,etherViolence,殺戮への餓え,Hunger for Slaughter,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたは殺戮に飢えている。,Desire for violence arises within you.,,,#1の心は落ち着いた。,A deep sense of peace fills #your heart.,#1は憎しみに支配された。,Hatred dominates #your soul.,,,,
+1557,etherHead,頭部の巨大化,Enlarged Head,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたの頭は巨大化している。,Your head has grown huge.,,,#1の頭は元に戻った。,#your head is normal size now.,#1の頭は巨大化した。,Suddenly #your head become giant size.,,,,
+1558,etherRain,生きた加湿器,Living Humidifier,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたは雨を呼ぶ。,Clouds of rain follow you.,よく雨が降る,Attract rain clouds,#1の頭上から雨雲が消えた。,Clouds of rain stop following #1.,#1の頭上に雨雲が現れた。,Clouds of rain start to follow #1.,,,,
+1559,etherAddict,ポーション中毒,Potion Addict,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたはポーション中毒だ。,You are addicted to potion.,定期的にポーションを飲む,Consume potions regularly,#1のポーション中毒は消えた。,#1 are/is no longer addicted to potion.,#1はポーション中毒になった。,"Potions! More potions!! Suddenly, #1 become(s) addicted to potion.",,,,
+1560,etherWeak,衰弱,Weakening,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたは衰弱している。,You suffer debilitation.,,,#1は健康になった。,#1 become(s) healthy again.,#1は衰弱した。,"#1 become(s) weak, very weak.",,,,
+1561,etherStupid,痴呆,Dementia,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたは痴呆になっている。,You have dementia.,,,#1は明晰になった。,#1 become(s) confident again.,#1はぼけた。,#1 become(s) feebleminded.,,,,
+1562,etherArmor,重い甲殻,Heavy Shell,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたは重い甲殻で覆われている。,You are covered by heavy carapace.,,,#1の皮膚から甲殻が消えた。,#your carapace starts to break.,#1の皮膚は甲殻で覆われた。,Heavy carapace starts to cover up #your skin.,,,,
+1563,etherProvoke,生きとし生けるものの敵,Enemy of All Living Thing,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたの存在は周囲の生物を怒らせる。,Your existence provokes living things.,"中立生物の敵対化,殺害時のカルマペナルティ減少","Neutral creatures go hostile,Reduced karma penalty when killing",#1の外見は元通りになった。,#your appearance is back to normal.,#1の頭に冒涜的な角が生えた。,#1 develope(s) a blasphemous horn on #his head.,,,,
+1564,etherManaBattery,マナバッテリー,Mana Battery,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたは生きたマナバッテリーだ。,You are a living mana battery.,触れた杖の魔力を吸い取る,Absorb mana from rods,#1のマナは元通りになった。,#1 are/is no longer a living mana battery.,#1のマナは杖から魔力を抽出する。,#1 are/is a living mana battery.,,,,
+1565,etherPoisonHand,エーテルの滴る手,Ether Hand,,,,,,,,,,,,,,,-1,,,,Mutation,MUTATION,ether,,,neg,,,,,,1,,,,,,,,,,エーテルが体内に蓄積したことにより生じた体の変化。,A physical alteration caused by the accumulation of Ether in your body.,あなたの手からは毒が滴っている。,Poison drips from your hands.,"触れたポーションが毒化,素手での攻撃が毒属性に変化","Poison potions,Unarmed attacks convert to poison element",#1の手は元通りになった。,#your hands are clean now.,#1の手から毒が滴り出した。,Poison starts to drip from #your hands.,,,,
+1610,featLife,"苦行者見習い
+苦行者
+熟練の苦行者
+苦行の達人
+伝説的苦行者","Apprentice Ascetic
+Journeyman Ascetic
+Expert Ascetic
+Master Ascetic
+Legendary Ascetic",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,general,,,,,,,,5,,,,,,,,,,苦行を通じて生命力を鍛える。,Practicing asceticism strengthens your life force.,"あなたは苦行者の見習いだ。
+あなたは立派な苦行者だ。
+あなたは熟練した苦行者だ。
+あなたは苦行の達人だ。
+あなたは伝説的な苦行者だ。","You are an apprentice of an ascetic.
+You are a journeyman of an ascetic.
+You are an expert of an ascetic.
+You are a master of an ascetic.
+You are an legendary ascetic.",,,,,,,,,,
+1611,featMana,"魔力の遺伝子
+魔力の細胞
+魔力の血液
+魔力の肉体
+魔力の支配","Magical Gene
+Magical Cell
+Magical Blood
+Magic Body
+Magic Being",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,general,,,,,,,,5,,,,,,,,,,遺伝子組み換えを行いマナを増やす。,You gain mana by using gene manipulation.,"あなたは魔力の遺伝子を持っている。
+あなたは魔力の細胞を持っている
+あなたには魔力の血液が流れている
+あなたの肉体は魔力を帯びている。
+あなたは魔力を支配している。","Your genes contain magic.
+Your cells contain magic.
+Your blood contain magic.
+Your body is made of magic.
+Magic dominats your entire body.",,,,,,,,,,
+1612,featStamina,"短距離走者
+中距離走者
+長距離走者","Short Distance Runner
+Middle Distance Runner
+Long Distance Runner",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,general,,,,,,,,3,,,,,,,,,,長年の走り込みの成果がスタミナを高める。,Years of training strengthens your stamina.,"あなたは持久力がある。
+あなたはかなり持久力がある。
+あなたの持久力は恐ろしい。","You have good stamina.
+You have very good stamina.
+You have outstanding stamina.",,,,,,,,,,
+1620,featSTR,"腕相撲の初心者
+腕相撲の達人
+腕相撲のチャンピオン","Arm Wrestler
+Adept Arm Wrestler
+Master Arm Wrestler",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,attribute,,,,,,,,3,,,,,,,,,,腕相撲の特訓で筋力を高める。,Train arm wrestling to increases your strength.,"あなたは腕相撲が強い。
+あなたは腕相撲の達人だ。
+あなたは腕相撲のチャンピオンだ。","You are an arm wrestler.
+You are a good arm wrestler.
+You are a master of arm wrestling.",,,,,,,,,,
+1621,featDEX,"器用な指
+職人の指
+自在の指","Flexible Fingers
+Artisan Fingers
+Able Fingers",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,attribute,,,,,,,,3,,,,,,,,,,指を動かして器用になる。,Moving your fingers makes you dexterous.,"あなたの指はよく動く。
+あなたの指はなめらかに動く。
+あなたの指は気持ち悪いほど動く。","Your fingers move well.
+Your fingers move smoothly.
+Your fingers move creepily.",,,,,,,,,,
+1622,featEND,"我慢強い
+とても我慢強い
+恐ろしく我慢強い","Tough
+Pretty Tough
+Awfully Tough",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,attribute,,,,,,,,3,,,,,,,,,,頭を壁にぶつけて耐久力を高める。,Pushing your head against a wall makes you tougher.,"あなたは我慢強い。
+あなたはとても我慢強い。
+あなたは恐ろしく我慢強い。","You are tough.
+You are pretty tough.
+You are awfully tough.",,,,,,,,,,
+1623,featPER,"見張りの目
+泥棒の目
+慧眼","Watch's Eye
+Thief's Eye
+Keen Eye",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,attribute,,,,,,,,3,,,,,,,,,,遠くを眺めて目を鍛える。,Train your eyes by looking into the distance.,"あなたの目は見張りのように鋭い。
+あなたの目は泥棒のように鋭い。
+あなたの目は鷹のように鋭い。","You have eyes of a watcher.
+You have eyes of a thief.
+You have keen eyes.",,,,,,,,,,
+1624,featLER,"好奇心
+勉強熱心
+本の虫","Curious
+Studious
+Bookworm",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,attribute,,,,,,,,3,,,,,,,,,,何にでも興味を持って素養を深める。,Deepen your interest in everything.,"あなたは何にでも興味を持つ。
+あなたは勤勉だ。
+あなたは本の虫だ。","You are curious for anything.
+You are studious.
+You are a bookworm.",,,,,,,,,,
+1625,featMAG,"スピリチュアル
+霊感
+第六感","Spiritual
+Mystic
+Sixth Sense",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,attribute,,,,,,,,3,,,,,,,,,,超自然的なものと触れ合い魔力を磨く。,Contact with supernatural beings to hone your magic.,"あなたはスピリチュアルに心頭している。
+あなたは超自然的な力を感じることができる。
+あなたには死んだ人が見える。","You are spiritually minded.
+You can sense supernatural forces.
+You see dead people.",,,,,,,,,,
+1626,featWIL,"強い意志
+鉄の意志
+不屈の意志","Strong Will
+Iron Will
+Unyielding Will",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,attribute,,,,,,,,3,,,,,,,,,,涙をこらえて意志を鍛える。,Fight back tears and strengthen your will.,"あなたの意志は強い。
+あなたは鉄の意志を持っている。
+あなたは不屈の意志を持っている。","Your will is strong.
+You have an iron will.
+You have an unyielding will.",,,,,,,,,,
+1627,featCHA,"セクシー
+ロマンチスト
+色魔","Sexy
+Romanticist
+Lady Killer",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,attribute,,,,,,,,3,,,,,,,,,,セクシーなポーズを学ぶ。,You learn sexy poses.,"あなたはセクシーだ。
+あなたはロマンチストだ。
+あなたはとんでもない色魔だ。","You are sexy.
+You are a romanticist.
+You are a lady killer.",,,,,,,,,,
+1628,featLuck,"幸運の持ち主
+類稀な幸運
+幸運の女神の寵愛","Lucky
+Incredibly Lucky
+Goddess of Luck",,,,,,,,,,,,,,"1,1,2",,,,,Feat,FEAT,feat,attribute,,,,,,,,3,,,,,,,,,,流れ星を見て幸運を手にする。,Sighting a falling star brings you luck.,"あなたは幸運の持ち主だ。
+あなたは類稀な幸運の持ち主だ。
+あなたは幸運の女神の寵愛を受けている。","You are lucky.
+You can rely on a good dose of luck.
+The goddess of luck smiles on you.",,,,,,,,,,
+1629,featSPD,"俊足
+韋駄天","Agile
+Very Agile",,,,,,,,,,,,,,2,,,,,Feat,FEAT,feat,attribute,,,,,,,,2,,,,,,,,,,猫を追いかけて速くなる。,Chasing cats increases your speed.,"あなたは速く走ることができる。
+あなたは猫よりも速い。","You can run fast.
+You can run faster than a cat.",,,,,,,,,,
+1630,featHardy,"石の守備
+鉄の守備
+鋼の守備","Stone Defense
+Iron Defense
+Steel Defense",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,general,,,,,,,,3,,,,,,,,,,受身を会得しPVを上昇させる。,You establish your own defensive style.,"あなたの防御は石のように硬い。
+あなたの守備は鉄壁だ。
+あなたの防御は鋼のように固い。","Your defense is as hard as stone.
+Your defense is as hard as iron.
+Your defense is as hard as steel.",,,,,,,,,,
+1631,featDefense,"見極め
+見極めの熟練者
+見極めの達人","Dodge
+Improved Dodge
+Greater Dodge",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,general,,,,,,,,3,,,,,,,,,,敵の動きを見極めDVを上昇させる。,You learn how to dodge attacks.,"あなたは見切れる。
+あなたはかなり見切れる。
+あなたの見切りは伝説的だ。","You can somewhat dodge enemy attacks.
+You can dodge enemy attacks.
+You can really dodge enemy attacks.",,,,,,,,,,
+1632,featEvade,"回避の修練者
+回避の熟練者
+回避の達人","Evade
+Improved Evade
+Greater Evade",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,skill,,,,,,,,3,evasion,,,,,,,,,回避の技術に磨きをかける。,You improve your evasion skill.,"あなたは回避に長けている。
+あなたは華麗に回避する。
+あなたは回避の達人だ。","You can somewhat evade enemy attacks.
+You can evade enemy attacks.
+You can really evade enemy attacks.",,,,,,,,,,
+1633,featSpotting,"発見者
+熟練発見者
+伝説の発見者","Spotter
+Adept Spotter
+Master Spotter",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,skill,,,,,,,,3,spotting,,,,,,,,,周りを注意深く観察し、隠されたものの発見を容易にする。,You search around carefully to spot hidden stuff.,"あなたは隠されたものによく気づく。
+あなたは隠されたものの発見に長けている。
+あなたは何でも見つけてしまう。","You are good at finding hidden stuff.
+You are adept at finding hidden stuff.
+You find everything hidden.",,,,,,,,,,
+1634,featNegotiate,"交渉上手
+交渉の神","Negotiator
+Great Negotiator",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,skill,,,,,,,,2,negotiation,,,,,,,,,行商人の元で働き交渉の技術を学ぶ。,Working under a trader improves your negotiation skill.,"あなたは交渉が上手い。
+あなたの交渉は神がかっている。","You are a negotiator.
+You are a great negotiator.",,,,,,,,,,
+1635,featMartial,"格闘家
+拳聖","Martial Artist
+Ken-Sei",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,skill,,,,,,,,2,,,,,,,,,,ストリートファイトに興じ格闘技の技を得る。,You learn tricks of martial arts from fighting in streets.,"あなたは格闘技を会得している。
+あなたは拳聖だ。","You know martial arts.
+You mastered martial arts.",,,,,,,,,,
+1636,featFaith,"信者
+狂信者","Believer
+Zealot",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,skill,,,,,,,,2,faith,,,,,,,,,神官の下で修行し信仰を深める。,Training under a priest deepens your faith.,"あなたは信仰に篤い。
+あなたは猛烈な信者だ。","You really believe in god.
+You are a zealot.",,,,,,,,,,
+1640,featAnimalLover,動物好き,Animal Lover,,,,,,,,,,,,,,1,-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,1,"negotiation,5",,,,,,,,,動物好きが高じて動物の言葉がわかるようになる。,Your love of animals leads you to understand animal language.,あなたは動物の言葉が理解できる。,You understand animal language.,動物が喋り始める,Animals start talking,,,,,,,,
+1641,featResCurse,祈祷師,Exorcist,,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,special,,,,,,,,1,"faith,15",,,,,,,,,祈祷を捧げることで、呪いの言葉の効力を弱める。,Your prayer weakens the power of cursed whisperings.,あなたの祈りは呪いの言葉を掻き消す。,Your prayer nullifies cursed whisperings.,確率で呪いを無効にする,Nullifies curses occasionally,,,,,,,,
+1642,featSleeper,"眠り上手
+眠りの熟練者
+眠りの達人","Easy Sleeper
+Deep Sleeper
+Master Sleeper",,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,special,,,,,,,,3,,,,,,,,,,羊を数えてぐっすり眠れるようになる。,You learn how to count sheeps.,"あなたは安眠できる。
+あなたは熟睡できる。
+あなたは泥のように眠ることができる。","You can sleep easily.
+You can sleep deeply.
+You sleep like a log.","睡眠時スタミナ回復量上昇,睡眠時レシピ習得率上昇","Increased stamina recovery when sleeping,Increased chance of learning a recipe when sleeping",,,,,,,,
+1643,featSorter,"A型
+情熱的なA型
+偏執的なA型","Sorter
+Passionate Sorter
+Paranoid Sorter",,,,,,,,,,,,,,,-1,,,,Feat,FEAT,feat,special,,hidden,,,,,,3,,,,,,,,,,物資がきちんと整理されていないと発狂する。,Keeping supplies organized makes you happy.,"あなたは物資を整理できる。
+あなたは物資の整理に情熱を燃やす。
+あなたは物資が整理されていないと狂う。","You can organize supplies.
+You are passionate about organizing supplies.
+You go crazy when supplies are not organized.",クラフト時に扱えるコンテナの範囲 +#1,+#1 range for searching containers when crafting,,,,,,,,
+1644,featBodyParts,肉体の変容,Body Mutation,,,,,,,,,,,,,,1,-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,20,featGrowParts,,,,,,,,,新たな体の部位を獲得する。,You grow a new body part.,あなたは不定形だ。,You are without a definite shape.,体の部位 +#1,+#1 Body Parts,,,,,,,,
+1645,featParty,人気者,Party Animal,,,,,,,,,,,,,,"1,2,3",-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,3,,,,,,,,,,パーティーに参加して人気者になる。,You attend parties to be popular.,あなたは人気者だ。,You are popular.,仲間の最大数 +#1,+#1 Max Ally,,,,,,,,
+1646,featLonelySoul,孤独な魂,Lonely Soul,,,,,,,,,,,,,,"1,1,1,2,2",-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,5,"travel,5",,,,,,,,,孤独を生きる力に変える思考を身につける。,You learn how to turn solitude into strength.,あなたは孤独が好きだ。,You like solitude.,仲間の最大数の空きに比例して能力強化,Boost attributes proportional to max ally vacancies,,,,,,,,
+1647,featSummoner,羊飼い,Shepherd,,,,,,,,,,,,,,"1,1,2,2",,,,,Feat,FEAT,feat,special,,noPet,,,,,,10,"casting,15",,,,,,,,,羊に囲まれて群れの導き方を学ぶ。,You learn how to lead a flock.,あなたは群れるのが好きだ。,You like to flock together.,召喚の最大数 +#1,+#1 Max Summon,,,,,,,,
+1648,featRapidMagic,連続魔法,Rapid Cast,,,,,,,,,,,,,,5,,,,,Feat,FEAT,feat,,,,,,,,,5,,,,,,,,,,,,あなたは早口で詠唱できる。,You can chant quickly.,魔法の発射数 +#1,+#1 Spell Projectile,,,,,,,,
+1649,featDefender,ディフェンダー,Defender,,,,,,,,,,,,,,"1,1,1",,,,,Feat,FEAT,feat,special,,,,,,,,3,,,,,,,,,,口汚く罵って敵の注意を惹く技術を学ぶ。,You learn how to use foul language to distract enemies.,あなたは煽るのが上手い。,You are good at provoking.,"「挑発」スタンス習得,挑発範囲 +#1
+挑発範囲 +#1","Learn ""Taunt"" stance,+#1 Taunt Range
++#1 Taunt Range",,,,,,,,
+1650,featGourmet,美食家,Gourmet,,,,,,,,,,,,,,1,-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,3,cooking,,,,,,,,,食べ物と栄養の知識を身につける。,You learn knowledge about food and nutrition.,あなたは食べ物の栄養を見抜くことが出来る。,You can discern nutritions of food.,"食べ物の隠された特性が見れるようになる
+食べ物の隠された特性が見れるようになる,一部のレシピに任意調味料枠を追加
+食べ物の隠された特性が見れるようになる,一部のレシピに任意調味料枠を追加,料理の栄養圧縮","Show hidden food traits
+Show hidden food traits,Add a seasoning slot to some recipes
+Show hidden food traits,Add a seasoning slot to some recipes,Compress the nutrition of dishes",,,,,,,,
+1651,featMagicManner,魔法のマナー,Magic Manners,,,,,,,,,,,,,,1,,,,,Feat,FEAT,feat,special,,,,,,,,2,"casting,5",,,,,,,,,周りに迷惑をかけない魔法の詠唱方法を学ぶ。,You learn socially responsible magic casting.,あなたは魔法の作法を心得ている。,You are adept in the manners of magic.,"魔法によるアイテム破壊の防止
+魔法によるアイテム破壊の防止（パーティー全体）","Prevent damage to items
+Prevent damage to items (Entire Party)",,,,,,,,
+1652,featRapidArrow,連続射撃,Rapid Arrow,,,,,,,,,,,,,,5,,,,,Feat,FEAT,feat,,,,,,,,,5,,,,,,,,,,,,あなたは目にもとまらぬ速さで射撃できる。,You can shoot very quickly.,"矢弾の発射数 +#1,リロード時間短縮","+#1 Ranged Projectile,Faster Reload",,,,,,,,
+1653,featDreamWaker,覚醒夢,Dream Waker,,,,,,,,,,,,,,"1,1,2",-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,3,casting,,,,,,,,,夢の中で魔法に触れる。,You touch magic source in your dream.,あなたは夢の中で魔法を覚える。,You learn magic while dreaming.,"睡眠時に必ず魔法の夢を見る,魔法の夢の効果増大
+睡眠時に必ず魔法の夢を見る,魔法の夢の効果がさらに増大
+睡眠時に必ず魔法の夢を見る,魔法の夢の効果がさらに増大,上位魔法を習得可能","Always dream of magic while sleeping,Increased effect of magic dreams
+Always dream of magic while sleeping,Further increased effect of magic dreams
+Always dream of magic while sleeping,Further increased effect of magic dreams,Possible to learn higher-level spells",,,,,,,,
+1654,featHeavyCasting,"初級重装詠唱
+中級重装詠唱
+上級重装詠唱","Basic Heavy Cast
+Advanced Heavy Cast
+Master Heavy Cast",,,,,,,,,,,,,,"1,1,2",,,,,Feat,FEAT,feat,special,,,,,,,,3,"armorHeavy,5",,,,,,,,,身体に大きな負荷をかけながら詠唱する。,You learn how to cast spells under heavy physical strain.,"あなたの声帯は太い。
+あなたの声帯はとても太い。
+あなたの声帯はとてつもなく太い。","You have a deep voice.
+You have a very deep voice.
+You have an incredibly deep voice.","重装備と盾装備時の重詠唱ペナルティを軽減
+重装備と盾装備時の重詠唱ペナルティをさらに軽減
+重装備と盾装備時の重詠唱ペナルティを最大まで軽減,朦朧状態での詠唱ペナルティ軽減","Reduced heavy casting penalty when wearing heavy armor or a shield
+Further reduced heavy casting penalty when wearing heavy armor or a shield
+Maximally reduced heavy casting penalty when wearing heavy armor or a shield,Reduced casting penalty when dimmed",,,,,,,,
+1655,featModelBeliever,模範信者,Model Follower,,,,,,,,,,,,,,1,-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,2,,,,,,,,,,毎日感謝の祈りを捧げる。,You offer a prayer of gratitude every day.,あなたは祈りをかかさない。,You never miss your prayers.,"祈りが可能なら一日の終わりに祈る
+祈りが可能なら一日の終わりに祈る,連れている仲間も一緒に祈る","Automatically pray at the end of the day if possible
+Automatically pray at the end of the day if possible,Party members also pray with you",,,,,,,,
+1656,featScavenger,廃品回収,Scavenger,,,,,,,,,,,,,,1,-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,3,"disarmTrap,5",,,,,,,,,ゴミの中から貴重品を見つけ出す技術を学ぶ。,You learn the technique of locating treasures in waste.,あなたは希少品を発見できる。,You can spot rare items.,"採取スポットでの採取品の品質微上昇,罠を解体時に低確率で素材を入手
+採取スポットでの採取品の品質上昇,罠を解体時に高確率で素材を入手
+採取スポットでの採取品の品質上昇,罠を解体時に高確率で素材を入手,罠の解体失敗時に罠をトリガーしない","Slightly higher item quality at gathering spots,Low chance to obtain materials when dismantling traps
+Higher item quality at gathering spots,Moderate chance to obtain materials when dismantling traps
+Higher item quality at gathering spots,Moderate chance to obtain materials when dismantling traps,Failed disarm doesn't activate trap",,,,,,,,
+1657,featManaCost,節魔術,Mana Saver,,,,,,,,,,,,,,"1,2",-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,2,"memorization,15,30",,,,,,,,,マナを節約する技術を学ぶ。,You learn how to save mana.,あなたはマナを節約できる。,You know how to save mana.,"「節魔」スタンス習得
+節魔の効果上昇","Learn ""Maconomy"" stance
+Improved Maconomy",,,,,,,,
+1658,featChef,旅するシェフ,Traveling Chef,,,,,,,,,,,,,,"2,1",-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,2,"cooking,10,25",,,,,,,,,ネフィアに潜りながら料理の可能性を探る。,You explore culinary possibilities while diving into Nefia.,あなたは料理が上手だ。,You are good at cooking.,"作った料理に【できたて料理】の特性を付与する
+作った料理に【できたて料理】の特性を付与する,できたて期間の延長","Add 【Just Prepared】 trait to meal you cook
+Add 【Just Prepared】 trait to meal you cook,Increased effect duration",,,,,,,,
+1659,featFisher,初釣り,First Catch,,,,,,,,,,,,,,"1,1",-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,2,"fishing,10,25",,,,,,,,,寝ている間に幸運の女神から啓示を受ける。,You receive a divine revelation from the goddess of luck while sleeping.,あなたの釣りを女神は見守っている。,You fish with divine blessing.,"一日の最初の5回の釣りでグレードの高い魚が釣れる確率が上昇
+一日の最初の5回の釣りでグレードの高い魚が釣れる確率が上昇,一日の最初の釣りで必ずグレードの高い魚が釣れる","First 5 casts of the day have boosted high-grade fish chance
+First 5 casts of the day have boosted high-grade fish chance,First cast of the day guarantees high grade fish",,,,,,,,
+1660,featLooter,略奪者,Looter,,,,,,,,,,,,,,"1,2,3",-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,3,"anatomy,10,25,40",,,,,,,,,略奪の作法を学ぶ。,Study the manners of looting.,あなたは略奪に長けている。,You excel at looting.,敵が落とすレアドロップ装備品の品質が#1%の確率で上昇,#1% chance for enemy rare drop equipment to be higher quality,,,,,,,,
+1661,featDismantler,解体屋,Dismantler,,,,,,,,,,,,,,"1,1",-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,2,"handicraft,5",,,,,,,,,ハンマーを振り回して力加減を学ぶ。,You train your sense of force by swinging a hammer around.,あなたは上手に解体できる。,You’re good at dismantling.,"アイテム解体時にレシピが習得可能かわかる,アイテム解体時にレシピを閃く確率がわずかに上昇
+アイテム解体時にレシピが習得可能かわかる,アイテム解体時にレシピを閃く確率が倍増","See if a recipe can be learned when dismantling,Chance to discover recipes slightly increased
+See if a recipe can be learned when dismantling,Double the chance to discover recipes",,,,,,,,
+1662,featGoldenFinger,黄金の指,Golden Finger,,,,,,,,,,,,,,2,-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,1,"stealing,25",,,,,,,,,窃盗の極意を学ぶ。,You learn the art of thievery.,あなたは窃盗の達人だ。,You excel at thievery.,窃盗無効の相手から盗めるようになる,You can steal from theft-immune targets,,,,,,,,
+1663,featFastEater,早食い,Fast Eater,,,,,,,,,,,,,,1,1,,,,Feat,FEAT,feat,special,,,,,,,,3,"cooking,5",,,,,,,,,噛まないで食べる。,You learn the art of fast eating.,あなたは早食いだ。,You can eat quickly.,食事にかかる時間の短縮,Eating takes less time,,,,,,,,
+1664,featFastFucker,愛の伝道師,Missionary of Love,,,,,,,,,,,,,,1,1,,,,Feat,FEAT,feat,special,,,,,,,,3,"taming,5",,,,,,,,,危ない本を読み漁る。,You learn the art of love.,あなたは技巧派だ。,You are easy to please.,吸血・捕食・悪戯に要する時間の短縮,Devour; Bloodsuck and Mischief take less time,,,,,,,,
+1750,featComat,戦技,Combat Art,,,,,,,,,,,,,,2,-1,,,,Feat,FEAT,feat,special,,noPet,,,,,,3,"tactics,30,50,100",,,,,,,,,木人を相手に戦いの技を磨く。,Train your fighting techniques on a practice dummy.,あなたは戦技を極めている。,You are a master of combat arts.,"「斬撃無双」と「スウォーム」を強化,#1%のパリィ（盾持ちスタイル時効果2倍）","Strengthen “Bladestorm” and “Swarm”,#1% parry chance (Doubled with Shield Style)",,,,,,,,
+2003,fConstruction,建築,Construction,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,"1,actBuildTerrain
+3,actBuildInspect
+5,actBuildCut
+7,actBuildMine
+8,actBuildCollect
+9,actBuildRecipe
+10,actBuildAnywhere",,,,建築の技術。ビルドモードでより多くの機能を使用できるようになる。,An architectural Technology. Enables more functions in build mode.,,,,,,,,,,,,
+2115,fAdmin,運営,Administration,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,ホーム運営の技術。より多くの条例を運用するために必要。,A technology to manage home necessary for implementing a greater number of laws.,,,,,,,,,,,,
+2116,fEducation,勤勉,Studious,,,,,,,,,,,,,,4,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,住人の仕事の効率を上げ、住人から受けるボーナスを増加する技術。,A technology that increases the efficiency of the residents' work and the bonuses received from them.,,,,,,,,,,,,
+2117,fLoyal,地元愛,Local Patriotism,,,,,,,,,,,,,,3,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,住人の好感度を上がりやすくする技術。,A technology that makes it easier to improve residents' affinity.,,,,,,,,,,,,
+2118,fLuck,幸運,Luck,,,,,,,,,,,,,,10,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,土地の幸運度。,The land's luck factor.,,,,,,,,,,,,
+2119,fTaxEvasion,脱税,Tax Evasion,,,,,,,,,,,,,,7,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,所得を隠し税務官の目を欺く技術。納める税金を減額できる。全ての拠点のスキルの合計値が適用される。,"A technology to conceal income and deceive tax officials, allowing for a reduction in the taxes levied. The combined skill value from all bases is utilized.",,,,,,,,,,,,
+2120,fHeirloom,遺産管理,Legacy,,,,,,,,,,,,,,4,,,,,Skill,FACTION,tech,,,,,,,,,30,,,,,,,,,,扱える家宝の数を増やす技術。,A technology to increase the number of heirlooms assessed towards the value of the land.,,,,,,,,,,,,
+2200,fSoil,土壌,Soil,,,,,,,,,,,,,,5,,,,,Skill,FACTION,tech,,,,,,,,,20,,,,,,,,,,土地の土壌の質。高いほど多くの植物を栽培することができるようになる。,The qualiy of the land's soil. Higher quality allows for the cultivation of more plants.,,,,,,,,,,,,
+2201,fElec,自然発電,Natural Power Generation,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,自然から生み出される電力。,Electricity generated from nature.,,,,,,,,,,,,
+2202,fPromo,宣伝,Publicity,,,,,,,,,,,,,,5,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,観光客や来訪者を増加させる宣伝力。,Promotional strength to boost tourist and visitor numbers.,,,,,,,,,,,,
+2203,fMoral,公共精神,Public Morality,,,,,,,,,,,,,,4,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,住人の道徳度。民度に影響する。,The morality standards of the residents that affect the level of civility.,,,,,,,,,,,,
+2204,fFood,食料供給,Food Supply,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,食料供給力。住人の最大数を増加させる。,Food supply capacity of the land. Increases the maximum number of residents.,,,,,,,,,,,,
+2205,fSafety,治安,Public Safety,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,ホームの治安。襲撃の頻度に影響する。,The safety of the home. Plays a role in how often attacks happen.,,,,,,,,,,,,
+2206,fAttraction,魅力,Attraction,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,ホームの魅力。来訪者の数に影響する。,The attractiveness of the home. Influences the number of visitors.,,,,,,,,,,,,
+2207,fRation,非常食,Emergency Ration,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,,,,,,,,,,,,,,,,,緊急時の食料。住人の数が上限を超えた時のペナルティーを緩和する。,Emergency rations. Reduce penalties if the population surpasses the maximum limit.,,,,,,,,,,,,
+2500,wealth_tax,富裕税,Wealth Tax,,,,,,,,,,,,,,9,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,富裕層からの税収を増大させる条令。有効化されて30日以上が経過しないと徴税されない。,An ordinance that increases tax revenue from wealthy residents. At least 30 days need to pass after enabling.,,,,,,,,,,,,
+2501,faith_tax,信仰税,Faith Tax,,,,,,,,,,,,,,5,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,神の信奉者から税金を徴収する法律。有効化されて30日以上が経過しないと徴税されない。,An ordinance that generates additional tax revenue based on faith. At least 30 days need to pass after enabling.,,,,,,,,,,,,
+2502,food_for_people,食料配給,Food for the People ,,,,,,,,,,,,0,,2,,,,,Skill,POLICY,policy,economy,,hidden,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2503,prohibition,禁酒法,Prohibition,,,,,,,,,,,,,,4,,,,,Skill,POLICY,policy,law,,,,,,,,,,,,,,,,,,住人の飲酒を禁止する法律。,A law that prohibits residents from drinking alcohol.,,,,,,,,,,,,
+2504,impressment,強制徴募,Impressment,,,,,,,,,,,,0,,5,,,,,Skill,POLICY,policy,law,,hidden,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2505,legal_drug,合法ドラッグ,Designer Drug,,,,,,,,,,,,,,2,,,,,Skill,POLICY,policy,law,,,,,,,,,,,,,,,,,,麻薬の所持を合法にする法律。,A law that makes possessing drugs legal.,,,,,,,,,,,,
+2506,human_right,人権,Human Right,,,,,,,,,,,,,,4,,,,,Skill,POLICY,policy,law,,,,,,,,,,,,,,,,,,ホームでの殺傷を禁じる法律。,A law that forbids killing and assaulting in home.,,,,,,,,,,,,
+2507,inquisition,異端審問会,Inquisition,,,,,,,,,,,,0,,2,,,,,Skill,POLICY,policy,law,,hidden,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2508,nocturnal_life,夜型生活条令,Nocturnal Life,,,,,,,,,,,,,,1,,,,,Skill,POLICY,policy,life,,,,,,,,,,,,,,,,,,住民が夜型生活になることを推奨する条令。,A campaign that encourages nocturnal living among residents.,,,,,,,,,,,,
+2509,vaccination,強制予防接種,Compulsory Vaccination,,,,,,,,,,,,0,,2,,,,,Skill,POLICY,policy,life,,,,,,,,,,,,,,,,,,ワクチンの接種を義務化する法律。,A law that enforces administration of vaccines.,,,,,,,,,,,,
+2510,ban_radio,電波規制,Ban Radio Wave,,,,,,,,,,,,0,,2,,,,,Skill,POLICY,policy,law,,,,,,,,,,,,,,,,,,住人に不法な電波の使用を禁止する法律。,A law that prohibits residents from using illegal radio waves.,,,,,,,,,,,,
+2511,self_sufficient,自給自足,Self Sufficient Life,,,,,,,,,,,,0,,2,,,,,Skill,POLICY,policy,life,,hidden,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2512,resident_tax,住民税,Resident Tax,,,,,,,,,,,,,,6,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,住人から税金を徴収する法律。有効化されて30日以上が経過しないと徴税されない。,A law for collecting taxes from residents. At least 30 days need to pass after enabling.,,,,,,,,,,,,
+2513,resident_wanted,住人誘致運動,Resident Wanted!,,,,,,,,,,,,,,4,,,,,Skill,POLICY,policy,life,,,,,,,,,,,,,,,,,,住人を広く募集し、掲示板に載る移住希望者の数を増やす運動。,A campaign to broadly recruit residents and increase the number of immigrants appear on the bulletin board.,,,,,,,,,,,,
+2514,taxfree,免税地,Tax Free Land,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,収入に税金がかからない土地。ファクション内で３つまで免税地を指定できる。,Land where income is not taxed. Up to three tax-free lands can be designated within a faction.,,,,,,,,,,,,
+2515,stop_growth,成長抑止,Growth Suppression,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,law,,,,,,,,,,,,,,,,,,盟約の石の成長を抑制する条令。,An ordinance to inhibit the growth of the Hearth Stone.,,,,,,,,,,,,
+2516,speed_growth,成長促進,Growth Boost,,,,,,,,,,,,0,,3,,,,,Skill,POLICY,policy,law,,,,,,,,,,,,,,,,,,盟約の石の成長を促進する条令。,An ordinance to promote the growth of the Hearth Stone.,,,,,,,,,,,,
+2700,energy_conservation,節電運動,Energy Conservation ,,,,,,,,,,,,,,2,,,,,Skill,POLICY,policy,life,,,,,,,,,,,,,,,,,,住人に節電を促し電力の消費を抑える運動。,A campaign that encourages residents to save electricity and reduce power consumption.,,,,,,,,,,,,
+2701,trash_sort,ゴミ分別条令,Waste Sorting Campaign,,,,,,,,,,,,,,1,,,,,Skill,POLICY,policy,life,,,,,,,,,,,,,,,,,,住民にゴミの分別を促し、民度を向上させる条令。,A campaign that encourages residents to separate their waste and enhance communal civility.,,,,,,,,,,,,
+2702,trash_no,ポイ捨て厳罰法,Strict Anti-Littering Law,,,,,,,,,,,,0,,1,,,,,Skill,POLICY,policy,life,,,,,,,,,,,,,,,,,,ゴミ出しを厳罰化し、ゴミのポイ捨てを防止する法律。民度は下がる。,"A law imposing strict penalties for improper garbage disposal and littering, which leads to a decline in public civility.",,,,,,,,,,,,
+2703,weed_no,草むしり条令,Weed Pulling Campaign,,,,,,,,,,,,0,,1,,,,,Skill,POLICY,policy,life,,,,,,,,,,,,,,,,,,住人に雑草の除去を推奨し、ホームに雑草が生えにくくする条令。,"A campaign that encourages residents to remove weeds, making it less likely for weeds to grow.",,,,,,,,,,,,
+2704,border_watch,境界の見張り,Border Watch,,,,,,,,,,,,,,3,,,,,Skill,POLICY,policy,law,,,,,,,,,,,,,,,,,,街の周辺の見回りを強化し強敵の侵入を未然に防ぐ条令。,A law to strengthen patrols around the town to prevent the invasion of formidable enemies.,,,,,,,,,,,,
+2705,taxTransfer,振替納税,Transfer Tax Payment,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,utility,,,,,,,,,,,,,,,,,,(拠点共通ポリシー) 税金が銀行の預金から直接引き落とされる条令。,(Global Policy) A law that allows taxes to be directly debited from your bank deposit.,,,,,,,,,,,,
+2706,demon_invocation,悪魔呼び,Demon Invocation,,,,,,,,,,,,,,3,,,,,Skill,POLICY,policy,law,,,,,,,,,,,,,,,,,,悪魔召喚の儀式を行い、強い魔物たちを呼び寄せる条令。,A law to hold a ritual of demon summoning to call forth powerful monsters.,,,,,,,,,,,,
+2707,auto_farm,お任せ農業,Delegated Farming,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,utility,,,,,,,,,,,,,,,,,,農業をお任せで行う条令。手作業よりも効率は劣るが、一度種を蒔いておけば、その後は自動的に作物を収穫し種を品種改良する。お任せ農業を行う範囲は畑の立札で指定する必要がある。隣り合った同種の作物は、強化レベルの高い方に統一されることがある。,"A law to delegate agriculture. Although it is less efficient than manual labor, once the seeds are planted, crops are automatically harvested and seeds are improved. The area for automatic farming must be designated with a farm sign. When adjacent crops are of the same type, the one with the higher enhancement level may take over the others.",,,,,,,,,,,,
+2708,noDM,迷惑メールお断り,Anti Spam Package,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,utility,,,,,,,,,,,,,,,,,,(拠点共通ポリシー) 貴重なものではないランダムな荷物の受け取りを拒否する条令。,(Global Policy) A law to refuse random non-valuable packages ,,,,,,,,,,,,
+2709,noAnimal,動物禁止区,Animal Prohibited Zone,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,utility,,,,,,,,,,,,,,,,,,中立動物の侵入を禁止する条令。,An ordinance prohibiting the entry of neutral animals.,,,,,,,,,,,,
+2710,noMother,マザー禁止区,Mother Prohibited Zone,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,utility,,globalPolicy,,,,,,,,,,,,,,,,(拠点共通ポリシー) マザーの侵入を禁止する条令。,(Global Policy) An ordinance prohibiting the entry of mothers.,,,,,,,,,,,,
+2711,incomeTransfer,給与振込,Salary Transfer,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,utility,,globalPolicy,,,,,,,,,,,,,,,,(拠点共通ポリシー) 拠点の収入を銀行に直接振り込む条令。,(Global Policy) A law that allows home incomes to be directly transfered to your bank deposit.,,,,,,,,,,,,
+2712,forcePanty,おもいやりﾊﾟﾝﾃｨｰ着用条例,Panty Mandate,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,utility,,globalPolicy,,,,,,,,,,,,,,,,(拠点共通ポリシー) 性別に関わらずパンティーの着用を義務化する条例。,"(Global Policy) A law requiring individuals to wear panties, irrespective of gender.",,,,,,,,,,,,
+2715,livestock_priv,家畜の優遇,Livestock Privileges,,,,,,,,,,,,0,,0,,,,,Skill,POLICY,policy,utility,,,,,,,,,,,,,,,,,,家畜に共有コンテナのアイテムの使用を許可する条例。,An ordinance allowing livestock to use shared containers.,,,,,,,,,,,,
+2800,home_discount,ふるさと割引,Home Discount,,,,,,,,,,,,,,6,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,ホームでの商品購入時に住人が割引を受けることができる制度。,A law where residents can receive a discount when purchasing products at home.,,,,,,,,,,,,
+2810,open_business,開店,Open For Business,,,,,,,,,,,,,,4,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,ホームに客が訪れるようになる条令。,A law to allow guests to visit your home.,,,,,,,,,,,,
+2811,tourist_safety,観光客保護条例,Tourist Protection,,,,,,,,,,,,,,4,,,,,Skill,POLICY,policy,law,,,,,,,,,,,,,,,,,,ホームに訪れる客の安全を確保し、より多くの客を呼び込む条令。,A law to ensure the safety of visitors to your Home and attract more guests.,,,,,,,,,,,,
+2812,bed_quality,旅人の宿,Traveler's Inn,,,,,,,,,,,,,,6,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,ベッドの品質を宿泊料に加算する条令。,A regulation to include bed quality in the lodging fee.,,,,,,,,,,,,
+2813,suite_room,スイートルーム,Luxury Suite,,,,,,,,,,,,,,8,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,富裕層から宿泊料をぼったくる条令。,A regulation to overcharge the wealthy for accommodation.,,,,,,,,,,,,
+2814,mass_exhibition,大量展示,Mass Exhibition,,,,,,,,,,,,,,4,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,重複する観光展示品も、僅かながら観光価値に計上されるようになる条令。個展と同時には実施できない。,An ordinance allowing even duplicate exhibits to be counted as having slight tourism value.  Cannot be implemented simultaneously with Solo Exhibition.,,,,,,,,,,,,
+2815,platinum_ticket,プラチナチケット,Platinum Ticket,,,,,,,,,,,,,,7,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,富裕層からの観光収入を増大させる条令。,An ordinance aimed at increasing tourism revenue from wealthy visitors.,,,,,,,,,,,,
+2816,store_ripoff,ぼったくり店,Rip-off Store,,,,,,,,,,,,,,10,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,値札を付けた商品の販売価格を大幅に値上げする条令。購買力も大幅に下がる。,An ordinance that significantly raises the prices of tagged goods at the cost of greatly decreased purchasing power.,,,,,,,,,,,,
+2817,store_premium,プレミアム店,Premium Store,,,,,,,,,,,,,,5,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,値札を付けた商品の販売価格を値上げする条令。購買力は下がる。,An ordinance that raises the prices of tagged goods at the cost of decreased purchasing power.,,,,,,,,,,,,
+2818,license_food,飲食店ライセンス,Restaurant License,,,,,,,,,,,,,,4,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,値札を付けた食品や飲み物の販売価格を上昇させるライセンス。,A license that increases the prices of tagged food and beverages. ,,,,,,,,,,,,
+2819,license_furniture,家具店ライセンス,Furniture Store License,,,,,,,,,,,,,,4,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,値札を付けた家具の販売価格を上昇させるライセンス。,A license that increases the prices of tagged furniture. ,,,,,,,,,,,,
+2820,license_general,雑貨店ライセンス,General Store License,,,,,,,,,,,,,,4,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,値札を付けた食品と家具以外のアイテムの販売価格を上昇させるライセンス。,"A license that increases the prices of tagged items other than food, beverages and furniture. ",,,,,,,,,,,,
+2821,legendary_heirloom,伝説の家宝,Legendary Heirloom,,,,,,,,,,,,,,5,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,家宝ランキングで1位のアイテムの評価額を上昇させる条令。,An ordinance that increases the appraisal value of the item ranked number one in the heirloom rankings.,,,,,,,,,,,,
+2822,celeb,セレブ天国,Celebrity's Heaven,,,,,,,,,,,,,,7,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,富裕層の来客を増加させる条令。,An ordinance to increase the number of wealthy visitors.,,,,,,,,,,,,
+2823,legendary_exhibition,個展,Solo Exhibition,,,,,,,,,,,,,,8,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,観光展示品の観光価値を上昇させる条令。大量展示と同時には実施できない。,An ordinance that enhances the tourism value of exhibits. Cannot be implemented simultaneously with Mass Exhibition.,,,,,,,,,,,,
+2824,license_stolen,盗品取扱ライセンス,Fence License,,,,,,,,,,,,,,3,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,値札を付けた盗品の販売価格を上昇させるライセンス。盗賊ギルドに所属している場合は、貢献値も得られるようになる。,"License to increase the prices of tagged stolen goods. If you belong to the Thieves Guild, you will be also able to earn contribution points.",,,,,,,,,,,,
+2825,milk_fan,乳派,Milk Faction,,,,,,,,,,,,,,1,,,,,Skill,POLICY,policy,law,,hidden,,,,,,,,,,,,,,,,家畜から乳をより多く生産する条令。,An ordinance to produce more milk from livestock.,,,,,,,,,,,,
+2826,egg_fan,卵派,Egg Faction,,,,,,,,,,,,,,1,,,,,Skill,POLICY,policy,law,,hidden,,,,,,,,,,,,,,,,家畜から卵をより多く生産する条令。,An ordinance to produce more eggs from livestock.,,,,,,,,,,,,
+2827,breed_season,繁殖期,Breeding Season,,,,,,,,,,,,,,3,,,,,Skill,POLICY,policy,law,,hidden,,,,,,,,,,,,,,,,家畜が乳や卵を生産する確率を上昇させる条令。,An ordinance to increase the probability of livestock producing milk and eggs.,,,,,,,,,,,,
+2828,license_slaver,奴隷販売ライセンス,Slaver License,,,,,,,,,,,,,,6,,,,,Skill,POLICY,policy,economy,,,,,,,,,,,,,,,,,,値札を付けた奴隷の価格を上昇させるライセンス。,A license that increases the prices of tagged slaves. ,,,,,,,,,,,,
+3500,bfCave,洞窟,Cave,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,base,,,,,,,,,,,,,,,,,,運営力の上昇しやすい土地。,Land with more admin points.,,,,,,,,,,,,
+3600,bfPlain,平野,Plain,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,base,,,,,,,,,,,,,,,,,,運営力の上昇しやすい土地。,Land with more admin points.,,,,,,,,,,,,
+3601,bfForest,森,Forest,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,base,,,,,,,,,,,,,,,,,,食料供給の上昇しやすい土地。,Land with more food supply.,,,,,,,,,,,,
+3602,bfSnow,雪原,Snowfield,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,base,,,,,,,,,,,,,,,,,,食料供給は少ないが、運営力と商業力の高い土地。,Land with little food supply but more admin points and commercial power.,,,,,,,,,,,,
+3603,bfHill,丘,Hill,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,base,,,,,,,,,,,,,,,,,,食料供給は少ないが、運営力が上昇しやすい土地。,Land with little food supply but more admin points.,,,,,,,,,,,,
+3604,bfBeach,ビーチ,Beach,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,base,,,,,,,,,,,,,,,,,,魚が多く釣れ、商業力の高い土地。,Land with many fish and more commercial power.,,,,,,,,,,,,
+3605,bfSea,海,Sea,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,base,,,,,,,,,,,,,,,,,,魚が多く釣れ、商業力の高い土地。,Land with many fish and more commercial power.,,,,,,,,,,,,
+3606,bfUndersea,海底,Under Sea,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,base,,,,,,,,,,,,,,,,,,魚が多く釣れ、商業力の高い土地。,Land with many fish and more commercial power.,,,,,,,,,,,,
+3700,bfFertile,肥沃,Fertile,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,土地の肥沃度を上げる。,Increase the fertility of the land.,,,,,,,,,,,,
+3701,bfGeyser,間欠泉,Geyser,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,温泉地帯特有の地質。,Geological features unique to hot spring areas.,,,,,,,,,,,,
+3702,bfRuin,古代遺跡,Ancient Ruin,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,より多くの来客が訪れるようになる。,Attract more visitors.,,,,,,,,,,,,
+3703,bfTranquil,安穏,Tranquil,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,魔物が襲ってくる確率を減らす。,Reduce the probability of monster attacks.,,,,,,,,,,,,
+3704,bfVolcano,火山,Volcano,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,bfHill,,,,,,,,,,,,,,,,火山地帯特有の地質。,Geological features unique to volcanic regions.,,,,,,,,,,,,
+3705,bfHunt,狩場,Hunting Ground,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,より多くの生物が自然発生するようになる。,Encourage more creatures to spawn.,,,,,,,,,,,,
+3706,bfFish,釣場,Fishing Spot,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,より多くの魚が釣れるようになる,Increase the amount of fish that can be caught.,,,,,,,,,,,,
+3707,bfMonster,魔物の巣,Monster's Den,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,魔物が頻繁に襲ってくるようになる,More monsters start attacking the base.,,,,,,,,,,,,
+3708,bfFreshAir,新鮮な空気,Fresh Air,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,住人の仕事の効率を上昇させる。,Increase the efficiency of the residents' work.,,,,,,,,,,,,
+3709,bfBasin,盆地,Basin,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,運営力を上昇させる。,Increase admin points.,,,,,,,,,,,,
+3710,bfBreed,繁殖地,Breeding Ground,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,生物が大量発生するようになる。,Greatly encourage more creatures to spawn.,,,,,,,,,,,,
+3780,bfLandmark1,巨像,Giant Statue,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,観光価値を上昇させる。,Increase tourism values.,,,,,,,,,,,,
+3781,bfLandmark2,恐竜の化石,Dinosaur Fossil,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,観光価値を上昇させる。,Increase tourism values.,,,,,,,,,,,,
+3782,bfLandmark3,謎の石碑,Mysterious Tablet,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,観光価値を上昇させる。,Increase tourism values.,,,,,,,,,,,,
+3783,bfLandmark4,モノリス,Monolith,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,観光価値を上昇させる。,Increase tourism values.,,,,,,,,,,,,
+3784,bfLandmark5,怪鳥,Weird Bird ,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,,,,,,,,,,,,,,,,,観光価値を上昇させる。,Increase tourism values.,,,,,,,,,,,,
+3800,bfCoal,石炭,Coal,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,"network,bfHill",,,,,,,,,,,,,,,,この土地で取れる特産品。,The local specialty produced in this land.,,,,,,,,,,,,
+3801,bfMushroom,特産きのこ,Mushroom,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,"network,bfForest",,,,,,,,,,,,,,,,この土地で取れる特産品。,The local specialty produced in this land.,,,,,,,,,,,,
+3802,bfSilica,シリカ真珠,Silica Pearl,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,"network,bfBeach",,,,,,,,,,,,,,,,この土地で取れる特産品。,The local specialty produced in this land.,,,,,,,,,,,,
+3803,bfGum,ゴム,Gum,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,"network,bfForest",,,,,,,,,,,,,,,,この土地で取れる特産品。,The local specialty produced in this land.,,,,,,,,,,,,
+3804,bfIce,氷塊,Ice Cube,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,"network,bfSnow",,,,,,,,,,,,,,,,この土地で取れる特産品。,The local specialty produced in this land.,,,,,,,,,,,,
+3805,bfChitin,キチン,Chitin,,,,,,,,,,,,,,,,,,,LandFeat,FACTION,landfeat,,,"network,bfPlain",,,,,,,,,,,,,,,,この土地で取れる特産品。,The local specialty produced in this land.,,,,,,,,,,,,
+3900,bfStart,エリンの加護,Elin's Grace,,,,,,,,,,,,0,,,,,,,LandFeat,FACTION,landfeat,,,network,,,,,,,,,,,,,,,,運営力を上昇させる。,Increase admin points.,,,,,,,,,,,,
+4000,actBuildCut,伐採モード,Clearing Mode,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,hidden,,,,,,1,,,,,,,,,,ビルドモードで伐採ができるようになる。,Unlocks Clearing in Build Mode.,,,,,,,,,,,,
+4001,actBuildMine,採掘モード,Mining Mode,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,hidden,,,,,,1,,,,,,,,,,ビルドモードで採掘ができるようになる。,Unlocks Mining in Build Mode.,,,,,,,,,,,,
+4002,actBuildTerrain,地形隆起,Terrain Mode,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,hidden,,,,,,1,,,,,,,,,,ビルドモードで地形が変更できるようになる。,Unlocks Terrain Editing in Build Mode.,,,,,,,,,,,,
+4003,actBuildAnywhere,どこでもビルド,Free Build,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,hidden,,,,,,1,,,,,,,,,,マップのどこからでもビルドモードにアクセスできるようになる。,Enables you to enter Build Mode from anywhere on map.,,,,,,,,,,,,
+4004,actBuildCollect,回収,Collecting,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,hidden,,,,,,1,,,,,,,,,,ビルドモードで回収ができるようになる。,Unlocks Collecting in Build Mode.,,,,,,,,,,,,
+4005,actBuildRecipe,レシピモード,Recipe Mode,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,hidden,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,
+4006,actBuildInspect,配置モード,Relocation Mode,,,,,,,,,,,,,,,,,,,Skill,FACTION,tech,,,hidden,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,
+5000,ActWait,待機,Wait,,,,,,,,,,,,,,,,,Self,,Ability,ABILITY,,,wait,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5001,ActMelee,攻撃,Attack,,,,,,,,,,,,,,,,,Ground,,Ability,ABILITY,,,melee,before_move,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5002,Melee,攻撃,Attack,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5003,Ranged,射撃,Shoot,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5004,Sleep,寝る,Sleep,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5005,Wait,待機,Wait,,,,,,,,,,,,,,,,,Self,,Ability,ABILITY,,,wait,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5006,Shoot,射撃,Shoot,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5007,Use,Use,Use,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5008,General,general,general,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5009,TaskMine,掘る,Mine,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5010,TaskDig,地面を掘る,Dig,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5011,TaskCut,伐採,Clear,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5012,AI_Goto,移動,Go to,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5013,ActAttack,攻撃,Attack,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5014,TaskPlow,耕す,Plow,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5015,TaskAttack,眠る,Sleep,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5016,TaskTame,射撃,Shoot,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5017,TaskTalk,使う,Use,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5018,TaskPick,5,5,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5019,TaskReadBoard,6,6,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5020,TaskFarm,農作業,Farm,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5021,TaskTrain,訓練,Train,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5022,TaskSleepOnBed,訓練,Train,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5023,TaskGoOut,訓練,Train,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5024,AI_Eat,食べる,Eat,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5025,AI_Grab,7,7,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5026,AI_Haul,運搬,Haul,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5027,GoalSleep,睡眠,Sleep,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5028,ActReleaseHeld,8,8,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5029,AI_Offer,9,9,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5030,AI_ReleaseHeld,10,10,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5031,AI_Deconstruct,11,11,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5032,AI_Equip,12,12,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5033,ActCancelTask,13,13,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5034,GoalIdle,暇つぶし,Idle,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5035,TaskBuild,設置,Place,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5036,TaskMoveInstalled,オブジェ移動,Move Object,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5037,ActNoItem,no item,no item ,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5038,ActThrow,投擲,Throw,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5039,AI_Fish,釣る,Fishing,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5040,ActRanged,射撃,Shoot,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,range,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5041,AI_Read,読む,Read,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5042,ActKick,蹴る,Kick,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5043,AI_TendAnimal,ブラシをかける,Brush,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5044,ActChat,話す,Talk,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5045,AI_Drink,飲む,Drink,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5046,ActInstall,設置,Install,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5047,ActPick,拾う,Pick,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5048,ActItem,アイテム,Item,,,,,,,,,,,,,,,,,Self,,Ability,ABILITY,,,item,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5049,AI_OpenLock,解錠,Pick Lock,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5050,AI_Sleep,寝る,Sleep,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5051,ActZap,振る,Zap,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5052,ActBash,体当たり,Bash,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5053,TaskHarvest,採取,Collect,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5054,AI_Bladder,入浴する,Bathe,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5055,ActRestrain,拘束,Restrain,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5056,ActMoneySlap,札束ビンタ,Money Slap,,,STR,,,5,100,,,,15,,,1,,,Neighbor,,ActMoneySlap,ABILITY,ability,ability,attack,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5057,ActMoneyThrow,銭投げ,Oren Toss,,,DEX,,,5,100,,,,30,,,2,,,Ground,,ActMoneyThrow,ABILITY,ability,ability,attack,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5058,ActMoneyDump,ばらまき,Oren Shower,,,CHA,,,5,100,,,,20,,,1,,,Self,,ActMoneyDump,ABILITY,ability,ability,any,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6001,AI_PlayMusic,演奏,Play Music,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,ability,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6003,AI_Meditate,休憩,Rest,,,WIL,,,5,,,,,,,,,,,,,AI_Meditate,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,目を閉じてリラックスする。体力やマナの回復が強化されるが、眠い時や疲れているときは眠ってしまうこともある。,"Close your eyes and relax. The recovery rate of your HP and mana is enhanced, but you may fall asleep if you are sleepy or too tired.",,,,,,,,,,,,
+6011,AI_Steal,スリの手,Sleight of Hand,,,DEX,,,5,,,,,,,,,,,,,AI_Steal,ABILITY,ability,ability,,neg,,,,,,,,,,,,,,,,人目を盗み他人の所有物をくすねる。,Steal someone else's belongings.,,,,,,,,,,,,
+6012,ActQuickCraft,簡易製作,Quick Craft,,,LER,,,,,,,,,,,,,,Self,,ActQuickCraft,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,設備を使用しない手作業のクラフト。,Hand crafting without a facility.,,,,,,,,,,,,
+6013,AI_PassTime,時間をつぶす,Pass Time,,,,,,,,,,,,,,,,,,,Ability,ABILITY,,ability,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6015,AI_SelfHarm,自傷,Self Harm,,,CHA,,,5,,,,,,,,,,,Self,,AI_SelfHarm,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,自分の体を傷つけて様々な状態異常を付与する。どうしようもなくなった時に使う最後のカード。,Damage your own body and inflicts various status effects. The last card to play when there is nothing you can do.,,,,,,,,,,,,
+6018,ActRide,騎乗,Ride,,,WIL,,,,,,,,,,,,,,Neighbor,,ActRide,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,仲間に騎乗して一緒に冒険する。,Ride with a companion and go on an adventure together.,,,,,,,,,,,,
+6019,ActParasite,寄生,Host,,,CHA,,,,,,,,,,,,,,Neighbor,,ActParasite,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,仲間を寄生させて一緒に冒険する。,Have a companion parasitize you and go on an adventure together.,,,,,,,,,,,,
+6020,ActDreamBug,夢蟲,Dream Larva,,,CHA,,,5,100,,,,,,,20,,,Chara,,ActDreamBug,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,対象の所持品にふしだらな夢を見せる蟲を忍び込ませる。,Sneak a larva into the target's belongings that induces lewd dreams.,,,"夢蟲を所持している者はサキュバスの寝床に誘われる,夢蟲を所持している者はイタズラされやすくなる","Those who possess a Dream Larva are lured into the succubus’s bed,Those who possess a Dream Larva become more prone to Mischief",,,,,,,,
+6050,ActPray,祈る,Pray,,,WIL,,,5,0,,,,,,,,,,Self,,ActPray,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,神に祈りをささげる。,Pray to God.,,,,,,,,,,,,
+6400,ActEscape,逃走,Escape,,,PER,,,5,100,,,,1,,,,,,Self,Escape,Ability,ABILITY,ability,ability,wait,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6410,ActSuicide,自爆,Suicide Bomb,,,WIL,eleImpact,,5,100,,,,1,,,,,,Self,Suicide,Ability,ABILITY,ability,ability,suicide,,,,,,3.5,,,,,,,,,,,,,,,,,,,,,,,,
+6420,ActDuplicate,増殖,Duplicate,,,END,,,5,100,,,,1,,,,,,Self,Duplicate,Ability,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6450,ActRush,突進,Rush,,,STR,,,5,100,,,,1,,,3,,,Ground,,ActRush,ABILITY,ability,ability,attackMelee,"before_move,neg,dontForget",,,,,,,,,,,,,,,,離れた相手に突進し攻撃する。,Rush towards a distant enemy and attack.,,,"対象から離れているほどダメージにボーナス,隣接した対象には使用できない","Damage bonus increases with distance,Cannot be used on adjacent targets ",,,,,,,,
+6500,ActCrabBreathe,泡ブレス,Bubble Breath,,,END,,,5,100,,,,18,0,,8,,,Ground,Bubble,Ability,ABILITY,ability,ability,ground,neg,,,,,,,,,,,,,,,,泡を吐く。,Breathe bubbles.,,,,,,,,,,,,
+6600,ActCurse,呪い,Curse,,,WIL,,,5,100,,,,1,,250,8,,,Chara,CurseEQ,Ability,ABILITY,ability,ability,debuff,neg,  S,,,,,,,,,,,,,,,対象に呪いを振りかける。,Bestow a curse upon a target.,,,,,,,,,,,,
+6601,ActEntangle,拘束,Entangle,,,END,,,5,100,,,,1,,,4,,,Neighbor,"Debuff,ConEntangle",Ability,ABILITY,ability,ability,debuff,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6602,ActDraw,牽引,Draw,,,END,,,5,100,,,,1,,,4,,,Chara,Draw,Ability,ABILITY,ability,ability,attack,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6603,ActNTR,イタズラ,Mischief,,,CHA,,,5,100,,,,1,,,10,,,Neighbor,,ActNTR,ABILITY,ability,ability,any,"neg,dontForget",,,,,,,,,,,,,,,,対象を愛でて生気を吸い取る。,Cherish the target and drain its life force.,,,"対象と気持ちいいことをする,対象の持つ最も高い主能力の潜在能力を得る","Engage in pleasurable acts with the target,Gain the potential of the target’s highest primary attribute",,,,,,,,
+6604,ActCryRage,嘆きの慟哭,Soul Cry,,,CHA,,,5,100,,,,50,,,8,,,Self,,ActCryRage,ABILITY,ability,ability,any,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6605,ActCrySad,物悲しい慟哭,Sad Cry,,,CHA,,,5,100,,,,50,,,8,,,Self,,ActCrySad,ABILITY,ability,ability,any,"neg,specialAbility,noRandomAbility",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6606,ActBurnMana,マナの燃焼,Burn Mana,,,END,,,5,100,,,,1,,,1,,,Self,BurnMana,Ability,ABILITY,ability,ability,any,neg,,,5,,,,,,,,,,,,,,,,,,,,,,,,,,
+6607,ActBloodsuck,吸血,Blood Suck,,,LER,,,5,100,,,,1,,,2,,,Neighbor,,ActBloodsuck,ABILITY,ability,ability,"any,0,-100",neg,,,,,,,,,,,,,,,,対象から血を吸い腹を満たす。,Feed by draining blood from the target.,,,"対象から血を吸う,出血耐性のある生物は対象にできない,血の食事特性を常時表示,レベル15で追加の食事特性を表示,レベル30で追加の食事特性を表示","Drain blood from the target,Cannot target creatures with Cut Resistance,Always reveal a food trait of blood,Reveal an additional food trait at level 15,Reveal an additional food trait at level 30",,,,,,,,
+6608,ActSlime,捕食,Devour,,,LER,,,5,100,,,,1,,,8,-1,,Neighbor,,ActSlime,ABILITY,ability,ability,"any,0,-100","neg,noRandomAbility",,,,,,,,,,,,,,,,対象を取り込んで栄養を吸収する。,Swallow the target and digests it.,,,"空腹時のみ使用可能,遺伝子を取得,遺伝子はフィートポイントを消費しない,体の部位が少ないほど体の部位を得る確率が上昇","Usable only when hungry,Obtain target's gene,Obtained gene does not consume feat points,Higher chance to gain body parts when you have fewer body parts",,,,,,,,
+6610,ActWeaken,弱体化の手,Touch Of Weakness,,,WIL,,,5,100,,,,1,,,7,,,Neighbor,Weaken,Ability,ABILITY,ability,ability,debuff,"neg,useHand",,,,,,,,,,,,,,,"spell_hand,attack_rotten",,,,,,,,,,,,,,
+6611,ActFear,恐怖の手,Touch Of Fear,,,WIL,,,5,100,,,,1,,,6,,,Neighbor,"Debuff,ConFear",Ability,ABILITY,ability,ability,debuff,"neg,useHand",,,,,,,,,,,,,,,"spell_hand,attack_fear",,,,,@ConFear,@ConFear,,,,,,,,
+6612,ActTouchSleep,眠りの手,Touch Of Sleep,,,WIL,,,5,100,,,,1,,,6,,,Neighbor,"Debuff,ConSleep",Ability,ABILITY,ability,ability,debuff,"neg,useHand",,,,,,,,,,,,,,,"spell_hand,attack_fear",,,,,@ConSleep,@ConSleep,,,,,,,,
+6613,ActTouchDrown,窒息の手,Touch Of Drown,,,WIL,,,5,100,,,,1,,,4,,,Neighbor,"Debuff,ConSuffocation",Ability,ABILITY,ability,ability,debuff,"neg,useHand",,,,,,,,,,,,,,,"spell_hand,attack_wet",,,,,@ConSuffocation,@ConSuffocation,,,,,,,,
+6620,ActGazeDim,朦朧の眼差し,Eye Of Dimness,,,MAG,,,5,100,,,,10,,,6,,,Chara,"Debuff,ConDim",Ability,ABILITY,ability,ability,debuff,"neg,reqSight",,,,,,,,,,,,,,,gaze_dim,,,,,@ConDim,@ConDim,,,,,,,,
+6621,ActGazeInsane,狂気の眼差し,Eye Of Insanity,,,MAG,,,5,100,,,,10,,,6,,,Chara,"Debuff,ConInsane",Ability,ABILITY,ability,ability,debuff,"neg,reqSight",,,,,,,,,,,,,,,gaze_insane,,,,,@ConInsane,@ConInsane,,,,,,,,
+6622,ActGazeMutation,変容の眼差し,Eye Of Mutation,,,MAG,,,5,100,,,,25,,,24,,,Chara,Mutation,Ability,ABILITY,ability,ability,debuff,"neg,reqSight",,,,,,,,,,,,,,,gaze_dim,,,,,,,,,,,,,,
+6623,ActGazeMana,マナの眼差し,Eye Of Mana,,,MAG,eleMagic,,5,100,,,,38,,,11,,,Chara,DrainMana,Ability,ABILITY,ability,ability,attack,"neg,reqSight",,400,,,,,,,,,,,,,gaze_dim,,,,,,,,,,,,,,
+6626,ActDrainBlood,吸収,Drain Blood,,,CHA,eleNether,,5,100,,,,10,,,6,,,Chara,DrainBlood,Ability,ABILITY,ability,ability,attack,neg,,1000,,,,,,,,,,,,,a_drain_blood,,,,,,,,,,,,,,
+6627,ActCatHuffing,猫吸い,Cat Sniff,,,CHA,,,5,100,,,,10,,,6,,,Self,CatSniff,Ability,ABILITY,ability,ability,special,neg,,,5,,,,,,,,,,,,,,,,,,,,,,,,,,
+6628,ActKiss,キス,Kiss,,,CHA,,,5,100,,,,10,,,1,,,Chara,,ActKiss,ABILITY,ability,ability,attack,dontForget,,,,,,,,,,,,,,,,対象にキスをする。,Kiss the target.,,,"対象の友好度を僅かに上昇,対象の興味を消費,対象の友好度が低いと高確率で失敗","Slightly increase affinity,Consumes target's interest,Likely to fail when target's affinity is low",,,,,,,,
+6629,ActDeepKiss,ディープキス,Deep Kiss,,,CHA,,,5,100,,,,10,,,1,,,Chara,,ActDeepKiss,ABILITY,ability,ability,special,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6630,ActInsult,罵倒,Insult,,,WIL,,,5,100,,,,1,,,3,,,Chara,"Debuff,ConDim",Ability,ABILITY,ability,ability,debuff,neg,,,,,,,,,,,,,,,gaze_insult,,,,,@ConDim,@ConDim,,,,,,,,
+6631,ActScream,絶叫,Scream,,,WIL,,,5,100,,,,1,,,25,,,Self,Scream,Ability,ABILITY,ability,ability,any,neg,,,,,,,,,,,,,,,a_scream,,,,,,,,,,,,,,
+6640,ActSteal,窃盗,Steal,,,DEX,,,5,100,,,,1,,,16,,,Neighbor,Steal,Ability,ABILITY,ability,ability,attack,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6641,ActStealFood,食べ物漁り,Steal Food,,,DEX,,,5,100,,,,1,,,8,,,Neighbor,"Steal,food",Ability,ABILITY,ability,ability,attack,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6642,ActStealMoney,金品窃盗,Steal Money,,,DEX,,,5,100,,,,1,,,12,,,Neighbor,"Steal,money",Ability,ABILITY,ability,ability,attack,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6650,ActNeckHunt,首狩り,Neck Hunt,,,STR,,,5,100,,,,1,,,,,,Chara,NeckHunt,Ability,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6660,ActDropMine,地雷設置,Drop Mine,,,DEX,,,5,100,,,,1,,,24,,,Self,DropMine,Ability,ABILITY,ability,ability,any,neg,,,,,,,,,,,,,,,a_drop_mine,,,,,,,,,,,,,,
+6661,ActThrowPotion,ポーション投げ,Throw Potion,,,DEX,,,5,100,,,,1,,,6,,,Chara,ThrowPotion,Ability,ABILITY,ability,ability,attack,neg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6662,ActSwarm,スウォーム,Swarm,,,DEX,,,5,100,,,,1,,,12,,,Ground,Swarm,ActSwarm,ABILITY,ability,ability,attack,"neg,CD_npc,dontForget",,,30,,,,,,,,,,,,,広範囲に武器による無数の攻撃を繰り出す。,Unleash countless weapon attacks over a wide area.,,,,,,,,,,,,
+6663,ActMultiHit,乱れ打ち,Volley Strike,,,DEX,,,5,100,,,,1,,,10,,,Ground,,ActMultihit,ABILITY,ability,ability,attack,"neg,CD_npc,dontForget",,,10,,,,,,,,,,,,,対象を滅多切りにする。,Hack the target to bits.,,,,,,,,,,,,
+6664,ActBladeStorm,斬撃無双,Bladestorm,,,STR,,,5,100,,,,1,,,10,,,Ground,,ActMultihit,ABILITY,ability,ability,attack,"neg,CD_npc,dontForget",,,10,,,,,,,,,,,,,対象を滅多切りにする。,Hack the target to bits.,,,武器の数によりスタミナ消費量が変動,The number of weapons affects stamina usage,,,,,,,,
+6665,ActBladeStorm2,千切り,Gorefest,,,DEX,,,5,100,,,,1,,,10,,,Neighbor,,ActMultihit,ABILITY,ability,ability,attack,"neg,CD_npc",,,10,,,,,,,,,,,,,対象を滅多切りにする。,Hack the target to bits.,,,武器の数によりスタミナ消費量が変動,The number of weapons affects stamina usage,,,,,,,,
+6666,ActWhirlwind,大回転,Whirlwind,,,DEX,,,5,100,,,,1,,,6,,,Neighbor,,ActWhirlwind,ABILITY,ability,ability,attack,"neg,CD_npc",,,3,,,,,,,,,,,,,,,,,,,,,,,,,,
+6667,ActMissileBarrage,バレージ,Barrage,,,DEX,,,5,100,,,,1,,,6,2,,Self,,ActMissileBarrage,ABILITY,ability,ability,attack,"neg,CD_npc,specialAbility,noRandomAbility",,,20,,,,,,,,,,,,,,,,,,,,,,,,,,
+6800,ActSummonSpecial,召集,Summoning Call,,,CHA,,,5,100,,,,1,,,5,-1,,Self,"Summon,special",Ability,ABILITY,ability,ability,summonSpecial,"neg,specialAbility,noRandomAbility",,,10,,,,,,,,,,,,summon_ally,,,,,,,,,,,,,,
+6801,ActWombDark,闇の胎動,Womb of Darkness,,,CHA,,,5,100,,,,1,,,5,-1,,Self,"Summon,special2",Ability,ABILITY,ability,ability,summonSpecial2,"neg,specialAbility,noRandomAbility",,,30,,,,,,,,,,,,summon_ally,,,,,,,,,,,,,,
+6802,ActDeathSentense,死の宣告,Death Sentence,,,WIL,,,5,100,,,,1,,,8,,,Chara,"Debuff,ConDeathSentense",Ability,ABILITY,ability,ability,debuff,neg,,,30,,,,,,,,,,,,,,,,,@ConDeathSentense,@ConDeathSentense,,,,,,,,
+6700,StTaunt,挑発,Taunt,,,WIL,,,5,0,,,,1,,,2,,,Self,"Buff,StanceTaunt",Ability,ABILITY,ability,ability,taunt,,,,,,,,,,,,,,,,,味方を庇い、敵の攻撃を引き付けるスタンス。,A stance that shields allies and attracts enemy attacks.,,,@StanceTaunt,@StanceTaunt,,,,,,,,
+6701,StMama,幼狐返り,Fox Cub Regression,,,WIL,,,5,0,,,,1,,,2,,,Self,"Buff,StanceMama",Ability,ABILITY,ability,ability,,godAbility,,,,,,,,,,,,,,,,子供に返り、誰にでも遠慮なく甘えられるようになるスタンス。,A stance where you return to childhood and freely cling to anyone without hesitation.,,,@StanceMama,@StanceMama,,,,,,,,
+6720,StManaCost,節魔,Maconomy,,,MAG,,,5,0,,,,1,,,2,,,Self,"Buff,StanceManaCost",Ability,ABILITY,ability,ability,,,,,,,,,,,,,,,,,,魔法のストックを多く消費する代わりにマナの消費が減るスタンス。,A stance that reduces mana consumption at the cost of using more spell stocks. ,,,,,,,,,,,,
+6750,SongSleep,子守唄,Lullaby,,,CHA,,,5,100,,,,10,,,2,,,Self,"Buff,StanceSongSleep",Ability,ABILITY,ability,ability,song,,,,,,,,,,,,,,,,,周囲の生物に眠りをもたらす歌。,A song that grants sleep to surrounding creatures.,,,,,,,,,,,,
+6751,SongTulip,チューリップの歌,Song of Tulip,,,CHA,,,5,100,,,,10,,,2,,,Self,"Buff,StanceSongSleep",Ability,ABILITY,ability,ability,song,,,,,,,,,,,,,,,,,周囲の生物に微笑みをもたらす歌。,A song that grants smile to surrounding creatures.,,,,,,,,,,,,
+6752,SongValor,勇気の歌,Song of Valor,,,CHA,,,5,100,,,,10,,,2,,,Self,"Buff,StanceSongValor",Ability,ABILITY,ability,ability,song,,,,,,,,,,,,,,,,,周囲の生物に勇気をもたらす歌。,A song that grants courgae to surrounding creatures.,,,,,,,,,,,,
+6753,SongEnd,おわりの歌,Song of The End,,,CHA,,,5,100,,,,10,,,2,,,Self,"Buff,StanceSongEnd",Ability,ABILITY,ability,ability,song,,,,,,,,,,,,,,,,,周囲の生物に勇気をもたらす歌。,A song that grants courgae to surrounding creatures.,,,,,,,,,,,,
+6900,ActManaAbsorb,魔力の抽出,Absorb Mana,,,piety,,,1,0,,,,10,400,1200,10,-1,,Party,AbsorbMana,Ability,ABILITY,ability,ability,special,"godAbility,CD_npc,noRandomAbility",,,20,4,,,,,,,,,,,,周囲の空気からマナを抽出する。,Absorb mana from the air around the caster.,,,#calcのマナ回復,Restore #calc mana,,,,,,,,
+6901,ActJureHeal,《ジュア》の祈り,Prayer of 《Jure》,,,piety,,,1,0,,,,1,,,12,-1,,Party,JureHeal,Ability,ABILITY,ability,ability,,"godAbility,noRandomAbility",,,,,,,,,,,,,,,,女神の祈りが詠唱者と周囲の味方を回復する。,The prayer of Goddess heals you and your allies.,,,#calcの体力回復,Restore #calc hit points,,,,,,,,
+6902,ActLulwyTrick,《ルルウィ》の憑依,《Lulwy》's Possession ,,,piety,,,1,0,,,,1,,,20,-1,,Party,"LulwyTrick,SPD",Ability,ABILITY,ability,ability,,"godAbility,noRandomAbility",,,,,,,,,,,,,,,,詠唱者に風の女神が憑依し速度をあげる。,The Goddess of Wind possesses and hastens the caster.,,,@ConBuffStats,@ConBuffStats,,,,,,,,
+6903,ActKizuamiTrick,《キズアミ》の悪戯,《Kizuami》's Trick,,,piety,,,1,0,,,,1,,,15,-1,,Chara,KizuamiTrick,Ability,ABILITY,ability,ability,"debuff,0,-100","godAbility,CD_npc,noRandomAbility",,,20,,,,,,,,,,,,,悪戯の神が対象にランダムな呪いか加護を授ける。,The God of Trickery bestows random hexes or blessings upon the target.,,,"対象が敵の場合ランダムな呪いを付与,対象が味方の場合ランダムな加護を付与","Apply random hexes if the target is an enemy,Apply random blessings if the target is an ally",,,,,,,,
+6904,ActHeadpat,頭撫で,Headpat,,,piety,,,1,0,,,,1,,,5,,,Neighbor,Headpat,Ability,ABILITY,ability,ability,"attack,0,-100",godAbility,,,,,,,,,,,,,,,,対象の頭を撫でる。,Headpat the target.,,,"対象の友好度を僅かに上昇,対象の興味を消費,ホロメ信仰時に味方全体を僅かに強化","Slightly increase affinity,Consumes target's interest,Slightly enhance all allies when worshipping Horome",,,,,,,,
+7000,breathe_,吐息,Breath,,,END,mold,,5,100,,,,10,500,330,4,,,Ground,Breathe,ActBreathe,ABILITY,ability,attack,attackArea,"neg,domain",B  R,90,,12,5,,,,,,,,,,,対象を中心とした強力な広範囲のブレスを吐く。,Release a powerful breath attack centered on the target.,,,#calcの#eleのブレスを吐く,Release a #calc #ele breath,,,,,,,,
+7001,ball_,渦,Ball,,,MAG,mold,,5,100,,,,15,500,450,10,,,Self,Ball,ActBall,SPELL,ability,attack,attackArea,"neg,repeat,domain",B,70,,10,5,,,,,,,,,,,詠唱者を中心とした魔法の球を広範囲に召喚する。,"Summon a magical sphere around the caster, covering a wide range.",,,#calcの#eleの渦を招来する,Invoke a #calc #ele sphere,,,,,,,,
+7002,bolt_,光線,Bolt,,,MAG,mold,,5,100,,,,5,500,350,7,,,Ground,Bolt,ActBolt,SPELL,ability,attack,attackArea,"neg,repeat,domain",B  R,90,,12,99,,,,,,,,,,,対象を魔法の光線で貫く。,Pierce the target with a beam of magical light.,,,#calcの#eleの光線を放つ,Emit a #calc #ele beam,,,,,,,,
+7003,hand_,手,Hand,,,WIL,mold,,5,100,,,,2,600,240,2,,,Neighbor,Hand,ActHand,SPELL,ability,attack,attack,"neg,useHand,repeat,domain",B,125,,16,,,,,,,,,,,,魔力を詠唱者の手に集中させ触れた対象を傷つける。,Concentrate magical power in the caster's hand to harm any touched target.,,,"#calcの#eleの手で触る,属性による状態異常などを与えやすい","Touch the target with #calc #ele hand,More likely to inflict elemental status effects",,,,,,,,
+7004,arrow_,矢,Arrow,,,MAG,mold,,5,100,,,,1,1500,180,3,,,Ground,Arrow,ActArrow,SPELL,ability,attack,attack,"neg,repeat,domain",B,50,,16,,,,,,,,,,,,鋭い魔法の矢を対象目掛けて放つ。,Release a sharp magical arrow aimed at the target.,,,#calcの#eleの矢を射る,Fire a #calc #ele arrow,,,,,,,,
+7005,funnel_,具象,Funnel,,,WIL,mold,,5,100,,,,15,150,950,24,,,Ground,Funnel,ActFunnel,SPELL,ability,util,summon,"neg,keepInvisi,domain",B  R,,,6,,,,,,,,,,,,意思を持った魔力の塊を具現化する。,Materialize a sentient mass of magical energy.,,,,,,,,,,,,
+7006,miasma_,瘴気,Miasma,,,MAG,mold,,5,100,,,,12,400,420,10,,,Chara,"Debuff,ConMiasma",ActMiasma,SPELL,ability,attack,dot,"neg,domain",B,40,,10,,,,,,,,,,,,対象の体力を徐々に減少させる瘴気を付与する。,Inflict a miasma that gradually reduces the target's vitality.,,,@ConMiasma,@ConMiasma,,,,,,,,
+7007,weapon_,唄,Intonation,,,MAG,mold,,5,100,,,,12,200,640,10,,,Self,"Buff,ConWeapon",ActWeapon,SPELL,ability,defense,buff,domain,B S,20,,10,,,,,,,,,,,,詠唱者の武器に魔力を付与する。,Infuse the singer's weapon with elemental prowess. ,,,"@ConWeapon,耐性ボーナスは魅力に依存する,武器ダメージを属性ダメージに変換,攻撃するか属性ダメージを受けるとターンを消費","@ConWeapon,Resistance bonus scales with Charisma,Converts weapon damage to elemental damage,Attacking or taking elemental damage consumes a turn",,,,,,,,
+7008,sword_,剣,Sword,,,MAG,mold,,5,100,,,,13,700,550,14,,,Neighbor,Sword,ActSword,SPELL,ability,attack,attack,"neg,useHand,repeat,domain,noRandomAbility",B,5,,13,,,,,,,,,,,,対象の耐性を貫く魔法の剣で攻撃する。,Attacks with a magic sword that pierces the target's resistance.,,,"#calcの#eleの幻体の剣で斬る,対象の属性耐性を貫通する,属性による状態異常などを与えにくい,ダメージは長剣スキルにより上昇する","Slash the target with #calc #ele phantasmal sword,Penetrate the target's elemental resistance,Less likely to inflict elemental status effects,Damage increases with Longsword skill",,,,,,,,
+7009,bit_,ビット,Bit,,,LER,mold,,5,100,,,,15,150,950,24,,,Ground,Bit,ActBit,SPELL,ability,util,summon,"neg,keepInvisi,domain",B  R,,,6,,,,,,,,,,,,軌道を描く機械の守護者を召喚する。,Materialize an orbital machine guardian.,,,,,,,,,,,,
+7010,flare_,フレア,Flare,,,MAG,mold,,5,100,,,,32,150,540,10,,,Ground,Flare,ActFlare,SPELL,ability,attack,attack,"neg,repeat,domain",,,,6,,,,,,,,,,,,,,,,#calcの#eleの渦を招来する,Invoke a #calc #ele sphere,,,,,,,,
+7800,puddle_,海,Sea,,,PER,mold,,5,100,,,,6,0,500,10,,,Ground,Puddle,ActPuddle,SPELL,ability,attack,"ground,0,-100","neg,domain",,100,,8,,,,,,,,,,,,,,,,,,,,,,,,,
+8200,SpTeleport,テレポート,Teleport,,,PER,,,5,100,,,,5,,320,12,,,Self,Teleport,Spell,SPELL,ability,util,"teleport,0,-100","noCostInc,keepInvisi",B SR,,,10,,,,,,,,,,,,ランダムな場所にテレポートする。,Teleport to a random location.,,,,,,,,,,,,
+8201,SpTeleportShort,ショートテレポート,Short Teleport,,,PER,,,5,100,,,,1,,280,8,,,Self,TeleportShort,Spell,SPELL,ability,util,"teleport,0,-100","noCostInc,keepInvisi",B SR,,,12,,,,,,,,,,,,あまり離れていないランダムな場所にテレポートする。,Teleport to a nearby random location.,,,,,,,,,,,,
+8202,SpGate,マステレポート,Mass Teleport,,,PER,,,5,100,,,,35,,550,28,,,Self,Gate,Spell,SPELL,ability,util,"teleport,0,-100","noCostInc,keepInvisi",B  R,,,6,,,,,,,,,,,,仲間を連れてランダムな場所にテレポートする。,Teleport to a random location with party members.,,,,,,,,,,,,
+8215,SpTelekinesis,テレキネシス,Telekinesis,,,LER,eleImpact,,5,100,,,,1,,250,6,,,Ground,,ActTelekinesis,SPELL,ability,util,attack,,B,,,6,,,,,,,,,,,,,,,,"地面のアイテムと生物を対象にできる,パワーが上がるほどより重い対象を動かせる,対象が隣接している場合は放り飛ばす,対象が離れている場合は引き寄せる,対象は移動経路にいる生物を押しのける,#calcの#eleの衝突,衝突ダメージは対象の重量と移動距離に比例する","Can be used on creatures and items on the ground,Higher power allows heavier objects to be moved,The target is hurled away if it is adjacent to you,The target is pulled closer if it is distant from you,The target pushes aside any creatures along its path,Invoke a #calc #ele collision,Collision damage increases with target weight and distance",,,,,,,,
+8220,SpReturn,帰還,Return,,,PER,,,5,100,,,,20,,820,28,,,Self,Return,Spell,SPELL,ability,util,,noCostInc,B S,,,4,,,,,,,,,,,,一度訪れたことのある場所へのポータルを開く。,Open a portal to a previously visited location.,,,,,,,,,,,,
+8221,SpEvac,脱出,Evacuation,,,PER,,,5,100,,,,10,,480,20,,,Self,Evac,Spell,SPELL,ability,util,,noCostInc,B S,,,5,,,,,,,,,,,,地上へと脱出する。,Escape to the surface.,,,,,,,,,,,,
+8230,SpIdentify,鑑定,Identify,,,PER,,,5,100,,,,8,500,750,35,,,SelfParty,Identify,Spell,SPELL,ability,util,,"noCostInc,keepInvisi",B SR,,,6,,,,,,,,,,,,記憶の神殿から未鑑定品の知識を引き出す。,Draw knowledge of an unappraised item from the Temple of Memory.,,,長押しで所持品を全て鑑定,Press and hold to identify all items in inventory,,,,,,,,
+8232,SpIdentifyG,*鑑定*,*Identify*,,,PER,,,5,100,,,,25,100,3500,125,,,SelfParty,GreaterIdentify,Spell,SPELL,ability,util,,noCostInc,  SR,,,3,,,,,,,,,,,,記憶の神殿から未鑑定品の知識を引き出す。,Draw knowledge of an unappraised item from the Temple of Memory.,,,長押しで所持品を全て鑑定,Press and hold to identify all items in inventory,,,,,,,,
+8240,SpUncurse,解呪,Uncurse,,,WIL,,,5,100,,,,5,,840,40,,,Chara,UncurseEQ,Spell,SPELL,ability,util,,noCostInc,B SR,,,5,,,,,,,,,,,,装備にかけられた呪いを解く。,Break the curse placed on equipment.,,,,,,,,,,,,
+8241,SpUncurseG,*解呪*,*Uncurse*,,,WIL,,,5,100,,,,30,100,4500,140,,,Chara,UncurseEQGreater,Spell,SPELL,ability,util,,noCostInc,  SR,,,3,,,,,,,,,,,,装備にかけられた呪いを解く。,Break the curse placed on equipment.,,,,,,,,,,,,
+8250,SpEnchantWeapon,武器強化,Enchant Weapon,,,LER,,,5,100,,,,10,200,5000,70,,,Self,EnchantWeapon,Spell,SPELL,ability,util,,noCostInc,  S,,,4,,,,,,,,,,,,武器を魔力で強化する。,Enhance a weapon with magical power.,,,,,,,,,,,,
+8251,SpEnchantWeaponGreat,*武器強化*,*Enchant Weapon*,,,LER,,,5,100,,,,35,50,11000,160,,,Self,EnchantWeaponGreat,Spell,SPELL,ability,util,,noCostInc,  S,,,1,,,,,,,,,,,,武器を魔力で強化する。,Enhance a weapon with magical power.,,,,,,,,,,,,
+8255,SpEnchantArmor,防具強化,Enchant Armor,,,LER,,,5,100,,,,10,200,4800,65,,,Self,EnchantArmor,Spell,SPELL,ability,util,,noCostInc,  S,,,4,,,,,,,,,,,,防具を魔力で強化する。,Enhance a piece of armor with magical power.,,,,,,,,,,,,
+8256,SpEnchantArmorGreat,*防具強化*,*Enchant Armor*,,,LER,,,5,100,,,,35,50,10000,150,,,Self,EnchantArmorGreat,Spell,SPELL,ability,util,,noCostInc,  S,,,1,,,,,,,,,,,,防具を魔力で強化する。,Enhance a piece of armor with magical power.,,,,,,,,,,,,
+8260,SpMagicMap,魔法の地図,Magic Map,,,PER,,,5,100,,,,10,,750,18,,,Self,MagicMap,Spell,SPELL,ability,util,,keepInvisi,B SR,,,7,,,,,,,,,,,,周囲の地形を感知する。,Reveal portion of the map surrounding the caster.,,,,,,,,,,,,
+8280,SpLighten,軽量化,Lighten,,,LER,,,5,100,,,,25,50,25000,240,,,Self,Lighten,Spell,SPELL,ability,util,,noCostInc,  S,,,3,,,,,,,,,,,,物体を魔力で軽量化する。,Lighten an object with magical power.,,,,,,,,,,,,
+8281,SpFaith,信仰,Faith,,,LER,,,5,100,,,,1,100,6500,680,,,Self,Faith,Spell,SPELL,ability,util,,noCostInc,  S,,,4,,,,,,,,,,,,神の名を唱え神を褒め称える。,Praise and extol the name of God.,,,,,,,,,,,,
+8284,SpChangeMaterialLesser,劣悪素材,Inferior Material,,,LER,,,5,100,,,,1,,300,68,,,Self,ChangeMaterialLesser,Spell,SPELL,ability,util,,noCostInc,,,,5,,,,,,,,,,,,物体の再構成により素材を変化させる。,Transform materials by reconstituting an object.,,,,,,,,,,,,
+8285,SpChangeMaterial,素材変化,Change Material,,,LER,,,5,100,,,,20,100,5000,180,,,Self,ChangeMaterial,Spell,SPELL,ability,util,,noCostInc,,,,4,,,,,,,,,,,,物体の再構成により素材を変化させる。,Transform materials by reconstituting an object.,,,,,,,,,,,,
+8286,SpChangeMaterialG,*素材変化*,*Change Material*,,,LER,,,5,100,,,,45,50,12000,460,,,Self,ChangeMaterialGreater,Spell,SPELL,ability,util,,noCostInc,,,,3,,,,,,,,,,,,物体の再構成により素材を変化させる。,Transform materials by reconstituting an object.,,,,,,,,,,,,
+8288,SpReconstruction,再構築,Reconstruction,,,LER,,,5,100,,,,55,100,30000,550,,,Self,Reconstruction,Spell,SPELL,ability,util,,"noCostInc,noShop",  S,,,3,,,,,,,,,,,,物体を再構築する。,Reconstruct an object with magical power.,,,,,,,,,,,,
+8300,SpLevitate,浮遊,Levitate,,,PER,,,5,100,,,,6,,630,15,,,Self,"Buff,ConLevitate",Spell,SPELL,ability,util,"buff,0,-100","noCostInc,keepInvisi,syncRide",B S,,,8,,,,,,,,,,,,対象の身体を羽のように軽くし浮遊させる。,Make the target's body as light as a feather and float.,,,@ConLevitate,@ConLevitate,,,,,,,,
+8380,SpMutation,自己変容,Mutation,,,PER,,,5,100,,,,18,,2200,72,,,Self,Mutation,Spell,SPELL,ability,util,,,BP,,,2,,,,,,,,,,,,自らの身体を魔力で変容させる。,Transform the caster's body with magic.,,,,,,,,,,,,
+8390,SpWish,願い,Wish,,,LUC,,,5,100,,,,50,1,50000,2000,,,Self,Wish,Spell,SPELL,ability,util,,"noShop,noCopy,noRandomAbility",B  ,,,1,,,,,,,,,,,,*あなたは何を望む？*,*What do you wish for?*,,,,,,,,,,,,
+8400,SpHealLight,軽傷治癒,Cure Minor Wound,,,WIL,,,5,100,,,,1,,200,6,,,Select,Heal,Spell,SPELL,ability,defense,heal,syncRide,BP R,,,12,,,,,,,,,,,,聖なる癒しの力で軽い傷を治療する。,Heal minor wounds with the power of sacred healing.,,,#calcの体力回復,Restore #calc hit points,,,,,,,,
+8401,SpHealHeavy,重傷治癒,Cure Major Wound,,,WIL,,,5,100,,,,10,,650,10,,,Select,Heal,Spell,SPELL,ability,defense,heal,syncRide, P ,,,10,,,,,,,,,,,,聖なる癒しの力で重い傷を治療する。,Heal heavy wounds with the power of sacred healing.,,,#calcの体力回復,Restore #calc hit points,,,,,,,,
+8402,SpHealCritical,致命傷治癒,Cure Critical Wound,,,WIL,,,5,100,,,,20,,1500,14,,,Select,Heal,Spell,SPELL,ability,defense,heal,syncRide,BP R,,,8,,,,,,,,,,,,聖なる癒しの力で致命的な傷を治療する。,Heal critical wounds with the power of sacred healing.,,,#calcの体力回復,Restore #calc hit points,,,,,,,,
+8403,SpHeal,体力回復,Healing,,,WIL,,,5,100,,,,30,300,3600,22,2,,Select,Heal,Spell,SPELL,ability,defense,heal,syncRide,BP R,,,6,,,,,,,,,,,,聖なる癒しの力でいかなる傷も治療する。,Heal any wounds with the power of sacred healing.,,,#calcの体力回復,Restore #calc hit points,,,,,,,,
+8404,SpHealEris,《エリス》の癒し,Healing of 《Eris》,,,WIL,,,5,100,,,,50,200,8000,40,2,,Select,Heal,Spell,SPELL,ability,defense,heal,"syncRide,noRandomAbility",BP ,,,4,,,,,,,,,,,,女神エリスの癒しの力で術者を回復する。,Heal the target with the power of Goddess Eris.,,,#calcの体力回復,Restore #calc hit points,,,,,,,,
+8405,SpHealOdina,《オディナ》の癒し,Healing of 《Odina》,,,WIL,,,5,100,,,,70,100,12000,60,2,,Select,Heal,Spell,SPELL,ability,defense,heal,"syncRide,noRandomAbility",BP ,,,3,,,,,,,,,,,,女神オディナの癒しの力で術者を回復する。,Heal the target with the power of Goddess Odina.,,,#calcの体力回復,Restore #calc hit points,,,,,,,,
+8406,SpHealJure,《ジュア》の癒し,Healing of 《Jure》,,,WIL,,,5,100,,,,90,50,16000,80,2,,Select,HealComplete,Spell,SPELL,ability,defense,heal,"syncRide,noRandomAbility,noShop,noCopy,noCostInc",B,,,2,,,,,,,,,,,,女神ジュアの癒しの力で術者を回復する。,Heal the target with the power of Goddess Jure.,,,#calcの体力回復,Restore #calc hit points,,,,,,,,
+8430,SpRevive,復活,Resurrection,,,WIL,,,5,100,,,,40,500,8800,90,,,Self,Revive,Spell,SPELL,ability,defense,,"noRandomAbility,CD_npc",B S,,400,4,,,,,,,,,,,,仲間を死者の世界から呼び戻す。,Call an ally back from the world of the dead.,,,,,,,,,,,,
+8450,SpHOT,自然の抱擁,Nature's Embrace ,,,WIL,,,5,100,,,,4,,580,12,,,Select,"Buff,ConHOT",Spell,SPELL,ability,defense,hot,,BP,,,10,,,,,,,,,,,,生命の泉が対象の傷を徐々に癒す。,Nature's life spring gradually restores the target.,,,@ConHOT,@ConHOT,,,,,,,,
+8470,SpRestoreBody,肉体復活,Restore Body,,,WIL,,,5,100,,,,10,,360,12,,,Select,RestoreBody,Spell,SPELL,ability,defense,,syncRide,BP,,,10,,,,,,,,,,,,対象の衰えた肉体能力を復活させる。,Restore the target's diminished physical abilities.,,,,,,,,,,,,
+8471,SpRestoreMind,精神復活,Restore Mind,,,WIL,,,5,100,,,,15,,380,12,,,Select,RestoreMind,Spell,SPELL,ability,defense,,syncRide,BP,,,10,,,,,,,,,,,,対象の衰えた精神能力を復活させる。,Restore the target's diminished mental abilities.,,,,,,,,,,,,
+8480,SpCureMutation,変異治癒,Cure Mutation,,,WIL,,,5,100,,,,10,,1300,32,,,Self,CureMutation,Spell,SPELL,ability,defense,,, P ,,,3,,,,,,,,,,,,対象に生じた変異を治療する。,Cure a mutation in the caster.,,,,,,,,,,,,
+8490,SpRemoveHex,清浄なる光,Holy Light,,,WIL,,,5,100,,,,6,,320,8,,,Select,RemoveHex,Spell,SPELL,ability,defense,cure,,B SR,,,10,,,,,,,,,,,,対象から呪いを一つ取り除く。,Remove a hex from the target.,,,高確率での呪いの除去,High chance to remove a hex,,,,,,,,
+8491,SpVanishHex,全浄化,Vanquish Hex,,,WIL,,,5,100,,,,50,50,9500,36,2,,Select,RemoveHexAll,Spell,SPELL,ability,defense,cure,,B SR,,,4,,,,,,,,,,,,対象から全ての呪いを取り除く。,Remove all hexes from the target.,,,浄化に失敗した呪いの強度を半減,Halves the power of hexes that resist purification,,,,,,,,
+8500,SpHolyVeil,ホーリーヴェイル,Holy Veil,,,WIL,,,5,100,,,,12,,720,20,,,Select,"Buff,ConHolyVeil",Spell,SPELL,ability,defense,buff,,B S,,,6,,,,,,,,,,,,呪いを寄せ付けない祝福されたヴェールを付与する。,Grant a blessed veil that wards off hexes.,,,@ConHolyVeil,@ConHolyVeil,,,,,,,,
+8501,SpCatsEye,猫の目,Cat's Eye,,,PER,,,5,100,,,,5,,300,8,,,Self,"Buff,ConNightVision",Spell,SPELL,ability,defense,buff,,BP,,,12,,,,,,,,,,,,暗闇を見通すことのできる猫の目を対象に授ける。,"Bestow cat's eyes on the target, allowing them to see in the dark.",,,@ConNightVision,@ConNightVision,,,,,,,,
+8502,SpHolyShield,聖なる盾,Holy Shield,,,WIL,,,5,100,,,,4,,390,8,,,Select,"Buff,ConHolyShield",Spell,SPELL,ability,defense,buff,,B  R,,,12,,,,,,,,,,,,恐怖をはねのける守りの加護を付与する。,Grant a protective blessing to ward off fear.,,,@ConHolyShield,@ConHolyShield,,,,,,,,
+8503,SpWisdom,知者,Divine Wisdom,,,LER,,,5,100,,,,5,,430,14,,,Self,"Buff,ConWisdom",Spell,SPELL,ability,defense,buff,,B S,,,6,,,,,,,,,,,,短期間の間、古の賢者たちの叡智を授かる。,Receive the wisdom of ancient sages for a short period of time.,,,@ConWisdom,@ConWisdom,,,,,,,,
+8504,SpHero,英雄,Hero,,,WIL,,,5,100,,,,1,,410,12,,,Select,"Buff,ConHero",Spell,SPELL,ability,defense,buff,,BPS,,,10,,,,,,,,,,,,対象に英雄になったかのような高揚感を与える。,Give the target a feeling of exhilaration as if they've become a hero.,,,@ConHero,@ConHero,,,,,,,,
+8506,SpResEle,元素保護,Elemental Shield,,,WIL,,,5,100,,,,8,,750,16,,,Select,"Buff,ConResEle",Spell,SPELL,ability,defense,buff,,BP,,,10,,,,,,,,,,,,元素の衣により対象を元素の攻撃から保護する。,Shield the target from elemental attacks.,,,@ConResEle,@ConResEle,,,,,,,,
+8507,SpBreath,水中呼吸,Water Breathing,,,WIL,,,5,100,,,,16,,550,18,,,Select,"Buff,ConBreath",Spell,SPELL,ability,util,buff,, P,,,7,,,,,,,,,,,,対象の周りに空気の泡を発生させる。,Create air bubbles around the target.,,,@ConBreath,@ConBreath,,,,,,,,
+8510,SpSpeedUp,加速,Speed,,,WIL,,,5,100,,,,15,,1800,24,,,Self,"BuffStats,SPD",Spell,SPELL,ability,defense,buffStats,,BP R,,,6,,,,,,,,,,,,対象の動きを加速する。,Accelerate the movement of the target.,,,@ConBuffStats,@ConBuffStats,,,,,,,,
+8550,SpRebirth,不死鳥,Phoenix,,,WIL,,,5,100,,,,75,50,25000,120,-1,,Select,"Buff,ConRebirth",Spell,SPELL,ability,defense,buff,"noShop,noCopy,loytelMart,noRandomAbility",BP,,,1,,,,,,,,,,,,対象に不死鳥の加護を付与する。,Grant the Phoenix's blessing to the target.,,,@ConRebirth,@ConRebirth,,,,,,,,
+8555,SpBrightnessOfLife,いのちの輝き,Brightness of Life,,,WIL,,,5,100,,,,60,200,2500,30,,,Select,"Buff,ConBrightnessOfLife",Spell,SPELL,ability,defense,buff,"noShop,noCopy,noRandomAbility",,,,3,,,,,,,,,,,,,,,,@ConBrightnessOfLife,@ConBrightnessOfLife,,,,,,,,
+8700,SpSilence,沈黙,Silence,,,WIL,,,5,100,,,,8,,850,15,,,Chara,"Debuff,ConSilence",Spell,SPELL,ability,attack,debuff,neg,BP R,,,6,,,,,,,,,,,,対象の周りに呪術の詠唱を阻害する霧を発生させる。,Generate a fog around the target that impedes magical incantations.,,,@ConSilence,@ConSilence,,,,,,,,
+8702,SpWeakness,脆弱,Weakness,,,WIL,,,5,100,,,,1,,550,10,,,Chara,"Debuff,ConWeakness",Spell,SPELL,ability,attack,debuff,neg,BP,,,10,,,,,,,,,,,,対象を脆くする。,Make the target fragile.,,,"@ConWeakness,対象のDVとPVを半減","@ConWeakness,Halves target's DV and PV",,,,,,,,
+8704,SpWeakResEle,元素の傷跡,Elemental Scar,,,MAG,,,5,100,,,,5,,700,17,,,Chara,"Debuff,ConWeakResEle",Spell,SPELL,ability,attack,debuff,neg,BP,,,9,,,,,,,,,,,,対象の元素への抵抗力を奪う。,Strip the target of its resistance to elements.,,,@ConWeakResEle,@ConWeakResEle,,,,,,,,
+8705,SpNightmare,ナイトメア,Nightmare,,,MAG,,,5,100,,,,24,,1300,22,,,Chara,"Debuff,ConNightmare",Spell,SPELL,ability,attack,debuff,neg,BP,,,7,,,,,,,,,,,,対象の精神に悪夢を呼び起こし耐性を減少させる。,"Inflict nightmares upon the target’s mind, reducing their resistance.",,,@ConNightmare,@ConNightmare,,,,,,,,
+8706,SpBane,災い,Bane,,,WIL,,,5,100,,,,5,,650,8,,,Chara,"Debuff,ConBane",Spell,SPELL,ability,attack,debuff,neg,B  R,,,10,,,,,,,,,,,,対象に災いをもたらす。,Bring misfortune to the target.,,,"@ConBane,対象の命中率の減少","@ConBane,Decreases target's To Hit",,,,,,,,
+8707,SpBerserk,狂戦士,Berserk,,,WIL,,,5,100,,,,20,,700,10,,,Chara,"Buff,ConBerserk",Spell,SPELL,ability,attack,buff,, P,,,5,,,,,,,,,,,,対象の精神を興奮させ狂戦士にする。,Drive the target into a berserker rage.,,,"@ConBerserk,対象の与ダメージ上昇","@ConBerserk,Increase target's damage",,,,,,,,
+8708,SpGravity,グラビティ,Gravity,,,MAG,,,5,100,,,,32,,950,19,,,Chara,"Debuff,ConGravity",Spell,SPELL,ability,attack,debuff,neg,B  R,,,7,,,,,,,,,,,,対象の周りに重力場を発生させる。,Generate a gravitational field around the target.,,,@ConGravity,@ConGravity,,,,,,,,
+8710,SpSpeedDown,鈍足,Slow,,,WIL,,,5,100,,,,10,,920,18,,,Chara,"DebuffStats,SPD",Spell,SPELL,ability,attack,debuffStats,neg,BP R,,,8,,,,,,,,,,,,対象の動きを遅くする。,Slow down the movement of the target.,,,@ConBuffStats,@ConBuffStats,,,,,,,,
+8720,SpFear,フィア,Fear,,,WIL,,,5,100,,,,6,0,320,4,,,Chara,Fear,Spell,SPELL,ability,attack,debuff,neg,,,,6,,,,,,,,,,,,,,,,@ConFear,@ConFear,,,,,,,,
+8721,SpMassFear,マスフィア,Mass Fear,,,WIL,,,5,100,,,,18,0,760,18,,,Chara,MassFear,Spell,SPELL,ability,attack,debuff,neg,,,,5,,,,,,,,,,,,,,,,@ConFear,@ConFear,,,,,,,,
+8770,SpTelepathy,テレパシー,Telepathy,,,PER,,,5,100,,,,16,,850,14,,,Self,"Buff,ConTelepathy",Spell,SPELL,ability,util,,keepInvisi,BP,,,7,,,,,,,,,,,,精神を持った生物を遠隔から感知する。,Detect sentient beings from a distance.,,,@ConTelepathy,@ConTelepathy,,,,,,,,
+8775,SpInvisibility,透明化,Invisibility,,,PER,,,5,100,,,,25,500,1100,28,,,Select,"Buff,ConInvisibility",Spell,SPELL,ability,util,"buff,0,-100","keepInvisi,syncRide",BP R,,,5,,,,,,,,,,,,術者の姿を見えなくする。,Render the caster's form invisible.,,,@ConInvisibility,@ConInvisibility,,,,,,,,
+8776,SpSeeInvisible,透明可視,See Invisible,,,PER,,,5,100,,,,4,,650,15,,,Self,"Buff,ConSeeInvisible",Spell,SPELL,ability,util,"buff,0,-100","keepInvisi,syncRide",BP,,,9,,,,,,,,,,,,透明な物体や生物を見ることができるようにする。,Allow the caster to see through invisible objects and beings.,,,@ConSeeInvisible,@ConSeeInvisible,,,,,,,,
+8780,SpIncognito,インコグニート,Incognito,,,PER,,,5,100,,,,18,,1300,36,,,Self,"Buff,ConIncognito",Spell,SPELL,ability,util,,keepInvisi,B S,,,6,,,,,,,,,,,,術者に変装をほどこし、他人の目を欺く。,Disguise the caster to deceive the eyes of others.,,,@ConIncognito,@ConIncognito,,,,,,,,
+8790,SpTransmuteBroom,ホウキ変容,Broomification,,,PER,,,5,100,,,,10,0,2500,40,,,Chara,"Buff,ConTransmuteBroom",Spell,SPELL,ability,util,"buff,0,-100",keepInvisi,B,,,6,,,,,,,,,,,,対象を他者に変容させる。,Transmutate the target into someone else.,,,@ConTransmuteBroom,@ConTransmuteBroom,,,,,,,,
+8791,SpTransmutePutit,プチ変容,Putitification,,,PER,,,5,100,,,,10,100,1200,40,,,Chara,"Buff,ConTransmutePutit",Spell,SPELL,ability,util,debuff,keepInvisi, P ,,,6,,,,,,,,,,,,対象を他者に変容させる。,Transmutate the target into someone else.,,,@ConTransmutePutit,@ConTransmutePutit,,,,,,,,
+8792,SpTransmuteCat,猫変容,Catification,,,PER,,,5,100,,,,10,100,1200,40,,,Chara,"Buff,ConTransmuteCat",Spell,SPELL,ability,util,debuff,keepInvisi, P ,,,6,,,,,,,,,,,,対象を他者に変容させる。,Transmutate the target into someone else.,,,@ConTransmuteCat,@ConTransmuteCat,,,,,,,,
+8793,SpTransmuteBat,コウモリ変容,Bat Transformation,,,PER,,,5,100,,,,10,0,1200,1,-1,6620,Self,"Buff,ConTransmuteBat",Ability,ABILITY,ability,ability,"buff,0,-100","keepInvisi,noShop,noCopy,noRandomAbility",,,20,6,,,,,,,,,,,,対象を他者に変容させる。,Transmutate the target into someone else.,,,@ConTransmuteBat,@ConTransmuteBat,,,,,,,,
+8794,SpTransmuteMimic,ミミック,Mimic,,,PER,,,5,100,,,,20,100,3800,1,,,Chara,"Buff,ConTransmuteMimic",Ability,ABILITY,ability,ability,"buff,0,-100",keepInvisi, P ,,,6,,,,,,,,,,,,対象を他者に変容させる。,Transmutate the target into someone else.,,,"@ConTransmuteMimic,攻撃を受けると擬態解除,行動時に擬態解除","@ConTransmuteMimic,Taking damage breaks mimicry,Taking action breaks mimicry",,,,,,,,
+8795,SpTransmuteShadow,影被り,Shadowform,,,PER,,,5,100,,,,30,0,3200,1,,,Chara,"Buff,ConTransmuteShadow",Ability,ABILITY,ability,ability,"buff,0,-100",keepInvisi,,,,6,,,,,,,,,,,,対象を他者に変容させる。,Transmutate the target into someone else.,,,@ConTransmuteShadow,@ConTransmuteShadow,,,,,,,,
+8796,SpTransmuteHuman,擬人,Human Guise,,,PER,,,5,100,,,,20,0,3800,5,,,Chara,"Buff,ConTransmuteHuman",Ability,ABILITY,ability,ability,"buff,0,-100",keepInvisi,,,,6,,,,,,,,,,,,対象を他者に変容させる。,Transmutate the target into someone else.,,,"@ConTransmuteHuman,攻撃を受けると確率で擬態解除","@ConTransmuteHuman,Chance to break mimicry upon taking damage",,,,,,,,
+8800,SpDarkness,闇の霧,Mist of Darkness,,,WIL,,,5,100,,,,8,,560,10,,,Ground,MistOfDarkness,Spell,SPELL,ability,attack,"ground,0,-100",keepInvisi,B  R,,,6,,,,,,,,,,,,対象地点の周辺に、攻撃が当たりにくくなる闇の霧を発生させる。,Create shadowy fogs that make it difficult for attacks to hit.,,,,,,,,,,,,
+8801,SpWeb,蜘蛛の巣,Web,,,WIL,,,5,100,,,,8,,400,8,,,Ground,Web,Spell,SPELL,ability,attack,"ground,0,-100","neg,keepInvisi",B  R,,,6,,,,,,,,,,,,対象地点の周辺に、動きを阻害する蜘蛛の巣を発生させる。,Create spider's webs that hinder movement.,,,,,,,,,,,,
+9000,SpSummon,動物召喚,Summon Animal,,,CHA,,,5,100,,,,6,,640,32,,,Self,"Summon,animal",Spell,SPELL,ability,util,summon,keepInvisi,B  R,,,6,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9001,SpSummonUndeadSister,アンデッド妹召喚,Summon Undead Younger Sister,,,CHA,,,5,100,,,,25,,850,38,,,Self,"Summon,sister_undead",Spell,SPELL,ability,util,summon,keepInvisi,B,,,8,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9002,SpSummonFire,炎召喚,Summon Fire,,,CHA,,,5,100,,,,18,,750,32,,,Self,"Summon,fire",Spell,SPELL,ability,util,summon,,,,,4,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9003,SpSummonTentacle,触手召喚,Summon Tentacle,,,CHA,,,5,100,,,,18,50,750,8,,,Chara,"Summon,tentacle",Spell,SPELL,ability,util,summon,,,,,4,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9004,SpSummonMonster,モンスター召喚,Summon Monster,,,CHA,,,5,100,,,,8,,640,26,,,Self,"Summon,monster",Spell,SPELL,ability,util,summon,"keepInvisi,noShop,noCopy,loytelMart",B S,,,5,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9005,SpSummonPawn,駒召喚,Summon Pawn,,,CHA,,,5,100,,,,15,200,1000,35,,,Self,"Summon,pawn",Spell,SPELL,ability,util,summon,"keepInvisi,noShop,noCopy,loytelMart",B S,,,4,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9006,SpSummonYeek,イーク召喚,Summon Yeek,,,CHA,,,5,100,,,,7,,400,16,,,Self,"Summon,yeek",Spell,SPELL,ability,util,summon,keepInvisi,,,,7,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9007,SpSummonOrc,オーク召喚,Summon Orc,,,CHA,,,5,100,,,,9,,500,18,,,Self,"Summon,orc",Spell,SPELL,ability,util,summon,keepInvisi,,,,6,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9008,SpSummonFish,魚召喚,Summon Fish,,,CHA,,,5,100,,,,10,,350,16,,,Self,"Summon,fish",Spell,SPELL,ability,util,summon,"keepInvisi,noShop,noCopy,loytelMart",B,,,6,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9009,SpSummonTako,タコ召喚,Summon Octopus,,,CHA,,,5,100,,,,20,,700,20,,,Self,"Summon,octopus",Spell,SPELL,ability,util,summon,"keepInvisi,noShop,noCopy,loytelMart",B,,,6,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9010,SpSummonShubKid,落とし子召喚,Summon Offspring,,,CHA,,,5,100,,,,30,,700,20,,,Self,"Summon,shub_kid",Spell,SPELL,ability,util,summon,"keepInvisi,noShop,noCopy,loytelMart",B,,,6,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9050,SpSummonShadow,影召喚,Summon Shadow,,,CHA,,,5,100,,,,14,,890,22,,,Self,"Summon,shadow",Spell,SPELL,ability,util,summon,,B SR,,,5,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9051,SpSummonTidalWave,大海嘯,Summon Tidal Wave,,,CHA,,,5,100,,,,45,,1600,14,,,Self,"Summon,tsunami",Spell,SPELL,ability,util,summon,,,,,5,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9052,SpSummonTrooper,トルーパー召喚,Summon Trooper,,,CHA,,,5,100,,,,24,200,1000,35,,,Self,"Summon,trooper",Spell,SPELL,ability,util,summon,"keepInvisi,noShop,noCopy,loytelMart",B,,,4,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9053,SpSummonMachine,機械召喚,Summon Machine,,,CHA,,,5,100,,,,24,200,1000,35,,,Self,"Summon,machine",Spell,SPELL,ability,util,summon,"keepInvisi,noShop,noCopy,loytelMart",B,,,4,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9054,SpSummonDragon,竜召喚,Summon Dragon,,,CHA,,,5,100,,,,50,200,3000,54,,,Self,"Summon,dragon",Spell,SPELL,ability,util,summon,"keepInvisi,noShop,noCopy,loytelMart,noRandomAbility",B,,,2,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9055,SpSummonUndead,アンデッド召喚,Summon Undead,,,CHA,,,5,100,,,,12,,500,22,,,Self,"Summon,undead",Spell,SPELL,ability,util,summon,keepInvisi,,,,6,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9056,SpSummonImotoroid,妹ロイド召喚,Summon Younger Sisteroid,,,CHA,,,5,100,,,,38,,2200,42,,,Self,"Summon,imotoroid",Spell,SPELL,ability,util,summon,"keepInvisi,noShop,noCopy,loytelMart",,,,6,,,,,,,,,,,,援軍を呼ぶ。,Summon allies to fight with you.,,,,,,,,,,,,
+9150,SpMeteor,メテオ,Meteor,,,MAG,eleFire,,5,100,,,,30,200,5000,45,,,Self,Meteor,Spell,SPELL,ability,attack,attackArea,"neg,noRandomAbility",B SR,100,,5,,,,,,,,,,,,広範囲に無数の隕石群をふらせる。,Summons numerous meteor clusters across a wide area.,,,#calcの#eleの隕石を召喚,Summon #calc #ele meteors,,,,,,,,
+9151,SpEarthquake,地震,Earthquake,,,MAG,eleImpact,,5,100,,,,20,300,4000,32,,,Self,Earthquake,Spell,SPELL,ability,attack,attackArea,"neg,noRandomAbility",B SR,100,,6,,,,,,,,,,,,広範囲に地震を起こす。,Cause widespread earthquake.,,,"#calcの#eleの地震,浮遊している対象には効果減少,重力を受けている対象には効果増大","Invoke #calc #ele earthquake,Reduced damage against floating targets,Massive damage against targets affected by gravity",,,,,,,,
+9155,SpMoonSpear,月夜の槍,Spear of The Moonlit Night,,,CHA,eleHoly,,5,100,,,,18,500,7500,35,-1,,Ground,MoonSpear,ActArrow,SPELL,ability,attack,attack,"neg,repeat,noRandomAbility,noShop,noCopy",B,100,,4,,,,,,,,,,,,死の苦しみを快楽に変える魅惑の槍で対象を貫く。,Pierce the target with a bewitching spear that turns agony into pleasure.,,,"#calcの#eleの槍を放つ,この槍で殺された対象は乳や卵を落とす,この槍で殺された対象は稀に遺伝子を落とす,威力は詠唱者の魅力に依存する","Unleash a #calc #ele spear,Target slain by this spear drops milk or an egg,Target slain by this spear sometimes drops a gene,Damage scales with the caster’s Charisma",,,,,,,,
+9156,SpMoonArrow,月夜の矢,Arrow of The Moonlit Night,,,CHA,eleHoly,,5,100,,,,12,,2500,8,,,Ground,MoonArrow,ActArrow,SPELL,ability,attack,attack,"neg,repeat",B,50,,10,,,,,,,,,,,,快楽の矢を対象目掛けて放つ。,Release an arrow of pleasure aimed at the target.,,,"#calcの#eleの矢を射る,この矢で殺された対象は稀に乳や卵を落とす,この矢で殺された対象は極稀に遺伝子を落とす,威力は詠唱者の魅力に依存する","Fire a #calc #ele arrow,Target slain by this arrow sometimes drops milk or an egg,Target slain by this arrow sometimes drops a gene,Damage scales with the caster’s Charisma",,,,,,,,
+9160,SpExterminate,害虫駆除,Exterminate,,,MAG,,,5,100,,,,10,150,1500,46,,,Self,Exterminate,Spell,SPELL,ability,attack,,noRandomAbility,  S,100,,2,,,,,,,,,,,,,,,,,,,,,,,,,
+9200,SpShutterHex,破呪,Shatter Hex,,,MAG,eleHoly,,5,100,,,,10,500,720,14,,,Enemy,ShutterHex,Spell,SPELL,ability,attack,attack,"neg,repeat",B,100,,7,,,,,,,,,,,,対象の呪いを破壊し、対象の周囲に光の破片を放つ。,Destroy hexes on the target and emits shards of light around it.,,,"#calcの#eleの破片の放射,対象の呪いが多いほど攻撃回数増加,確率で対象の呪いを取り除く","Release #calc #ele shards,Attack counts increase with hexes,Low chance to remove each hex on the target",,,,,,,,
+9210,SpStripBlessing,聖壊,Strip Blessing,,,MAG,,,5,100,,,,14,500,720,22,,,Select,StripBlessing,Spell,SPELL,ability,attack,,"neg,noRandomAbility",BP R,100,,7,,,,,,,,,,,,対象から加護を取り除く。,Remove blessings from the target.,,,"対象が味方の場合、全ての加護を取り除く,対象が敵の場合、加護を1つ取り除く","Remove all blessings if the target is an ally,Remove one blessing if the target is an enemy",,,,,,,,
+9500,SpWardMonster,魔除け,Ward Monster,,,WIL,,,5,100,,,,1,,500,12,,,Self,"Buff,ConWardMonster",Spell,SPELL,ability,defense,,,    F,,,10,,,,,,,,,,,,,,,,@ConWardMonster,@ConWardMonster,,,,,,,,
+9501,SpDrawMonster,魔寄せ,Lure Monster,,,WIL,,,5,100,,,,1,,500,12,,,Self,"Buff,ConDrawMonster",Spell,SPELL,ability,defense,,,    F,,,10,,,,,,,,,,,,,,,,@ConDrawMonster,@ConDrawMonster,,,,,,,,
+9502,SpDrawMetal,メタル寄せ,Lure Metal,,,WIL,,,5,100,,,,25,50,2000,12,2,,Self,"Buff,ConDrawMetal",Spell,SPELL,ability,defense,,,    F,,,10,,,,,,,,,,,,,,,,@ConDrawMetal,@ConDrawMetal,,,,,,,,
+9503,SpDrawBacker,出会い,Meeting,,,WIL,,,5,100,,,,10,,1000,12,,,Self,"Buff,ConDrawBacker",Spell,SPELL,ability,defense,,,    F,,,10,,,,,,,,,,,,,,,,@ConDrawBacker,@ConDrawBacker,,,,,,,,
+10000,FieldSpider,白糸の墓所,Tomb of Pale Threads,,,LER,,,5,100,,,,10,,1000,12,,,Self,Field,FieldEffectSpider,SPELL,ability,defense,,,,,,1,,,,,,,,,,,,,,,,"「闇の胎動」発動時にゾーン内の全ての繭が孵化,蜘蛛は死体を残さない,蜘蛛は「蜘蛛の巣」の代わりに「酸の手」を使う","All cocoons in the zone hatch when ""Womb of Darkness"" is activated,Spiders leave no corpses,Spiders use ""Acid Touch"" instead of ""Web""",,,,,,,,
+10001,FieldFeast,底無しの饗宴,Bottomless Feast,,,LER,,,5,100,,,,10,,1000,12,,,Self,Field,FieldEffectFeast,SPELL,ability,defense,,,,,,1,,,,,,,,,,,,,,,,"満腹時でも食事可能,満腹時でも完全な食事効果,パーティー会場に設置された料理にのみ適用","Can eat even when full,Grants full food effects even while full,Applies only to dishes set at the party venue",,,,,,,,
