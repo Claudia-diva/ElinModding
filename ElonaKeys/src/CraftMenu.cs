@@ -509,9 +509,9 @@ namespace ElonaKeys
 	{
 		private static void Postfix(LayerCraft __instance, Thing t)
 		{
-			if (Plugin.CraftingStyle != "menu" || CraftMenu.bypass)
+			if (InputRouter.VanillaLocked || Plugin.CraftingStyle != "menu" || CraftMenu.bypass)
 			{
-				return; // default: the native window stays, PopupNav drives it
+				return; // default (or mod paused): the native window stays
 			}
 			bool ours = false;
 			try

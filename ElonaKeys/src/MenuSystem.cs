@@ -385,49 +385,87 @@ namespace ElonaKeys
 				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
 				iconParent.SetActive(enable: true);
 				iconParent.anchoredPosition = new Vector2(16f, 0f);
-				// OUR OWN bare Image, never the button's icon: that one is a
-				// skinned game component that re-tints itself, which is why
-				// spells (colored tint) drifted off while actions (white tint)
-				// looked fine. A bare Image + Act.SetImage is the tooltip's
-				// exact setup.
-				Transform ownT = iconParent.Find("EKAbilityIcon");
-				Image img = (ownT != null) ? ownT.GetComponent<Image>() : null;
-				if (img == null)
+				// THE TOOLTIP'S OWN image, literally: instantiate the same
+				// "HeaderAbility" prefab UINote.AddHeaderAbility loads and use
+				// its image1 (whatever material/settings it carries). Only its
+				// texts and extra chrome are hidden. No plate, no re-tinting
+				// component, no guesswork left.
+				Image img = null;
+				Transform hdrT = iconParent.Find("EKAbilityHeader");
+				UIItem hdr = (hdrT != null) ? hdrT.GetComponent<UIItem>() : null;
+				if (hdr == null)
 				{
-					GameObject io = new GameObject("EKAbilityIcon");
-					io.transform.SetParent(iconParent, worldPositionStays: false);
-					img = io.AddComponent<Image>();
-					img.raycastTarget = false;
+					try
+					{
+						hdr = Util.Instantiate<UIItem>("UI/Element/Header/HeaderAbility", iconParent);
+						hdr.name = "EKAbilityHeader";
+						if (hdr.text1 != null)
+						{
+							hdr.text1.SetActive(enable: false);
+						}
+						if (hdr.text2 != null)
+						{
+							hdr.text2.SetActive(enable: false);
+						}
+						RectTransform hrt = hdr.transform as RectTransform;
+						hrt.anchorMin = new Vector2(0.5f, 0.5f);
+						hrt.anchorMax = new Vector2(0.5f, 0.5f);
+						hrt.pivot = new Vector2(0.5f, 0.5f);
+						hrt.anchoredPosition = Vector2.zero;
+					}
+					catch (Exception ex)
+					{
+						Plugin.Log?.LogWarning("ElonaKeys HeaderAbility prefab failed: " + ex.Message);
+						hdr = null;
+					}
+				}
+				if (hdr != null && hdr.image1 != null)
+				{
+					img = hdr.image1;
+					// hide everything in the prefab except the icon image
+					foreach (Image hi in hdr.GetComponentsInChildren<Image>(includeInactive: true))
+					{
+						if (hi != img)
+						{
+							hi.enabled = false;
+						}
+					}
+					foreach (Text htx in hdr.GetComponentsInChildren<Text>(includeInactive: true))
+					{
+						htx.enabled = false;
+					}
+					hdr.SetActive(enable: true);
+				}
+				else
+				{
+					// fallback: bare Image (still tooltip-equivalent painting)
+					Transform ownT = iconParent.Find("EKAbilityIcon");
+					img = (ownT != null) ? ownT.GetComponent<Image>() : null;
+					if (img == null)
+					{
+						GameObject io = new GameObject("EKAbilityIcon");
+						io.transform.SetParent(iconParent, worldPositionStays: false);
+						img = io.AddComponent<Image>();
+						img.raycastTarget = false;
+					}
+					img.material = null;
 				}
 				foreach (Image sib in iconParent.GetComponentsInChildren<Image>(includeInactive: true))
 				{
-					if (sib != img)
+					if (sib != img && (hdr == null || !sib.transform.IsChildOf(hdr.transform)))
 					{
-						sib.enabled = false; // button icon, old EKIconBg... all retired
+						sib.enabled = false; // button icon, old plates/backings... retired
 					}
 				}
-				// pale plate under the glyph, like the tooltip's HeaderAbility
-				// prefab: window skins are saved PER SAVE FILE, and on a dark
-				// skin a bare tinted glyph reads as mud ("deep fried on one
-				// save, fine on the other"). Parchment-colored, so it blends
-				// away on light skins.
-				Transform plateT = iconParent.Find("EKIconPlate");
-				Image plate = (plateT != null) ? plateT.GetComponent<Image>() : null;
-				if (plate == null)
-				{
-					GameObject po = new GameObject("EKIconPlate");
-					po.transform.SetParent(iconParent, worldPositionStays: false);
-					plate = po.AddComponent<Image>();
-					plate.raycastTarget = false;
-					plate.color = new Color(0.94f, 0.90f, 0.82f, 0.9f);
-					plate.rectTransform.sizeDelta = new Vector2(32f, 32f);
-					plate.rectTransform.anchoredPosition = Vector2.zero;
-				}
-				plate.enabled = true;
-				plate.transform.SetAsLastSibling();
 				img.enabled = true;
-				img.transform.SetAsLastSibling(); // glyph above the plate
-				img.material = null;
+				if (hdr != null)
+				{
+					hdr.transform.SetAsLastSibling();
+				}
+				else
+				{
+					img.transform.SetAsLastSibling();
+				}
 				// AddHeaderAbility paints with THE ELEMENT ITSELF as an Act
 				// ((this as Act)?.SetImage) — the pc's spells/actions ARE Act
 				// instances with the real sprite. ACT.Create(source) built a

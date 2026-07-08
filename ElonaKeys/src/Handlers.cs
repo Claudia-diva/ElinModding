@@ -921,7 +921,25 @@ namespace ElonaKeys
 		public static void EmptyHands()
 		{
 			bool had = pc.held != null || (EClass.player.currentHotItem != null && !(EClass.player.currentHotItem is HotItemNoItem));
-			EClass.player.ResetCurrentHotItem();
+			// toolbelt tools (shears, sickle, hammer...): the WIDGET keeps a
+			// selected slot and re-holds the tool right after a plain reset —
+			// Select(-1) is the native deselect that clears both
+			bool viaWidget = false;
+			try
+			{
+				if (WidgetCurrentTool.Instance != null)
+				{
+					WidgetCurrentTool.Instance.Select(-1);
+					viaWidget = true;
+				}
+			}
+			catch
+			{
+			}
+			if (!viaWidget)
+			{
+				EClass.player.ResetCurrentHotItem();
+			}
 			Msg.SayRaw(had ? "You empty your hands." : "Your hands are already empty.");
 			try
 			{
@@ -1411,7 +1429,11 @@ namespace ElonaKeys
 					maxAmount = t.Num,
 					onAmount = delegate(int n)
 					{
-						if (dest.things.IsFull())
+						// IsFull(Thing): the plain IsFull() reports special
+						// containers (shipping chest, delivery box) as ALWAYS
+						// full once installed; the Thing overload asks for a
+						// real destination like the native drag does
+						if (dest.things.IsFull(t))
 						{
 							Msg.SayRaw("The " + dest.Name + " is full.");
 							return;
@@ -1467,7 +1489,8 @@ namespace ElonaKeys
 			{
 				rows.Add(new MenuRow
 				{
-					label = name + ":  " + (value ? "<color=#70a070>ON</color>" : "<color=#a07070>OFF</color>"),
+					// plain text: colored values were unreadable on parchment
+					label = name + ":  " + (value ? "ON" : "OFF"),
 					closeOnAct = false,
 					act = flip
 				});
@@ -1475,7 +1498,7 @@ namespace ElonaKeys
 			// --- sort (same fields the native window setting menu writes) ---
 			rows.Add(new MenuRow
 			{
-				label = "Sort mode:  <color=#9fd6ff>" + sd.sortMode + "</color>  (cycle)",
+				label = "Sort mode:  " + sd.sortMode + "  (Enter cycles)",
 				closeOnAct = false,
 				act = delegate
 				{
@@ -1489,10 +1512,14 @@ namespace ElonaKeys
 			// --- distribution ---
 			rows.Add(new MenuRow
 			{
-				label = "Distribution priority: <color=#9fd6ff>" + sd.priority + "</color>  (spinner, -5..20)",
+				// Enter cycles -5..20 with wrap; the raw count spinner showed
+				// meaningless internal numbers ("26 (26)")
+				label = "Distribution priority:  " + sd.priority + "  (Enter cycles, -5..20)",
 				closeOnAct = false,
-				maxAmount = 26,
-				onAmount = delegate(int n) { sd.priority = n - 6; } // 1..26 -> -5..20
+				act = delegate
+				{
+					sd.priority = (sd.priority >= 20) ? -5 : (sd.priority + 1);
+				}
 			});
 			Toggle("Only rottable items (cooler/fridge)", sd.onlyRottable, delegate { sd.onlyRottable = !sd.onlyRottable; });
 			Toggle("Refuse rotten items", sd.noRotten, delegate { sd.noRotten = !sd.noRotten; });
@@ -1511,7 +1538,7 @@ namespace ElonaKeys
 			// --- autodump ---
 			rows.Add(new MenuRow
 			{
-				label = "Autodump:  <color=#9fd6ff>" + sd.autodump + "</color>  (cycle)",
+				label = "Autodump:  " + sd.autodump + "  (Enter cycles)",
 				closeOnAct = false,
 				act = delegate
 				{
@@ -1629,7 +1656,9 @@ namespace ElonaKeys
 				amount: (Thing t) => t.Num,
 				onAmount: delegate(Thing t, int n)
 				{
-					if (container.things.IsFull())
+					// IsFull(Thing), not IsFull(): special containers (shipping
+					// chest, delivery box) report plain-full forever once installed
+					if (container.things.IsFull(t))
 					{
 						Msg.SayRaw("The " + container.Name + " is full.");
 						return;
@@ -2811,6 +2840,11 @@ namespace ElonaKeys
 			if (rows.Count == 0)
 			{
 				rows.Add(new MenuRow { label = "<color=#8f8f7a>(empty)</color>" });
+			}
+			// free-space readout in the footer (party members included)
+			if (src.owner != null)
+			{
+				MenuSystem.NextFooterExtra = SlotText(src.owner);
 			}
 			MenuSystem.Show(title, rows, delegate
 			{

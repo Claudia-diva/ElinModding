@@ -144,6 +144,10 @@ namespace ElonaKeys
 				{
 					return;
 				}
+				if (InputRouter.VanillaLocked)
+				{
+					return; // mod paused: no menu keys, no popup nav, no overlays
+				}
 				UpdateCastHold();
 				MenuSystem.HandleKeys();
 				PopupNav.OnUpdate();

@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.25.0";
+		public const string Version = "1.25.1";
 
 		internal static ManualLogSource Log;
 
@@ -162,7 +162,7 @@ namespace ElonaKeys
 			suppressNativeKeys = Config.Bind("General", "SuppressNativeKeys", "",
 				"Comma-separated keys hidden from the game entirely (use when a native Elin key annoys you and you don't want either binding).");
 			suppressAllKey = Config.Bind("General", "SuppressAllKey", "capsLock",
-				"Toggle key: while ON, ALL vanilla key actions are blocked and only this mod's keys (plus movement and digit quickslots) work. CapsLock is unused by the game. 'none' disables the toggle.");
+				"PAUSE toggle: while ON, this mod steps aside completely - no mod keys, no keyboard menus, no window redirects, no trade panes. Pure native Elin, the escape hatch when a mod window misbehaves. CapsLock is unused by the game. 'none' disables the toggle.");
 			wheelStyle = Config.Bind("Menus", "WheelStyle", "radial",
 				new ConfigDescription("z action wheel style: radial (classic Elona circles) or list (window).",
 					new AcceptableValueList<string>("radial", "list")));

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.25.1 - 2026-07-08
+- Trading actually works now (1.25.0 searched for the shop windows in the wrong place and found none, silently). Same keys as advertised: arrows, Tab between panes, Enter to buy/sell, x examine. It's one generic system for every vendor; nothing is per-shop.
+- CAPSLOCK IS THE ESCAPE HATCH now, repurposed: press it and the mod pauses COMPLETELY: native windows, native keys, no redirects, until you press it again. Any time a mod window misbehaves, CapsLock gets you the normal Elin one.
+- Shipping chests and delivery boxes accept items again ("full at 0/40": the game reports special containers as always-full through the simple check; we now ask the same question the native drag does).
+- The bright plate behind ability icons is gone (that was my attempt at the fried-sprite fix, wrong call). Spell icons now use the tooltip's actual icon component, cloned from the same prefab, so whatever the tooltip renders is what the list renders.
+- Empty hands (shift+e) now really puts toolbelt tools away (shears, sickle, hammer): the toolbar kept them selected and re-equipped them instantly; we now deselect the way the toolbar itself does.
+- Container settings menu cleaned up: all values in plain readable text, and Distribution priority is a simple "Enter cycles -5..20" instead of the confusing spinner numbers.
+- Party member inventories show their free space in the footer ("slots 14/25").
+
 ## 1.25.0 - 2026-07-08
 - TRADING BY KEYBOARD. Open any shop and your backpack opens beside it: arrows walk the item grids, Tab (or left/right) hops between the shop's stock and your inventory, Enter buys or sells exactly like a right-click (same prices, same confirmations, same stack dialogs), x examines. The game's own rules still apply: no money = no sale, no space = "backpack is full", purchases stack and store like a normal pickup.
 - This covers every window of that kind with the same keys: shopkeepers, the kettle duplication shop, Demitas's spell duplication, spell vendors, wandering merchants. Bank and trainers talk through dialog choices, which were already keyboard-driven.

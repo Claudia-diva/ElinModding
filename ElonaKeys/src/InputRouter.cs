@@ -124,25 +124,30 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			// vanilla-lock toggle (default CapsLock): while ON, no vanilla key
-			// ACTION fires at all; movement and digit quickslots stay native
+			// mod-pause toggle (default CapsLock), REPURPOSED by request: while
+			// ON, ElonaKeys steps aside COMPLETELY — no mod keys, no window
+			// redirects, no trade panes. Pure native Elin, the escape hatch
+			// for anything the mod gets wrong.
 			foreach (Keybind kb in Plugin.SuppressAllBinds)
 			{
 				if (kb.IsDown())
 				{
 					suppressVanilla = !suppressVanilla;
+					if (suppressVanilla)
+					{
+						MenuSystem.Close();
+						TargetMode.Cancel();
+					}
 					Msg.SayRaw(suppressVanilla
-						? "Vanilla keybinds LOCKED: only " + Plugin.Name + " keys act. (" + kb + " to restore)"
-						: "Vanilla keybinds restored.");
-					EInput.action = EAction.None;
+						? Plugin.Name + " PAUSED: pure native Elin windows and keys. (" + kb + " to resume)"
+						: Plugin.Name + " resumed.");
 					EInput.Consume();
 					return;
 				}
 			}
-			if (suppressVanilla && !Input.GetKey(KeyCode.Escape) && !Input.GetKey(KeyCode.Return) && !Input.GetKey(KeyCode.KeypadEnter))
+			if (suppressVanilla)
 			{
-				// Escape/Enter stay alive: menus and dialogs must remain usable
-				EInput.action = EAction.None;
+				return; // paused: everything native, nothing of ours runs
 			}
 			// swallow keys the user asked us to hide from the game entirely
 			foreach (Keybind sb in Plugin.SuppressBinds)
@@ -451,9 +456,9 @@ namespace ElonaKeys
 	{
 		private static bool Prefix(TraitContainer __instance)
 		{
-			if (!Plugin.KeyboardContainers || __instance.owner == null || __instance.HasChara || !(__instance.owner is Thing))
+			if (InputRouter.VanillaLocked || !Plugin.KeyboardContainers || __instance.owner == null || __instance.HasChara || !(__instance.owner is Thing))
 			{
-				return true;
+				return true; // paused = the normal Elin window
 			}
 			try
 			{
@@ -475,7 +480,7 @@ namespace ElonaKeys
 	{
 		private static void Postfix(TraitCrafter crafter)
 		{
-			if (!Plugin.KeyboardCrafters || crafter == null)
+			if (InputRouter.VanillaLocked || !Plugin.KeyboardCrafters || crafter == null)
 			{
 				return;
 			}
@@ -498,8 +503,12 @@ namespace ElonaKeys
 	{
 		private static bool Prefix()
 		{
+			if (InputRouter.VanillaLocked)
+			{
+				return true; // paused: Tab toggles the inventory natively
+			}
 			if (Input.GetKey(KeyCode.Tab)
-				&& (InputRouter.VanillaLocked || MenuSystem.Alive || PopupNav.InvNavActive || (EClass.ui != null && EClass.ui.BlockActions)))
+				&& (MenuSystem.Alive || PopupNav.InvNavActive || (EClass.ui != null && EClass.ui.BlockActions)))
 			{
 				// InvNavActive: Tab hops trade panes, must not toggle the backpack
 				return false;
@@ -516,6 +525,10 @@ namespace ElonaKeys
 	{
 		private static void Postfix()
 		{
+			if (InputRouter.VanillaLocked)
+			{
+				return;
+			}
 			try
 			{
 				if (LayerInventory.GetPCLayer() == null)

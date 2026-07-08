@@ -164,10 +164,12 @@ namespace ElonaKeys
 					// (buy/sell/transfer with all its checks and dialogs),
 					// Tab / left / right = hop panes, x = examine.
 					target = topLayer;
+					// scene-wide: ui.layers does NOT hold these (that was 1.25.0's
+					// dead-on-arrival trading: zero panes found, zero errors)
 					List<LayerInventory> lis = new List<LayerInventory>();
-					foreach (Layer l in EClass.ui.layers)
+					foreach (LayerInventory li in UnityEngine.Object.FindObjectsOfType<LayerInventory>())
 					{
-						if (l is LayerInventory li && li.gameObject.activeInHierarchy)
+						if (li != null && li.gameObject.activeInHierarchy)
 						{
 							lis.Add(li);
 						}
@@ -195,6 +197,10 @@ namespace ElonaKeys
 						ApplySlotCaption(li);
 					}
 					invNav = groups.Count > 0;
+					if (Plugin.DebugLog && invNav)
+					{
+						Plugin.Log?.LogInfo("ElonaKeys trade nav: " + lis.Count + " inventory windows, " + groups.Count + " panes");
+					}
 				}
 				else if (topLayer != null && (EClass.ui.BlockActions || topLayer is LayerCraftFloat))
 				{
@@ -391,6 +397,9 @@ namespace ElonaKeys
 
 		private static void HandleKeys(Layer topLayer)
 		{
+			// panes come and go between frames (windows close): never index
+			// with a stale group cursor
+			groupIndex = Mathf.Clamp(groupIndex, 0, Mathf.Max(0, groups.Count - 1));
 			Group g = (groups.Count > 0) ? groups[groupIndex] : null;
 			// Elona window family: Tab on the character sheet hops to the
 			// equipment window (and back from there via MenuSystem's Tab)
