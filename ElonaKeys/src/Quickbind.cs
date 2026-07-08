@@ -201,6 +201,11 @@ namespace ElonaKeys
 				Handlers.ZapRod(t);
 				return;
 			}
+			if (t.trait.CanOpenContainer)
+			{
+				Handlers.ContainerMenu(t); // quickbound chest = quick access
+				return;
+			}
 			if (t.trait.CanUse(EClass.pc))
 			{
 				t.trait.OnUse(EClass.pc);
@@ -243,8 +248,7 @@ namespace ElonaKeys
 					}
 					Act a = ACT.Create(src);
 					img.material = null;
-					a.SetImage(img);
-					img.color = Color.white; // element tint blobs plain UI images
+					a.SetImage(img); // tinted glyph; the overlay backing carries it
 					return true;
 				}
 				Thing t = ResolveItem(e.key);

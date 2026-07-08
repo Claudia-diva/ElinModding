@@ -22,7 +22,8 @@ Mod keys beat Elin's own bindings on clash by default (OverrideGameKeys). If key
 
 $Keys
 {topic|Item Keys}
-{pair|g / numpad 0|Pick up: single item = instant, several = selection list with counts + take everything}
+{pair|numpad 0|Instantly pick up EVERYTHING on your tile}
+{pair|g|Pick up: single item instant, several = selection list. HOLD g = grab anything nearby (furniture, dropped containers)}
 {pair|d|Drop menu (count spinner for stacks, stays open)}
 {pair|e|Eat menu}
 {pair|q|Quaff menu, includes nearby wells and fountains}

@@ -83,34 +83,55 @@ namespace ElonaKeys
 			return -1;
 		}
 
-		// hold-the-cast-key watcher: menu opened by v/a flips into MANUAL
-		// targeting when the key stays held ~0.5s after opening
-		private static float castHoldAt = -1f;
-		private static KeyCode castHoldKey;
+		// generic hold-the-key watcher: an action fires when the key that just
+		// triggered something stays held ~0.5s (hold-v manual cast, hold-g grab)
+		private static float holdAt = -1f;
+		private static KeyCode holdKey;
+		private static Action holdAction;
+		private static bool holdNeedsMenu;
+
+		public static void WatchHold(KeyCode key, Action action, bool requireMenuAlive)
+		{
+			holdKey = key;
+			holdAction = action;
+			holdNeedsMenu = requireMenuAlive;
+			holdAt = (key != KeyCode.None && action != null) ? Time.unscaledTime : -1f;
+		}
 
 		public static void WatchCastHold(KeyCode key)
 		{
-			castHoldKey = key;
-			castHoldAt = (key != KeyCode.None) ? Time.unscaledTime : -1f;
+			WatchHold(key, delegate
+			{
+				Handlers.ManualCastMode = true;
+				SE.Tab();
+				Msg.SayRaw("Manual targeting: casts aim freely at friend or foe.");
+			}, requireMenuAlive: true);
 		}
 
 		private static void UpdateCastHold()
 		{
-			if (castHoldAt < 0f)
+			if (holdAt < 0f)
 			{
 				return;
 			}
-			if (!MenuSystem.Alive || !Input.GetKey(castHoldKey))
+			if ((holdNeedsMenu && !MenuSystem.Alive) || !Input.GetKey(holdKey))
 			{
-				castHoldAt = -1f; // released (or menu gone): stays quick-cast
+				holdAt = -1f; // released (or menu gone): normal behavior stays
 				return;
 			}
-			if (Time.unscaledTime - castHoldAt > 0.45f)
+			if (Time.unscaledTime - holdAt > 0.45f)
 			{
-				castHoldAt = -1f;
-				Handlers.ManualCastMode = true;
-				SE.Tab();
-				Msg.SayRaw("Manual targeting: casts aim freely at friend or foe.");
+				holdAt = -1f;
+				Action a = holdAction;
+				holdAction = null;
+				try
+				{
+					a();
+				}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogError("ElonaKeys hold action failed: " + ex);
+				}
 			}
 		}
 

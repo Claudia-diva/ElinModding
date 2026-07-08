@@ -29,6 +29,7 @@ namespace ElonaKeys
 		public Action<Image> drawIcon;       // custom icon painter (recipe sprites...)
 		public float rightWidth;             // right column width override (0 = WeightWidth)
 		public int sortCount;                // count/stock sort key (item Num, spell stock)
+		public string[] cols;                // aligned right-side columns (ability rows: Lv/Hit/Dmg/Cost/Left)
 	}
 
 	public static class MenuSystem
@@ -365,8 +366,9 @@ namespace ElonaKeys
 			}
 			else if (r.ability != null)
 			{
-				// spell/action rows: element sprite (plain UI sprite, no item
-				// shader) + the game's own ability tooltip (ButtonAbility recipe)
+				// spell/action rows: tinted ability glyph on a dark backing (the
+				// tint IS the art; on bare parchment it reads as a blob, white
+				// kills the color — the backing is what the native slots provide)
 				Element ab = r.ability;
 				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
 				iconParent.SetActive(enable: true);
@@ -379,11 +381,24 @@ namespace ElonaKeys
 						sib.enabled = false;
 					}
 				}
+				Transform bgT = iconParent.Find("EKIconBg");
+				Image bgImg = (bgT != null) ? bgT.GetComponent<Image>() : null;
+				if (bgImg == null)
+				{
+					GameObject bgo = new GameObject("EKIconBg");
+					bgo.transform.SetParent(iconParent, worldPositionStays: false);
+					bgImg = bgo.AddComponent<Image>();
+					bgImg.raycastTarget = false;
+					bgImg.color = new Color(0.08f, 0.07f, 0.06f, 0.6f);
+					bgImg.rectTransform.sizeDelta = new Vector2(30f, 30f);
+					bgImg.rectTransform.anchoredPosition = Vector2.zero;
+				}
+				bgImg.enabled = true;
+				bgImg.transform.SetAsLastSibling();
 				img.enabled = true;
-				img.transform.SetAsLastSibling();
+				img.transform.SetAsLastSibling(); // above the backing
 				img.material = null; // pooled row may carry the item shader
-				// Act.SetImage = the real ability sprite (+element tint);
-				// Element.SetImage would draw the scaling-stat icon instead
+				// Act.SetImage = the real ability sprite + element tint
 				bool drawn = false;
 				try
 				{
@@ -401,9 +416,6 @@ namespace ElonaKeys
 				{
 					ab.SetImage(img);
 				}
-				// the element tint (colorSprite) turns sprites into solid blobs
-				// on a plain UI Image; the element color lives in the stat icon
-				img.color = Color.white;
 				RectTransform art = img.rectTransform;
 				art.pivot = new Vector2(0.5f, 0.5f);
 				art.anchoredPosition = Vector2.zero;
@@ -444,9 +456,10 @@ namespace ElonaKeys
 				b.button1.mainText.text = letter + ")  " + b.button1.mainText.text;
 			}
 			float nameX = badge ? 78f : 52f;
-			float rightW = (r.rightWidth > 0f) ? r.rightWidth : Plugin.WeightWidth;
+			float rightW = (r.cols != null) ? ColsBlockWidth : ((r.rightWidth > 0f) ? r.rightWidth : Plugin.WeightWidth);
 			b.button1.mainText.rectTransform.anchoredPosition = new Vector2(nameX, 0f);
-			SetWeightText(b, r.rightText, rightW);
+			SetCols(b, r.cols);
+			SetWeightText(b, (r.cols != null) ? "" : r.rightText, (r.cols != null) ? Plugin.WeightWidth : rightW);
 			if (r.fixedPrefix != null)
 			{
 				// static prefix in mainText; only the name (child text) scrolls.
@@ -458,6 +471,110 @@ namespace ElonaKeys
 			{
 				SetNameText(b, null, 0f, 0f);
 				MenuExtras.ApplyNameDisplay(b.button1.mainText, Plugin.MenuWidth - nameX - rightW - 24f);
+			}
+		}
+
+		// aligned right-side columns (Elona style): fixed x per column, with
+		// header labels in the window's header strip. Order in MenuRow.cols:
+		// [Lv, Hit, Dmg, Cost, Left]
+		private static readonly float[] ColX = { -230f, -180f, -114f, -60f, -14f };
+		private static readonly float[] ColW = { 44f, 52f, 68f, 56f, 44f };
+		private static readonly string[] ColNames = { "Lv", "Hit", "Dmg", "Cost", "Left" };
+		private const float ColsBlockWidth = 270f;
+
+		private static void SetCols(ItemGeneral b, string[] cols)
+		{
+			try
+			{
+				for (int i = 0; i < ColX.Length; i++)
+				{
+					Transform existing = b.button1.transform.Find("EKCol" + i);
+					UIText ct = (existing != null) ? existing.GetComponent<UIText>() : null;
+					if (cols == null || i >= cols.Length)
+					{
+						if ((bool)ct)
+						{
+							ct.text = "";
+						}
+						continue;
+					}
+					if (ct == null)
+					{
+						GameObject go = new GameObject("EKCol" + i);
+						go.transform.SetParent(b.button1.transform, worldPositionStays: false);
+						ct = go.AddComponent<UIText>();
+						ct.font = b.button1.mainText.font;
+						ct.fontSize = 13;
+						ct.alignment = TextAnchor.MiddleRight;
+						ct.color = new Color(0.4f, 0.38f, 0.3f);
+						ct.raycastTarget = false;
+						ct.horizontalOverflow = HorizontalWrapMode.Overflow;
+						RectTransform crt = ct.rectTransform;
+						crt.anchorMin = new Vector2(1f, 0.5f);
+						crt.anchorMax = new Vector2(1f, 0.5f);
+						crt.pivot = new Vector2(1f, 0.5f);
+						crt.sizeDelta = new Vector2(ColW[i], 22f);
+						crt.anchoredPosition = new Vector2(ColX[i], 0f);
+					}
+					ct.text = cols[i] ?? "";
+				}
+			}
+			catch
+			{
+				// cosmetic only
+			}
+		}
+
+		// header labels for the column block, in the window's header strip
+		private static readonly List<Text> headerCols = new List<Text>();
+
+		private static void RefreshColsHeader(bool show)
+		{
+			try
+			{
+				headerCols.RemoveAll((Text t) => t == null || !t);
+				if (!show)
+				{
+					foreach (Text t in headerCols)
+					{
+						t.enabled = false;
+					}
+					return;
+				}
+				if (headerCols.Count == 0)
+				{
+					if (layer == null || !layer || layer.windows.Count == 0)
+					{
+						return;
+					}
+					for (int i = 0; i < ColNames.Length; i++)
+					{
+						GameObject go = new GameObject("EKColHead" + i);
+						go.transform.SetParent(layer.windows[0].transform, worldPositionStays: false);
+						Text ht = go.AddComponent<Text>();
+						ht.font = RadialWheel.FindFont();
+						ht.fontSize = 12;
+						ht.alignment = TextAnchor.MiddleRight;
+						ht.color = new Color(0.35f, 0.32f, 0.25f);
+						ht.raycastTarget = false;
+						ht.text = ColNames[i];
+						RectTransform rt = ht.rectTransform;
+						rt.anchorMin = new Vector2(1f, 1f);
+						rt.anchorMax = new Vector2(1f, 1f);
+						rt.pivot = new Vector2(1f, 1f);
+						rt.sizeDelta = new Vector2(ColW[i], 18f);
+						rt.anchoredPosition = new Vector2(ColX[i] - 14f, -42f); // beside the Name header
+						headerCols.Add(ht);
+					}
+				}
+				foreach (Text t in headerCols)
+				{
+					t.enabled = true;
+				}
+			}
+			catch
+			{
+				// cosmetic only
 			}
 		}
 
@@ -477,7 +594,7 @@ namespace ElonaKeys
 					}
 					return;
 				}
-				float statX = 0f - (Plugin.AbilityStatWidth + 24f);
+				float statX = -284f; // just left of the column block
 				if (si == null)
 				{
 					GameObject go = new GameObject("EKStat");
@@ -731,6 +848,16 @@ namespace ElonaKeys
 				caption += "  " + pieces + " items " + (grams / 1000f).ToString("0.0") + "s";
 			}
 			layer.windows[0].SetCaption(caption);
+			bool colsPage = false;
+			foreach (MenuRow r1 in pageRows)
+			{
+				if (r1.cols != null)
+				{
+					colsPage = true;
+					break;
+				}
+			}
+			RefreshColsHeader(colsPage);
 			ShowSelTooltip();
 		}
 

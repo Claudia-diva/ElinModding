@@ -285,11 +285,14 @@ namespace ElonaKeys
 			};
 			target.Update(p);
 			plan._Update(target);
-			// GENERIC held-item interactions: the game only adds the held item's
-			// right-click acts (brush, whip, syringe, tools...) in the RightMouse
-			// branch, so merge them into our AllAction plans too. The target-Card
-			// branch reads the GLOBAL mouse target, so point it at the tile first.
-			if (includeHeld && input == ActInput.AllAction && EClass.player.currentHotItem is HotItemHeld held)
+			// GENERIC hot-item interactions: the game only adds the hot item's
+			// right-click acts in the RightMouse branch. HotItemHeld = held-tool
+			// acts (brush, whip, chop...); HotItemNoItem (EMPTY HANDS) = the
+			// grab-installed "actHold" (a dropped purse!) and tile harvest.
+			// The target-Card branch reads the GLOBAL mouse target: point it
+			// at the tile first.
+			HotItem hot = EClass.player.currentHotItem;
+			if (includeHeld && input == ActInput.AllAction && (hot is HotItemHeld || hot is HotItemNoItem))
 			{
 				try
 				{
@@ -299,7 +302,7 @@ namespace ElonaKeys
 					mt.Update(p);
 					mt.mouse = wasMouse;
 					int before = plan.list.Count;
-					held.TrySetAct(plan);
+					hot.TrySetAct(plan);
 					// drop duplicates the AllAction pass already produced
 					for (int i = plan.list.Count - 1; i >= before; i--)
 					{
@@ -697,10 +700,7 @@ namespace ElonaKeys
 
 		// ---------- world keys ----------
 
-		// g: SELECT what to pick up (with counts), or take everything.
-		// Built straight from the tile's things: plan.listPick missed items
-		// under some input rules.
-		public static void Get()
+		private static List<Thing> TilePickables()
 		{
 			List<Thing> here = new List<Thing>();
 			foreach (Thing t in pc.pos.Things)
@@ -710,9 +710,36 @@ namespace ElonaKeys
 					here.Add(t);
 				}
 			}
+			return here;
+		}
+
+		// numpad0: hoover the tile, no questions asked
+		public static void GetAll()
+		{
+			List<Thing> here = TilePickables();
 			if (here.Count == 0)
 			{
 				Msg.SayRaw("There is nothing here to pick up.");
+				return;
+			}
+			foreach (Thing t in here)
+			{
+				if (t != null && !t.isDestroyed)
+				{
+					pc.Pick(t);
+				}
+			}
+		}
+
+		// g: SELECT what to pick up (with counts). HOLD g = grab anything
+		// nearby, including installed things like a dropped purse.
+		public static void Get()
+		{
+			MenuExtras.WatchHold(Plugin.GetBindKey("Get"), GrabNearby, requireMenuAlive: false);
+			List<Thing> here = TilePickables();
+			if (here.Count == 0)
+			{
+				Msg.SayRaw("There is nothing here to pick up. (Hold g to grab nearby objects.)");
 				return;
 			}
 			if (here.Count == 1)
@@ -721,20 +748,6 @@ namespace ElonaKeys
 				return;
 			}
 			List<MenuRow> rows = new List<MenuRow>();
-			rows.Add(new MenuRow
-			{
-				label = "[ Take everything ]",
-				act = delegate
-				{
-					foreach (Thing t in here)
-					{
-						if (t != null && !t.isDestroyed)
-						{
-							pc.Pick(t);
-						}
-					}
-				}
-			});
 			foreach (Thing thing in here)
 			{
 				Thing t = thing;
@@ -754,7 +767,75 @@ namespace ElonaKeys
 					}
 				});
 			}
+			rows.Add(new MenuRow
+			{
+				label = "[ Take everything ]",
+				act = delegate
+				{
+					foreach (Thing t in here)
+					{
+						if (t != null && !t.isDestroyed)
+						{
+							pc.Pick(t);
+						}
+					}
+				}
+			});
 			MenuSystem.Show("Pick up what?", rows);
+		}
+
+		// hold-g: every grabbable in interaction range, loose AND installed
+		// (the dropped-purse case: installed things grab via HoldCard)
+		public static void GrabNearby()
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (Point point in Nearby())
+			{
+				foreach (Thing thing in point.Things)
+				{
+					Thing t = thing;
+					if (!t.IsInstalled && t.placeState == PlaceState.roaming && pc.CanPick(t))
+					{
+						rows.Add(new MenuRow
+						{
+							label = t.Name,
+							icon = t,
+							sortCount = t.Num,
+							closeOnAct = false,
+							maxAmount = Mathf.Max(1, t.Num),
+							onAmount = delegate(int n)
+							{
+								Thing taken = (n >= t.Num) ? t : t.Split(n);
+								pc.Pick(taken);
+							}
+						});
+					}
+					else if (t.IsInstalled)
+					{
+						rows.Add(new MenuRow
+						{
+							label = "Grab: " + t.Name,
+							icon = t,
+							act = delegate
+							{
+								if (!pc.CanLift(t))
+								{
+									pc.Say("tooHeavy", t);
+									return;
+								}
+								pc.HoldCard(t);
+								if (pc.held != null)
+								{
+									t.PlaySoundHold(spatial: false);
+									EClass.player.RefreshCurrentHotItem();
+									pc.renderer.Refresh();
+								}
+							}
+						});
+					}
+				}
+			}
+			RunRows("Grab what?", rows, "There is nothing nearby to grab.");
 		}
 
 		private static void PlanMenu(string title, Point p, string emptyMsg)
@@ -1008,6 +1089,11 @@ namespace ElonaKeys
 				label = "[ Picked-up categories... ]",
 				closeOnAct = false,
 				act = delegate { CategoryFilterMenu(sd, "Autopickup categories"); }
+			});
+			rows.Add(new MenuRow
+			{
+				label = "[ Advanced distribution panel... ]",
+				act = delegate { OpenAdvDistribution(pc, sd); }
 			});
 			rows.Add(new MenuRow
 			{
@@ -1284,6 +1370,11 @@ namespace ElonaKeys
 				closeOnAct = false,
 				act = delegate { CategoryFilterMenu(container); }
 			});
+			rows.Add(new MenuRow
+			{
+				label = "[ Advanced distribution panel... ]",
+				act = delegate { OpenAdvDistribution(container, sd); }
+			});
 			// --- autodump ---
 			rows.Add(new MenuRow
 			{
@@ -1314,6 +1405,25 @@ namespace ElonaKeys
 				}
 			});
 			return rows;
+		}
+
+		// the game's real slider/categorization panel, hosted like the native
+		// window-settings menu hosts it (UIInventory.ShowAdvDistribution)
+		private static void OpenAdvDistribution(Card container, Window.SaveData sd)
+		{
+			try
+			{
+				UIContextMenu m = EClass.ui.CreateContextMenu();
+				UIDistribution ud = Util.Instantiate<UIDistribution>("UI/Layer/UIDistribution");
+				ud.SetContainer(container, sd);
+				m.AddGameObject(ud);
+				m.Show();
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys adv distribution panel failed: " + ex);
+				Msg.SayRaw("Could not open the distribution panel.");
+			}
 		}
 
 		// per-category accept/block toggles: a SET ContainerFlag = category BLOCKED
@@ -1958,8 +2068,7 @@ namespace ElonaKeys
 			return new MenuRow
 			{
 				label = (fav ? "★ " : "") + e.source.GetName() + Quickbind.TagForAbility(e.source.alias) + " <size=13><color=#8f8f7a>" + TypeBucket(e) + stat + "</color></size>",
-				rightText = AbilityCostText(e, spells),
-				rightWidth = Plugin.AbilityStatWidth, // static stat block, configurable
+				cols = BuildAbilityCols(e, spells),  // aligned Lv/Hit/Dmg/Cost/Left
 				sortWeight = BucketIndex(e) * 1000, // z-sort mode 2 = by category
 				sortCount = stock,                  // z-sort mode 3 = by stock
 				actSrc = e.source,
@@ -1968,15 +2077,18 @@ namespace ElonaKeys
 			};
 		}
 
-		// Slim stat block (fits statically in the 175px column): level, cast
-		// chance (spells), dice, cost, casts left / potential. Power and the
-		// original cost live in the tooltip.
-		private static string AbilityCostText(Element e, bool spells)
+		// aligned column values [Lv, Hit, Dmg, Cost, Left]; power and the
+		// original cost live in the tooltip
+		private static string[] BuildAbilityCols(Element e, bool spells)
 		{
-			string s = "";
+			string lv = "";
+			string hit = "";
+			string dmg = "";
+			string cost = "";
+			string left = "";
 			try
 			{
-				s += "Lv" + e.DisplayValue + " ";
+				lv = e.DisplayValue.ToString();
 			}
 			catch
 			{
@@ -1985,7 +2097,7 @@ namespace ElonaKeys
 			{
 				if (e is Spell)
 				{
-					s += pc.CalcCastingChance(e) + "% ";
+					hit = pc.CalcCastingChance(e) + "%";
 				}
 			}
 			catch
@@ -1996,40 +2108,34 @@ namespace ElonaKeys
 				Dice d = Dice.Create(e, pc);
 				if (d != null)
 				{
-					s += "<color=#d6a26f>" + d.ToString() + "</color> ";
+					dmg = "<color=#d6a26f>" + d.ToString() + "</color>";
 				}
 			}
 			catch
 			{
 			}
-			int cur = 0;
 			try
 			{
 				Act a = ACT.Create(e.source);
-				cur = a.GetCost(pc).cost;
+				int cur = a.GetCost(pc).cost;
+				if (cur > 0)
+				{
+					cost = cur + (spells ? "mp" : "sp");
+				}
 			}
 			catch
 			{
-			}
-			if (cur > 0)
-			{
-				s += cur + (spells ? "mp" : "sp");
 			}
 			try
 			{
-				if (e.PotentialAsStock)
-				{
-					s += " <color=#9fd6ff>x" + e.vPotential + "</color>"; // casts left
-				}
-				else
-				{
-					s += " <color=#8f8f7a>" + e.Potential + "%</color>";
-				}
+				left = e.PotentialAsStock
+					? ("<color=#3a6ea5>x" + e.vPotential + "</color>")
+					: ("<color=#8f8f7a>" + e.Potential + "%</color>");
 			}
 			catch
 			{
 			}
-			return "<size=12>" + s.Trim() + "</size>";
+			return new string[] { lv, hit, dmg, cost, left };
 		}
 
 		// w in the ability menus: cast the selected spell on the WHOLE PARTY

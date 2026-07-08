@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.22.0 - 2026-07-08
+- Spell/action menus have REAL columns now: Lv / Hit / Dmg / Cost / Left, each aligned under its own header label like Elona. The icons got their elemental colors back, on a dark backing so they read as icons instead of blobs.
+- numpad0 instantly picks up everything on your tile, no menu. g keeps the selection menu (with "[ Take everything ]" at the bottom), and HOLDING g opens "Grab what?": everything grabbable around you, including furniture and dropped containers, so a purse on the floor is one hold away.
+- That dropped purse also shows a "Hold" action in the space/interact/tile menus now (it never appeared anywhere before).
+- Quickbinding a container gives quick ACCESS: shift+digit opens it instead of putting it in your hands.
+- Container and backpack settings can open the game's real "advanced distribution" panel (the one with sliders and detailed categorization), instead of just the on/off toggle.
+
 ## 1.21.1 - 2026-07-08
 - Spell/action icons show their real art again (the element color was smothering them into solid blobs). The stat column width is configurable (AbilityStatWidth) and the scaling-stat icon is bigger and sits right next to the numbers.
 - Hotkey casts FORCE-cast at your remembered target, friend or foe, and failures only print the game's own message (no more "stock is depleted" plus "you cannot aim there" double-talk).
