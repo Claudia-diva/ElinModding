@@ -27,6 +27,44 @@ namespace ElonaKeys
 		private static int index = -1;
 		private static readonly List<Group> groups = new List<Group>();
 
+		// inventory/trade navigation is live (InputRouter fences arrows and
+		// the native Tab inventory toggle while this is true)
+		private static bool invNav;
+		internal static bool InvNavActive => invNav;
+
+		// "name  [8/40]" on inventory windows: used slots / capacity
+		private static void ApplySlotCaption(LayerInventory li)
+		{
+			try
+			{
+				if (li.windows.Count == 0 || li.invs.Count == 0 || li.invs[0].owner == null)
+				{
+					return;
+				}
+				Card cont = li.invs[0].owner.Container;
+				if (cont == null || cont.things == null)
+				{
+					return;
+				}
+				Window w = li.windows[0];
+				string tag = "  [" + cont.things.Count + "/" + cont.things.MaxCapacity + "]";
+				string cap = (w.textCaption != null) ? w.textCaption.text : null;
+				if (cap != null && !cap.EndsWith(tag))
+				{
+					int cut = cap.LastIndexOf("  [");
+					if (cut > 0 && cap.EndsWith("]"))
+					{
+						cap = cap.Substring(0, cut); // stale count from last refresh
+					}
+					w.SetCaption(cap + tag);
+				}
+			}
+			catch
+			{
+				// cosmetic only
+			}
+		}
+
 		// debounced crafting selection: highlight moves instantly, the real
 		// selection (full product-panel refresh + click sound) fires once the
 		// cursor RESTS, so holding a key to scroll doesn't strobe the window
@@ -65,6 +103,7 @@ namespace ElonaKeys
 				return;
 			}
 			groups.Clear();
+			invNav = false;
 			Object target = null;
 			Layer topLayer = null;
 			UIContextMenu ctx = UIContextMenu.Current;
@@ -115,6 +154,47 @@ namespace ElonaKeys
 					{
 						groups.Add(g);
 					}
+				}
+				else if (topLayer is LayerInventory)
+				{
+					// TRADING / inventory windows: non-modal, so the generic
+					// (BlockActions) branch never sees them. Every open
+					// inventory window becomes a pane group: shop stock, your
+					// backpack, open containers. Enter = the native right-click
+					// (buy/sell/transfer with all its checks and dialogs),
+					// Tab / left / right = hop panes, x = examine.
+					target = topLayer;
+					List<LayerInventory> lis = new List<LayerInventory>();
+					foreach (Layer l in EClass.ui.layers)
+					{
+						if (l is LayerInventory li && li.gameObject.activeInHierarchy)
+						{
+							lis.Add(li);
+						}
+					}
+					// the window on top leads (a freshly opened shop = its stock)
+					if (lis.Remove(topLayer as LayerInventory))
+					{
+						lis.Insert(0, topLayer as LayerInventory);
+					}
+					foreach (LayerInventory li in lis)
+					{
+						Group g = new Group { grid = true };
+						foreach (ButtonGrid bg in li.GetComponentsInChildren<ButtonGrid>(includeInactive: false))
+						{
+							if (bg.card != null && bg.invOwner != null && bg.interactable && bg.gameObject.activeInHierarchy)
+							{
+								g.buttons.Add(bg);
+							}
+						}
+						if (g.buttons.Count > 0)
+						{
+							SortByPosition(g.buttons);
+							groups.Add(g);
+						}
+						ApplySlotCaption(li);
+					}
+					invNav = groups.Count > 0;
 				}
 				else if (topLayer != null && (EClass.ui.BlockActions || topLayer is LayerCraftFloat))
 				{
@@ -314,6 +394,20 @@ namespace ElonaKeys
 			Group g = (groups.Count > 0) ? groups[groupIndex] : null;
 			// Elona window family: Tab on the character sheet hops to the
 			// equipment window (and back from there via MenuSystem's Tab)
+			// trade/inventory panes: Tab hops buy <-> sell <-> containers,
+			// Elona+CGX style (left/right do the same via the group switch)
+			if (invNav && Input.GetKeyDown(KeyCode.Tab))
+			{
+				if (groups.Count > 1 && g != null)
+				{
+					Unhighlight(g);
+					groupIndex = (groupIndex + 1) % groups.Count;
+					index = 0;
+					Highlight(groups[groupIndex]);
+					EnsureVisible(groups[groupIndex]);
+				}
+				return;
+			}
 			if (Input.GetKeyDown(KeyCode.Tab) && topLayer is LayerChara && MenuCycle.Group == "chara" && !MenuCycle.CycledThisFrame)
 			{
 				// CycledThisFrame: MenuSystem's Tab already hopped Wear->Chara

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.25.0 - 2026-07-08
+- TRADING BY KEYBOARD. Open any shop and your backpack opens beside it: arrows walk the item grids, Tab (or left/right) hops between the shop's stock and your inventory, Enter buys or sells exactly like a right-click (same prices, same confirmations, same stack dialogs), x examines. The game's own rules still apply: no money = no sale, no space = "backpack is full", purchases stack and store like a normal pickup.
+- This covers every window of that kind with the same keys: shopkeepers, the kettle duplication shop, Demitas's spell duplication, spell vendors, wandering merchants. Bank and trainers talk through dialog choices, which were already keyboard-driven.
+- Every inventory window's title shows its slots: "Backpack [23/40]".
+
 ## 1.24.3 - 2026-07-08
 - FIXED: dropping/giving the last item on a menu's last page left the window stuck on a page that no longer existed ("None", arrows dead).
 - FIXED: Escape opens the system menu again. The new "Escape cancels your action" feature considered the idle state a running action and swallowed every press.

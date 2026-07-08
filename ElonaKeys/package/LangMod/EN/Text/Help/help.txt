@@ -54,6 +54,7 @@ $Keys
 {pair|D|Dig/mine a wall (auto-holds your digging tool)}
 {pair|o|Open containers and crafting kits; also the backpack autopickup settings}
 {pair|(any route)|Chests/containers always open the keyboard menu; item processors open a keyboard ingredient picker (KeyboardContainers / KeyboardCrafters config)}
+{pair|Shops|Your backpack opens beside the shop. Arrows walk the items, Tab hops shop stock <-> your inventory, Enter buys/sells (native prices and dialogs), x examines. Same keys for the duplication shops and spell vendors. Titles show slots [used/max]}
 {pair|C|Open or close a door in a chosen direction}
 {pair|p|Pray}
 {pair|O|Offer at an adjacent altar}
@@ -83,6 +84,9 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.25.0}
+・ Keyboard trading: shops open with your backpack beside them; arrows/Tab/Enter buy and sell through the native flow. Inventory titles show slot counts. (1.24.3: Escape menu fixed, page-stuck fixed, spell icon colors fixed.)
+
 {topic|1.24.2}
 ・ Column headers actually sit over their columns now (the window layout had been stacking them at the bottom). Weight header on item/equipment windows. No more white square for icon-less scaling stats.
 

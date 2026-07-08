@@ -89,9 +89,16 @@ namespace ElonaKeys
 			// Tab is ALSO a native Elin action (inventory): while our menus or any
 			// modal window own it (family cycling, window tabs), neutralize the
 			// native dispatch or closing our layer lets it toggle the inventory
-			if (Input.GetKey(KeyCode.Tab) && (MenuSystem.Alive || EClass.ui.BlockActions))
+			if (Input.GetKey(KeyCode.Tab) && (MenuSystem.Alive || EClass.ui.BlockActions || PopupNav.InvNavActive))
 			{
 				EInput.action = EAction.None;
+			}
+			// inventory/trade navigation: arrows walk the item grids, not the
+			// player (same fence the quick-craft float window gets)
+			if (PopupNav.InvNavActive
+				&& (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)))
+			{
+				EInput.axis = Vector2.zero;
 			}
 			// Escape CANCELS the running action: crafting always (its window
 			// hides itself mid-craft), and with no window open, any running
@@ -492,11 +499,34 @@ namespace ElonaKeys
 		private static bool Prefix()
 		{
 			if (Input.GetKey(KeyCode.Tab)
-				&& (InputRouter.VanillaLocked || MenuSystem.Alive || (EClass.ui != null && EClass.ui.BlockActions)))
+				&& (InputRouter.VanillaLocked || MenuSystem.Alive || PopupNav.InvNavActive || (EClass.ui != null && EClass.ui.BlockActions)))
 			{
+				// InvNavActive: Tab hops trade panes, must not toggle the backpack
 				return false;
 			}
 			return true;
+		}
+	}
+
+	// A shopkeeper's window opens: bring up your backpack next to it so the
+	// sell pane is one Tab away (Elona layout). The native buy/sell flow and
+	// its checks (money, space, karma) are untouched.
+	[HarmonyPatch(typeof(LayerInventory), nameof(LayerInventory.CreateBuy))]
+	internal static class Patch_ShopOpen
+	{
+		private static void Postfix()
+		{
+			try
+			{
+				if (LayerInventory.GetPCLayer() == null)
+				{
+					LayerInventory.CreatePCBackpack();
+				}
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogWarning("ElonaKeys shop auto-open failed: " + ex.Message);
+			}
 		}
 	}
 
