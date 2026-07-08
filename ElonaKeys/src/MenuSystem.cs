@@ -25,6 +25,8 @@ namespace ElonaKeys
 		public Element ability;              // ability rows: element icon + native tooltip
 		public string fixedPrefix;           // static text (slot names); label scrolls separately
 		public Action<UINote> note;          // custom tooltip body (crafting recipes...)
+		public Card iconCard;                // NPC/chara rows: live sprite in the icon slot
+		public Action<Image> drawIcon;       // custom icon painter (recipe sprites...)
 	}
 
 	public static class MenuSystem
@@ -40,8 +42,6 @@ namespace ElonaKeys
 		}
 
 		private static LayerList layer;
-		private static Text hintText;
-		private static string hintInfo = "";
 		private static Screen current;
 		private static readonly List<Screen> history = new List<Screen>();
 		private static readonly List<MenuRow> pageRows = new List<MenuRow>();
@@ -110,7 +110,6 @@ namespace ElonaKeys
 				{
 					Activate(r);
 				}, BuildRow, autoClose: false);
-				hintText = null; // built lazily: windows[0] doesn't exist yet here
 			}
 			ApplyPage();
 			MenuExtras.RegisterMenu(layer);
@@ -126,6 +125,29 @@ namespace ElonaKeys
 				layer.Close();
 			}
 			layer = null;
+		}
+
+		// one step back in the window chain (what shift does), for submenus
+		// that want to return to their parent after acting
+		public static void BackOne()
+		{
+			Back();
+		}
+
+		// re-run the current screen's row builder (live refresh after an action)
+		public static void RefreshCurrent()
+		{
+			if (current != null && current.refreshSource != null)
+			{
+				try
+				{
+					current.refreshSource();
+				}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogError("ElonaKeys menu refresh failed: " + ex);
+				}
+			}
 		}
 
 		private static void Back()
@@ -251,6 +273,92 @@ namespace ElonaKeys
 				{
 					tip.WriteNote(tt.note);
 				});
+			}
+			else if (r.iconCard != null)
+			{
+				// characters in interaction menus: live sprite, same slot
+				Card c = r.iconCard;
+				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
+				iconParent.SetActive(enable: true);
+				iconParent.anchoredPosition = new Vector2(16f, 0f);
+				Image img = b.button1.icon;
+				foreach (Image sib in iconParent.GetComponentsInChildren<Image>(includeInactive: true))
+				{
+					if (sib != img)
+					{
+						sib.enabled = false;
+					}
+				}
+				img.enabled = true;
+				img.transform.SetAsLastSibling();
+				try
+				{
+					c.SetImage(img);
+					Material itemMat2 = ItemMaterial();
+					if (itemMat2 != null)
+					{
+						img.material = itemMat2;
+					}
+					else
+					{
+						img.color = Color.white;
+					}
+					RectTransform crt = img.rectTransform;
+					crt.pivot = new Vector2(0.5f, 0.5f);
+					crt.anchoredPosition = Vector2.zero;
+					img.transform.localScale = new Vector3(Mathf.Abs(img.transform.localScale.x), img.transform.localScale.y, 1f);
+					Vector2 cs = crt.sizeDelta;
+					float cmax = Mathf.Max(cs.x, cs.y);
+					if (cmax > 34f)
+					{
+						crt.sizeDelta = cs * (34f / cmax);
+					}
+					Card tipC = c;
+					b.button1.SetTooltip("note", delegate(UITooltip tt)
+					{
+						tipC.WriteNote(tt.note);
+					});
+				}
+				catch
+				{
+					img.enabled = false;
+				}
+			}
+			else if (r.drawIcon != null)
+			{
+				// custom painter (crafting recipe product sprites...)
+				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
+				iconParent.SetActive(enable: true);
+				iconParent.anchoredPosition = new Vector2(16f, 0f);
+				Image img = b.button1.icon;
+				foreach (Image sib in iconParent.GetComponentsInChildren<Image>(includeInactive: true))
+				{
+					if (sib != img)
+					{
+						sib.enabled = false;
+					}
+				}
+				img.enabled = true;
+				img.transform.SetAsLastSibling();
+				try
+				{
+					img.material = null;
+					r.drawIcon(img);
+					RectTransform drt = img.rectTransform;
+					drt.pivot = new Vector2(0.5f, 0.5f);
+					drt.anchoredPosition = Vector2.zero;
+					img.transform.localScale = new Vector3(Mathf.Abs(img.transform.localScale.x), img.transform.localScale.y, 1f);
+					Vector2 ds = drt.sizeDelta;
+					float dmax = Mathf.Max(ds.x, ds.y);
+					if (dmax > 34f || dmax <= 0f)
+					{
+						drt.sizeDelta = (dmax > 0f) ? (ds * (34f / dmax)) : new Vector2(30f, 30f);
+					}
+				}
+				catch
+				{
+					img.enabled = false;
+				}
 			}
 			else if (r.ability != null)
 			{
@@ -523,13 +631,17 @@ namespace ElonaKeys
 			sel = Mathf.Clamp(sel, 0, Mathf.Max(0, pageRows.Count - 1));
 			layer.list.List();
 			layer.RefreshSize();
-			// caption stays a CLEAN title; page/totals live at the bottom, Elona style
+			// everything in the CAPTION: the one place that provably renders.
+			// Plain ASCII only (no rich text, no fancy glyphs).
 			string caption = current.title;
 			if (sortMode != 0)
 			{
 				caption += (sortMode == 1) ? " [name]" : " [weight]";
 			}
-			layer.windows[0].SetCaption(caption);
+			if (PageCount > 1)
+			{
+				caption += "  (" + (page + 1) + "/" + PageCount + ")";
+			}
 			int pieces = 0;
 			int grams = 0;
 			foreach (MenuRow r in view)
@@ -540,84 +652,14 @@ namespace ElonaKeys
 					grams += r.sortWeight;
 				}
 			}
-			hintInfo = "";
-			if (PageCount > 1)
-			{
-				hintInfo = "Page " + (page + 1) + "/" + PageCount;
-			}
 			if (pieces > 0)
 			{
-				hintInfo += ((hintInfo.Length > 0) ? "   " : "") + pieces + " items  " + (grams / 1000f).ToString("0.0") + "s";
+				caption += "  " + pieces + " items " + (grams / 1000f).ToString("0.0") + "s";
 			}
-			UpdateHint();
+			layer.windows[0].SetCaption(caption);
 			ShowSelTooltip();
 		}
 
-		// Elona-style key hint line at the bottom of every menu window.
-		// Built LAZILY from UpdateHint: at Show() time the window frame
-		// (layer.windows[0]) does not exist yet, which used to kill the whole
-		// line (page/totals/keys) silently for every menu.
-		private static void BuildHint()
-		{
-			try
-			{
-				if (!Plugin.MenuKeyHints || layer == null || !layer || layer.windows == null || layer.windows.Count == 0)
-				{
-					return;
-				}
-				GameObject go = new GameObject("EKHint");
-				go.transform.SetParent(layer.windows[0].transform, worldPositionStays: false);
-				hintText = go.AddComponent<Text>();
-				hintText.font = RadialWheel.FindFont();
-				hintText.fontSize = 12;
-				hintText.alignment = TextAnchor.LowerCenter;
-				hintText.color = new Color(1f, 0.6f, 0.38f); // Elona's orange hint
-				hintText.raycastTarget = false;
-				hintText.horizontalOverflow = HorizontalWrapMode.Overflow;
-				RectTransform rt = hintText.rectTransform;
-				rt.anchorMin = new Vector2(0.5f, 0f);
-				rt.anchorMax = new Vector2(0.5f, 0f);
-				rt.pivot = new Vector2(0.5f, 0f);
-				rt.anchoredPosition = new Vector2(0f, 4f); // inside the frame bottom
-				rt.sizeDelta = new Vector2(Plugin.MenuWidth - 40f, 32f); // info + keys
-				Outline o = go.AddComponent<Outline>();
-				o.effectColor = new Color(0f, 0f, 0f, 0.9f);
-				o.effectDistance = new Vector2(1.2f, -1.2f);
-			}
-			catch (Exception ex)
-			{
-				hintText = null;
-				Plugin.Log?.LogError("ElonaKeys hint line failed: " + ex);
-			}
-		}
-
-		private static void UpdateHint()
-		{
-			if (hintText == null || !hintText)
-			{
-				BuildHint(); // window frame exists once pages apply
-			}
-			if (hintText == null || !hintText)
-			{
-				return;
-			}
-			string keys;
-			if (amountRow != null)
-			{
-				keys = "<- -> 1   up/dn 10   Enter ok   Shift cancel";
-			}
-			else
-			{
-				keys = "Enter/letter use";
-				keys += (current != null && current.sourceCycle != null) ? "   z/x switch" : "   z sort   x examine";
-				if (MenuCycle.Group != null)
-				{
-					keys += "   Tab window";
-				}
-				keys += "   1-9/Ctrl+1-9 bind   Shift back";
-			}
-			hintText.text = (hintInfo.Length > 0) ? (hintInfo + "\n" + keys) : keys;
-		}
 
 		// keep the item stat card visible for the keyboard-selected row
 		private static void ShowSelTooltip()

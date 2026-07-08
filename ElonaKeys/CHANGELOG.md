@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.20.2 - 2026-07-08
+- Page number, item count and total weight are back in the window TITLE, where they render reliably. The bottom hint line is gone (it refused to show twice); the key list lives in Mod Help.
+- The space/interact/tile menus show the live sprite of each character next to their actions, like they already did for items and stations. Hovering the row shows their info card.
+- The list-style crafting menu (CraftingStyle=menu) got its dressing: product sprites on every recipe, green names for craftable and gray for not, and labeled counts ("own 2  make x5" instead of naked numbers).
+- Materials in the list-style menu are picked from a proper list now (sprites, counts, current one marked) instead of cycling blindly one by one; your pick is remembered for next time.
+- Dropdown configs: CraftingStyle, NameDisplay and WheelStyle now offer their valid choices as a picker instead of a free-text field.
+
 ## 1.20.1 - 2026-07-06
 - Escape cancels a craft in progress (nothing could stop one before; it would chew through your whole log pile). Keys can't accidentally start another craft while one is running.
 - The bottom line of the menus (page number, item count, total weight, key hints with z/x) actually shows now; it silently failed to attach in every window since it was added.

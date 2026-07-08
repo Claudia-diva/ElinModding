@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.20.1";
+		public const string Version = "1.20.2";
 
 		internal static ManualLogSource Log;
 
@@ -69,7 +69,6 @@ namespace ElonaKeys
 		private static ConfigEntry<int> weightWidth;
 		private static ConfigEntry<int> menuWidth;
 		private static ConfigEntry<int> nameScrollSlack;
-		private static ConfigEntry<bool> menuKeyHints;
 		private static ConfigEntry<string> quickbinds;
 		private static ConfigEntry<bool> keyboardContainers;
 		private static ConfigEntry<bool> keyboardCrafters;
@@ -113,7 +112,6 @@ namespace ElonaKeys
 		internal static float WeightWidth => Mathf.Clamp(weightWidth.Value, 30, 160);
 		internal static float MenuWidth => Mathf.Clamp(menuWidth.Value, 480, 1100);
 		internal static float NameScrollSlack => Mathf.Clamp(nameScrollSlack.Value, 0, 100);
-		internal static bool MenuKeyHints => menuKeyHints.Value;
 
 		internal static void SaveQuickbinds(string v)
 		{
@@ -147,7 +145,8 @@ namespace ElonaKeys
 			categoryThreshold = Config.Bind("Menus", "CategoryThreshold", 25,
 				"Item count above which the category menu kicks in.");
 			nameDisplay = Config.Bind("Menus", "NameDisplay", "pingpong",
-				"How long item names are displayed in menus: truncate, pingpong (scroll back and forth), or wrap.");
+				new ConfigDescription("How long item names are displayed in menus: truncate, pingpong (scroll back and forth), or wrap.",
+					new AcceptableValueList<string>("pingpong", "truncate", "wrap")));
 			menuPageSize = Config.Bind("Menus", "MenuPageSize", 15,
 				"Rows per menu page. Multiple pages are switched with the left/right arrow keys.");
 			shiftDirTool = Config.Bind("General", "ShiftDirTool", true,
@@ -163,7 +162,8 @@ namespace ElonaKeys
 			suppressAllKey = Config.Bind("General", "SuppressAllKey", "capsLock",
 				"Toggle key: while ON, ALL vanilla key actions are blocked and only this mod's keys (plus movement and digit quickslots) work. CapsLock is unused by the game. 'none' disables the toggle.");
 			wheelStyle = Config.Bind("Menus", "WheelStyle", "radial",
-				"z action wheel style: radial (classic Elona circles) or list (window).");
+				new ConfigDescription("z action wheel style: radial (classic Elona circles) or list (window).",
+					new AcceptableValueList<string>("radial", "list")));
 			wheelInfo = Config.Bind("Menus", "WheelInfo", "Help,Chara,Journal,Log,Equip,Inventory",
 				"Verbs on the Info ring (max 6; east/west are ring links). Available: Eat, Quaff, Read, Zap, Cast, Equip, Tool, Use, Blend, Throw, Ammo, Get, Drop, Open, Door, Bash, Dig, Search, Interact, Pray, Offer, Give, Party, Inventory, Help, Chara, Journal, Log, Fire.");
 			wheelAction = Config.Bind("Menus", "WheelAction", "Cast,Fire,Get,Search,Ammo,Use",
@@ -186,8 +186,6 @@ namespace ElonaKeys
 				"Width of the mod's menu windows in pixels.");
 			nameScrollSlack = Config.Bind("Menus", "NameScrollSlack", 20,
 				"Names overflowing their column by fewer pixels than this render as-is instead of scrolling.");
-			menuKeyHints = Config.Bind("Menus", "MenuKeyHints", true,
-				"Show the Elona-style key hint line under menu windows.");
 			shiftBarVisible = Config.Bind("Hotkeys", "ShiftBarVisible", true,
 				"Show the OTHER quickslot page (what shift+1..9 fires) as small corner icons on the real hotbar's slots.");
 			familyBarVisible = Config.Bind("Menus", "FamilyBarVisible", true,
@@ -199,7 +197,8 @@ namespace ElonaKeys
 			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
 				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Locked chests and surprise packages stay native.");
 			craftingStyle = Config.Bind("Menus", "CraftingStyle", "native",
-				"native = the game's crafting window, fully keyboard-driven (arrows pick recipes with live preview, +/- count, Enter crafts, left/right reach the material pickers). menu = replace it with the mod's list-style menu.");
+				new ConfigDescription("native = the game's crafting window, fully keyboard-driven (arrows pick recipes with live preview, +/- count, m = materials, Enter crafts). menu = replace it with the mod's list-style menu.",
+					new AcceptableValueList<string>("native", "menu")));
 			keyboardCrafters = Config.Bind("Menus", "KeyboardCrafters", true,
 				"Item processors (mill, seed maker, grindstone, cooking tools...) open a keyboard ingredient picker on top of the native window; picking ingredients starts the craft. Esc leaves the native window for the mouse.");
 			macro1 = Config.Bind("Macros", "Macro1", "", "Comma-separated ability aliases cast in sequence (self/party per spell; targeted spells hit your current enemy). Find aliases via the spell list names or the ability window.");

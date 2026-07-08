@@ -113,12 +113,19 @@ namespace ElonaKeys
 				int own = OwnedCount(r);
 				Recipe rr = r;
 				Thing fac = factory;
-				string tag = " <size=13><color=#8f8f7a>" + skill + ((own > 0) ? ("  own " + own) : "") + "</color></size>";
+				// native-style coloring: craftable green, uncraftable gray;
+				// labeled counts instead of naked numbers
+				string tag = " <size=13><color=#8f8f7a>" + skill
+					+ ((own > 0) ? ("  own " + own) : "")
+					+ (craftable ? ("  make x" + max) : "  missing materials") + "</color></size>";
+				string name = craftable
+					? ("<color=#3a7d3a>" + SafeName(rr) + "</color>")
+					: ("<color=#8a8a8a>" + SafeName(rr) + "</color>");
 				(craftable ? can : cant).Add(new MenuRow
 				{
-					label = (craftable ? SafeName(rr) : ("<color=#777777>" + SafeName(rr) + "</color>")) + tag,
-					rightText = craftable ? ("x" + max) : "-",
+					label = name + tag,
 					closeOnAct = false,
+					drawIcon = delegate(UnityEngine.UI.Image img) { rr.SetImage(img); },
 					note = delegate(UINote n) { WriteRecipeNote(n, rr, fac); },
 					act = delegate { Detail(rr, fac); }
 				});
@@ -352,7 +359,7 @@ namespace ElonaKeys
 					label = ingName + " → " + assigned + (ing.optional ? " <size=12>(optional)</size>" : ""),
 					icon = (ing.thing != null && !ing.thing.isDestroyed) ? ing.thing : null,
 					closeOnAct = false,
-					act = delegate { CycleIngredient(r, ing); }
+					act = delegate { PickIngredient(r, ing); }
 				});
 			}
 			int max = SafeMaxCount(r);
@@ -368,8 +375,10 @@ namespace ElonaKeys
 			return rows;
 		}
 
-		// Enter on an ingredient row: rotate to the next owned candidate
-		private static void CycleIngredient(Recipe r, Recipe.Ingredient ing)
+		// Enter on an ingredient row: PICK from a list of every owned candidate
+		// (sprites, counts, current selection marked); picking returns to the
+		// recipe with the material applied and remembered
+		private static void PickIngredient(Recipe r, Recipe.Ingredient ing)
 		{
 			try
 			{
@@ -379,27 +388,59 @@ namespace ElonaKeys
 					Msg.SayRaw("You own nothing that fits.");
 					return;
 				}
-				int cur = (ing.thing != null) ? st.list.IndexOf(ing.thing) : -1;
-				for (int step = 1; step <= st.list.Count; step++)
+				List<MenuRow> rows = new List<MenuRow>();
+				foreach (Thing thing in st.list)
 				{
-					Thing t = st.list[(cur + step) % st.list.Count];
-					if (t.Num >= ing.req || st.list.Count == 1)
+					Thing t = thing;
+					bool selected = ing.thing == t;
+					bool enough = t.Num >= ing.req;
+					rows.Add(new MenuRow
 					{
-						ing.SetThing(t);
-						break;
-					}
+						label = t.Name
+							+ (selected ? " <color=#3a7d3a>(selected)</color>" : "")
+							+ (enough ? "" : " <color=#8a8a8a>(not enough)</color>"),
+						icon = t,
+						sortWeight = t.ChildrenAndSelfWeight,
+						act = delegate
+						{
+							ing.SetThing(t);
+							try
+							{
+								r.SaveLastIngredients();
+							}
+							catch
+							{
+							}
+							SE.Equip();
+						},
+						closeOnAct = false
+					});
 				}
+				string ingName;
 				try
 				{
-					r.SaveLastIngredients();
+					ingName = ing.GetName();
 				}
 				catch
 				{
+					ingName = ing.id;
 				}
+				// wrap each act so picking pops back to the recipe view refreshed
+				foreach (MenuRow row in rows)
+				{
+					Action inner = row.act;
+					row.act = delegate
+					{
+						inner();
+						MenuSystem.BackOne();
+						MenuSystem.RefreshCurrent();
+					};
+				}
+				MenuSystem.Show("Pick " + ingName + " (need x" + ing.req + ")", rows);
 			}
 			catch (Exception ex)
 			{
-				Plugin.Log?.LogError("ElonaKeys ingredient cycle failed: " + ex);
+				Plugin.Log?.LogError("ElonaKeys ingredient pick failed: " + ex);
 			}
 		}
 

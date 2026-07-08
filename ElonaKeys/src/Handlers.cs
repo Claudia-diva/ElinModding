@@ -337,6 +337,7 @@ namespace ElonaKeys
 						{
 							label = labelPrefix + (item.tc?.Name ?? ""),
 							icon = item.tc as Thing,
+							iconCard = (item.tc != null && item.tc.isChara) ? item.tc : null,
 							act = delegate
 							{
 								if (item.Perform())
@@ -735,6 +736,7 @@ namespace ElonaKeys
 				{
 					label = ContextLabel(item, plan.HasMultipleTargets),
 					icon = item.tc as Thing,
+					iconCard = (item.tc != null && item.tc.isChara) ? item.tc : null,
 					act = delegate
 					{
 						if (item.Perform())
@@ -785,6 +787,7 @@ namespace ElonaKeys
 				{
 					label = ContextLabel(item, plan.HasMultipleTargets),
 					icon = item.tc as Thing,
+					iconCard = (item.tc != null && item.tc.isChara) ? item.tc : null,
 					act = delegate
 					{
 						if (item.Perform())
@@ -834,6 +837,7 @@ namespace ElonaKeys
 					{
 						label = ContextLabel(item, forceName: true),
 						icon = item.tc as Thing,
+						iconCard = (item.tc != null && item.tc.isChara) ? item.tc : null,
 						act = delegate
 						{
 							if (item.Perform())

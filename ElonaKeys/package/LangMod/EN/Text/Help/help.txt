@@ -13,7 +13,7 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Native windows: ↑↓ move, ←→ switch group (list/grid/dropdowns/buttons), z/x switch window tabs (character sheet, quest board, crafting), Enter acts, x examines in item grids. Tab stays native (chat) except inside window families.
 ・ Quest boards: ↑↓ scroll the requests, ←→ switch tabs, r = reroll.
 ・ Crafting (stations + quick craft): the normal window, keyboard-driven: ↑↓ pick recipes (preview follows when the cursor rests), +/- count (shift = 10s), m = material picker (again = next slot), Enter crafts, Esc cancels a running craft, z/x categories. (CraftingStyle=menu for a list-style menu instead.)
-・ Every menu shows its usable keys in the hint line at the bottom (MenuKeyHints config).
+・ Menu titles show the page, item count and total weight. In-menu keys: ↑↓ move (hold = scroll), ←→ pages, Enter/letter/Space use, z sort (or z/x tabs in crafting/browser, hold x = reset), x examine, 1-9 or Ctrl+1-9 bind, Tab window family, Shift back.
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
 {pair|Source and issues|github.com/Claudia-diva/ElinModding}
