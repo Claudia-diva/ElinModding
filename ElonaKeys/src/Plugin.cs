@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.23.1";
+		public const string Version = "1.24.0";
 
 		internal static ManualLogSource Log;
 
@@ -218,6 +218,7 @@ namespace ElonaKeys
 			Def("Wear", "w", Handlers.Wear, "Elona-style equipment window: body slot rows, pick a slot to equip or remove; DV/PV in the title.");
 			Def("Wide", "shift+w", Handlers.WideMenu, "Wide Skill: list every spell/action that can target your party; Enter casts it on ALL of them.");
 			Def("Tool", "t", Handlers.HoldTool, "Pick a tool from your inventory and hold it in your hands.");
+			Def("EmptyHands", "shift+e", Handlers.EmptyHands, "Put away whatever is in your hands (held item, grabbed furniture, or a stuck hotbar selection).");
 			Def("Use", "u", Handlers.Use, "Use a usable item from your inventory.");
 			Def("Blend", "shift+b", Handlers.Blend, "Dip/blend: pick a potion or liquid, then mix items into it.");
 			Def("Throw", "shift+t", Handlers.Throw, "Throw: pick an item, then a target from the list or a direction.");
@@ -316,6 +317,28 @@ namespace ElonaKeys
 				}
 			}
 			return null;
+		}
+
+		// any of our verb keys physically held (custom handlers only, not
+		// native passthroughs): movement must stay dead the whole press, or
+		// holding s a beat too long steps the character south
+		internal static bool AnyBindHeld()
+		{
+			foreach (Entry e in entries)
+			{
+				if (e.run == null)
+				{
+					continue;
+				}
+				foreach (Keybind b in e.binds)
+				{
+					if (b.IsHeld())
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 	}
 }

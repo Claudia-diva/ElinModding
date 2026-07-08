@@ -164,6 +164,14 @@ namespace ElonaKeys
 			{
 				EInput.action = EAction.None;
 			}
+			// verb keys that double as movement (s/w/a/d) must not ALSO step
+			// the character — for the WHOLE press, not just the down frame:
+			// s on a collectable started the harvest, then walked south a few
+			// frames later and cancelled it
+			if (Plugin.OverrideGameKeys && Plugin.AnyBindHeld())
+			{
+				EInput.axis = Vector2.zero;
+			}
 			int digitSlot = -1;
 			if (entry == null)
 			{

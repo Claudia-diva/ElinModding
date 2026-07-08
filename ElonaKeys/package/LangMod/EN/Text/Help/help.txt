@@ -32,6 +32,7 @@ $Keys
 {pair|w|Equipment window: body slots, pick one to equip/remove}
 {pair|t|Hold ANY usable item (brush, whip, syringe, tools...); then i / Space / s applies it to a target or yourself. Pick it again to put it away}
 {pair|u|Use an item}
+{pair|E (shift+e)|Empty your hands: put away the held item/tool, grabbed furniture, or a stuck hotbar selection}
 {pair|B|Dip/blend: pick a liquid, then mix items into it}
 {pair|T|Throw: pick item, then the free cursor (auto-fires at your remembered HOSTILE target)}
 {pair|A (shift+a)|Load compatible ammo into your ranged weapon}
@@ -82,6 +83,9 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.24.0}
+・ Refused casts no longer eat their cost; aimed casts can hex your own party; the aim label names the armed spell. Spell icons show real art. s/w/a/d verbs never step the character. shift+e empties hands. Collect rows show the object sprite. Character sheet scrolls with the selection.
+
 {topic|1.23.1}
 ・ Pow column (effective power) in the ability lists; x aims in both spell and action menus, with a clear message for self/party casts that have nothing to aim.
 

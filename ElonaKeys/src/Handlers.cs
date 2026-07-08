@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ElonaKeys
 {
@@ -893,28 +894,93 @@ namespace ElonaKeys
 			RunRows("Grab what?", rows, "There is nothing nearby to grab.");
 		}
 
+		// shift+e: put away whatever occupies your hands — a held item/tool,
+		// grabbed furniture, or a hotbar ability selection that got stuck
+		public static void EmptyHands()
+		{
+			bool had = pc.held != null || (EClass.player.currentHotItem != null && !(EClass.player.currentHotItem is HotItemNoItem));
+			EClass.player.ResetCurrentHotItem();
+			Msg.SayRaw(had ? "You empty your hands." : "Your hands are already empty.");
+			try
+			{
+				pc.renderer.Refresh();
+			}
+			catch
+			{
+			}
+		}
+
 		private static void PlanMenu(string title, Point p, string emptyMsg)
 		{
 			ActPlan plan = BuildPlan(p);
 			List<MenuRow> rows = new List<MenuRow>();
 			foreach (ActPlan.Item i in plan.list)
 			{
-				ActPlan.Item item = i;
-				rows.Add(new MenuRow
-				{
-					label = ContextLabel(item, plan.HasMultipleTargets),
-					icon = item.tc as Thing,
-					iconCard = (item.tc != null && item.tc.isChara) ? item.tc : null,
-					act = delegate
-					{
-						if (item.Perform())
-						{
-							EClass.player.EndTurn();
-						}
-					}
-				});
+				rows.Add(PlanRow(i, plan.HasMultipleTargets));
 			}
 			RunRows(title, rows, emptyMsg);
+		}
+
+		private static MenuRow PlanRow(ActPlan.Item item, bool forceName)
+		{
+			return new MenuRow
+			{
+				label = ContextLabel(item, forceName),
+				icon = item.tc as Thing,
+				iconCard = (item.tc != null && item.tc.isChara) ? item.tc : null,
+				// tile acts (Collect, mine...) have no target card: show the
+				// map object/block sprite so the row isn't naked
+				drawIcon = (item.tc == null) ? TileIconPainter(item.pos) : null,
+				act = delegate
+				{
+					if (item.Perform())
+					{
+						EClass.player.EndTurn();
+					}
+				}
+			};
+		}
+
+		private static Action<Image> TileIconPainter(Point p)
+		{
+			try
+			{
+				if (p == null)
+				{
+					return null;
+				}
+				RenderRow row = null;
+				if (p.cell.obj != 0)
+				{
+					row = p.cell.sourceObj;
+				}
+				else if (p.cell.HasBlock)
+				{
+					row = p.cell.sourceBlock;
+				}
+				if (row == null)
+				{
+					return null;
+				}
+				RenderRow r2 = row;
+				return delegate(Image img)
+				{
+					Sprite sp = r2.GetSprite();
+					if (sp == null)
+					{
+						img.enabled = false;
+						return;
+					}
+					img.material = null;
+					img.color = Color.white;
+					img.sprite = sp;
+					img.SetNativeSize();
+				};
+			}
+			catch
+			{
+				return null;
+			}
 		}
 
 		// "Talk - Poppy" instead of six anonymous Talks when several targets exist
@@ -950,20 +1016,7 @@ namespace ElonaKeys
 			List<MenuRow> rows = new List<MenuRow>();
 			foreach (ActPlan.Item i in plan.list)
 			{
-				ActPlan.Item item = i;
-				rows.Add(new MenuRow
-				{
-					label = ContextLabel(item, plan.HasMultipleTargets),
-					icon = item.tc as Thing,
-					iconCard = (item.tc != null && item.tc.isChara) ? item.tc : null,
-					act = delegate
-					{
-						if (item.Perform())
-						{
-							EClass.player.EndTurn();
-						}
-					}
-				});
+				rows.Add(PlanRow(i, plan.HasMultipleTargets));
 			}
 			if (rows.Count == 0)
 			{
@@ -1006,19 +1059,7 @@ namespace ElonaKeys
 					{
 						continue;
 					}
-					rows.Add(new MenuRow
-					{
-						label = ContextLabel(item, forceName: true),
-						icon = item.tc as Thing,
-						iconCard = (item.tc != null && item.tc.isChara) ? item.tc : null,
-						act = delegate
-						{
-							if (item.Perform())
-							{
-								EClass.player.EndTurn();
-							}
-						}
-					});
+					rows.Add(PlanRow(item, forceName: true));
 				}
 			}
 			if (rows.Count == 0)
@@ -2179,7 +2220,7 @@ namespace ElonaKeys
 				Dice d = Dice.Create(e, pc);
 				if (d != null)
 				{
-					dmg = "<color=#d6a26f>" + d.ToString() + "</color>";
+					dmg = d.ToString(); // plain: the tinted version was unreadable
 				}
 			}
 			catch
@@ -2363,15 +2404,30 @@ namespace ElonaKeys
 					bool ok;
 					if (tt.Range == TargetRange.Ground)
 					{
-						ok = SafeCanPerformAt(act, p) && pc.UseAbility(act, null, p);
+						if (!SafeCanPerformAt(act, p))
+						{
+							Msg.SayRaw(act.GetText() + " cannot reach that spot. (No cost spent.)");
+							return;
+						}
+						ok = ForceUse(act, null, p);
 					}
 					else if (ch != null)
 					{
-						ok = pc.UseAbility(act, ch, ch.pos);
+						if (!CanForcePerform(act, ch, ch.pos))
+						{
+							Msg.SayRaw(act.GetText() + " cannot target " + ch.Name + " (enemy-only or out of reach). (No cost spent.)");
+							return;
+						}
+						ok = ForceUse(act, ch, ch.pos);
 					}
 					else if (p.Equals(pc.pos))
 					{
-						ok = pc.UseAbility(act, pc, pc.pos);
+						if (!CanForcePerform(act, pc, pc.pos))
+						{
+							Msg.SayRaw(act.GetText() + " cannot target you. (No cost spent.)");
+							return;
+						}
+						ok = ForceUse(act, pc, pc.pos);
 					}
 					else
 					{
@@ -2389,7 +2445,7 @@ namespace ElonaKeys
 			// self-only: instant
 			if (tt.Range == TargetRange.Self && !tt.ForceParty)
 			{
-				if (pc.UseAbility(act, pc, pc.pos))
+				if (ForceUse(act, pc, pc.pos))
 				{
 					EClass.player.EndTurn();
 				}
@@ -2410,13 +2466,14 @@ namespace ElonaKeys
 			{
 				DirPrompt.Ask("Aim " + act.GetText() + " where? (wait key = your tile)", self: true, delegate(Point p)
 				{
-					if (pc.UseAbility(act, null, p))
+					if (!SafeCanPerformAt(act, p))
+					{
+						Msg.SayRaw("You cannot aim there (enemy-only or blocked). (No cost spent.)");
+						return;
+					}
+					if (ForceUse(act, null, p))
 					{
 						EClass.player.EndTurn();
-					}
-					else
-					{
-						Msg.SayRaw("You cannot aim there.");
 					}
 				});
 				return;
@@ -2426,11 +2483,12 @@ namespace ElonaKeys
 			if (tt.Range == TargetRange.Ground)
 			{
 				Chara quickG = TargetMode.QuickTarget(act);
-				if (quickG != null)
+				// only quick-fire when the game can actually perform there;
+				// otherwise fall into the aim cursor (which names the spell)
+				if (quickG != null && SafeCanPerformAt(act, quickG.pos))
 				{
-					// force-cast at the remembered spot; a false return means the
-					// game already said why (depleted stock...) — stay quiet
-					if (pc.UseAbility(act, null, quickG.pos))
+					// a false return means the game already said why — stay quiet
+					if (ForceUse(act, null, quickG.pos))
 					{
 						TargetMode.Remember(quickG);
 						EClass.player.EndTurn();
@@ -2447,8 +2505,13 @@ namespace ElonaKeys
 				}
 				TargetMode.Begin(act.GetText(), spots, delegate(Point p, Chara c)
 				{
+					if (!SafeCanPerformAt(act, p))
+					{
+						Msg.SayRaw(act.GetText() + " cannot reach that spot. (No cost spent.)");
+						return;
+					}
 					// UseAbility failures explain themselves; no double messages
-					if (pc.UseAbility(act, null, p))
+					if (ForceUse(act, null, p))
 					{
 						EClass.player.EndTurn();
 					}
@@ -2456,12 +2519,15 @@ namespace ElonaKeys
 				return;
 			}
 			// chara-targeted: remembered target fires INSTANTLY (Elona flow);
-			// otherwise the in-world targeting mode (dim + cycle), no window
+			// otherwise the in-world targeting mode (dim + cycle), no window.
+			// The quick shot only fires when the game can perform on that
+			// target — a refused one (ally for an enemy-only spell) used to
+			// eat the cost with no visible effect. Refusal opens the cursor.
 			Chara quick = TargetMode.QuickTarget(act);
-			if (quick != null)
+			if (quick != null && CanForcePerform(act, quick, quick.pos))
 			{
 				// force-cast, friend or foe; silent on false (the game speaks)
-				if (pc.UseAbility(act, quick, quick.pos))
+				if (ForceUse(act, quick, quick.pos))
 				{
 					TargetMode.Remember(quick);
 					EClass.player.EndTurn();
@@ -2474,7 +2540,11 @@ namespace ElonaKeys
 				{
 					Msg.SayRaw("There is no one there.");
 				}
-				else if (pc.UseAbility(act, c, c.pos))
+				else if (!CanForcePerform(act, c, c.pos))
+				{
+					Msg.SayRaw(act.GetText() + " cannot target " + c.Name + " (enemy-only or out of reach). (No cost spent.)");
+				}
+				else if (ForceUse(act, c, c.pos))
 				{
 					EClass.player.EndTurn();
 				}
@@ -2483,13 +2553,44 @@ namespace ElonaKeys
 
 		private static bool SafeCanPerformAt(Act act, Point p)
 		{
+			return CanForcePerform(act, null, p);
+		}
+
+		// An explicit aim is consent: the shift-only "negative ability on your
+		// own" config gate is lifted while WE check and cast. The pre-check
+		// matters because UseAbility pays the cost BEFORE Perform re-runs
+		// CanPerform — without it a refused target silently ate the mana/sp.
+		private static bool CanForcePerform(Act act, Chara tc, Point p)
+		{
+			var game = EClass.core.config.game;
+			bool gate = game.shiftToUseNegativeAbilityOnSelf;
+			game.shiftToUseNegativeAbilityOnSelf = false;
 			try
 			{
-				return act.CanPerform(pc, null, p);
+				return act.CanPerform(pc, tc, p ?? tc?.pos);
 			}
 			catch
 			{
 				return false;
+			}
+			finally
+			{
+				game.shiftToUseNegativeAbilityOnSelf = gate;
+			}
+		}
+
+		private static bool ForceUse(Act act, Chara tc, Point p)
+		{
+			var game = EClass.core.config.game;
+			bool gate = game.shiftToUseNegativeAbilityOnSelf;
+			game.shiftToUseNegativeAbilityOnSelf = false;
+			try
+			{
+				return pc.UseAbility(act, tc, p);
+			}
+			finally
+			{
+				game.shiftToUseNegativeAbilityOnSelf = gate;
 			}
 		}
 

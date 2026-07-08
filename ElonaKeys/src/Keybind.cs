@@ -28,6 +28,24 @@ namespace ElonaKeys
 			return Input.GetKeyDown(key);
 		}
 
+		// physically held right now (same modifier rules as IsDown)
+		public bool IsHeld()
+		{
+			if (key == KeyCode.None)
+			{
+				return false;
+			}
+			if (EInput.isCtrlDown || EInput.isAltDown)
+			{
+				return false;
+			}
+			if (EInput.isShiftDown != shift)
+			{
+				return false;
+			}
+			return Input.GetKey(key);
+		}
+
 		// Accepts a comma-separated list of binds: "g, keypad0".
 		public static System.Collections.Generic.List<Keybind> ParseList(string csv)
 		{

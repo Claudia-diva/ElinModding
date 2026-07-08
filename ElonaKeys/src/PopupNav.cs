@@ -610,14 +610,29 @@ namespace ElonaKeys
 			}
 			try
 			{
-				if (g.list != null && g.buttons.Count > 1)
+				// scroll from the BUTTON itself, so every scrollable group
+				// works (chara sheet skills/traits/strategy, not just UILists)
+				UIButton b = g.buttons[index];
+				if (!b)
 				{
-					ScrollRect sr = g.list.GetComponentInParent<ScrollRect>();
-					if (sr != null && sr.vertical)
-					{
-						sr.verticalNormalizedPosition = Mathf.Clamp01(1f - (float)index / (g.buttons.Count - 1));
-					}
+					return;
 				}
+				ScrollRect sr = b.GetComponentInParent<ScrollRect>();
+				if (sr == null || !sr.vertical || sr.content == null)
+				{
+					return;
+				}
+				RectTransform vp = (sr.viewport != null) ? sr.viewport : sr.transform as RectTransform;
+				float contentH = sr.content.rect.height;
+				float viewH = vp.rect.height;
+				if (contentH <= viewH + 1f)
+				{
+					return; // everything already fits
+				}
+				RectTransform bt = b.transform as RectTransform;
+				float fromTop = Mathf.Abs(((Vector2)sr.content.InverseTransformPoint(bt.position)).y - sr.content.rect.yMax);
+				// center the selection in the viewport
+				sr.verticalNormalizedPosition = Mathf.Clamp01(1f - (fromTop - viewH * 0.5f) / (contentH - viewH));
 			}
 			catch
 			{

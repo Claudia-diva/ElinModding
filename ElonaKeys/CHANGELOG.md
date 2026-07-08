@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.24.0 - 2026-07-08
+- Casting at a refused target no longer EATS the spell cost (the game charged first and checked after; now we check first). Aimed casts can hex/debuff your own party members without holding shift, and truly enemy-only spells tell you "(No cost spent.)" instead of failing silently.
+- When your remembered target can't take the spell (an ally for an enemy-only attack, out of reach...), the cast opens the aiming cursor instead of firing blind, and the big label at the bottom names the spell you're aiming, with (party)/(hostile) tags on whoever the cursor is over.
+- Spell icons draw with their real art again (they were all falling back to the same default glyph, which tinted into identical blobs; actions were unaffected). Damage dice numbers use the normal text color instead of the barely-readable tan.
+- The verb keys that share letters with movement (s, w, a, d) can't step your character anymore, even if you hold them a beat too long. That's what "tapped" collectables once and walked you off them.
+- "Collect", mining and other ground actions show the map object's sprite in the space/tile menus instead of a blank slot.
+- shift+e empties your hands: puts away a held item or tool, grabbed furniture, or a hotbar selection that got stuck.
+- The character sheet tabs (skills, traits, strategy...) scroll to keep the keyboard selection in view.
+
 ## 1.23.1 - 2026-07-08
 - Pow column in the spell/action lists (with its header): the effective power, the number that grows with your skill and spell levels and gear. Sits between Lv and Hit.
 - x aims the selected ability in BOTH the spell and action menus. Self-only and party-wide casts have nothing to aim, so x tells you that and leaves the menu open (Enter still casts). Items keep x = examine.

@@ -389,23 +389,47 @@ namespace ElonaKeys
 				}
 				img.enabled = true;
 				img.material = null; // pooled row may carry the item shader
-				// Act.SetImage = the real ability sprite + element tint
+				// AddHeaderAbility paints with THE ELEMENT ITSELF as an Act
+				// ((this as Act)?.SetImage) — the pc's spells/actions ARE Act
+				// instances with the real sprite. ACT.Create(source) built a
+				// bare copy whose GetSprite() came up empty for spells, so
+				// they all fell back to the default-ability glyph (the
+				// identical tinted blobs). Created copy = fallback only.
 				bool drawn = false;
-				try
+				Act own = ab as Act;
+				if (own != null)
 				{
-					Act a2 = ACT.Create(ab.source);
-					if (a2 != null)
+					try
 					{
-						a2.SetImage(img);
+						own.SetImage(img);
 						drawn = true;
 					}
+					catch
+					{
+					}
 				}
-				catch
+				if (!drawn)
 				{
+					try
+					{
+						Act a2 = ACT.Create(ab.source);
+						if (a2 != null)
+						{
+							a2.SetImage(img);
+							drawn = true;
+						}
+					}
+					catch
+					{
+					}
 				}
 				if (!drawn)
 				{
 					ab.SetImage(img);
+				}
+				if (Plugin.DebugLog)
+				{
+					Plugin.Log?.LogInfo("ElonaKeys ability icon: " + ab.source.alias + " ownAct=" + (own != null) + " sprite=" + (img.sprite != null ? img.sprite.name : "NULL") + " color=" + img.color);
 				}
 				RectTransform art = img.rectTransform;
 				art.pivot = new Vector2(0.5f, 0.5f);
@@ -534,49 +558,58 @@ namespace ElonaKeys
 				}
 				if (headerCols.Count == 0)
 				{
-					if (layer == null || !layer || layer.windows.Count == 0 || layer.list == null)
+					if (layer == null || !layer || layer.windows.Count == 0)
 					{
 						return;
 					}
-					// live inside the list container, right-aligned to the same
-					// edge the row columns hang from, just above the first row —
-					// the strip where the native "Name" sort button sits. Borrow
-					// that button's font: a Text with a null font renders nothing,
-					// silently (why these never showed).
+					// live as SIBLINGS of the native "Name" sort button — the
+					// one header element that provably renders — with its font
+					// and its exact vertical placement copied at runtime. (v1:
+					// hand-picked font was null = renders nothing, silently.
+					// v2: parented into the list, above its top edge = clipped.)
 					Window win = layer.windows[0];
-					Font font = null;
-					if (win.buttonSort != null && win.buttonSort.mainText != null)
+					UIButton sort = win.buttonSort;
+					if (sort == null || !sort || sort.mainText == null)
 					{
-						font = win.buttonSort.mainText.font;
+						if (Plugin.DebugLog)
+						{
+							Plugin.Log?.LogWarning("ElonaKeys cols header: no buttonSort on this window");
+						}
+						return;
 					}
+					RectTransform srt = sort.transform as RectTransform;
+					Font font = sort.mainText.font ?? RadialWheel.FindFont();
 					if (font == null)
 					{
-						font = RadialWheel.FindFont();
-					}
-					if (font == null)
-					{
+						Plugin.Log?.LogWarning("ElonaKeys cols header: no usable font");
 						return;
 					}
 					for (int i = 0; i < ColNames.Length; i++)
 					{
 						GameObject go = new GameObject("EKColHead" + i);
-						go.transform.SetParent(layer.list.transform, worldPositionStays: false);
+						go.transform.SetParent(sort.transform.parent, worldPositionStays: false);
 						LayoutElement le = go.AddComponent<LayoutElement>();
-						le.ignoreLayout = true; // not a list item
+						le.ignoreLayout = true; // in case the strip has a layout group
 						Text ht = go.AddComponent<Text>();
 						ht.font = font;
 						ht.fontSize = 12;
-						ht.alignment = TextAnchor.LowerRight;
+						ht.alignment = TextAnchor.MiddleRight;
 						ht.color = new Color(0.35f, 0.32f, 0.25f);
 						ht.raycastTarget = false;
 						ht.text = ColNames[i];
 						RectTransform rt = ht.rectTransform;
-						rt.anchorMin = new Vector2(1f, 1f);
-						rt.anchorMax = new Vector2(1f, 1f);
-						rt.pivot = new Vector2(1f, 0f);
-						rt.sizeDelta = new Vector2(ColW[i], 16f);
-						rt.anchoredPosition = new Vector2(ColX[i], 2f); // just above row 1
+						// same vertical band as the sort button, x measured from
+						// the strip's right edge like the row columns
+						rt.anchorMin = new Vector2(1f, srt.anchorMin.y);
+						rt.anchorMax = new Vector2(1f, srt.anchorMax.y);
+						rt.pivot = new Vector2(1f, srt.pivot.y);
+						rt.sizeDelta = new Vector2(ColW[i], srt.sizeDelta.y > 0f ? srt.sizeDelta.y : 20f);
+						rt.anchoredPosition = new Vector2(ColX[i] - 16f, srt.anchoredPosition.y);
 						headerCols.Add(ht);
+					}
+					if (Plugin.DebugLog)
+					{
+						Plugin.Log?.LogInfo("ElonaKeys cols header: created beside buttonSort (parent=" + sort.transform.parent.name + ", y=" + srt.anchoredPosition.y + ", anchors=" + srt.anchorMin + "/" + srt.anchorMax + ")");
 					}
 				}
 				foreach (Text t in headerCols)
@@ -584,9 +617,9 @@ namespace ElonaKeys
 					t.enabled = true;
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
-				// cosmetic only
+				Plugin.Log?.LogWarning("ElonaKeys cols header failed: " + ex.Message);
 			}
 		}
 
