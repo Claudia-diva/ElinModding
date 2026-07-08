@@ -96,7 +96,10 @@ namespace ElonaKeys
 					// generic window: build all group kinds. LayerCraftFloat (quick
 					// craft) is non-modal but still wants keyboard navigation.
 					target = topLayer;
-					// quest board: lists only (left/right = tabs, r = reroll)
+					// quest board: lists only (left/right = tabs, r = reroll).
+					// crafting window: recipe list + material dropdowns only
+					// (count/craft get direct keys; grids/loose buttons skipped)
+					bool craftWindow = topLayer is LayerCraft;
 					bool listsOnly = topLayer is LayerQuestBoard;
 					// virtualized lists first (crafting recipes): navigate the DATA,
 					// select-on-move gives the native click preview
@@ -115,6 +118,23 @@ namespace ElonaKeys
 						{
 							groups.Add(g);
 						}
+					}
+					if (craftWindow)
+					{
+						// keep material dropdowns, skip everything else
+						Group craftDrops = new Group();
+						foreach (UIDropdown dd in topLayer.GetComponentsInChildren<UIDropdown>(includeInactive: false))
+						{
+							if (dd.interactable && dd.gameObject.activeInHierarchy)
+							{
+								craftDrops.drops.Add(dd);
+							}
+						}
+						if (craftDrops.drops.Count > 0)
+						{
+							groups.Add(craftDrops);
+						}
+						goto doneGroups;
 					}
 					if (listsOnly)
 					{
@@ -274,6 +294,35 @@ namespace ElonaKeys
 				topLayer.Close();
 				MenuCycle.Next();
 				return;
+			}
+			// crafting window: +/- adjust the count (shift = 10s), Enter crafts
+			// from the recipe list (dropdown group keeps Enter = open picker)
+			if (topLayer is LayerCraft lc)
+			{
+				int step = EInput.isShiftDown ? 10 : 1;
+				if (KeyRepeat.Down(KeyCode.Equals) || KeyRepeat.Down(KeyCode.KeypadPlus))
+				{
+					if (lc.recipe != null)
+					{
+						lc.inputNum.ModNum(step);
+					}
+					return;
+				}
+				if (KeyRepeat.Down(KeyCode.Minus) || KeyRepeat.Down(KeyCode.KeypadMinus))
+				{
+					if (lc.recipe != null)
+					{
+						lc.inputNum.ModNum(-step);
+					}
+					return;
+				}
+				bool onDrops = g != null && g.drops.Count > 0;
+				if (!onDrops && lc.recipe != null && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
+				{
+					lc.OnClickCraft();
+					EInput.Consume();
+					return;
+				}
 			}
 			// quest board: left/right switch tabs, r hits the reroll button
 			if (topLayer is LayerQuestBoard)
