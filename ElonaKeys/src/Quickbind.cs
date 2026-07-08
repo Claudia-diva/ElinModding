@@ -244,6 +244,7 @@ namespace ElonaKeys
 					Act a = ACT.Create(src);
 					img.material = null;
 					a.SetImage(img);
+					img.color = Color.white; // element tint blobs plain UI images
 					return true;
 				}
 				Thing t = ResolveItem(e.key);

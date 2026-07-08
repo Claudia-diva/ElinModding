@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.21.1 - 2026-07-08
+- Spell/action icons show their real art again (the element color was smothering them into solid blobs). The stat column width is configurable (AbilityStatWidth) and the scaling-stat icon is bigger and sits right next to the numbers.
+- Hotkey casts FORCE-cast at your remembered target, friend or foe, and failures only print the game's own message (no more "stock is depleted" plus "you cannot aim there" double-talk).
+- g / numpad0 opens a pick-up list when your tile has several things: choose items and counts, or "[ Take everything ]". A single item is still grabbed instantly. The confusing per-tile "pick all" entries are gone from the space menu.
+- o always shows the container list now (no more auto-opening the purse), with "[ Backpack settings (autopickup)... ]" on it: which categories get picked up, refuse rotten, advanced distribution, name filter.
+
 ## 1.21.0 - 2026-07-08
 - Spell/action menus cleaned up: the stats get a proper wide column (no more everything scrolling in a sliver), the scaling-stat icon is back next to the numbers, and the tooltip keeps the deep detail.
 - Sorting fits the menu now: z cycles original / name / CATEGORY / STOCK in ability menus, and original / name / weight / COUNT in item menus.

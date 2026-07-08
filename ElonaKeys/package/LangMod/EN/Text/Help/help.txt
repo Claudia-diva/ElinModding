@@ -22,7 +22,7 @@ Mod keys beat Elin's own bindings on clash by default (OverrideGameKeys). If key
 
 $Keys
 {topic|Item Keys}
-{pair|g / numpad 0|Get everything pickable on your tile}
+{pair|g / numpad 0|Pick up: single item = instant, several = selection list with counts + take everything}
 {pair|d|Drop menu (count spinner for stacks, stays open)}
 {pair|e|Eat menu}
 {pair|q|Quaff menu, includes nearby wells and fountains}
@@ -49,7 +49,7 @@ $Keys
 {pair|f|Fire ranged weapon}
 {pair|b|Bash a direction}
 {pair|D|Dig/mine a wall (auto-holds your digging tool)}
-{pair|o|Open containers (keyboard take/put menu) and crafting kits}
+{pair|o|Open containers and crafting kits; also the backpack autopickup settings}
 {pair|(any route)|Chests/containers always open the keyboard menu; item processors open a keyboard ingredient picker (KeyboardContainers / KeyboardCrafters config)}
 {pair|C|Open or close a door in a chosen direction}
 {pair|p|Pray}
@@ -80,6 +80,9 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.21.1}
+・ Spell icons show real art; stat column configurable; hotkey casts force-cast friend-or-foe with clean messages; g = pickup selection; o = container list + backpack autopickup settings.
+
 {topic|1.21.0}
 ・ Casting menus: wide static stat columns + the scaling-stat icon; z sorts by category/stock; HOLD v = manual targeting (friend or foe); w = whole-party cast; party menu shows member sprites.
 

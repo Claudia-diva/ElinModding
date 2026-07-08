@@ -400,8 +400,10 @@ namespace ElonaKeys
 				if (!drawn)
 				{
 					ab.SetImage(img);
-					img.color = Color.white;
 				}
+				// the element tint (colorSprite) turns sprites into solid blobs
+				// on a plain UI Image; the element color lives in the stat icon
+				img.color = Color.white;
 				RectTransform art = img.rectTransform;
 				art.pivot = new Vector2(0.5f, 0.5f);
 				art.anchoredPosition = Vector2.zero;
@@ -475,6 +477,7 @@ namespace ElonaKeys
 					}
 					return;
 				}
+				float statX = 0f - (Plugin.AbilityStatWidth + 24f);
 				if (si == null)
 				{
 					GameObject go = new GameObject("EKStat");
@@ -485,20 +488,18 @@ namespace ElonaKeys
 					srt.anchorMin = new Vector2(1f, 0.5f);
 					srt.anchorMax = new Vector2(1f, 0.5f);
 					srt.pivot = new Vector2(1f, 0.5f);
-					srt.anchoredPosition = new Vector2(-190f, 0f); // left of the stat column
 				}
 				si.enabled = true;
 				si.material = null;
 				ability.SetImage(si); // base painter = the scaling-stat icon
-				si.color = Color.white;
 				RectTransform rt = si.rectTransform;
 				rt.pivot = new Vector2(1f, 0.5f);
-				rt.anchoredPosition = new Vector2(-190f, 0f);
+				rt.anchoredPosition = new Vector2(statX, 0f); // right beside the column
 				Vector2 s = rt.sizeDelta;
 				float max = Mathf.Max(s.x, s.y);
-				if (max > 18f || max <= 0f)
+				if (max > 24f || max <= 0f)
 				{
-					rt.sizeDelta = (max > 0f) ? (s * (18f / max)) : new Vector2(18f, 18f);
+					rt.sizeDelta = (max > 0f) ? (s * (24f / max)) : new Vector2(24f, 24f);
 				}
 			}
 			catch

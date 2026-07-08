@@ -65,22 +65,14 @@ namespace ElonaKeys
 			{
 				return false;
 			}
-			if (needHostile && (!EClass.pc.IsHostile(c) || c.IsPCParty))
-			{
-				return false; // never auto-throw/nuke a friend remembered from a heal
-			}
-			if (act == null)
-			{
-				return true;
-			}
-			try
-			{
-				return act.IsValidTC(c) && act.CanPerform(EClass.pc, c, c.pos);
-			}
-			catch
+			// throws (act == null) keep the hostile preference so they never
+			// auto-hit a friend; SPELLS force-cast at the remembered target,
+			// friend or foe (user directive) — the game validates on cast
+			if (act == null && needHostile && (!EClass.pc.IsHostile(c) || c.IsPCParty))
 			{
 				return false;
 			}
+			return true;
 		}
 
 		public static void Begin(string _verb, List<Chara> _candidates, Action<Point, Chara> _onPick)

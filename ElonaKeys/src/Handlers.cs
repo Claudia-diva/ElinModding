@@ -697,33 +697,64 @@ namespace ElonaKeys
 
 		// ---------- world keys ----------
 
+		// g: SELECT what to pick up (with counts), or take everything.
+		// Built straight from the tile's things: plan.listPick missed items
+		// under some input rules.
 		public static void Get()
 		{
-			ActPlan plan = BuildPlan(pc.pos.Copy());
-			List<Thing> picked = new List<Thing>();
-			foreach (Thing t in plan.listPick)
+			List<Thing> here = new List<Thing>();
+			foreach (Thing t in pc.pos.Things)
 			{
-				picked.Add(t);
-			}
-			if (picked.Count == 0)
-			{
-				foreach (Thing t in pc.pos.Things)
+				if (!t.IsInstalled && t.placeState == PlaceState.roaming && pc.CanPick(t))
 				{
-					if (!t.IsInstalled && t.trait.CanBeHeld)
-					{
-						picked.Add(t);
-					}
+					here.Add(t);
 				}
 			}
-			if (picked.Count == 0)
+			if (here.Count == 0)
 			{
 				Msg.SayRaw("There is nothing here to pick up.");
 				return;
 			}
-			foreach (Thing t in picked)
+			if (here.Count == 1)
 			{
-				pc.Pick(t);
+				pc.Pick(here[0]);
+				return;
 			}
+			List<MenuRow> rows = new List<MenuRow>();
+			rows.Add(new MenuRow
+			{
+				label = "[ Take everything ]",
+				act = delegate
+				{
+					foreach (Thing t in here)
+					{
+						if (t != null && !t.isDestroyed)
+						{
+							pc.Pick(t);
+						}
+					}
+				}
+			});
+			foreach (Thing thing in here)
+			{
+				Thing t = thing;
+				rows.Add(new MenuRow
+				{
+					label = t.Name,
+					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
+					sortCount = t.Num,
+					closeOnAct = false,
+					maxAmount = Mathf.Max(1, t.Num),
+					onAmount = delegate(int n)
+					{
+						Thing taken = (n >= t.Num) ? t : t.Split(n);
+						pc.Pick(taken);
+					}
+				});
+			}
+			MenuSystem.Show("Pick up what?", rows);
 		}
 
 		private static void PlanMenu(string title, Point p, string emptyMsg)
@@ -834,6 +865,11 @@ namespace ElonaKeys
 				foreach (ActPlan.Item i in plan.list)
 				{
 					ActPlan.Item item = i;
+					// pickup belongs to g; the native per-tile pick acts only confuse
+					if (item.act is DynamicAct da && (da.id == "actPickAll" || da.id == "actPickOne"))
+					{
+						continue;
+					}
 					rows.Add(new MenuRow
 					{
 						label = ContextLabel(item, forceName: true),
@@ -926,7 +962,70 @@ namespace ElonaKeys
 					}
 				}
 			}
-			RunRows("Open what?", rows, "There is nothing to open here.");
+			// backpack autopickup settings (player.dataPick) live here: the base
+			// bag has no other keyboard home, and single-container auto-open used
+			// to make this row unreachable
+			rows.Add(new MenuRow
+			{
+				label = "[ Backpack settings (autopickup)... ]",
+				closeOnAct = false,
+				act = delegate { BackpackSettings(); }
+			});
+			if (rows.Count == 1)
+			{
+				Msg.SayRaw("There is nothing to open here.");
+			}
+			MenuSystem.Show("Open what?", rows); // never auto-fire a single row
+		}
+
+		// autopickup config: which categories get picked up, rotten filter,
+		// advanced distribution, name filter — stored on EClass.player.dataPick
+		private static void BackpackSettings()
+		{
+			MenuSystem.Show("Backpack autopickup", BuildAutopickRows(), delegate
+			{
+				MenuSystem.SetRows(BuildAutopickRows());
+			});
+		}
+
+		private static List<MenuRow> BuildAutopickRows()
+		{
+			Window.SaveData sd = EClass.player.dataPick;
+			List<MenuRow> rows = new List<MenuRow>();
+			void Toggle(string name, bool value, Action flip)
+			{
+				rows.Add(new MenuRow
+				{
+					label = name + ":  " + (value ? "<color=#70a070>ON</color>" : "<color=#a07070>OFF</color>"),
+					closeOnAct = false,
+					act = flip
+				});
+			}
+			Toggle("Refuse rotten items", sd.noRotten, delegate { sd.noRotten = !sd.noRotten; });
+			Toggle("Advanced distribution", sd.advDistribution, delegate { sd.advDistribution = !sd.advDistribution; });
+			rows.Add(new MenuRow
+			{
+				label = "[ Picked-up categories... ]",
+				closeOnAct = false,
+				act = delegate { CategoryFilterMenu(sd, "Autopickup categories"); }
+			});
+			rows.Add(new MenuRow
+			{
+				label = sd.filter.IsEmpty() ? "[ Name filter... ]" : "[ Filter: " + sd.filter + " ]",
+				closeOnAct = false,
+				act = delegate
+				{
+					Dialog.InputName("distFilter3", sd.filter.IsEmpty(""), delegate(bool cancel, string s)
+					{
+						if (!cancel)
+						{
+							sd._filterStrs = null;
+							sd.filter = s;
+						}
+					}, Dialog.InputType.DistributionFilter);
+				}
+			});
+			return rows;
 		}
 
 		// keyboard take/put for any container (chests, bags, boxes)
@@ -1220,20 +1319,25 @@ namespace ElonaKeys
 		// per-category accept/block toggles: a SET ContainerFlag = category BLOCKED
 		private static void CategoryFilterMenu(Thing container)
 		{
-			MenuSystem.Show("Allowed categories - " + container.Name, BuildCategoryRows(container), delegate
-			{
-				MenuSystem.SetRows(BuildCategoryRows(container));
-			});
-		}
-
-		private static List<MenuRow> BuildCategoryRows(Thing container)
-		{
 			Window.SaveData sd = container.c_windowSaveData;
 			if (sd == null)
 			{
 				sd = new Window.SaveData();
 				container.c_windowSaveData = sd;
 			}
+			CategoryFilterMenu(sd, "Allowed categories - " + container.Name);
+		}
+
+		private static void CategoryFilterMenu(Window.SaveData sd, string title)
+		{
+			MenuSystem.Show(title, BuildCategoryRows(sd), delegate
+			{
+				MenuSystem.SetRows(BuildCategoryRows(sd));
+			});
+		}
+
+		private static List<MenuRow> BuildCategoryRows(Window.SaveData sd)
+		{
 			List<MenuRow> rows = new List<MenuRow>();
 			foreach (ContainerFlag value in Enum.GetValues(typeof(ContainerFlag)))
 			{
@@ -1855,7 +1959,7 @@ namespace ElonaKeys
 			{
 				label = (fav ? "★ " : "") + e.source.GetName() + Quickbind.TagForAbility(e.source.alias) + " <size=13><color=#8f8f7a>" + TypeBucket(e) + stat + "</color></size>",
 				rightText = AbilityCostText(e, spells),
-				rightWidth = 175f, // static stat block: no scrolling in a tiny column
+				rightWidth = Plugin.AbilityStatWidth, // static stat block, configurable
 				sortWeight = BucketIndex(e) * 1000, // z-sort mode 2 = by category
 				sortCount = stock,                  // z-sort mode 3 = by stock
 				actSrc = e.source,
@@ -2045,10 +2149,7 @@ namespace ElonaKeys
 					{
 						EClass.player.EndTurn();
 					}
-					else
-					{
-						Msg.SayRaw("You cannot cast that there.");
-					}
+					// false = the game already printed the reason
 				});
 				return;
 			}
@@ -2091,9 +2192,11 @@ namespace ElonaKeys
 			// characters' tiles via the remembered target / targeting mode
 			if (tt.Range == TargetRange.Ground)
 			{
-				Chara quickG = TargetMode.QuickTarget(null);
-				if (quickG != null && SafeCanPerformAt(act, quickG.pos))
+				Chara quickG = TargetMode.QuickTarget(act);
+				if (quickG != null)
 				{
+					// force-cast at the remembered spot; a false return means the
+					// game already said why (depleted stock...) — stay quiet
 					if (pc.UseAbility(act, null, quickG.pos))
 					{
 						TargetMode.Remember(quickG);
@@ -2111,11 +2214,8 @@ namespace ElonaKeys
 				}
 				TargetMode.Begin(act.GetText(), spots, delegate(Point p, Chara c)
 				{
-					if (!SafeCanPerformAt(act, p))
-					{
-						Msg.SayRaw("You cannot aim there.");
-					}
-					else if (pc.UseAbility(act, null, p))
+					// UseAbility failures explain themselves; no double messages
+					if (pc.UseAbility(act, null, p))
 					{
 						EClass.player.EndTurn();
 					}
@@ -2125,8 +2225,9 @@ namespace ElonaKeys
 			// chara-targeted: remembered target fires INSTANTLY (Elona flow);
 			// otherwise the in-world targeting mode (dim + cycle), no window
 			Chara quick = TargetMode.QuickTarget(act);
-			if (quick != null && (!tt.CanOnlyTargetEnemy || pc.IsHostile(quick)))
+			if (quick != null)
 			{
+				// force-cast, friend or foe; silent on false (the game speaks)
 				if (pc.UseAbility(act, quick, quick.pos))
 				{
 					TargetMode.Remember(quick);
