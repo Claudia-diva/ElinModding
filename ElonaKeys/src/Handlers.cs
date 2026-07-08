@@ -2127,7 +2127,7 @@ namespace ElonaKeys
 			return new MenuRow
 			{
 				label = (fav ? "★ " : "") + e.source.GetName() + Quickbind.TagForAbility(e.source.alias) + " <size=13><color=#8f8f7a>" + TypeBucket(e) + stat + "</color></size>",
-				cols = BuildAbilityCols(e, spells),  // aligned Lv/Hit/Dmg/Cost/Left
+				cols = BuildAbilityCols(e, spells),  // aligned Lv/Pow/Hit/Dmg/Cost/Left
 				sortWeight = BucketIndex(e) * 1000, // z-sort mode 2 = by category
 				sortCount = stock,                  // z-sort mode 3 = by stock
 				actSrc = e.source,
@@ -2136,11 +2136,12 @@ namespace ElonaKeys
 			};
 		}
 
-		// aligned column values [Lv, Hit, Dmg, Cost, Left]; power and the
-		// original cost live in the tooltip
+		// aligned column values [Lv, Pow, Hit, Dmg, Cost, Left]; the original
+		// cost lives in the tooltip. Pow scales with skill/spell level and gear.
 		private static string[] BuildAbilityCols(Element e, bool spells)
 		{
 			string lv = "";
+			string pow = "";
 			string hit = "";
 			string dmg = "";
 			string cost = "";
@@ -2148,6 +2149,17 @@ namespace ElonaKeys
 			try
 			{
 				lv = e.DisplayValue.ToString();
+			}
+			catch
+			{
+			}
+			try
+			{
+				int p = e.GetPower(pc);
+				if (p > 0)
+				{
+					pow = p.ToString();
+				}
 			}
 			catch
 			{
@@ -2194,12 +2206,26 @@ namespace ElonaKeys
 			catch
 			{
 			}
-			return new string[] { lv, hit, dmg, cost, left };
+			return new string[] { lv, pow, hit, dmg, cost, left };
 		}
 
-		// x on an ability row: aim THIS cast manually with the free cursor
+		// x on an ability row: aim THIS cast manually with the free cursor.
+		// Self-only and party-wide casts have nothing to aim: say so and keep
+		// the menu open instead of closing into a pointless cursor.
 		internal static void ManualTargetCast(Element e)
 		{
+			try
+			{
+				TargetType tt = ACT.Create(e.source).TargetType;
+				if (tt.Range == TargetRange.Self || tt.Range == TargetRange.Party || tt.ForceParty)
+				{
+					Msg.SayRaw(e.source.GetName() + " has no target to aim (Enter casts it).");
+					return;
+				}
+			}
+			catch
+			{
+			}
 			MenuSystem.Close();
 			ManualCastMode = true;
 			CastAbility(e);

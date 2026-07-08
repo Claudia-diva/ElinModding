@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.23.1 - 2026-07-08
+- Pow column in the spell/action lists (with its header): the effective power, the number that grows with your skill and spell levels and gear. Sits between Lv and Hit.
+- x aims the selected ability in BOTH the spell and action menus. Self-only and party-wide casts have nothing to aim, so x tells you that and leaves the menu open (Enter still casts). Items keep x = examine.
+
 ## 1.23.0 - 2026-07-08
 - Picking up things that belong to someone now asks first, like the game's own "Steal" flow (and respects the crime warning option). Applies to g, numpad0, hold-g grabbing and taking from the browser; owned items are tagged [steal] in the pickup lists. Before this, the mod's pickups silently committed the crime.
 - Spell/action icons are drawn exactly the way the ability tooltip draws them: full color on the plain row, no dark square behind. The Lv / Hit / Dmg / Cost / Left header labels finally show, lined up over their columns.

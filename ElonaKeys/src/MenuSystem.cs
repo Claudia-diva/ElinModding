@@ -467,11 +467,11 @@ namespace ElonaKeys
 
 		// aligned right-side columns (Elona style): fixed x per column, with
 		// header labels in the window's header strip. Order in MenuRow.cols:
-		// [Lv, Hit, Dmg, Cost, Left]
-		private static readonly float[] ColX = { -230f, -180f, -114f, -60f, -14f };
-		private static readonly float[] ColW = { 44f, 52f, 68f, 56f, 44f };
-		private static readonly string[] ColNames = { "Lv", "Hit", "Dmg", "Cost", "Left" };
-		private const float ColsBlockWidth = 270f;
+		// [Lv, Pow, Hit, Dmg, Cost, Left]
+		private static readonly float[] ColX = { -278f, -230f, -180f, -114f, -60f, -14f };
+		private static readonly float[] ColW = { 44f, 44f, 52f, 68f, 56f, 44f };
+		private static readonly string[] ColNames = { "Lv", "Pow", "Hit", "Dmg", "Cost", "Left" };
+		private const float ColsBlockWidth = 318f;
 
 		private static void SetCols(ItemGeneral b, string[] cols)
 		{
@@ -606,7 +606,7 @@ namespace ElonaKeys
 					}
 					return;
 				}
-				float statX = -284f; // just left of the column block
+				float statX = -332f; // just left of the column block
 				if (si == null)
 				{
 					GameObject go = new GameObject("EKStat");
