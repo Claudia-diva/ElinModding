@@ -1029,9 +1029,27 @@ namespace ElonaKeys
 		}
 
 		// Elona-style bottom line, anchored to the LAST row's rendered
-		// geometry (same technique as the column header; the two earlier
-		// footer attempts died to a null font and to mask clipping)
-		private static Text footer;
+		// geometry (same technique as the column header). Two parts, per the
+		// user's spec: counts/slots CENTERED, page number bottom-RIGHT, both
+		// in the vanilla menu font (copied off the row text).
+		private static Text footerCenter;
+		private static Text footerPage;
+
+		private static Text MakeFooterText(string name, Text sample, RectTransform winRt, TextAnchor align)
+		{
+			GameObject go = new GameObject(name);
+			go.transform.SetParent(winRt, worldPositionStays: false);
+			go.AddComponent<LayoutElement>().ignoreLayout = true; // window layout group must not place it
+			Text t = go.AddComponent<Text>();
+			t.font = sample.font;
+			t.fontSize = Mathf.Max(12, sample.fontSize - 2);
+			t.fontStyle = sample.fontStyle;
+			t.alignment = align;
+			t.horizontalOverflow = HorizontalWrapMode.Overflow;
+			t.color = new Color(0.38f, 0.35f, 0.27f);
+			t.raycastTarget = false;
+			return t;
+		}
 
 		private static void RefreshFooter(int pieces, int grams)
 		{
@@ -1050,44 +1068,42 @@ namespace ElonaKeys
 				RectTransform winRt = layer.windows[0].transform as RectTransform;
 				Bounds bf = RectTransformUtility.CalculateRelativeRectTransformBounds(winRt, first.button1.transform as RectTransform);
 				Bounds bl = RectTransformUtility.CalculateRelativeRectTransformBounds(winRt, last.button1.transform as RectTransform);
-				if (footer == null || !footer)
+				if (footerCenter == null || !footerCenter)
 				{
-					GameObject go = new GameObject("EKFooter");
-					go.transform.SetParent(winRt, worldPositionStays: false);
-					go.AddComponent<LayoutElement>().ignoreLayout = true; // window layout group must not place it
-					footer = go.AddComponent<Text>();
-					footer.font = first.button1.mainText.font;
-					footer.fontSize = 13;
-					footer.alignment = TextAnchor.UpperLeft;
-					footer.horizontalOverflow = HorizontalWrapMode.Overflow;
-					footer.color = new Color(0.38f, 0.35f, 0.27f);
-					footer.raycastTarget = false;
+					footerCenter = MakeFooterText("EKFooter", first.button1.mainText, winRt, TextAnchor.UpperCenter);
+					footerPage = MakeFooterText("EKFooterPage", first.button1.mainText, winRt, TextAnchor.UpperRight);
 					if (Plugin.DebugLog)
 					{
 						Plugin.Log?.LogInfo("ElonaKeys footer: created from row geometry (bottom=" + bl.min.y + ")");
 					}
 				}
-				string line = "";
-				if (PageCount > 1)
-				{
-					line += "page " + (page + 1) + "/" + PageCount + "   ";
-				}
+				float y = bl.min.y - 3f;
+				string mid = "";
 				if (pieces > 0)
 				{
-					line += pieces + " items  " + (grams / 1000f).ToString("0.0") + "s   ";
+					mid += pieces + " items  " + (grams / 1000f).ToString("0.0") + "s";
 				}
 				if (current != null && !string.IsNullOrEmpty(current.footerExtra))
 				{
-					line += current.footerExtra;
+					mid += (mid.Length > 0 ? "   " : "") + current.footerExtra;
 				}
-				footer.text = line.TrimEnd();
-				footer.enabled = footer.text.Length > 0;
-				RectTransform rt = footer.rectTransform;
-				rt.anchorMin = winRt.pivot;
-				rt.anchorMax = winRt.pivot;
-				rt.pivot = new Vector2(0f, 1f);
-				rt.sizeDelta = new Vector2(bf.max.x - bf.min.x, 18f);
-				rt.anchoredPosition = new Vector2(bf.min.x + 6f, bl.min.y - 3f);
+				footerCenter.text = mid;
+				footerCenter.enabled = mid.Length > 0;
+				RectTransform rc = footerCenter.rectTransform;
+				rc.anchorMin = winRt.pivot;
+				rc.anchorMax = winRt.pivot;
+				rc.pivot = new Vector2(0.5f, 1f);
+				rc.sizeDelta = new Vector2(bf.max.x - bf.min.x, 18f);
+				rc.anchoredPosition = new Vector2((bf.min.x + bf.max.x) * 0.5f, y);
+				string pg = (PageCount > 1) ? ("page " + (page + 1) + "/" + PageCount) : "";
+				footerPage.text = pg;
+				footerPage.enabled = pg.Length > 0;
+				RectTransform rp = footerPage.rectTransform;
+				rp.anchorMin = winRt.pivot;
+				rp.anchorMax = winRt.pivot;
+				rp.pivot = new Vector2(1f, 1f);
+				rp.sizeDelta = new Vector2(160f, 18f);
+				rp.anchoredPosition = new Vector2(bf.max.x - 6f, y);
 			}
 			catch (Exception ex)
 			{

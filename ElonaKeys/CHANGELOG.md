@@ -1,7 +1,8 @@
 # Changelog
 
 ## 1.24.2 - 2026-07-08
-- The column headers were RENDERING at last, just in the wrong place: the window's own layout system grabbed them and stacked them at the bottom (that vertical Lv/Pow/Hit/Dmg/Cost/Left pile in the corner). They're exempt from the window layout now and sit in the header strip next to "Name", over their columns. The footer line stays put at the bottom-left of the rows for the same reason.
+- The column headers were RENDERING at last, just in the wrong place: the window's own layout system grabbed them and stacked them at the bottom (that vertical Lv/Pow/Hit/Dmg/Cost/Left pile in the corner). They're exempt from the window layout now and sit in the header strip next to "Name", over their columns.
+- Footer layout per spec: item count / weight / container slots CENTERED, the page number at the bottom RIGHT, both in the same font as the menu rows.
 - Item and equipment windows get a "Weight" header over the weight column, so every window has labeled columns, not just the ability lists.
 - Abilities whose scaling stat has no icon (piety...) no longer draw a white square in the stat slot.
 
