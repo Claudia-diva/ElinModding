@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.19.4 - 2026-07-06
+- Fixed crafting opening a broken Elin window that Escape couldn't close (with the material panel stuck open). The keyboard recipe menu now opens the way it was meant to.
+
 ## 1.19.3 - 2026-07-06
 - Fixed 1.19.2 breaking most menu features at once (arrow navigation, weights, tooltips, the bottom info line, the family bar). If the mod ever half-breaks like that again, the log now says so in one loud line.
 

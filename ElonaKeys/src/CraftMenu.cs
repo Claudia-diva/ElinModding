@@ -58,17 +58,9 @@ namespace ElonaKeys
 
 		private static void ShowCat(Thing factory)
 		{
-			List<RecipeSource> sources;
-			try
-			{
-				sources = EClass.player.recipes.ListSources(factory, null);
-			}
-			catch (Exception ex)
-			{
-				Plugin.Log?.LogError("ElonaKeys craft list failed: " + ex);
-				OpenNative(factory);
-				return;
-			}
+			// throws propagate to the redirect postfix, which keeps the native
+			// window when our menu can't open (never open a SECOND native one)
+			List<RecipeSource> sources = EClass.player.recipes.ListSources(factory, null);
 			// category tabs, native style: All + each present second-root category
 			List<string> cats = new List<string> { "all" };
 			foreach (RecipeSource rs0 in sources)
@@ -341,25 +333,41 @@ namespace ElonaKeys
 
 	// Every crafting entry point (stations, the quick-craft action) funnels
 	// through LayerCraft.SetFactory: redirect to the keyboard menu.
+	// POSTFIX on purpose: closing the layer before SetFactory initializes it
+	// tears down a half-built window (NRE mid-Close, layer stuck un-closable).
+	// After SetFactory the window is in its normal closable state.
 	[HarmonyPatch(typeof(LayerCraft), nameof(LayerCraft.SetFactory))]
 	internal static class Patch_CraftOpen
 	{
-		private static bool Prefix(LayerCraft __instance, Thing t)
+		private static void Postfix(LayerCraft __instance, Thing t)
 		{
 			if (!Plugin.KeyboardCrafting || CraftMenu.bypass)
 			{
-				return true;
+				return;
 			}
+			bool ours = false;
 			try
 			{
-				__instance.Close();
 				CraftMenu.Show(t);
-				return false;
+				ours = true;
 			}
 			catch (Exception ex)
 			{
-				Plugin.Log?.LogError("ElonaKeys craft redirect failed: " + ex);
-				return true;
+				Plugin.Log?.LogError("ElonaKeys craft redirect failed (native window kept): " + ex);
+			}
+			if (ours)
+			{
+				try
+				{
+					if (__instance != null && (bool)__instance)
+					{
+						__instance.Close();
+					}
+				}
+				catch (Exception ex2)
+				{
+					Plugin.Log?.LogError("ElonaKeys native craft close failed: " + ex2);
+				}
 			}
 		}
 	}
