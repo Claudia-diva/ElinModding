@@ -27,6 +27,31 @@ namespace ElonaKeys
 		private static int index = -1;
 		private static readonly List<Group> groups = new List<Group>();
 
+		// debounced crafting selection: highlight moves instantly, the real
+		// selection (full product-panel refresh + click sound) fires once the
+		// cursor RESTS, so holding a key to scroll doesn't strobe the window
+		private static UIButton pendingCraftBtn;
+		private static float pendingCraftAt;
+
+		private static void ApplyPendingCraftSelect()
+		{
+			if (pendingCraftBtn == null || !pendingCraftBtn)
+			{
+				pendingCraftBtn = null;
+				return;
+			}
+			UIButton b = pendingCraftBtn;
+			pendingCraftBtn = null;
+			try
+			{
+				b.onClick.Invoke();
+			}
+			catch (System.Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys craft select failed: " + ex);
+			}
+		}
+
 		public static void OnUpdate()
 		{
 			if (MenuSystem.Alive || EInput.isInputFieldActive || EInput.isCtrlDown || EInput.isAltDown)
@@ -299,9 +324,20 @@ namespace ElonaKeys
 			// from the recipe list (dropdown group keeps Enter = open picker)
 			if (topLayer is LayerCraft lc)
 			{
+				if (!EClass.pc.HasNoGoal)
+				{
+					pendingCraftBtn = null;
+					return; // craft in progress: no re-fires; Escape cancels it
+				}
+				// apply the debounced selection once the cursor rests
+				if (pendingCraftBtn != null && Time.unscaledTime >= pendingCraftAt)
+				{
+					ApplyPendingCraftSelect();
+				}
 				int step = EInput.isShiftDown ? 10 : 1;
 				if (KeyRepeat.Down(KeyCode.Equals) || KeyRepeat.Down(KeyCode.KeypadPlus))
 				{
+					ApplyPendingCraftSelect(); // count applies to the shown recipe
 					if (lc.recipe != null)
 					{
 						lc.inputNum.ModNum(step);
@@ -310,17 +346,51 @@ namespace ElonaKeys
 				}
 				if (KeyRepeat.Down(KeyCode.Minus) || KeyRepeat.Down(KeyCode.KeypadMinus))
 				{
+					ApplyPendingCraftSelect();
 					if (lc.recipe != null)
 					{
 						lc.inputNum.ModNum(-step);
 					}
 					return;
 				}
-				bool onDrops = g != null && g.drops.Count > 0;
-				if (!onDrops && lc.recipe != null && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
+				// m = material picker, stateless: opens the first dropdown, and
+				// with one already open, hops to the next slot. No group state
+				// involved (the panel rebuilds destroy it under our feet).
+				if (Input.GetKeyDown(KeyCode.M))
 				{
-					lc.OnClickCraft();
-					EInput.Consume();
+					ApplyPendingCraftSelect();
+					List<UIDropdown> dds = new List<UIDropdown>();
+					foreach (UIDropdown dd in topLayer.GetComponentsInChildren<UIDropdown>(includeInactive: false))
+					{
+						if (dd.interactable && dd.gameObject.activeInHierarchy)
+						{
+							dds.Add(dd);
+						}
+					}
+					if (dds.Count == 0)
+					{
+						SE.BeepSmall();
+						return;
+					}
+					int open = (UIDropdown.activeInstance != null) ? dds.IndexOf(UIDropdown.activeInstance) : -1;
+					if (open >= 0)
+					{
+						dds[open].Hide();
+					}
+					dds[(open + 1) % dds.Count].Show();
+					return;
+				}
+				// Enter crafts ONLY from the recipe list (the dropdown group keeps
+				// Enter = open picker; material access itself lives on m)
+				bool onDrops = g != null && g.drops.Count > 0;
+				if (!onDrops && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
+				{
+					ApplyPendingCraftSelect(); // craft what's under the cursor
+					if (lc.recipe != null)
+					{
+						lc.OnClickCraft();
+						EInput.Consume();
+					}
 					return;
 				}
 			}
@@ -470,18 +540,12 @@ namespace ElonaKeys
 				}
 				Highlight(g);
 				EnsureVisible(g);
-				// crafting recipe list: SELECT on move so the product panel
-				// follows the cursor (full native selection, live preview)
+				// crafting recipe list: select the rested-on recipe (debounced;
+				// the product panel refresh is too heavy to run per step)
 				if (topLayer is LayerCraft && g.drops.Count == 0 && !g.grid && index >= 0 && index < g.buttons.Count)
 				{
-					try
-					{
-						g.buttons[index].onClick.Invoke();
-					}
-					catch (System.Exception ex)
-					{
-						Plugin.Log?.LogError("ElonaKeys craft select failed: " + ex);
-					}
+					pendingCraftBtn = g.buttons[index];
+					pendingCraftAt = Time.unscaledTime + 0.15f;
 				}
 				return;
 			}

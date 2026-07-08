@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.20.1 - 2026-07-06
+- Escape cancels a craft in progress (nothing could stop one before; it would chew through your whole log pile). Keys can't accidentally start another craft while one is running.
+- The bottom line of the menus (page number, item count, total weight, key hints with z/x) actually shows now; it silently failed to attach in every window since it was added.
+- Crafting: scrolling the recipe list no longer flickers (the preview updates when the cursor rests instead of every step), and materials get their own key: m opens the material picker, m again hops to the next slot. Enter can no longer craft by accident while you're aiming at materials.
+
 ## 1.20.0 - 2026-07-06
 - Crafting uses the game's normal window again, now fully keyboard-driven: up/down walk the recipes with the product panel following live, +/- set the count (shift for 10s), Enter crafts, left/right reach the material pickers (Enter opens, arrows choose), z/x switch categories. Fewer keypresses than the mouse, with all the window's info intact.
 - The list-style crafting menu from 1.19 is still available: set CraftingStyle=menu in the config.

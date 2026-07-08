@@ -110,7 +110,7 @@ namespace ElonaKeys
 				{
 					Activate(r);
 				}, BuildRow, autoClose: false);
-				BuildHint();
+				hintText = null; // built lazily: windows[0] doesn't exist yet here
 			}
 			ApplyPage();
 			MenuExtras.RegisterMenu(layer);
@@ -553,14 +553,16 @@ namespace ElonaKeys
 			ShowSelTooltip();
 		}
 
-		// Elona-style key hint line at the bottom of every menu window
+		// Elona-style key hint line at the bottom of every menu window.
+		// Built LAZILY from UpdateHint: at Show() time the window frame
+		// (layer.windows[0]) does not exist yet, which used to kill the whole
+		// line (page/totals/keys) silently for every menu.
 		private static void BuildHint()
 		{
 			try
 			{
-				if (!Plugin.MenuKeyHints || layer == null || layer.windows.Count == 0)
+				if (!Plugin.MenuKeyHints || layer == null || !layer || layer.windows == null || layer.windows.Count == 0)
 				{
-					hintText = null;
 					return;
 				}
 				GameObject go = new GameObject("EKHint");
@@ -568,28 +570,33 @@ namespace ElonaKeys
 				hintText = go.AddComponent<Text>();
 				hintText.font = RadialWheel.FindFont();
 				hintText.fontSize = 12;
-				hintText.alignment = TextAnchor.MiddleCenter;
+				hintText.alignment = TextAnchor.LowerCenter;
 				hintText.color = new Color(1f, 0.6f, 0.38f); // Elona's orange hint
 				hintText.raycastTarget = false;
 				hintText.horizontalOverflow = HorizontalWrapMode.Overflow;
 				RectTransform rt = hintText.rectTransform;
 				rt.anchorMin = new Vector2(0.5f, 0f);
 				rt.anchorMax = new Vector2(0.5f, 0f);
-				rt.pivot = new Vector2(0.5f, 1f);
-				rt.anchoredPosition = new Vector2(0f, -2f); // just under the window
-				rt.sizeDelta = new Vector2(Plugin.MenuWidth, 34f); // two lines: info + keys
+				rt.pivot = new Vector2(0.5f, 0f);
+				rt.anchoredPosition = new Vector2(0f, 4f); // inside the frame bottom
+				rt.sizeDelta = new Vector2(Plugin.MenuWidth - 40f, 32f); // info + keys
 				Outline o = go.AddComponent<Outline>();
 				o.effectColor = new Color(0f, 0f, 0f, 0.9f);
 				o.effectDistance = new Vector2(1.2f, -1.2f);
 			}
-			catch
+			catch (Exception ex)
 			{
 				hintText = null;
+				Plugin.Log?.LogError("ElonaKeys hint line failed: " + ex);
 			}
 		}
 
 		private static void UpdateHint()
 		{
+			if (hintText == null || !hintText)
+			{
+				BuildHint(); // window frame exists once pages apply
+			}
 			if (hintText == null || !hintText)
 			{
 				return;

@@ -83,6 +83,17 @@ namespace ElonaKeys
 			{
 				EInput.action = EAction.None;
 			}
+			// Escape CANCELS a running craft: the native window hides itself
+			// while crafting and nothing else listens for a stop
+			if (Input.GetKeyDown(KeyCode.Escape) && EClass.pc.ai != null && EClass.pc.ai.IsRunning
+				&& (EClass.pc.ai is AI_UseCrafter || EClass.pc.ai is TaskCraft))
+			{
+				EClass.pc.ai.TryCancel(EClass.pc);
+				Msg.SayRaw("Crafting canceled.");
+				EInput.action = EAction.None;
+				EInput.Consume();
+				return;
+			}
 			if (queuedNative != EAction.None)
 			{
 				EInput.action = queuedNative;
