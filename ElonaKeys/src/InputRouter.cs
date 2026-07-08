@@ -94,10 +94,11 @@ namespace ElonaKeys
 				EInput.action = EAction.None;
 			}
 			// Escape CANCELS the running action: crafting always (its window
-			// hides itself mid-craft), and with no window open, ANY running
-			// task — eating, processing, stealing, harvesting... nothing else
-			// offered a stop for those
-			if (Input.GetKeyDown(KeyCode.Escape) && EClass.pc.ai != null && EClass.pc.ai.IsRunning
+			// hides itself mid-craft), and with no window open, any running
+			// TASK — eating, processing, stealing, harvesting. HasNoGoal is
+			// the gate: the idle AI (NoGoal) also "runs" constantly, and
+			// consuming Escape for it blocked the system menu entirely.
+			if (Input.GetKeyDown(KeyCode.Escape) && EClass.pc.ai != null && EClass.pc.ai.IsRunning && !EClass.pc.HasNoGoal
 				&& (EClass.pc.ai is AI_UseCrafter || EClass.pc.ai is TaskCraft || EClass.ui.TopLayer == null))
 			{
 				EClass.pc.ai.TryCancel(EClass.pc);

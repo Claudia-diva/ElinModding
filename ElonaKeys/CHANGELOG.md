@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.24.3 - 2026-07-08
+- FIXED: dropping/giving the last item on a menu's last page left the window stuck on a page that no longer existed ("None", arrows dead).
+- FIXED: Escape opens the system menu again. The new "Escape cancels your action" feature considered the idle state a running action and swallowed every press.
+- Spell icons draw onto a plain fresh image now, the exact same setup as the tooltip, instead of the row button's own icon (a skinned component that re-tints itself; white action icons hid the drift, colored spell icons showed it).
+- Ability icons sit on a pale parchment plate like the tooltip's. Window skins are saved per save file, and on a dark skin the bare colored glyphs turned to mud, which is why one save looked deep-fried and the other didn't.
+
 ## 1.24.2 - 2026-07-08
 - The column headers were RENDERING at last, just in the wrong place: the window's own layout system grabbed them and stacked them at the bottom (that vertical Lv/Pow/Hit/Dmg/Cost/Left pile in the corner). They're exempt from the window layout now and sit in the header strip next to "Name", over their columns.
 - Footer layout per spec: item count / weight / container slots CENTERED, the page number at the bottom RIGHT, both in the same font as the menu rows.

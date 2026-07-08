@@ -385,16 +385,49 @@ namespace ElonaKeys
 				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
 				iconParent.SetActive(enable: true);
 				iconParent.anchoredPosition = new Vector2(16f, 0f);
-				Image img = b.button1.icon;
+				// OUR OWN bare Image, never the button's icon: that one is a
+				// skinned game component that re-tints itself, which is why
+				// spells (colored tint) drifted off while actions (white tint)
+				// looked fine. A bare Image + Act.SetImage is the tooltip's
+				// exact setup.
+				Transform ownT = iconParent.Find("EKAbilityIcon");
+				Image img = (ownT != null) ? ownT.GetComponent<Image>() : null;
+				if (img == null)
+				{
+					GameObject io = new GameObject("EKAbilityIcon");
+					io.transform.SetParent(iconParent, worldPositionStays: false);
+					img = io.AddComponent<Image>();
+					img.raycastTarget = false;
+				}
 				foreach (Image sib in iconParent.GetComponentsInChildren<Image>(includeInactive: true))
 				{
 					if (sib != img)
 					{
-						sib.enabled = false; // also retires any old EKIconBg on pooled rows
+						sib.enabled = false; // button icon, old EKIconBg... all retired
 					}
 				}
+				// pale plate under the glyph, like the tooltip's HeaderAbility
+				// prefab: window skins are saved PER SAVE FILE, and on a dark
+				// skin a bare tinted glyph reads as mud ("deep fried on one
+				// save, fine on the other"). Parchment-colored, so it blends
+				// away on light skins.
+				Transform plateT = iconParent.Find("EKIconPlate");
+				Image plate = (plateT != null) ? plateT.GetComponent<Image>() : null;
+				if (plate == null)
+				{
+					GameObject po = new GameObject("EKIconPlate");
+					po.transform.SetParent(iconParent, worldPositionStays: false);
+					plate = po.AddComponent<Image>();
+					plate.raycastTarget = false;
+					plate.color = new Color(0.94f, 0.90f, 0.82f, 0.9f);
+					plate.rectTransform.sizeDelta = new Vector2(32f, 32f);
+					plate.rectTransform.anchoredPosition = Vector2.zero;
+				}
+				plate.enabled = true;
+				plate.transform.SetAsLastSibling();
 				img.enabled = true;
-				img.material = null; // pooled row may carry the item shader
+				img.transform.SetAsLastSibling(); // glyph above the plate
+				img.material = null;
 				// AddHeaderAbility paints with THE ELEMENT ITSELF as an Act
 				// ((this as Act)?.SetImage) — the pc's spells/actions ARE Act
 				// instances with the real sprite. ACT.Create(source) built a
@@ -962,6 +995,10 @@ namespace ElonaKeys
 				}
 			}
 			pageRows.Clear();
+			// clamp AFTER the view rebuild: Refresh()'s old clamp ran against
+			// the stale view, so dropping the last item of the last page left
+			// the menu on a page that no longer existed ("None", keys dead)
+			page = Mathf.Clamp(page, 0, PageCount - 1);
 			int start = page * PageSize;
 			for (int i = start; i < view.Count && i < start + PageSize; i++)
 			{
