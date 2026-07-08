@@ -24,6 +24,7 @@ namespace ElonaKeys
 		public SourceElement.Row actSrc;     // ability rows: enables digit hotkeying
 		public Element ability;              // ability rows: element icon + native tooltip
 		public string fixedPrefix;           // static text (slot names); label scrolls separately
+		public Action<UINote> note;          // custom tooltip body (crafting recipes...)
 	}
 
 	public static class MenuSystem
@@ -54,6 +55,10 @@ namespace ElonaKeys
 		private static MenuRow amountRow;
 		private static int amount;
 
+		// hold-x-to-reset tracking (sourceCycle screens)
+		private static float xDownAt;
+		private static bool xPending;
+
 		// multi-source screens (inventory browser, craft categories): z/x cycle
 		// sources/tabs instead of sort/examine. Stored ON the screen, so shift-
 		// back restores the right behavior per window.
@@ -76,12 +81,17 @@ namespace ElonaKeys
 
 		private static int PageCount => Mathf.Max(1, (view.Count + PageSize - 1) / PageSize);
 
-		public static void Show(string _title, List<MenuRow> rows, Action _refreshSource = null, bool keepLayers = false)
+		public static void Show(string _title, List<MenuRow> rows, Action _refreshSource = null, bool keepLayers = false, bool replace = false)
 		{
 			MenuCycle.ClearUnlessJustSet(); // Tab only cycles inside a window family
 			if (Alive && current != null)
 			{
-				history.Add(current); // shift returns here
+				if (!replace)
+				{
+					history.Add(current); // shift returns here
+				}
+				// replace = tab/source cycling: same window, new view; shift
+				// exits instead of walking every tab you visited
 			}
 			else
 			{
@@ -298,6 +308,16 @@ namespace ElonaKeys
 						Act a = ACT.Create(ab.source);
 						ab._WriteNote(tt.note, EClass.pc, a);
 					});
+				});
+			}
+			if (r.note != null)
+			{
+				Action<UINote> writer = r.note;
+				b.button1.SetTooltip("note", delegate(UITooltip tt)
+				{
+					tt.note.Clear();
+					writer(tt.note);
+					tt.note.Build();
 				});
 			}
 			if (!badge)
@@ -598,7 +618,7 @@ namespace ElonaKeys
 			try
 			{
 				TooltipManager.Instance.HideTooltips(immediate: true);
-				if (sel < 0 || sel >= pageRows.Count || (pageRows[sel].icon == null && pageRows[sel].ability == null) || layer.list.buttons == null || sel >= layer.list.buttons.Count)
+				if (sel < 0 || sel >= pageRows.Count || (pageRows[sel].icon == null && pageRows[sel].ability == null && pageRows[sel].note == null) || layer.list.buttons == null || sel >= layer.list.buttons.Count)
 				{
 					return;
 				}
@@ -652,7 +672,8 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			// multi-source screen: z/x flip the shown inventory / category tab
+			// multi-source screen: z/x flip the shown inventory / category tab.
+			// HOLDING x (0.6s) resets to the first tab ([All] / You).
 			if (current.sourceCycle != null && !EInput.isCtrlDown && !EInput.isAltDown)
 			{
 				if (Input.GetKeyDown(KeyCode.Z))
@@ -662,6 +683,19 @@ namespace ElonaKeys
 				}
 				if (Input.GetKeyDown(KeyCode.X))
 				{
+					xDownAt = Time.unscaledTime;
+					xPending = true;
+					return;
+				}
+				if (xPending && Input.GetKey(KeyCode.X) && Time.unscaledTime - xDownAt >= 0.6f)
+				{
+					xPending = false;
+					current.sourceCycle(0); // hold = reset to the first tab
+					return;
+				}
+				if (xPending && Input.GetKeyUp(KeyCode.X))
+				{
+					xPending = false;
 					current.sourceCycle(1);
 					return;
 				}

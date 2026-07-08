@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.19.5 - 2026-07-06
+- Crafting menu catches up to the native window's info: recipes show their skill and how many you own next to the name (the right column is just the craftable count now, no more garbled text), hovering or selecting a recipe shows a full tooltip (skill vs yours, stamina cost and whether it will drain you, craftable count, owned, every material with have/need), and the recipe view opens with an info line (skill, stamina in red when it would hurt, owned).
+- Switching crafting categories or browser inventories no longer piles up history: shift exits the window instead of replaying every tab you visited.
+- Holding x (0.6s) in the crafting menu or inventory browser resets to [All] / You.
+
 ## 1.19.4 - 2026-07-06
 - Fixed crafting opening a broken Elin window that Escape couldn't close (with the material panel stuck open). The keyboard recipe menu now opens the way it was meant to.
 

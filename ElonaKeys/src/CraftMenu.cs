@@ -58,6 +58,11 @@ namespace ElonaKeys
 
 		private static void ShowCat(Thing factory)
 		{
+			ShowCat(factory, replaceScreen: false);
+		}
+
+		private static void ShowCat(Thing factory, bool replaceScreen)
+		{
 			// throws propagate to the redirect postfix, which keeps the native
 			// window when our menu can't open (never open a SECOND native one)
 			List<RecipeSource> sources = EClass.player.recipes.ListSources(factory, null);
@@ -105,13 +110,16 @@ namespace ElonaKeys
 				catch
 				{
 				}
+				int own = OwnedCount(r);
 				Recipe rr = r;
 				Thing fac = factory;
+				string tag = " <size=13><color=#8f8f7a>" + skill + ((own > 0) ? ("  own " + own) : "") + "</color></size>";
 				(craftable ? can : cant).Add(new MenuRow
 				{
-					label = craftable ? SafeName(rr) : ("<color=#777777>" + SafeName(rr) + "</color>"),
-					rightText = "<size=12>" + skill + (craftable ? ("  x" + max) : "") + "</size>",
+					label = (craftable ? SafeName(rr) : ("<color=#777777>" + SafeName(rr) + "</color>")) + tag,
+					rightText = craftable ? ("x" + max) : "-",
 					closeOnAct = false,
+					note = delegate(UINote n) { WriteRecipeNote(n, rr, fac); },
 					act = delegate { Detail(rr, fac); }
 				});
 			}
@@ -124,16 +132,105 @@ namespace ElonaKeys
 				act = delegate { OpenNative(factory); }
 			});
 			string title = ((factory != null) ? (factory.Name + " - ") : "") + "Craft [" + CatName(craftCat) + "]";
-			MenuSystem.Show(title, rows);
-			// z/x cycle the category tabs, same keys as everywhere else
+			MenuSystem.Show(title, rows, null, keepLayers: false, replace: replaceScreen);
+			// z/x cycle the category tabs; holding x resets to [All]; cycling
+			// REPLACES the screen so shift exits instead of replaying every tab
 			List<string> catList = cats;
 			Thing fac2 = factory;
 			MenuSystem.SetSourceCycle(delegate(int dir)
 			{
-				int cur = Mathf.Max(0, catList.IndexOf(craftCat));
-				craftCat = catList[((cur + dir) % catList.Count + catList.Count) % catList.Count];
-				ShowCat(fac2);
+				if (dir == 0)
+				{
+					craftCat = "all";
+				}
+				else
+				{
+					int cur = Mathf.Max(0, catList.IndexOf(craftCat));
+					craftCat = catList[((cur + dir) % catList.Count + catList.Count) % catList.Count];
+				}
+				ShowCat(fac2, replaceScreen: true);
 			});
+		}
+
+		// how many of the product the player already owns (native "Own" column)
+		private static int OwnedCount(Recipe r)
+		{
+			try
+			{
+				string id = r.id; // recipe id == product card id
+				int n = 0;
+				foreach (Thing t in EClass.pc.things.List((Thing x) => x.id == id, onlyAccessible: true))
+				{
+					n += t.Num;
+				}
+				return n;
+			}
+			catch
+			{
+				return 0;
+			}
+		}
+
+		private static int SpCost(Recipe r, Thing factory)
+		{
+			try
+			{
+				return r.source.GetSPCost(factory);
+			}
+			catch
+			{
+				return -1;
+			}
+		}
+
+		// tooltip / detail summary matching what the native product panel shows
+		private static void WriteRecipeNote(UINote n, Recipe r, Thing factory)
+		{
+			n.AddHeader(SafeName(r));
+			try
+			{
+				Element sk = r.source.GetReqSkill();
+				int cur = EClass.pc.Evalue(sk.id);
+				n.AddText("Skill: " + sk.Name + " " + sk.Value + "  (you: " + cur + ")");
+			}
+			catch
+			{
+			}
+			int sp = SpCost(r, factory);
+			if (sp >= 0)
+			{
+				bool hurts = sp >= EClass.pc.stamina.value;
+				n.AddText("Stamina: " + sp + " per craft  (you: " + EClass.pc.stamina.value + ")" + (hurts ? "  DRAINS YOU" : ""));
+			}
+			int max = SafeMaxCount(r);
+			n.AddText("Craftable now: " + ((max > 0) ? ("x" + max) : "none"));
+			int own = OwnedCount(r);
+			if (own > 0)
+			{
+				n.AddText("Owned: " + own);
+			}
+			n.Space(4);
+			foreach (Recipe.Ingredient ing in r.ingredients)
+			{
+				string nm;
+				try
+				{
+					nm = ing.GetName();
+				}
+				catch
+				{
+					nm = ing.id;
+				}
+				int have = 0;
+				try
+				{
+					have = EClass._map.Stocked.ListThingStack(ing, StockSearchMode.AroundPC).count;
+				}
+				catch
+				{
+				}
+				n.AddText("- " + nm + " x" + ing.req + "  (have " + have + ")" + (ing.optional ? " (optional)" : ""));
+			}
 		}
 
 		private static string SafeName(Recipe r)
@@ -205,6 +302,35 @@ namespace ElonaKeys
 		private static List<MenuRow> BuildDetailRows(Recipe r, Thing factory)
 		{
 			List<MenuRow> rows = new List<MenuRow>();
+			// info header, like the native product panel
+			string info = "";
+			try
+			{
+				Element sk = r.source.GetReqSkill();
+				info = sk.Name + " " + sk.Value + " (you " + EClass.pc.Evalue(sk.id) + ")";
+			}
+			catch
+			{
+			}
+			int sp = SpCost(r, factory);
+			if (sp >= 0)
+			{
+				bool hurts = sp >= EClass.pc.stamina.value;
+				info += "   Stamina " + (hurts ? ("<color=#c05050>" + sp + "!</color>") : sp.ToString()) + "/" + EClass.pc.stamina.value;
+			}
+			int owned = OwnedCount(r);
+			if (owned > 0)
+			{
+				info += "   own " + owned;
+			}
+			if (info.Length > 0)
+			{
+				rows.Add(new MenuRow
+				{
+					label = "<size=13>" + info.Trim() + "</size>",
+					note = delegate(UINote n) { WriteRecipeNote(n, r, factory); }
+				});
+			}
 			foreach (Recipe.Ingredient ingredient in r.ingredients)
 			{
 				Recipe.Ingredient ing = ingredient;
@@ -235,6 +361,7 @@ namespace ElonaKeys
 				label = (max > 0) ? ("Craft  <color=#9fd6ff>(up to x" + max + ")</color>") : "<color=#777777>Craft (missing materials)</color>",
 				closeOnAct = false,
 				maxAmount = Mathf.Max(0, max),
+				note = delegate(UINote n) { WriteRecipeNote(n, r, factory); },
 				onAmount = delegate(int n) { Execute(r, factory, n); },
 				act = (max == 1) ? ((Action)delegate { Execute(r, factory, 1); }) : null
 			});

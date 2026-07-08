@@ -2164,7 +2164,7 @@ namespace ElonaKeys
 		{
 			MenuCycle.Set("items", 0);
 			browseSrc = 0;
-			ShowBrowser();
+			ShowBrowser(replaceScreen: false);
 		}
 
 		private static List<(string name, Chara owner)> BrowserSources()
@@ -2184,12 +2184,16 @@ namespace ElonaKeys
 			return s;
 		}
 
-		private static void ShowBrowser()
+		private static void ShowBrowser(bool replaceScreen)
 		{
 			List<(string name, Chara owner)> sources = BrowserSources();
 			browseSrc = ((browseSrc % sources.Count) + sources.Count) % sources.Count;
 			(string name, Chara owner) src = sources[browseSrc];
 			List<MenuRow> rows = BuildBrowserRows(src.owner);
+			if (Plugin.DebugLog)
+			{
+				Plugin.Log?.LogInfo("ElonaKeys browser: source=" + src.name + " rows=" + rows.Count + " (of " + sources.Count + " sources)");
+			}
 			string title = "Inventory - " + src.name;
 			if (rows.Count == 0)
 			{
@@ -2198,12 +2202,12 @@ namespace ElonaKeys
 			MenuSystem.Show(title, rows, delegate
 			{
 				MenuSystem.SetRows(BuildBrowserRows(src.owner));
-			});
+			}, keepLayers: false, replace: replaceScreen);
 			int count = sources.Count;
 			MenuSystem.SetSourceCycle(delegate(int dir)
 			{
-				browseSrc = ((browseSrc + dir) % count + count) % count;
-				ShowBrowser();
+				browseSrc = (dir == 0) ? 0 : (((browseSrc + dir) % count + count) % count);
+				ShowBrowser(replaceScreen: true);
 			});
 		}
 
@@ -2259,8 +2263,19 @@ namespace ElonaKeys
 					maxAmount = Mathf.Max(1, t.Num),
 					onAmount = delegate(int n)
 					{
-						Thing taken = (n >= t.Num) ? t : t.Split(n);
-						pc.Pick(taken);
+						try
+						{
+							if (Plugin.DebugLog)
+							{
+								Plugin.Log?.LogInfo("ElonaKeys browser take: " + t.Name + " x" + n + " from " + (owner != null ? owner.Name : "home stock") + " (uid " + t.uid + ")");
+							}
+							Thing taken = (n >= t.Num) ? t : t.Split(n);
+							pc.Pick(taken);
+						}
+						catch (Exception ex)
+						{
+							Plugin.Log?.LogError("ElonaKeys browser take failed: " + ex);
+						}
 					}
 				});
 			}
