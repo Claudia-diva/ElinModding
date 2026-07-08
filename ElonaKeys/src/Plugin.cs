@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.20.2";
+		public const string Version = "1.21.0";
 
 		internal static ManualLogSource Log;
 
@@ -288,6 +288,20 @@ namespace ElonaKeys
 			SuppressBinds = Keybind.ParseList(suppressNativeKeys.Value);
 			SuppressAllBinds = Keybind.ParseList(suppressAllKey.Value);
 			Quickbind.LoadFrom(quickbinds.Value);
+		}
+
+		// first key of a named bind (hold-detection etc.)
+		internal static KeyCode GetBindKey(string name)
+		{
+			foreach ((ConfigEntry<string> cfg, string n, Action run, EAction action) d in defs)
+			{
+				if (d.n == name)
+				{
+					List<Keybind> list = Keybind.ParseList(d.cfg.Value);
+					return (list.Count > 0) ? list[0].key : KeyCode.None;
+				}
+			}
+			return KeyCode.None;
 		}
 
 		internal static Entry FindPressed()

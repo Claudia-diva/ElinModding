@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.21.0 - 2026-07-08
+- Spell/action menus cleaned up: the stats get a proper wide column (no more everything scrolling in a sliver), the scaling-stat icon is back next to the numbers, and the tooltip keeps the deep detail.
+- Sorting fits the menu now: z cycles original / name / CATEGORY / STOCK in ability menus, and original / name / weight / COUNT in item menus.
+- HOLD v (or a) while the menu opens = manual targeting mode: every cast opens the aiming cursor and you can target anyone, friend or foe. Tap = the quick flow as before (remembered target casts instantly).
+- w on a selected spell casts it on your WHOLE party (Elona's Wide Skill), for spells that can target allies.
+- The party menu (shift+q) shows each member's live sprite, with their info card on hover.
+
 ## 1.20.2 - 2026-07-08
 - Page number, item count and total weight are back in the window TITLE, where they render reliably. The bottom hint line is gone (it refused to show twice); the key list lives in Mod Help.
 - The space/interact/tile menus show the live sprite of each character next to their actions, like they already did for items and stations. Hovering the row shows their info card.

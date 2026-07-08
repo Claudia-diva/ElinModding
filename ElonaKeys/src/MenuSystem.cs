@@ -27,6 +27,8 @@ namespace ElonaKeys
 		public Action<UINote> note;          // custom tooltip body (crafting recipes...)
 		public Card iconCard;                // NPC/chara rows: live sprite in the icon slot
 		public Action<Image> drawIcon;       // custom icon painter (recipe sprites...)
+		public float rightWidth;             // right column width override (0 = WeightWidth)
+		public int sortCount;                // count/stock sort key (item Num, spell stock)
 	}
 
 	public static class MenuSystem
@@ -48,7 +50,7 @@ namespace ElonaKeys
 		private static List<MenuRow> view = new List<MenuRow>();
 		private static int page;
 		private static int sel;
-		private static int sortMode; // 0 original, 1 name, 2 weight
+		private static int sortMode; // 0 original, 1 name, 2 weight/category, 3 count/stock
 		private static int openFrame;
 
 		// count spinner state
@@ -120,6 +122,7 @@ namespace ElonaKeys
 			history.Clear();
 			current = null;
 			amountRow = null;
+			Handlers.ManualCastMode = false;
 			if (Alive)
 			{
 				layer.Close();
@@ -417,6 +420,11 @@ namespace ElonaKeys
 						ab._WriteNote(tt.note, EClass.pc, a);
 					});
 				});
+				SetStatIcon(b, ab);
+			}
+			else
+			{
+				SetStatIcon(b, null); // pooled rows: hide the stat badge
 			}
 			if (r.note != null)
 			{
@@ -434,19 +442,68 @@ namespace ElonaKeys
 				b.button1.mainText.text = letter + ")  " + b.button1.mainText.text;
 			}
 			float nameX = badge ? 78f : 52f;
+			float rightW = (r.rightWidth > 0f) ? r.rightWidth : Plugin.WeightWidth;
 			b.button1.mainText.rectTransform.anchoredPosition = new Vector2(nameX, 0f);
-			SetWeightText(b, r.rightText);
+			SetWeightText(b, r.rightText, rightW);
 			if (r.fixedPrefix != null)
 			{
 				// static prefix in mainText; only the name (child text) scrolls.
 				// Prefix column is narrow (slot names are trimmed to 9 chars).
 				float prefixW = 116f;
-				SetNameText(b, r.label, nameX + prefixW, Plugin.MenuWidth - (nameX + prefixW) - Plugin.WeightWidth - 24f);
+				SetNameText(b, r.label, nameX + prefixW, Plugin.MenuWidth - (nameX + prefixW) - rightW - 24f);
 			}
 			else
 			{
 				SetNameText(b, null, 0f, 0f);
-				MenuExtras.ApplyNameDisplay(b.button1.mainText, Plugin.MenuWidth - nameX - Plugin.WeightWidth - 24f);
+				MenuExtras.ApplyNameDisplay(b.button1.mainText, Plugin.MenuWidth - nameX - rightW - 24f);
+			}
+		}
+
+		// small scaling-stat icon for ability rows (left of the stat column),
+		// painted with the base Element.SetImage (the stat-icon painter)
+		private static void SetStatIcon(ItemGeneral b, Element ability)
+		{
+			try
+			{
+				Transform existing = b.button1.transform.Find("EKStat");
+				Image si = (existing != null) ? existing.GetComponent<Image>() : null;
+				if (ability == null)
+				{
+					if ((bool)si)
+					{
+						si.enabled = false;
+					}
+					return;
+				}
+				if (si == null)
+				{
+					GameObject go = new GameObject("EKStat");
+					go.transform.SetParent(b.button1.transform, worldPositionStays: false);
+					si = go.AddComponent<Image>();
+					si.raycastTarget = false;
+					RectTransform srt = si.rectTransform;
+					srt.anchorMin = new Vector2(1f, 0.5f);
+					srt.anchorMax = new Vector2(1f, 0.5f);
+					srt.pivot = new Vector2(1f, 0.5f);
+					srt.anchoredPosition = new Vector2(-190f, 0f); // left of the stat column
+				}
+				si.enabled = true;
+				si.material = null;
+				ability.SetImage(si); // base painter = the scaling-stat icon
+				si.color = Color.white;
+				RectTransform rt = si.rectTransform;
+				rt.pivot = new Vector2(1f, 0.5f);
+				rt.anchoredPosition = new Vector2(-190f, 0f);
+				Vector2 s = rt.sizeDelta;
+				float max = Mathf.Max(s.x, s.y);
+				if (max > 18f || max <= 0f)
+				{
+					rt.sizeDelta = (max > 0f) ? (s * (18f / max)) : new Vector2(18f, 18f);
+				}
+			}
+			catch
+			{
+				// cosmetic only
 			}
 		}
 
@@ -509,7 +566,7 @@ namespace ElonaKeys
 		}
 
 		// right-aligned weight column: our own Text child, pooled-row safe
-		private static void SetWeightText(ItemGeneral b, string text)
+		private static void SetWeightText(ItemGeneral b, string text, float width)
 		{
 			try
 			{
@@ -538,10 +595,10 @@ namespace ElonaKeys
 				}
 				if ((bool)wt)
 				{
-					wt.rectTransform.sizeDelta = new Vector2(Plugin.WeightWidth, 24f);
+					wt.rectTransform.sizeDelta = new Vector2(width, 24f);
 					wt.text = text ?? "";
-					// very long weights scroll inside the narrow column
-					MenuExtras.ApplyNameDisplay(wt, Plugin.WeightWidth);
+					// overly long content scrolls inside the column
+					MenuExtras.ApplyNameDisplay(wt, width);
 				}
 			}
 			catch
@@ -620,7 +677,12 @@ namespace ElonaKeys
 			}
 			else if (sortMode == 2)
 			{
+				// ability menus store the category bucket here, item menus weight
 				view.Sort((MenuRow a, MenuRow b) => b.sortWeight.CompareTo(a.sortWeight));
+			}
+			else if (sortMode == 3)
+			{
+				view.Sort((MenuRow a, MenuRow b) => b.sortCount.CompareTo(a.sortCount));
 			}
 			pageRows.Clear();
 			int start = page * PageSize;
@@ -636,7 +698,18 @@ namespace ElonaKeys
 			string caption = current.title;
 			if (sortMode != 0)
 			{
-				caption += (sortMode == 1) ? " [name]" : " [weight]";
+				bool abilityMenu = false;
+				foreach (MenuRow r0 in view)
+				{
+					if (r0.ability != null)
+					{
+						abilityMenu = true;
+						break;
+					}
+				}
+				caption += (sortMode == 1) ? " [name]"
+					: ((sortMode == 2) ? (abilityMenu ? " [category]" : " [weight]")
+					: (abilityMenu ? " [stock]" : " [count]"));
 			}
 			if (PageCount > 1)
 			{
@@ -830,10 +903,19 @@ namespace ElonaKeys
 			string typed = Input.inputString;
 			if (typed == "z" && !EInput.isShiftDown && !EInput.isCtrlDown && !EInput.isAltDown)
 			{
-				sortMode = (sortMode + 1) % 3;
+				sortMode = (sortMode + 1) % 4;
 				sel = 0;
 				page = 0;
 				ApplyPage();
+				return;
+			}
+			// w = WIDE cast: the selected spell on the whole party (Elona's Wide)
+			if (typed == "w" && !EInput.isShiftDown && !EInput.isCtrlDown && !EInput.isAltDown)
+			{
+				if (sel >= 0 && sel < pageRows.Count && pageRows[sel].ability != null)
+				{
+					Handlers.WideCast(pageRows[sel].ability);
+				}
 			}
 		}
 

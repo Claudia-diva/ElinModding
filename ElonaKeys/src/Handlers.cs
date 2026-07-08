@@ -188,6 +188,7 @@ namespace ElonaKeys
 					icon = t,
 					rightText = WeightText(t.ChildrenAndSelfWeight),
 					sortWeight = t.ChildrenAndSelfWeight,
+					sortCount = t.Num,
 					closeOnAct = !refresh,
 					maxAmount = (amount != null) ? amount(t) : 0,
 					onAmount = (onAmount != null) ? ((Action<int>)delegate(int n) { onAmount(t, n); }) : null,
@@ -1502,11 +1503,13 @@ namespace ElonaKeys
 				rows.Add(new MenuRow
 				{
 					label = c.Name + " - Character sheet",
+					iconCard = c,
 					act = delegate { EClass.ui.AddLayer<LayerChara>().SetChara(c); }
 				});
 				rows.Add(new MenuRow
 				{
 					label = c.Name + " - Items",
+					iconCard = c,
 					closeOnAct = false,
 					act = delegate { PartyInventory(c); }
 				});
@@ -1701,16 +1704,24 @@ namespace ElonaKeys
 		// v = spells (mana, group SPELL), a = actions (stamina, group ABILITY).
 		// Both menus: favorites, type filters (attack/buff/hex/heal), favorite
 		// management, native targeting via ButtonAbility.TryUse, digit hotkeys.
+		// tap = quick flow (remembered target casts instantly); HOLD the key
+		// ~0.5s after the menu opens = manual targeting for every cast
+		internal static bool ManualCastMode;
+
 		public static void Cast()
 		{
 			MenuCycle.Set("ability", 0);
+			ManualCastMode = false;
 			AbilityMenu(spells: true, bucket: null, favOnly: false);
+			MenuExtras.WatchCastHold(Plugin.GetBindKey("Cast"));
 		}
 
 		public static void ActionList()
 		{
 			MenuCycle.Set("ability", 1);
+			ManualCastMode = false;
 			AbilityMenu(spells: false, bucket: null, favOnly: false);
+			MenuExtras.WatchCastHold(Plugin.GetBindKey("Action"));
 		}
 
 		private static string TypeBucket(Element e)
@@ -1806,6 +1817,18 @@ namespace ElonaKeys
 			}
 		}
 
+		private static int BucketIndex(Element e)
+		{
+			switch (TypeBucket(e))
+			{
+			case "attack": return 4;
+			case "buff": return 3;
+			case "heal": return 2;
+			case "hex": return 1;
+			default: return 0;
+			}
+		}
+
 		private static MenuRow AbilityRow(Element e, bool spells)
 		{
 			bool fav = EClass.player.favAbility.Contains(e.id);
@@ -1814,8 +1837,16 @@ namespace ElonaKeys
 			{
 				if (!e.source.aliasParent.IsEmpty())
 				{
-					stat = " · " + e.source.aliasParent;
+					stat = " " + e.source.aliasParent;
 				}
+			}
+			catch
+			{
+			}
+			int stock = 0;
+			try
+			{
+				stock = e.PotentialAsStock ? e.vPotential : e.Potential;
 			}
 			catch
 			{
@@ -1824,15 +1855,18 @@ namespace ElonaKeys
 			{
 				label = (fav ? "★ " : "") + e.source.GetName() + Quickbind.TagForAbility(e.source.alias) + " <size=13><color=#8f8f7a>" + TypeBucket(e) + stat + "</color></size>",
 				rightText = AbilityCostText(e, spells),
+				rightWidth = 175f, // static stat block: no scrolling in a tiny column
+				sortWeight = BucketIndex(e) * 1000, // z-sort mode 2 = by category
+				sortCount = stock,                  // z-sort mode 3 = by stock
 				actSrc = e.source,
 				ability = e,
 				act = delegate { CastAbility(e); }
 			};
 		}
 
-		// Elona-ish stat columns: level, cast chance (spells), damage dice,
-		// power, current(original) cost, and x = casts left (spell stock) or
-		// potential % for actions. The tooltip keeps the full card.
+		// Slim stat block (fits statically in the 175px column): level, cast
+		// chance (spells), dice, cost, casts left / potential. Power and the
+		// original cost live in the tooltip.
 		private static string AbilityCostText(Element e, bool spells)
 		{
 			string s = "";
@@ -1864,15 +1898,7 @@ namespace ElonaKeys
 			catch
 			{
 			}
-			try
-			{
-				s += "P" + e.GetPower(pc) + " ";
-			}
-			catch
-			{
-			}
-			int orig = (e.source.cost != null && e.source.cost.Length > 0) ? e.source.cost[0] : 0;
-			int cur = orig;
+			int cur = 0;
 			try
 			{
 				Act a = ACT.Create(e.source);
@@ -1881,9 +1907,9 @@ namespace ElonaKeys
 			catch
 			{
 			}
-			if (cur > 0 || orig > 0)
+			if (cur > 0)
 			{
-				s += cur + ((orig > 0 && orig != cur) ? ("(" + orig + ")") : "") + (spells ? "mp" : "sp");
+				s += cur + (spells ? "mp" : "sp");
 			}
 			try
 			{
@@ -1900,6 +1926,32 @@ namespace ElonaKeys
 			{
 			}
 			return "<size=12>" + s.Trim() + "</size>";
+		}
+
+		// w in the ability menus: cast the selected spell on the WHOLE PARTY
+		// (Elona's Wide Skill), via the game's native multicast
+		internal static void WideCast(Element e)
+		{
+			try
+			{
+				Act act = ACT.Create(e.source);
+				TargetType tt = act.TargetType;
+				bool allyOk = tt.CanSelectParty || tt.ForceParty || tt.Range == TargetRange.Party || tt.CanSelectSelf;
+				if (!allyOk)
+				{
+					Msg.SayRaw(e.source.GetName() + " cannot target your party.");
+					return;
+				}
+				MenuSystem.Close();
+				if (pc.UseAbility(act, null, null, pt: true))
+				{
+					EClass.player.EndTurn();
+				}
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys wide cast failed: " + ex);
+			}
 		}
 
 		private static void FilterMenu(bool spells)
@@ -1957,6 +2009,49 @@ namespace ElonaKeys
 		{
 			Act act = (e as Act) ?? ACT.Create(e.source);
 			TargetType tt = act.TargetType;
+			// MANUAL mode (menu opened by HOLDING the cast key): no quick-cast,
+			// no hostility pre-filters: the free cursor aims at anyone
+			if (ManualCastMode)
+			{
+				List<Chara> all = new List<Chara>();
+				foreach (Chara cc in EClass._map.charas)
+				{
+					if (cc != pc && !cc.isDead && pc.CanSee(cc))
+					{
+						all.Add(cc);
+					}
+				}
+				TargetMode.Begin(act.GetText() + " (manual)", all, delegate(Point p, Chara ch)
+				{
+					bool ok;
+					if (tt.Range == TargetRange.Ground)
+					{
+						ok = SafeCanPerformAt(act, p) && pc.UseAbility(act, null, p);
+					}
+					else if (ch != null)
+					{
+						ok = pc.UseAbility(act, ch, ch.pos);
+					}
+					else if (p.Equals(pc.pos))
+					{
+						ok = pc.UseAbility(act, pc, pc.pos);
+					}
+					else
+					{
+						Msg.SayRaw("There is no one there.");
+						return;
+					}
+					if (ok)
+					{
+						EClass.player.EndTurn();
+					}
+					else
+					{
+						Msg.SayRaw("You cannot cast that there.");
+					}
+				});
+				return;
+			}
 			// self-only: instant
 			if (tt.Range == TargetRange.Self && !tt.ForceParty)
 			{

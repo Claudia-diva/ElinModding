@@ -83,6 +83,37 @@ namespace ElonaKeys
 			return -1;
 		}
 
+		// hold-the-cast-key watcher: menu opened by v/a flips into MANUAL
+		// targeting when the key stays held ~0.5s after opening
+		private static float castHoldAt = -1f;
+		private static KeyCode castHoldKey;
+
+		public static void WatchCastHold(KeyCode key)
+		{
+			castHoldKey = key;
+			castHoldAt = (key != KeyCode.None) ? Time.unscaledTime : -1f;
+		}
+
+		private static void UpdateCastHold()
+		{
+			if (castHoldAt < 0f)
+			{
+				return;
+			}
+			if (!MenuSystem.Alive || !Input.GetKey(castHoldKey))
+			{
+				castHoldAt = -1f; // released (or menu gone): stays quick-cast
+				return;
+			}
+			if (Time.unscaledTime - castHoldAt > 0.45f)
+			{
+				castHoldAt = -1f;
+				Handlers.ManualCastMode = true;
+				SE.Tab();
+				Msg.SayRaw("Manual targeting: casts aim freely at friend or foe.");
+			}
+		}
+
 		public static void OnUpdate()
 		{
 			try
@@ -92,6 +123,7 @@ namespace ElonaKeys
 				{
 					return;
 				}
+				UpdateCastHold();
 				MenuSystem.HandleKeys();
 				PopupNav.OnUpdate();
 				ShiftOverlay.OnUpdate();
