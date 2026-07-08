@@ -22,8 +22,8 @@ Mod keys beat Elin's own bindings on clash by default (OverrideGameKeys). If key
 
 $Keys
 {topic|Item Keys}
-{pair|numpad 0|Instantly pick up EVERYTHING on your tile}
-{pair|g|Pick up: single item instant, several = selection list. HOLD g = grab anything nearby (furniture, dropped containers)}
+{pair|numpad 0|Instantly pick up EVERYTHING on your tile (someone's property = one crime prompt first)}
+{pair|g|Pick up: single item instant, several = selection list, owned items tagged [steal] and confirmed like the game's Steal. HOLD g = grab anything nearby (furniture, dropped containers)}
 {pair|d|Drop menu (count spinner for stacks, stays open)}
 {pair|e|Eat menu}
 {pair|q|Quaff menu, includes nearby wells and fountains}
@@ -41,8 +41,9 @@ $Keys
 {pair|Family bar|Elona-style diamond tabs shown while family windows are open (current = gold, click to jump). A real widget: toggle/drag/lock it in the widget manager, like the shift-page hotbar}
 
 {topic|Action Keys}
-{pair|v|Spells: tap = quick cast flow, HOLD = manual targeting (aim at anyone). Columns: Lv, chance, dice, cost, casts left. w = cast on whole party. z sorts by category/stock}
+{pair|v|Spells: tap = quick cast flow, HOLD = manual targeting (aim at anyone). x on a spell = aim that cast manually. Columns: Lv, chance, dice, cost, casts left. w = cast on whole party. z sorts by category/stock}
 {pair|a|Special actions: same, with sp cost and potential %}
+{pair|W (shift+w)|Wide Skill: list everything castable on your party; Enter casts it on ALL of them}
 {pair|* (keypad) or '|Free targeting cursor: arrows/numpad move (any visible tile), Space next character, Enter confirm; hover info follows the cursor}
 {pair|c|Character sheet}
 {pair|i|Interact with a direction: keyboard menu of everything there}
@@ -81,6 +82,12 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.23.0}
+・ Taking someone's property asks first (like the game's Steal), tagged [steal]. Held item pinned atop item menus with (held). Hold-v / x-on-a-spell manual aiming fixed; shift+w = Wide Skill list; menus stop leaking movement keys; captions show the controls; utility rows stop sort-shuffling.
+
+{topic|1.22.0}
+・ Ability lists: real aligned columns with header; icons in full tooltip color. numpad0 = instant tile hoover; hold g = grab nearby (installed things too); quickbound containers open; advanced distribution panel reachable.
+
 {topic|1.21.1}
 ・ Spell icons show real art; stat column configurable; hotkey casts force-cast friend-or-foe with clean messages; g = pickup selection; o = container list + backpack autopickup settings.
 

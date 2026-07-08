@@ -30,6 +30,8 @@ namespace ElonaKeys
 		public float rightWidth;             // right column width override (0 = WeightWidth)
 		public int sortCount;                // count/stock sort key (item Num, spell stock)
 		public string[] cols;                // aligned right-side columns (ability rows: Lv/Hit/Dmg/Cost/Left)
+		public bool pinTop;                  // stays first in every sort mode (the held item)
+		public bool pinBottom;               // stays last in every sort mode (utility rows)
 	}
 
 	public static class MenuSystem
@@ -123,7 +125,10 @@ namespace ElonaKeys
 			history.Clear();
 			current = null;
 			amountRow = null;
-			Handlers.ManualCastMode = false;
+			// NOTE: ManualCastMode is NOT reset here. Run() closes the menu
+			// BEFORE the row action fires, so a reset here made hold-v useless
+			// (CastAbility always saw manual mode off and insta-cast on self).
+			// CastAbility consumes the flag itself.
 			if (Alive)
 			{
 				layer.Close();
@@ -366,9 +371,10 @@ namespace ElonaKeys
 			}
 			else if (r.ability != null)
 			{
-				// spell/action rows: tinted ability glyph on a dark backing (the
-				// tint IS the art; on bare parchment it reads as a blob, white
-				// kills the color — the backing is what the native slots provide)
+				// spell/action rows: exactly what the ability tooltip header does
+				// (Element.AddHeaderAbility): Act.SetImage on a plain image over
+				// the parchment row. No extra backing — a dark square behind the
+				// tinted glyph deep-fries it.
 				Element ab = r.ability;
 				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
 				iconParent.SetActive(enable: true);
@@ -378,25 +384,10 @@ namespace ElonaKeys
 				{
 					if (sib != img)
 					{
-						sib.enabled = false;
+						sib.enabled = false; // also retires any old EKIconBg on pooled rows
 					}
 				}
-				Transform bgT = iconParent.Find("EKIconBg");
-				Image bgImg = (bgT != null) ? bgT.GetComponent<Image>() : null;
-				if (bgImg == null)
-				{
-					GameObject bgo = new GameObject("EKIconBg");
-					bgo.transform.SetParent(iconParent, worldPositionStays: false);
-					bgImg = bgo.AddComponent<Image>();
-					bgImg.raycastTarget = false;
-					bgImg.color = new Color(0.08f, 0.07f, 0.06f, 0.6f);
-					bgImg.rectTransform.sizeDelta = new Vector2(30f, 30f);
-					bgImg.rectTransform.anchoredPosition = Vector2.zero;
-				}
-				bgImg.enabled = true;
-				bgImg.transform.SetAsLastSibling();
 				img.enabled = true;
-				img.transform.SetAsLastSibling(); // above the backing
 				img.material = null; // pooled row may carry the item shader
 				// Act.SetImage = the real ability sprite + element tint
 				bool drawn = false;
@@ -543,27 +534,48 @@ namespace ElonaKeys
 				}
 				if (headerCols.Count == 0)
 				{
-					if (layer == null || !layer || layer.windows.Count == 0)
+					if (layer == null || !layer || layer.windows.Count == 0 || layer.list == null)
+					{
+						return;
+					}
+					// live inside the list container, right-aligned to the same
+					// edge the row columns hang from, just above the first row —
+					// the strip where the native "Name" sort button sits. Borrow
+					// that button's font: a Text with a null font renders nothing,
+					// silently (why these never showed).
+					Window win = layer.windows[0];
+					Font font = null;
+					if (win.buttonSort != null && win.buttonSort.mainText != null)
+					{
+						font = win.buttonSort.mainText.font;
+					}
+					if (font == null)
+					{
+						font = RadialWheel.FindFont();
+					}
+					if (font == null)
 					{
 						return;
 					}
 					for (int i = 0; i < ColNames.Length; i++)
 					{
 						GameObject go = new GameObject("EKColHead" + i);
-						go.transform.SetParent(layer.windows[0].transform, worldPositionStays: false);
+						go.transform.SetParent(layer.list.transform, worldPositionStays: false);
+						LayoutElement le = go.AddComponent<LayoutElement>();
+						le.ignoreLayout = true; // not a list item
 						Text ht = go.AddComponent<Text>();
-						ht.font = RadialWheel.FindFont();
+						ht.font = font;
 						ht.fontSize = 12;
-						ht.alignment = TextAnchor.MiddleRight;
+						ht.alignment = TextAnchor.LowerRight;
 						ht.color = new Color(0.35f, 0.32f, 0.25f);
 						ht.raycastTarget = false;
 						ht.text = ColNames[i];
 						RectTransform rt = ht.rectTransform;
 						rt.anchorMin = new Vector2(1f, 1f);
 						rt.anchorMax = new Vector2(1f, 1f);
-						rt.pivot = new Vector2(1f, 1f);
-						rt.sizeDelta = new Vector2(ColW[i], 18f);
-						rt.anchoredPosition = new Vector2(ColX[i] - 14f, -42f); // beside the Name header
+						rt.pivot = new Vector2(1f, 0f);
+						rt.sizeDelta = new Vector2(ColW[i], 16f);
+						rt.anchoredPosition = new Vector2(ColX[i], 2f); // just above row 1
 						headerCols.Add(ht);
 					}
 				}
@@ -802,6 +814,41 @@ namespace ElonaKeys
 			{
 				view.Sort((MenuRow a, MenuRow b) => b.sortCount.CompareTo(a.sortCount));
 			}
+			// pinned rows ignore the sort: held item on top, utility rows
+			// ([ Filter... ], [ Take everything ]...) at the bottom
+			List<MenuRow> pinnedTop = null;
+			List<MenuRow> pinnedBottom = null;
+			foreach (MenuRow rp in view)
+			{
+				if (rp.pinTop)
+				{
+					if (pinnedTop == null)
+					{
+						pinnedTop = new List<MenuRow>();
+					}
+					pinnedTop.Add(rp);
+				}
+				else if (rp.pinBottom)
+				{
+					if (pinnedBottom == null)
+					{
+						pinnedBottom = new List<MenuRow>();
+					}
+					pinnedBottom.Add(rp);
+				}
+			}
+			if (pinnedTop != null || pinnedBottom != null)
+			{
+				view.RemoveAll((MenuRow r2) => r2.pinTop || r2.pinBottom);
+				if (pinnedTop != null)
+				{
+					view.InsertRange(0, pinnedTop);
+				}
+				if (pinnedBottom != null)
+				{
+					view.AddRange(pinnedBottom);
+				}
+			}
 			pageRows.Clear();
 			int start = page * PageSize;
 			for (int i = start; i < view.Count && i < start + PageSize; i++)
@@ -814,17 +861,17 @@ namespace ElonaKeys
 			// everything in the CAPTION: the one place that provably renders.
 			// Plain ASCII only (no rich text, no fancy glyphs).
 			string caption = current.title;
+			bool abilityMenu = false;
+			foreach (MenuRow r0 in view)
+			{
+				if (r0.ability != null)
+				{
+					abilityMenu = true;
+					break;
+				}
+			}
 			if (sortMode != 0)
 			{
-				bool abilityMenu = false;
-				foreach (MenuRow r0 in view)
-				{
-					if (r0.ability != null)
-					{
-						abilityMenu = true;
-						break;
-					}
-				}
 				caption += (sortMode == 1) ? " [name]"
 					: ((sortMode == 2) ? (abilityMenu ? " [category]" : " [weight]")
 					: (abilityMenu ? " [stock]" : " [count]"));
@@ -847,6 +894,8 @@ namespace ElonaKeys
 			{
 				caption += "  " + pieces + " items " + (grams / 1000f).ToString("0.0") + "s";
 			}
+			// the controls, at the top where text provably renders (plain ASCII)
+			caption += abilityMenu ? "  [x aim / w party / z sort]" : "  [z sort / x info]";
 			layer.windows[0].SetCaption(caption);
 			bool colsPage = false;
 			foreach (MenuRow r1 in pageRows)
@@ -950,9 +999,15 @@ namespace ElonaKeys
 					return;
 				}
 			}
-			// x examines the hovered/selected row (press again to close)
+			// x on a castable ability row = aim it manually (free cursor),
+			// x elsewhere examines the hovered/selected row
 			if (Input.GetKeyDown(KeyCode.X) && !EInput.isCtrlDown && !EInput.isAltDown)
 			{
+				if (sel >= 0 && sel < pageRows.Count && pageRows[sel].ability != null && pageRows[sel].actSrc != null)
+				{
+					Handlers.ManualTargetCast(pageRows[sel].ability);
+					return;
+				}
 				Thing t = MenuExtras.HoveredThing() ?? SelectedThing();
 				if (t != null)
 				{
@@ -1037,13 +1092,15 @@ namespace ElonaKeys
 				ApplyPage();
 				return;
 			}
-			// w = WIDE cast: the selected spell on the whole party (Elona's Wide)
+			// w = WIDE cast: the selected spell on the whole party (Elona's Wide).
+			// Always swallowed here: falling through would move the character.
 			if (typed == "w" && !EInput.isShiftDown && !EInput.isCtrlDown && !EInput.isAltDown)
 			{
 				if (sel >= 0 && sel < pageRows.Count && pageRows[sel].ability != null)
 				{
 					Handlers.WideCast(pageRows[sel].ability);
 				}
+				return;
 			}
 		}
 

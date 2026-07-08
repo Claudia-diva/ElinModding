@@ -177,15 +177,22 @@ namespace ElonaKeys
 			List<MenuRow> rows = new List<MenuRow>();
 			if (extraRows != null)
 			{
-				rows.AddRange(extraRows);
+				foreach (MenuRow er in extraRows)
+				{
+					er.pinTop = true; // utility rows never sort-shuffle into the items
+					rows.Add(er);
+				}
 			}
 			foreach (Thing thing in things)
 			{
 				Thing t = thing;
+				bool held = t == pc.held;
 				rows.Add(new MenuRow
 				{
-					label = ((label != null) ? label(t) : DetailName(t)) + Quickbind.TagForItem(t.id),
+					// the held item leads the list, marked, in every menu (Elona)
+					label = (held ? "(held) " : "") + ((label != null) ? label(t) : DetailName(t)) + Quickbind.TagForItem(t.id),
 					icon = t,
+					pinTop = held,
 					rightText = WeightText(t.ChildrenAndSelfWeight),
 					sortWeight = t.ChildrenAndSelfWeight,
 					sortCount = t.Num,
@@ -713,7 +720,30 @@ namespace ElonaKeys
 			return here;
 		}
 
-		// numpad0: hoover the tile, no questions asked
+		// the native theft flow: taking someone's property asks first
+		// (Dialog.TryWarnCrime — the same prompt the mouse "Steal" action
+		// uses; respects the warnCrime config toggle). Everything our pickup
+		// paths grab goes through here, Pick/HoldCard alone silently eats
+		// karma + witnesses the crime.
+		private static void SafeTake(Thing t, Action take)
+		{
+			if (t != null && t.isNPCProperty)
+			{
+				Dialog.TryWarnCrime(delegate { take(); });
+			}
+			else
+			{
+				take();
+			}
+		}
+
+		private static string StealTag(Thing t)
+		{
+			return (t != null && t.isNPCProperty) ? "  [steal]" : "";
+		}
+
+		// numpad0: hoover the tile. Free things instantly; if any of it is
+		// someone's property, ONE crime prompt covers that part of the pile.
 		public static void GetAll()
 		{
 			List<Thing> here = TilePickables();
@@ -722,12 +752,34 @@ namespace ElonaKeys
 				Msg.SayRaw("There is nothing here to pick up.");
 				return;
 			}
+			List<Thing> owned = new List<Thing>();
 			foreach (Thing t in here)
 			{
-				if (t != null && !t.isDestroyed)
+				if (t == null || t.isDestroyed)
+				{
+					continue;
+				}
+				if (t.isNPCProperty)
+				{
+					owned.Add(t);
+				}
+				else
 				{
 					pc.Pick(t);
 				}
+			}
+			if (owned.Count > 0)
+			{
+				Dialog.TryWarnCrime(delegate
+				{
+					foreach (Thing t in owned)
+					{
+						if (t != null && !t.isDestroyed)
+						{
+							pc.Pick(t);
+						}
+					}
+				});
 			}
 		}
 
@@ -744,7 +796,8 @@ namespace ElonaKeys
 			}
 			if (here.Count == 1)
 			{
-				pc.Pick(here[0]);
+				Thing single = here[0];
+				SafeTake(single, delegate { pc.Pick(single); });
 				return;
 			}
 			List<MenuRow> rows = new List<MenuRow>();
@@ -753,7 +806,7 @@ namespace ElonaKeys
 				Thing t = thing;
 				rows.Add(new MenuRow
 				{
-					label = t.Name,
+					label = t.Name + StealTag(t),
 					icon = t,
 					rightText = WeightText(t.ChildrenAndSelfWeight),
 					sortWeight = t.ChildrenAndSelfWeight,
@@ -762,24 +815,20 @@ namespace ElonaKeys
 					maxAmount = Mathf.Max(1, t.Num),
 					onAmount = delegate(int n)
 					{
-						Thing taken = (n >= t.Num) ? t : t.Split(n);
-						pc.Pick(taken);
+						// split only after the crime prompt says yes
+						SafeTake(t, delegate
+						{
+							Thing taken = (n >= t.Num) ? t : t.Split(n);
+							pc.Pick(taken);
+						});
 					}
 				});
 			}
 			rows.Add(new MenuRow
 			{
 				label = "[ Take everything ]",
-				act = delegate
-				{
-					foreach (Thing t in here)
-					{
-						if (t != null && !t.isDestroyed)
-						{
-							pc.Pick(t);
-						}
-					}
-				}
+				pinBottom = true,
+				act = delegate { GetAll(); }
 			});
 			MenuSystem.Show("Pick up what?", rows);
 		}
@@ -798,15 +847,18 @@ namespace ElonaKeys
 					{
 						rows.Add(new MenuRow
 						{
-							label = t.Name,
+							label = t.Name + StealTag(t),
 							icon = t,
 							sortCount = t.Num,
 							closeOnAct = false,
 							maxAmount = Mathf.Max(1, t.Num),
 							onAmount = delegate(int n)
 							{
-								Thing taken = (n >= t.Num) ? t : t.Split(n);
-								pc.Pick(taken);
+								SafeTake(t, delegate
+								{
+									Thing taken = (n >= t.Num) ? t : t.Split(n);
+									pc.Pick(taken);
+								});
 							}
 						});
 					}
@@ -814,22 +866,25 @@ namespace ElonaKeys
 					{
 						rows.Add(new MenuRow
 						{
-							label = "Grab: " + t.Name,
+							label = "Grab: " + t.Name + StealTag(t),
 							icon = t,
 							act = delegate
 							{
-								if (!pc.CanLift(t))
+								SafeTake(t, delegate
 								{
-									pc.Say("tooHeavy", t);
-									return;
-								}
-								pc.HoldCard(t);
-								if (pc.held != null)
-								{
-									t.PlaySoundHold(spatial: false);
-									EClass.player.RefreshCurrentHotItem();
-									pc.renderer.Refresh();
-								}
+									if (!pc.CanLift(t))
+									{
+										pc.Say("tooHeavy", t);
+										return;
+									}
+									pc.HoldCard(t);
+									if (pc.held != null)
+									{
+										t.PlaySoundHold(spatial: false);
+										EClass.player.RefreshCurrentHotItem();
+										pc.renderer.Refresh();
+									}
+								});
 							}
 						});
 					}
@@ -2002,21 +2057,25 @@ namespace ElonaKeys
 			}
 			if (bucket == null && !favOnly)
 			{
+				// pinBottom: z-sorting must never shuffle these into the spells
 				rows.Add(new MenuRow
 				{
 					label = "[ Filter by type... ]",
 					closeOnAct = false,
+					pinBottom = true,
 					act = delegate { FilterMenu(spells); }
 				});
 				rows.Add(new MenuRow
 				{
 					label = "[ Manage favorites... ]",
 					closeOnAct = false,
+					pinBottom = true,
 					act = delegate { FavoriteMenu(spells); }
 				});
 				rows.Add(new MenuRow
 				{
 					label = "(open the ability window...)",
+					pinBottom = true,
 					act = delegate { EClass.ui.ToggleAbility(); }
 				});
 			}
@@ -2138,6 +2197,14 @@ namespace ElonaKeys
 			return new string[] { lv, hit, dmg, cost, left };
 		}
 
+		// x on an ability row: aim THIS cast manually with the free cursor
+		internal static void ManualTargetCast(Element e)
+		{
+			MenuSystem.Close();
+			ManualCastMode = true;
+			CastAbility(e);
+		}
+
 		// w in the ability menus: cast the selected spell on the WHOLE PARTY
 		// (Elona's Wide Skill), via the game's native multicast
 		internal static void WideCast(Element e)
@@ -2162,6 +2229,37 @@ namespace ElonaKeys
 			{
 				Plugin.Log?.LogError("ElonaKeys wide cast failed: " + ex);
 			}
+		}
+
+		// Wide key (shift+w): every spell/action that can hit your party,
+		// Enter casts it on ALL of them (Elona's Wide Skill as its own list)
+		public static void WideMenu()
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			for (int pass = 0; pass < 2; pass++)
+			{
+				bool spells = pass == 0;
+				foreach (Element element in KnownAbilities(spells))
+				{
+					Element e = element;
+					try
+					{
+						TargetType tt = ACT.Create(e.source).TargetType;
+						if (!(tt.CanSelectParty || tt.ForceParty || tt.Range == TargetRange.Party || tt.CanSelectSelf))
+						{
+							continue;
+						}
+					}
+					catch
+					{
+						continue;
+					}
+					MenuRow row = AbilityRow(e, spells);
+					row.act = delegate { WideCast(e); };
+					rows.Add(row);
+				}
+			}
+			RunRows("Wide cast on the party - what?", rows, "Nothing you know can target your party.");
 		}
 
 		private static void FilterMenu(bool spells)
@@ -2219,10 +2317,13 @@ namespace ElonaKeys
 		{
 			Act act = (e as Act) ?? ACT.Create(e.source);
 			TargetType tt = act.TargetType;
-			// MANUAL mode (menu opened by HOLDING the cast key): no quick-cast,
-			// no hostility pre-filters: the free cursor aims at anyone
+			// MANUAL mode (hold-v, or x on the row): no quick-cast, no hostility
+			// pre-filters: the free cursor aims at anyone. The flag is consumed
+			// HERE, one cast per arm — Close() must not touch it (Run() closes
+			// the menu before the row action, so a reset there always won).
 			if (ManualCastMode)
 			{
+				ManualCastMode = false;
 				List<Chara> all = new List<Chara>();
 				foreach (Chara cc in EClass._map.charas)
 				{
@@ -2532,10 +2633,12 @@ namespace ElonaKeys
 				foreach (Thing thing in pc.things.List((Thing t) => !(t.trait is TraitAbility), onlyAccessible: true))
 				{
 					Thing t = thing;
+					bool held = t == pc.held;
 					rows.Add(new MenuRow
 					{
-						label = t.Name + (t.isEquipped ? " <size=12><color=#90d090>(equipped)</color></size>" : "") + Quickbind.TagForItem(t.id),
+						label = (held ? "(held) " : "") + t.Name + (t.isEquipped ? " <size=12><color=#90d090>(equipped)</color></size>" : "") + Quickbind.TagForItem(t.id),
 						icon = t,
+						pinTop = held,
 						rightText = WeightText(t.ChildrenAndSelfWeight),
 						sortWeight = t.ChildrenAndSelfWeight,
 						closeOnAct = false,
@@ -2582,8 +2685,11 @@ namespace ElonaKeys
 							{
 								Plugin.Log?.LogInfo("ElonaKeys browser take: " + t.Name + " x" + n + " from " + (owner != null ? owner.Name : "home stock") + " (uid " + t.uid + ")");
 							}
-							Thing taken = (n >= t.Num) ? t : t.Split(n);
-							pc.Pick(taken);
+							SafeTake(t, delegate
+							{
+								Thing taken = (n >= t.Num) ? t : t.Split(n);
+								pc.Pick(taken);
+							});
 						}
 						catch (Exception ex)
 						{

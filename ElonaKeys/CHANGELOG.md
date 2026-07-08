@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.23.0 - 2026-07-08
+- Picking up things that belong to someone now asks first, like the game's own "Steal" flow (and respects the crime warning option). Applies to g, numpad0, hold-g grabbing and taking from the browser; owned items are tagged [steal] in the pickup lists. Before this, the mod's pickups silently committed the crime.
+- Spell/action icons are drawn exactly the way the ability tooltip draws them: full color on the plain row, no dark square behind. The Lv / Hit / Dmg / Cost / Left header labels finally show, lined up over their columns.
+- The item you hold in your hands is pinned to the TOP of every item menu with a (held) tag: pick food off the floor into your hands, press e, it leads the list.
+- Holding v (or a) for manual targeting works again: it kept casting on yourself because the menu wiped the manual flag while closing. Also new: pressing x on a spell in the list aims that one cast manually right away.
+- Wide Skill got its own key: shift+w lists every spell and action that can target your party; Enter casts it on all of them. w on a selected spell still does the same from inside the list.
+- Movement keys no longer leak through open menus (pressing w in a spell list used to step you forward). Menu captions now list their controls: [x aim / w party / z sort] in ability lists, [z sort / x info] elsewhere.
+- Sorting with z leaves the utility rows alone: [ Filter by type... ], [ Manage favorites... ], [ Take everything ] and friends stay put at the bottom (or top) instead of shuffling into the items.
+
 ## 1.22.0 - 2026-07-08
 - Spell/action menus have REAL columns now: Lv / Hit / Dmg / Cost / Left, each aligned under its own header label like Elona. The icons got their elemental colors back, on a dark backing so they read as icons instead of blobs.
 - numpad0 instantly picks up everything on your tile, no menu. g keeps the selection menu (with "[ Take everything ]" at the bottom), and HOLDING g opens "Grab what?": everything grabbable around you, including furniture and dropped containers, so a purse on the floor is one hold away.

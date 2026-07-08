@@ -69,6 +69,16 @@ namespace ElonaKeys
 			{
 				return; // direction prompt is eating input this frame
 			}
+			// our menus own the keyboard: WASD must not walk "through" the
+			// window (w on a spell row = Wide cast, not a step forward), and
+			// native actions/hotbar digits stay out of the world. Escape-close
+			// is unaffected (layers read Escape directly, not EInput.action).
+			if (MenuSystem.Alive)
+			{
+				EInput.axis = Vector2.zero;
+				EInput.action = EAction.None;
+				EInput.hotkey = -1;
+			}
 			// quick-craft float window: ARROW keys navigate its recipe list
 			// (PopupNav), not the player; WASD still walks
 			if (EClass.ui.TopLayer is LayerCraftFloat

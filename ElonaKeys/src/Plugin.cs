@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.22.0";
+		public const string Version = "1.23.0";
 
 		internal static ManualLogSource Log;
 
@@ -216,6 +216,7 @@ namespace ElonaKeys
 			Def("Cast", "v", Handlers.Cast, "Spell list (mana): favorites, type filters, digits hotkey the selection.");
 			Def("Action", "a", Handlers.ActionList, "Special actions list (stamina): favorites, type filters, digits hotkey the selection.");
 			Def("Wear", "w", Handlers.Wear, "Elona-style equipment window: body slot rows, pick a slot to equip or remove; DV/PV in the title.");
+			Def("Wide", "shift+w", Handlers.WideMenu, "Wide Skill: list every spell/action that can target your party; Enter casts it on ALL of them.");
 			Def("Tool", "t", Handlers.HoldTool, "Pick a tool from your inventory and hold it in your hands.");
 			Def("Use", "u", Handlers.Use, "Use a usable item from your inventory.");
 			Def("Blend", "shift+b", Handlers.Blend, "Dip/blend: pick a potion or liquid, then mix items into it.");
