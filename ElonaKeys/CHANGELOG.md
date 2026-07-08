@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.24.1 - 2026-07-08
+- Column headers, fourth try, different foundation: they now anchor to the first ROW's actual on-screen position and use its font. (The previous anchor, the window's sort button, turned out not to exist on these windows at all; the log finally said so.) Column ORDER is configurable: AbilityColumns in the config, reorder or remove entries.
+- The menus grew an Elona-style bottom line: page, item count, total weight, and for containers the SLOTS (used/free), built on the same row-anchored technique.
+- Escape cancels whatever your character is doing: eating, processing, stealing, harvesting, crafting. Anything with a progress bar stops on Escape when no window is open.
+- Sorting by weight/count in the category view sorts the CATEGORIES now (by their total weight / total pieces), each category shows its combined weight, and "All items" stays pinned on top.
+- Wide (shift+w) lists only what can truly multicast on your party: attack spells and hexes are out (the game aims those at ALL ENEMIES, which is why it said "Nothing seems to happen" in town). Low spell stock now says "not enough for the whole party" instead of silently casting on just you.
+- Targeting with * (or confirming any aimed cast) now sets the game's own target too: the native target marker appears on them, and ranged auto-fire respects it.
+- Tab from the equipment window reaches the character sheet again: one Tab press was cycling TWICE (two handlers saw the same key), landing you back where you started.
+
 ## 1.24.0 - 2026-07-08
 - Casting at a refused target no longer EATS the spell cost (the game charged first and checked after; now we check first). Aimed casts can hex/debuff your own party members without holding shift, and truly enemy-only spells tell you "(No cost spent.)" instead of failing silently.
 - When your remembered target can't take the spell (an ally for an enemy-only attack, out of reach...), the cast opens the aiming cursor instead of firing blind, and the big label at the bottom names the spell you're aiming, with (party)/(hostile) tags on whoever the cursor is over.

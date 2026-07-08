@@ -83,6 +83,9 @@ $Keys
 ・ Journal (j), log and help stay on Elin's own keys.
 
 $Changelog
+{topic|1.24.1}
+・ Column headers anchored to the rows themselves (+ AbilityColumns order config). Bottom line with page/items/weight/slots. Escape cancels any running action. Category view sorts and shows weights. Wide lists only true party casts. * sets the game's own target marker. Tab from equipment reaches the char sheet.
+
 {topic|1.24.0}
 ・ Refused casts no longer eat their cost; aimed casts can hex your own party; the aim label names the armed spell. Spell icons show real art. s/w/a/d verbs never step the character. shift+e empties hands. Collect rows show the object sprite. Character sheet scrolls with the selection.
 

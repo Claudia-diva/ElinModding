@@ -37,6 +37,10 @@ namespace ElonaKeys
 			Chara c = lastTarget;
 			if (!Valid(c, act, needHostile))
 			{
+				c = EClass.player.target; // the native key's pick counts too
+			}
+			if (!Valid(c, act, needHostile))
+			{
 				c = EClass.pc.enemy;
 			}
 			return Valid(c, act, needHostile) ? c : null;
@@ -57,6 +61,19 @@ namespace ElonaKeys
 		public static void Remember(Chara c)
 		{
 			lastTarget = c;
+			// feed the NATIVE target too: that's what draws the on-map target
+			// marker and what auto-fire reads — with only our private memory,
+			// * left no visible indicator on the picked character
+			try
+			{
+				if (c != null && EClass.player.target != c)
+				{
+					EClass.player.target = c;
+				}
+			}
+			catch
+			{
+			}
 		}
 
 		private static bool Valid(Chara c, Act act, bool needHostile)

@@ -314,8 +314,10 @@ namespace ElonaKeys
 			Group g = (groups.Count > 0) ? groups[groupIndex] : null;
 			// Elona window family: Tab on the character sheet hops to the
 			// equipment window (and back from there via MenuSystem's Tab)
-			if (Input.GetKeyDown(KeyCode.Tab) && topLayer is LayerChara && MenuCycle.Group == "chara")
+			if (Input.GetKeyDown(KeyCode.Tab) && topLayer is LayerChara && MenuCycle.Group == "chara" && !MenuCycle.CycledThisFrame)
 			{
+				// CycledThisFrame: MenuSystem's Tab already hopped Wear->Chara
+				// THIS frame; reacting to the same press bounced it right back
 				topLayer.Close();
 				MenuCycle.Next();
 				return;

@@ -44,7 +44,11 @@ namespace ElonaKeys
 			public List<MenuRow> rows;
 			public Action refreshSource;
 			public Action<int> sourceCycle; // z/x tab/source switching, per screen
+			public string footerExtra;      // extra footer detail (container slots...)
 		}
+
+		// extra footer detail for the NEXT Show() call (consumed once)
+		public static string NextFooterExtra;
 
 		private static LayerList layer;
 		private static Screen current;
@@ -102,7 +106,8 @@ namespace ElonaKeys
 			{
 				history.Clear();
 			}
-			current = new Screen { title = _title, rows = rows, refreshSource = _refreshSource };
+			current = new Screen { title = _title, rows = rows, refreshSource = _refreshSource, footerExtra = NextFooterExtra };
+			NextFooterExtra = null;
 			page = 0;
 			sel = 0;
 			amountRow = null;
@@ -110,6 +115,7 @@ namespace ElonaKeys
 			if (!Alive)
 			{
 				layer = keepLayers ? EClass.ui.AddLayerDontCloseOthers<LayerList>() : EClass.ui.AddLayer<LayerList>();
+				layer.paddings = new Vector2(layer.paddings.x, layer.paddings.y + 22f); // footer line space
 				layer.SetSize(Plugin.MenuWidth);
 				layer.SetList2(pageRows, RowText, delegate(MenuRow r, ItemGeneral b)
 				{
@@ -489,23 +495,74 @@ namespace ElonaKeys
 			}
 		}
 
-		// aligned right-side columns (Elona style): fixed x per column, with
-		// header labels in the window's header strip. Order in MenuRow.cols:
-		// [Lv, Pow, Hit, Dmg, Cost, Left]
-		private static readonly float[] ColX = { -278f, -230f, -180f, -114f, -60f, -14f };
+		// aligned right-side columns (Elona style). Canonical value order in
+		// MenuRow.cols: [Lv, Pow, Hit, Dmg, Cost, Left]; the DISPLAY order is
+		// the AbilityColumns config (csv, reorder or omit). Slot x positions
+		// are computed from the ordered widths, right to left.
 		private static readonly float[] ColW = { 44f, 44f, 52f, 68f, 56f, 44f };
 		private static readonly string[] ColNames = { "Lv", "Pow", "Hit", "Dmg", "Cost", "Left" };
-		private const float ColsBlockWidth = 318f;
+		private static readonly string[] ColKeys = { "lv", "pow", "hit", "dmg", "cost", "left" };
+
+		private static string orderSrc;      // config string the cache was built from
+		private static int[] colOrder;       // display slot -> canonical index
+		private static float[] colSlotX;     // display slot -> x offset from the right edge
+		private static float colsBlock = 318f;
+
+		private static int[] ColOrder()
+		{
+			string cfg = Plugin.AbilityColumns ?? "";
+			if (colOrder != null && orderSrc == cfg)
+			{
+				return colOrder;
+			}
+			List<int> order = new List<int>();
+			foreach (string raw in cfg.Split(','))
+			{
+				int idx = Array.IndexOf(ColKeys, raw.Trim().ToLowerInvariant());
+				if (idx >= 0 && !order.Contains(idx))
+				{
+					order.Add(idx);
+				}
+			}
+			if (order.Count == 0)
+			{
+				for (int i = 0; i < ColKeys.Length; i++)
+				{
+					order.Add(i);
+				}
+			}
+			colOrder = order.ToArray();
+			colSlotX = new float[colOrder.Length];
+			float x = -14f; // right padding
+			for (int i = colOrder.Length - 1; i >= 0; i--)
+			{
+				colSlotX[i] = x;
+				x -= ColW[colOrder[i]] + 8f;
+			}
+			colsBlock = -x + 8f;
+			orderSrc = cfg;
+			return colOrder;
+		}
+
+		private static float ColsBlockWidth
+		{
+			get
+			{
+				ColOrder();
+				return colsBlock;
+			}
+		}
 
 		private static void SetCols(ItemGeneral b, string[] cols)
 		{
 			try
 			{
-				for (int i = 0; i < ColX.Length; i++)
+				int[] order = ColOrder();
+				for (int i = 0; i < ColKeys.Length; i++)
 				{
 					Transform existing = b.button1.transform.Find("EKCol" + i);
 					UIText ct = (existing != null) ? existing.GetComponent<UIText>() : null;
-					if (cols == null || i >= cols.Length)
+					if (cols == null || i >= order.Length)
 					{
 						if ((bool)ct)
 						{
@@ -524,14 +581,16 @@ namespace ElonaKeys
 						ct.color = new Color(0.4f, 0.38f, 0.3f);
 						ct.raycastTarget = false;
 						ct.horizontalOverflow = HorizontalWrapMode.Overflow;
-						RectTransform crt = ct.rectTransform;
-						crt.anchorMin = new Vector2(1f, 0.5f);
-						crt.anchorMax = new Vector2(1f, 0.5f);
-						crt.pivot = new Vector2(1f, 0.5f);
-						crt.sizeDelta = new Vector2(ColW[i], 22f);
-						crt.anchoredPosition = new Vector2(ColX[i], 0f);
+						RectTransform crt0 = ct.rectTransform;
+						crt0.anchorMin = new Vector2(1f, 0.5f);
+						crt0.anchorMax = new Vector2(1f, 0.5f);
+						crt0.pivot = new Vector2(1f, 0.5f);
 					}
-					ct.text = cols[i] ?? "";
+					int canonical = order[i];
+					RectTransform crt = ct.rectTransform;
+					crt.sizeDelta = new Vector2(ColW[canonical], 22f);
+					crt.anchoredPosition = new Vector2(colSlotX[i], 0f);
+					ct.text = (canonical < cols.Length) ? (cols[canonical] ?? "") : "";
 				}
 			}
 			catch
@@ -556,65 +615,56 @@ namespace ElonaKeys
 					}
 					return;
 				}
+				// v4: NO prefab assumptions (v1 font was null, v2 got mask-
+				// clipped, v3's buttonSort doesn't exist on LayerList windows).
+				// Anchor to the FIRST ROW BUTTON's rendered geometry: its font
+				// provably renders, its right edge is where the value columns
+				// hang. Repositioned every refresh.
+				if (layer == null || !layer || layer.windows.Count == 0 || layer.list == null || layer.list.buttons.Count == 0)
+				{
+					return;
+				}
+				ItemGeneral first = layer.list.buttons[0].component as ItemGeneral;
+				if (first == null || !first || first.button1 == null || first.button1.mainText == null)
+				{
+					return;
+				}
+				RectTransform winRt = layer.windows[0].transform as RectTransform;
+				RectTransform btnRt = first.button1.transform as RectTransform;
+				Bounds bb = RectTransformUtility.CalculateRelativeRectTransformBounds(winRt, btnRt);
+				int[] order = ColOrder();
 				if (headerCols.Count == 0)
 				{
-					if (layer == null || !layer || layer.windows.Count == 0)
-					{
-						return;
-					}
-					// live as SIBLINGS of the native "Name" sort button — the
-					// one header element that provably renders — with its font
-					// and its exact vertical placement copied at runtime. (v1:
-					// hand-picked font was null = renders nothing, silently.
-					// v2: parented into the list, above its top edge = clipped.)
-					Window win = layer.windows[0];
-					UIButton sort = win.buttonSort;
-					if (sort == null || !sort || sort.mainText == null)
-					{
-						if (Plugin.DebugLog)
-						{
-							Plugin.Log?.LogWarning("ElonaKeys cols header: no buttonSort on this window");
-						}
-						return;
-					}
-					RectTransform srt = sort.transform as RectTransform;
-					Font font = sort.mainText.font ?? RadialWheel.FindFont();
-					if (font == null)
-					{
-						Plugin.Log?.LogWarning("ElonaKeys cols header: no usable font");
-						return;
-					}
-					for (int i = 0; i < ColNames.Length; i++)
+					for (int i = 0; i < order.Length; i++)
 					{
 						GameObject go = new GameObject("EKColHead" + i);
-						go.transform.SetParent(sort.transform.parent, worldPositionStays: false);
-						LayoutElement le = go.AddComponent<LayoutElement>();
-						le.ignoreLayout = true; // in case the strip has a layout group
+						go.transform.SetParent(winRt, worldPositionStays: false);
 						Text ht = go.AddComponent<Text>();
-						ht.font = font;
+						ht.font = first.button1.mainText.font;
 						ht.fontSize = 12;
 						ht.alignment = TextAnchor.MiddleRight;
 						ht.color = new Color(0.35f, 0.32f, 0.25f);
 						ht.raycastTarget = false;
-						ht.text = ColNames[i];
-						RectTransform rt = ht.rectTransform;
-						// same vertical band as the sort button, x measured from
-						// the strip's right edge like the row columns
-						rt.anchorMin = new Vector2(1f, srt.anchorMin.y);
-						rt.anchorMax = new Vector2(1f, srt.anchorMax.y);
-						rt.pivot = new Vector2(1f, srt.pivot.y);
-						rt.sizeDelta = new Vector2(ColW[i], srt.sizeDelta.y > 0f ? srt.sizeDelta.y : 20f);
-						rt.anchoredPosition = new Vector2(ColX[i] - 16f, srt.anchoredPosition.y);
 						headerCols.Add(ht);
 					}
 					if (Plugin.DebugLog)
 					{
-						Plugin.Log?.LogInfo("ElonaKeys cols header: created beside buttonSort (parent=" + sort.transform.parent.name + ", y=" + srt.anchoredPosition.y + ", anchors=" + srt.anchorMin + "/" + srt.anchorMax + ")");
+						Plugin.Log?.LogInfo("ElonaKeys cols header v4: created from row geometry (rowTop=" + bb.max.y + ", rowRight=" + bb.max.x + ")");
 					}
 				}
-				foreach (Text t in headerCols)
+				for (int i = 0; i < headerCols.Count && i < order.Length; i++)
 				{
-					t.enabled = true;
+					Text ht = headerCols[i];
+					ht.text = ColNames[order[i]];
+					RectTransform rt = ht.rectTransform;
+					// anchoredPosition space == the window's local space when the
+					// anchors sit on the parent's pivot
+					rt.anchorMin = winRt.pivot;
+					rt.anchorMax = winRt.pivot;
+					rt.pivot = new Vector2(1f, 0f);
+					rt.sizeDelta = new Vector2(ColW[order[i]], 16f);
+					rt.anchoredPosition = new Vector2(bb.max.x + colSlotX[i], bb.max.y + 2f);
+					ht.enabled = true;
 				}
 			}
 			catch (Exception ex)
@@ -639,7 +689,7 @@ namespace ElonaKeys
 					}
 					return;
 				}
-				float statX = -332f; // just left of the column block
+				float statX = -(ColsBlockWidth + 14f); // just left of the column block
 				if (si == null)
 				{
 					GameObject go = new GameObject("EKStat");
@@ -940,7 +990,74 @@ namespace ElonaKeys
 				}
 			}
 			RefreshColsHeader(colsPage);
+			RefreshFooter(pieces, grams);
 			ShowSelTooltip();
+		}
+
+		// Elona-style bottom line, anchored to the LAST row's rendered
+		// geometry (same technique as the column header; the two earlier
+		// footer attempts died to a null font and to mask clipping)
+		private static Text footer;
+
+		private static void RefreshFooter(int pieces, int grams)
+		{
+			try
+			{
+				if (layer == null || !layer || layer.windows.Count == 0 || layer.list == null || layer.list.buttons.Count == 0)
+				{
+					return;
+				}
+				ItemGeneral first = layer.list.buttons[0].component as ItemGeneral;
+				ItemGeneral last = layer.list.buttons[layer.list.buttons.Count - 1].component as ItemGeneral;
+				if (first == null || !first || last == null || !last || first.button1 == null || first.button1.mainText == null)
+				{
+					return;
+				}
+				RectTransform winRt = layer.windows[0].transform as RectTransform;
+				Bounds bf = RectTransformUtility.CalculateRelativeRectTransformBounds(winRt, first.button1.transform as RectTransform);
+				Bounds bl = RectTransformUtility.CalculateRelativeRectTransformBounds(winRt, last.button1.transform as RectTransform);
+				if (footer == null || !footer)
+				{
+					GameObject go = new GameObject("EKFooter");
+					go.transform.SetParent(winRt, worldPositionStays: false);
+					footer = go.AddComponent<Text>();
+					footer.font = first.button1.mainText.font;
+					footer.fontSize = 13;
+					footer.alignment = TextAnchor.UpperLeft;
+					footer.horizontalOverflow = HorizontalWrapMode.Overflow;
+					footer.color = new Color(0.38f, 0.35f, 0.27f);
+					footer.raycastTarget = false;
+					if (Plugin.DebugLog)
+					{
+						Plugin.Log?.LogInfo("ElonaKeys footer: created from row geometry (bottom=" + bl.min.y + ")");
+					}
+				}
+				string line = "";
+				if (PageCount > 1)
+				{
+					line += "page " + (page + 1) + "/" + PageCount + "   ";
+				}
+				if (pieces > 0)
+				{
+					line += pieces + " items  " + (grams / 1000f).ToString("0.0") + "s   ";
+				}
+				if (current != null && !string.IsNullOrEmpty(current.footerExtra))
+				{
+					line += current.footerExtra;
+				}
+				footer.text = line.TrimEnd();
+				footer.enabled = footer.text.Length > 0;
+				RectTransform rt = footer.rectTransform;
+				rt.anchorMin = winRt.pivot;
+				rt.anchorMax = winRt.pivot;
+				rt.pivot = new Vector2(0f, 1f);
+				rt.sizeDelta = new Vector2(bf.max.x - bf.min.x, 18f);
+				rt.anchoredPosition = new Vector2(bf.min.x + 6f, bl.min.y - 3f);
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogWarning("ElonaKeys footer failed: " + ex.Message);
+			}
 		}
 
 
@@ -999,8 +1116,10 @@ namespace ElonaKeys
 				shiftHeld = false;
 				return;
 			}
-			// Tab cycles the window family (items / equipment-chara / spells-actions)
-			if (Input.GetKeyDown(KeyCode.Tab) && MenuCycle.Next())
+			// Tab cycles the window family (items / equipment-chara / spells-actions).
+			// CycledThisFrame: one physical Tab must fire ONE hop — PopupNav
+			// also watches Tab and used to bounce the cycle straight back.
+			if (Input.GetKeyDown(KeyCode.Tab) && !MenuCycle.CycledThisFrame && MenuCycle.Next())
 			{
 				return;
 			}

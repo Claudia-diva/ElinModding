@@ -14,8 +14,13 @@ namespace ElonaKeys
 		private static string group;
 		private static int index;
 		private static int setFrame = -1;
+		private static int cycleFrame = -1;
 
 		internal static Action lastItemMenu;
+
+		// true when Next() already ran this frame: MenuSystem and PopupNav both
+		// watch Tab, and without this a single press hopped Wear->Chara->Wear
+		internal static bool CycledThisFrame => cycleFrame == Time.frameCount;
 
 		internal static string Group => group;
 		internal static int Index => index;
@@ -90,6 +95,7 @@ namespace ElonaKeys
 				return false;
 			}
 			int ni = (index + 1) % c.Length;
+			cycleFrame = Time.frameCount;
 			if (Plugin.DebugLog)
 			{
 				Plugin.Log?.LogInfo("ElonaKeys: Tab cycle " + group + " -> " + c[ni].name);
@@ -220,21 +226,34 @@ namespace ElonaKeys
 
 		private static void CategoryMenu(string title, List<Thing> things, Func<Thing, bool> filter, Action<Thing> onSelect, string emptyMsg, bool refresh, Func<Thing, string> label, List<MenuRow> extraRows, Func<Thing, int> amount, Action<Thing, int> onAmount)
 		{
+			// per category: entry count, stack total and weight, so the z sort
+			// modes (weight/count) actually sort the CATEGORIES too
 			Dictionary<string, int> counts = new Dictionary<string, int>();
+			Dictionary<string, int> nums = new Dictionary<string, int>();
+			Dictionary<string, int> weights = new Dictionary<string, int>();
 			foreach (Thing t in things)
 			{
 				string c = CategoryName(t);
 				counts.TryGetValue(c, out int n);
 				counts[c] = n + 1;
+				nums.TryGetValue(c, out int m);
+				nums[c] = m + Mathf.Max(1, t.Num);
+				weights.TryGetValue(c, out int w);
+				weights[c] = w + t.ChildrenAndSelfWeight;
 			}
 			List<MenuRow> rows = new List<MenuRow>();
 			if (extraRows != null)
 			{
-				rows.AddRange(extraRows);
+				foreach (MenuRow er in extraRows)
+				{
+					er.pinTop = true;
+					rows.Add(er);
+				}
 			}
 			rows.Add(new MenuRow
 			{
 				label = "All items (" + things.Count + ")",
+				pinTop = true, // never shuffles into the categories on sort
 				closeOnAct = false, // keep this window in the back-stack for shift
 				act = delegate { ItemMenu(title, filter, onSelect, emptyMsg, refresh, label, null, "", amount, onAmount); }
 			});
@@ -244,6 +263,9 @@ namespace ElonaKeys
 				rows.Add(new MenuRow
 				{
 					label = cat + " (" + kv.Value + ")",
+					rightText = WeightText(weights[cat]),
+					sortWeight = weights[cat],
+					sortCount = nums[cat],
 					closeOnAct = false,
 					act = delegate { ItemMenu(title + " - " + cat, filter, onSelect, emptyMsg, refresh, label, null, cat, amount, onAmount); }
 				});
@@ -1284,10 +1306,25 @@ namespace ElonaKeys
 
 		internal static void ContainerMenu(Thing container)
 		{
+			MenuSystem.NextFooterExtra = SlotText(container);
 			MenuSystem.Show(container.Name, BuildContainerRows(container), delegate
 			{
 				MenuSystem.SetRows(BuildContainerRows(container));
 			});
+		}
+
+		// used slots vs capacity ("slots 8/20") — the free space, which the
+		// weight line never told you
+		private static string SlotText(Card holder)
+		{
+			try
+			{
+				return "slots " + holder.things.Count + "/" + holder.things.MaxCapacity;
+			}
+			catch
+			{
+				return "";
+			}
 		}
 
 		private static List<MenuRow> BuildContainerRows(Thing container)
@@ -2278,12 +2315,18 @@ namespace ElonaKeys
 		{
 			try
 			{
-				Act act = ACT.Create(e.source);
-				TargetType tt = act.TargetType;
-				bool allyOk = tt.CanSelectParty || tt.ForceParty || tt.Range == TargetRange.Party || tt.CanSelectSelf;
-				if (!allyOk)
+				Act act = (e as Act) ?? ACT.Create(e.source);
+				if (!CanWide(act))
 				{
-					Msg.SayRaw(e.source.GetName() + " cannot target your party.");
+					Msg.SayRaw(e.source.GetName() + " cannot multicast on your party.");
+					return;
+				}
+				// the game SILENTLY downgrades a pt cast to a self-cast when the
+				// spell stock is below the party count — say it instead
+				int party = PartySize();
+				if (e is Spell && e.vPotential < party)
+				{
+					Msg.SayRaw("Not enough spell stock for the whole party (need " + party + ", have " + e.vPotential + ").");
 					return;
 				}
 				MenuSystem.Close();
@@ -2298,8 +2341,45 @@ namespace ElonaKeys
 			}
 		}
 
-		// Wide key (shift+w): every spell/action that can hit your party,
-		// Enter casts it on ALL of them (Elona's Wide Skill as its own list)
+		// Wide key (shift+w): ONLY what can genuinely multicast on your party
+		// (heals, buffs). Hostile-party spells are excluded: the game's pt
+		// cast loops ENEMIES for those ("Nothing seems to happen" in town).
+		private static bool CanWide(Act act)
+		{
+			try
+			{
+				if (act.IsTargetHostileParty())
+				{
+					return false;
+				}
+				TargetType tt = act.TargetType;
+				return tt.CanSelectParty || tt.ForceParty || tt.Range == TargetRange.Party;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static int PartySize()
+		{
+			int n = 0;
+			try
+			{
+				foreach (Chara m in EClass.pc.party.members)
+				{
+					if (m != null && !m.isDead && m.IsAliveInCurrentZone)
+					{
+						n++;
+					}
+				}
+			}
+			catch
+			{
+			}
+			return Mathf.Max(1, n);
+		}
+
 		public static void WideMenu()
 		{
 			List<MenuRow> rows = new List<MenuRow>();
@@ -2309,15 +2389,7 @@ namespace ElonaKeys
 				foreach (Element element in KnownAbilities(spells))
 				{
 					Element e = element;
-					try
-					{
-						TargetType tt = ACT.Create(e.source).TargetType;
-						if (!(tt.CanSelectParty || tt.ForceParty || tt.Range == TargetRange.Party || tt.CanSelectSelf))
-						{
-							continue;
-						}
-					}
-					catch
+					if (!CanWide((e as Act) ?? ACT.Create(e.source)))
 					{
 						continue;
 					}
@@ -2326,7 +2398,7 @@ namespace ElonaKeys
 					rows.Add(row);
 				}
 			}
-			RunRows("Wide cast on the party - what?", rows, "Nothing you know can target your party.");
+			RunRows("Wide cast on the party - what?", rows, "Nothing you know can multicast on your party.");
 		}
 
 		private static void FilterMenu(bool spells)
