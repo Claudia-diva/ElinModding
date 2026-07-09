@@ -495,6 +495,24 @@ namespace ElonaKeys
 		}
 	}
 
+	// An explicitly aimed cast may target ANYONE (classic Elona): while our
+	// force-cast helpers run, enemy-only target types accept allies too. The
+	// flag is only true inside CanForcePerform/ForceUse, so native aiming and
+	// AI casting are untouched.
+	[HarmonyPatch(typeof(TargetTypeEnemy), "get_CanOnlyTargetEnemy")]
+	internal static class Patch_ForceFriendlyFire
+	{
+		private static bool Prefix(ref bool __result)
+		{
+			if (Handlers.ForceFriendlyFire)
+			{
+				__result = false;
+				return false;
+			}
+			return true;
+		}
+	}
+
 	// Tab's inventory toggle is HARDCODED raw input in ActionMode.UpdateInput
 	// (ActionMode.cs:739), not an EInput action: block it at the destination.
 	// Mouse clicks on the inventory button pass (no Tab keydown that frame).

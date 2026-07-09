@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.26.1";
+		public const string Version = "1.26.2";
 
 		internal static ManualLogSource Log;
 
@@ -182,8 +182,8 @@ namespace ElonaKeys
 				"shift = shift+1..9 fires ElonaKeys quickbind slots (plain digits stay native quickslots). off = disable. Bind: select an item or spell in any mod menu and press 1-9. Bindings resolve dynamically: bind a rod of identify, ANY rod of identify in your inventory fires.");
 			quickbinds = Config.Bind("Hotkeys", "Quickbinds", "",
 				"ElonaKeys quickbind registry storage (slot:kind:id:name;...). Edited automatically; clear to reset all slots.");
-			abilityColumns = Config.Bind("Menus", "AbilityColumns", "lv,pow,hit,dmg,cost,left",
-				"Order of the spell/action list columns, comma-separated. Reorder or REMOVE entries (e.g. 'lv,dmg,cost,left'). Valid: lv, pow, hit, dmg, cost, left.");
+			abilityColumns = Config.Bind("Menus", "AbilityColumns", "lv,attr,pow,hit,dmg,cost,left",
+				"Order of the spell/action list columns, comma-separated. Reorder or REMOVE entries (e.g. 'lv,dmg,cost,left'). Valid: lv, attr, pow, hit, dmg, cost, left.");
 			weightWidth = Config.Bind("Menus", "WeightWidth", 48,
 				"Width of the right-aligned weight column in pixels (about 4 digits). Longer weights scroll inside it.");
 			menuWidth = Config.Bind("Menus", "MenuWidth", 680,

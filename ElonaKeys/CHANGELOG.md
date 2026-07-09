@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.26.2 - 2026-07-08
+- Attr column in the spell/action lists (the scaling attribute: MAG, WIL, CHA...), between Lv and Pow, with its header. The attribute text left the name line, so names are cleaner. AbilityColumns config accepts "attr".
+- Aimed casts can finally hit ALLIES with hostile spells/abilities (hold-a or x on the row, and quick-casts at a remembered ally): enemy-only targeting is bypassed while YOU aim, classic Elona rules. The AI and normal mouse aiming are untouched.
+
 ## 1.26.1 - 2026-07-08
 - The shop is ONLY the ElonaKeys window now, like Drop and Wear. The vanilla shop and backpack windows never show (they exist off-screen because the game's own transaction machinery lives in them); closing the menu closes the whole trade.
 - Spell/action icons are BACK. The tooltip-prefab experiment carried a whole header layout into the rows and rendered nothing; icons paint on a plain image again, the way the action list looked before.

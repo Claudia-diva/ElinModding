@@ -529,12 +529,12 @@ namespace ElonaKeys
 		}
 
 		// aligned right-side columns (Elona style). Canonical value order in
-		// MenuRow.cols: [Lv, Pow, Hit, Dmg, Cost, Left]; the DISPLAY order is
-		// the AbilityColumns config (csv, reorder or omit). Slot x positions
-		// are computed from the ordered widths, right to left.
-		private static readonly float[] ColW = { 44f, 44f, 52f, 68f, 56f, 44f };
-		private static readonly string[] ColNames = { "Lv", "Pow", "Hit", "Dmg", "Cost", "Left" };
-		private static readonly string[] ColKeys = { "lv", "pow", "hit", "dmg", "cost", "left" };
+		// MenuRow.cols: [Lv, Attr, Pow, Hit, Dmg, Cost, Left]; the DISPLAY
+		// order is the AbilityColumns config (csv, reorder or omit). Slot x
+		// positions are computed from the ordered widths, right to left.
+		private static readonly float[] ColW = { 44f, 52f, 44f, 52f, 68f, 56f, 44f };
+		private static readonly string[] ColNames = { "Lv", "Attr", "Pow", "Hit", "Dmg", "Cost", "Left" };
+		private static readonly string[] ColKeys = { "lv", "attr", "pow", "hit", "dmg", "cost", "left" };
 
 		private static string orderSrc;      // config string the cache was built from
 		private static int[] colOrder;       // display slot -> canonical index
@@ -544,6 +544,10 @@ namespace ElonaKeys
 		private static int[] ColOrder()
 		{
 			string cfg = Plugin.AbilityColumns ?? "";
+			if (cfg.Trim() == "lv,pow,hit,dmg,cost,left")
+			{
+				cfg = ""; // pre-Attr default saved in old configs: take the new full set
+			}
 			if (colOrder != null && orderSrc == cfg)
 			{
 				return colOrder;

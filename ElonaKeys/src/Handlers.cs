@@ -2372,17 +2372,6 @@ namespace ElonaKeys
 		private static MenuRow AbilityRow(Element e, bool spells)
 		{
 			bool fav = EClass.player.favAbility.Contains(e.id);
-			string stat = "";
-			try
-			{
-				if (!e.source.aliasParent.IsEmpty())
-				{
-					stat = " " + e.source.aliasParent;
-				}
-			}
-			catch
-			{
-			}
 			int stock = 0;
 			try
 			{
@@ -2393,7 +2382,9 @@ namespace ElonaKeys
 			}
 			return new MenuRow
 			{
-				label = (fav ? "★ " : "") + e.source.GetName() + Quickbind.TagForAbility(e.source.alias) + " <size=13><color=#8f8f7a>" + TypeBucket(e) + stat + "</color></size>",
+				// the attribute moved into its own column; the label keeps only
+				// the category bucket
+				label = (fav ? "★ " : "") + e.source.GetName() + Quickbind.TagForAbility(e.source.alias) + " <size=13><color=#8f8f7a>" + TypeBucket(e) + "</color></size>",
 				cols = BuildAbilityCols(e, spells),  // aligned Lv/Pow/Hit/Dmg/Cost/Left
 				sortWeight = BucketIndex(e) * 1000, // z-sort mode 2 = by category
 				sortCount = stock,                  // z-sort mode 3 = by stock
@@ -2403,11 +2394,12 @@ namespace ElonaKeys
 			};
 		}
 
-		// aligned column values [Lv, Pow, Hit, Dmg, Cost, Left]; the original
-		// cost lives in the tooltip. Pow scales with skill/spell level and gear.
+		// aligned column values [Lv, Attr, Pow, Hit, Dmg, Cost, Left]; the
+		// original cost lives in the tooltip. Pow scales with level and gear.
 		private static string[] BuildAbilityCols(Element e, bool spells)
 		{
 			string lv = "";
+			string attr = "";
 			string pow = "";
 			string hit = "";
 			string dmg = "";
@@ -2416,6 +2408,16 @@ namespace ElonaKeys
 			try
 			{
 				lv = e.DisplayValue.ToString();
+			}
+			catch
+			{
+			}
+			try
+			{
+				if (!e.source.aliasParent.IsEmpty())
+				{
+					attr = e.source.aliasParent.ToUpperInvariant();
+				}
 			}
 			catch
 			{
@@ -2473,7 +2475,7 @@ namespace ElonaKeys
 			catch
 			{
 			}
-			return new string[] { lv, pow, hit, dmg, cost, left };
+			return new string[] { lv, attr, pow, hit, dmg, cost, left };
 		}
 
 		// x on an ability row: aim THIS cast manually with the free cursor.
@@ -2817,15 +2819,20 @@ namespace ElonaKeys
 			return CanForcePerform(act, null, p);
 		}
 
-		// An explicit aim is consent: the shift-only "negative ability on your
-		// own" config gate is lifted while WE check and cast. The pre-check
-		// matters because UseAbility pays the cost BEFORE Perform re-runs
-		// CanPerform — without it a refused target silently ate the mana/sp.
+		// An explicit aim is consent (Elona rule): while WE check and cast,
+		// the shift-only "negative ability on your own" config gate is lifted
+		// AND enemy-only targeting accepts anyone (Patch_ForceFriendlyFire
+		// reads this flag). The pre-check matters because UseAbility pays the
+		// cost BEFORE Perform re-runs CanPerform — without it a refused
+		// target silently ate the mana/sp.
+		internal static bool ForceFriendlyFire;
+
 		private static bool CanForcePerform(Act act, Chara tc, Point p)
 		{
 			var game = EClass.core.config.game;
 			bool gate = game.shiftToUseNegativeAbilityOnSelf;
 			game.shiftToUseNegativeAbilityOnSelf = false;
+			ForceFriendlyFire = true;
 			try
 			{
 				return act.CanPerform(pc, tc, p ?? tc?.pos);
@@ -2837,6 +2844,7 @@ namespace ElonaKeys
 			finally
 			{
 				game.shiftToUseNegativeAbilityOnSelf = gate;
+				ForceFriendlyFire = false;
 			}
 		}
 
@@ -2845,6 +2853,7 @@ namespace ElonaKeys
 			var game = EClass.core.config.game;
 			bool gate = game.shiftToUseNegativeAbilityOnSelf;
 			game.shiftToUseNegativeAbilityOnSelf = false;
+			ForceFriendlyFire = true;
 			try
 			{
 				return pc.UseAbility(act, tc, p);
@@ -2852,6 +2861,7 @@ namespace ElonaKeys
 			finally
 			{
 				game.shiftToUseNegativeAbilityOnSelf = gate;
+				ForceFriendlyFire = false;
 			}
 		}
 
