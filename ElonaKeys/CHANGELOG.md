@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.26.0 - 2026-07-08
+- THE SHOP WINDOW IS OURS NOW. Talking to any vendor opens an ElonaKeys menu: the stock with prices and letters, Enter buys (stack popups included), z/x flips to the SELL view of your bag with what they'd pay, the footer shows your money. All of it still runs through the game's own transaction, so prices, space checks and karma are untouched. Works for every vendor, duplication shops included.
+- Buy-amount popups are keyboard-navigable while the shop menu is open.
+- Closing the menu (shift/Escape) leaves the native shop window for mouse use; talk to the vendor again for the menu.
+
 ## 1.25.2 - 2026-07-08
 - FIXED: opening a shop threw endless errors. The backpack auto-open used a leftover game function that creates a half-initialized window; it now opens your inventory through the exact same path the Tab key uses. If you hit the errors, reopening the game clears the broken window.
 

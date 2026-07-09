@@ -1322,6 +1322,121 @@ namespace ElonaKeys
 			MenuSystem.Show(title, rows, null, keepLayers: true);
 		}
 
+		// ---------- the ElonaKeys SHOP window ----------
+		// A real mod menu over the native trade: buy view lists the trader's
+		// stock with prices, sell view lists your bag with sell prices. Enter
+		// routes through the native right-click transaction (money, space,
+		// stack dialogs, karma all native). z/x switch buy <-> sell.
+		private static int shopView; // 0 = buy, 1 = sell
+
+		public static void ShopMenu()
+		{
+			shopView = 0; // every shop starts on the buy view
+			ShopMenu(replace: false);
+		}
+
+		private static void ShopMenu(bool replace)
+		{
+			InvOwner trader = InvOwner.Trader;
+			if (trader == null || ShopTransaction.current == null)
+			{
+				Msg.SayRaw("No shop is open.");
+				return;
+			}
+			bool sell = shopView == 1;
+			string cur = trader.currency.ToString().ToLowerInvariant();
+			string title = (sell ? "Sell to " : "Buy from ") + (trader.owner != null ? trader.owner.Name : "the shop") + "  (z/x = buy/sell)";
+			MenuSystem.NextFooterExtra = "you have " + pc.GetCurrency(cur) + " " + cur;
+			MenuSystem.Show(title, BuildShopRows(), delegate
+			{
+				MenuSystem.SetRows(BuildShopRows());
+			}, keepLayers: true, replace: replace);
+			MenuSystem.SetSourceCycle(delegate(int dir)
+			{
+				shopView = (dir == 0) ? 0 : (1 - shopView);
+				if (InvOwner.Trader != null && ShopTransaction.current != null)
+				{
+					ShopMenu(replace: true);
+				}
+			});
+		}
+
+		private static List<MenuRow> BuildShopRows()
+		{
+			InvOwner trader = InvOwner.Trader;
+			if (trader == null || ShopTransaction.current == null)
+			{
+				return new List<MenuRow> { new MenuRow { label = "(the shop closed)" } };
+			}
+			bool sell = shopView == 1;
+			string cur = trader.currency.ToString().ToLowerInvariant();
+			List<MenuRow> rows = new List<MenuRow>();
+			List<Thing> pool = new List<Thing>();
+			if (sell)
+			{
+				pool.AddRange(pc.things.List((Thing x) => !(x.trait is TraitAbility) && !x.isEquipped && !x.c_isImportant, onlyAccessible: true));
+			}
+			else if (trader.Container != null)
+			{
+				foreach (Thing x in trader.Container.things)
+				{
+					pool.Add(x);
+				}
+			}
+			foreach (Thing thing in pool)
+			{
+				Thing t = thing;
+				int price = 0;
+				try
+				{
+					price = t.GetPrice(trader.currency, sell, trader.priceType);
+				}
+				catch
+				{
+				}
+				if (sell && price <= 0)
+				{
+					continue; // the trader won't pay for it
+				}
+				rows.Add(new MenuRow
+				{
+					label = DetailName(t),
+					icon = t,
+					rightText = price + " " + cur,
+					rightWidth = 110f,
+					sortWeight = price,
+					sortCount = t.Num,
+					closeOnAct = false,
+					act = delegate { ShopAct(t); }
+				});
+			}
+			if (rows.Count == 0)
+			{
+				rows.Add(new MenuRow { label = sell ? "(nothing they would pay for)" : "(sold out)" });
+			}
+			return rows;
+		}
+
+		// buy/sell one row: through the native grid button = the native
+		// transaction with every check and dialog
+		private static void ShopAct(Thing t)
+		{
+			ButtonGrid bg = PopupNav.FindGridButton(t);
+			if (bg == null)
+			{
+				Msg.SayRaw("Cannot reach that item's window (is the pane open?).");
+				return;
+			}
+			try
+			{
+				bg.invOwner.OnRightClick(bg);
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys shop transaction failed: " + ex);
+			}
+		}
+
 		internal static void ContainerMenu(Thing container)
 		{
 			MenuSystem.NextFooterExtra = SlotText(container);

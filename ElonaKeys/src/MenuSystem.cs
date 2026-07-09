@@ -1231,10 +1231,16 @@ namespace ElonaKeys
 				UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
 			}
 			// another window (the examine card, etc.) sits ON TOP of our menu:
-			// route Shift/x to it and leave the menu underneath alone
+			// route Shift/x to it and leave the menu underneath alone.
+			// Dialogs (buy-amount popups...) belong to PopupNav: hands off.
 			Layer top = (EClass.ui != null) ? EClass.ui.TopLayer : null;
 			if (top != null && (object)top != (object)layer)
 			{
+				if (top is Dialog)
+				{
+					shiftHeld = false;
+					return; // PopupNav navigates it (gate opened for this case)
+				}
 				if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift) || Input.GetKeyDown(KeyCode.X))
 				{
 					top.Close();

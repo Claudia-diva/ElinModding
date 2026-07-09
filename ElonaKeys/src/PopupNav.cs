@@ -32,6 +32,24 @@ namespace ElonaKeys
 		private static bool invNav;
 		internal static bool InvNavActive => invNav;
 
+		// the native grid button currently showing this exact thing (the shop
+		// menu buys/sells by invoking the button's own right-click transaction)
+		internal static ButtonGrid FindGridButton(Thing t)
+		{
+			if (t == null)
+			{
+				return null;
+			}
+			foreach (ButtonGrid bg in UnityEngine.Object.FindObjectsOfType<ButtonGrid>())
+			{
+				if (bg != null && bg.card == t && bg.invOwner != null && bg.gameObject.activeInHierarchy)
+				{
+					return bg;
+				}
+			}
+			return null;
+		}
+
 		// "name  [8/40]" on inventory windows: used slots / capacity
 		private static void ApplySlotCaption(LayerInventory li)
 		{
@@ -92,7 +110,14 @@ namespace ElonaKeys
 
 		public static void OnUpdate()
 		{
-			if (MenuSystem.Alive || EInput.isInputFieldActive || EInput.isCtrlDown || EInput.isAltDown)
+			// a Dialog on top of an ElonaKeys menu (buy-amount popup over the
+			// shop menu) is still ours to navigate; everything else defers
+			// while a menu is open
+			if (MenuSystem.Alive && !(EClass.ui != null && EClass.ui.TopLayer is Dialog))
+			{
+				return;
+			}
+			if (EInput.isInputFieldActive || EInput.isCtrlDown || EInput.isAltDown)
 			{
 				return;
 			}

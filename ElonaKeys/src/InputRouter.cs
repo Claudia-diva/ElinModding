@@ -538,6 +538,9 @@ namespace ElonaKeys
 				{
 					EClass.ui.ToggleInventory();
 				}
+				// and the ElonaKeys shop window on top: prices, letters,
+				// z/x buy<->sell, Enter = native transaction
+				Handlers.ShopMenu();
 			}
 			catch (Exception ex)
 			{
