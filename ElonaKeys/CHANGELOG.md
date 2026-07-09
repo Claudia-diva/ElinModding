@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.26.1 - 2026-07-08
+- The shop is ONLY the ElonaKeys window now, like Drop and Wear. The vanilla shop and backpack windows never show (they exist off-screen because the game's own transaction machinery lives in them); closing the menu closes the whole trade.
+- Spell/action icons are BACK. The tooltip-prefab experiment carried a whole header layout into the rows and rendered nothing; icons paint on a plain image again, the way the action list looked before.
+
 ## 1.26.0 - 2026-07-08
 - THE SHOP WINDOW IS OURS NOW. Talking to any vendor opens an ElonaKeys menu: the stock with prices and letters, Enter buys (stack popups included), z/x flips to the SELL view of your bag with what they'd pay, the footer shows your money. All of it still runs through the game's own transaction, so prices, space checks and karma are untouched. Works for every vendor, duplication shops included.
 - Buy-amount popups are keyboard-navigable while the shop menu is open.

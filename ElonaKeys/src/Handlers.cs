@@ -1332,7 +1332,50 @@ namespace ElonaKeys
 		public static void ShopMenu()
 		{
 			shopView = 0; // every shop starts on the buy view
+			HideNativeTradeWindows();
 			ShopMenu(replace: false);
+		}
+
+		// the native shop/backpack windows stay ALIVE (their grid buttons run
+		// the transactions) but live far off-screen: the user sees ONLY the
+		// ElonaKeys window, like every other menu
+		private static void HideNativeTradeWindows()
+		{
+			try
+			{
+				foreach (LayerInventory li in UnityEngine.Object.FindObjectsOfType<LayerInventory>())
+				{
+					foreach (Window w in li.windows)
+					{
+						RectTransform rt = w.transform as RectTransform;
+						if (rt != null)
+						{
+							rt.anchoredPosition = new Vector2(24000f, 24000f);
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogWarning("ElonaKeys hide trade windows failed: " + ex.Message);
+			}
+		}
+
+		// closing our shop menu ends the whole trade (the native windows are
+		// off-screen; leaving them open would strand the session)
+		private static void CloseShopLayers()
+		{
+			try
+			{
+				foreach (LayerInventory li in UnityEngine.Object.FindObjectsOfType<LayerInventory>())
+				{
+					li.Close();
+				}
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogWarning("ElonaKeys close trade windows failed: " + ex.Message);
+			}
 		}
 
 		private static void ShopMenu(bool replace)
@@ -1359,6 +1402,8 @@ namespace ElonaKeys
 					ShopMenu(replace: true);
 				}
 			});
+			// our window IS the shop: when it goes, the whole trade goes
+			MenuSystem.SetOnKill(CloseShopLayers);
 		}
 
 		private static List<MenuRow> BuildShopRows()

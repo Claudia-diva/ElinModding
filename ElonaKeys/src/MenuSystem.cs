@@ -142,6 +142,16 @@ namespace ElonaKeys
 			layer = null;
 		}
 
+		// run something when THIS menu's window dies, whatever kills it
+		// (Escape, shift, Tab family hop): the shop menu closes the trade with it
+		public static void SetOnKill(Action a)
+		{
+			if (Alive && a != null)
+			{
+				layer.SetOnKill(a);
+			}
+		}
+
 		// one step back in the window chain (what shift does), for submenus
 		// that want to return to their parent after acting
 		public static void BackOne()
@@ -385,87 +395,39 @@ namespace ElonaKeys
 				RectTransform iconParent = b.button1.icon.transform.parent as RectTransform;
 				iconParent.SetActive(enable: true);
 				iconParent.anchoredPosition = new Vector2(16f, 0f);
-				// THE TOOLTIP'S OWN image, literally: instantiate the same
-				// "HeaderAbility" prefab UINote.AddHeaderAbility loads and use
-				// its image1 (whatever material/settings it carries). Only its
-				// texts and extra chrome are hidden. No plate, no re-tinting
-				// component, no guesswork left.
-				Image img = null;
-				Transform hdrT = iconParent.Find("EKAbilityHeader");
-				UIItem hdr = (hdrT != null) ? hdrT.GetComponent<UIItem>() : null;
-				if (hdr == null)
+				// bare Image + (element as Act).SetImage: the setup that
+				// PROVABLY renders the art (the HeaderAbility-prefab clone of
+				// 1.25.1 carried its own row layout and drew nothing here)
+				Transform ownT = iconParent.Find("EKAbilityIcon");
+				Image img = (ownT != null) ? ownT.GetComponent<Image>() : null;
+				if (img == null)
 				{
-					try
-					{
-						hdr = Util.Instantiate<UIItem>("UI/Element/Header/HeaderAbility", iconParent);
-						hdr.name = "EKAbilityHeader";
-						if (hdr.text1 != null)
-						{
-							hdr.text1.SetActive(enable: false);
-						}
-						if (hdr.text2 != null)
-						{
-							hdr.text2.SetActive(enable: false);
-						}
-						RectTransform hrt = hdr.transform as RectTransform;
-						hrt.anchorMin = new Vector2(0.5f, 0.5f);
-						hrt.anchorMax = new Vector2(0.5f, 0.5f);
-						hrt.pivot = new Vector2(0.5f, 0.5f);
-						hrt.anchoredPosition = Vector2.zero;
-					}
-					catch (Exception ex)
-					{
-						Plugin.Log?.LogWarning("ElonaKeys HeaderAbility prefab failed: " + ex.Message);
-						hdr = null;
-					}
-				}
-				if (hdr != null && hdr.image1 != null)
-				{
-					img = hdr.image1;
-					// hide everything in the prefab except the icon image
-					foreach (Image hi in hdr.GetComponentsInChildren<Image>(includeInactive: true))
-					{
-						if (hi != img)
-						{
-							hi.enabled = false;
-						}
-					}
-					foreach (Text htx in hdr.GetComponentsInChildren<Text>(includeInactive: true))
-					{
-						htx.enabled = false;
-					}
-					hdr.SetActive(enable: true);
-				}
-				else
-				{
-					// fallback: bare Image (still tooltip-equivalent painting)
-					Transform ownT = iconParent.Find("EKAbilityIcon");
-					img = (ownT != null) ? ownT.GetComponent<Image>() : null;
-					if (img == null)
-					{
-						GameObject io = new GameObject("EKAbilityIcon");
-						io.transform.SetParent(iconParent, worldPositionStays: false);
-						img = io.AddComponent<Image>();
-						img.raycastTarget = false;
-					}
-					img.material = null;
+					GameObject io = new GameObject("EKAbilityIcon");
+					io.transform.SetParent(iconParent, worldPositionStays: false);
+					img = io.AddComponent<Image>();
+					img.raycastTarget = false;
+					RectTransform irt = img.rectTransform;
+					irt.anchorMin = new Vector2(0.5f, 0.5f);
+					irt.anchorMax = new Vector2(0.5f, 0.5f);
+					irt.pivot = new Vector2(0.5f, 0.5f);
 				}
 				foreach (Image sib in iconParent.GetComponentsInChildren<Image>(includeInactive: true))
 				{
-					if (sib != img && (hdr == null || !sib.transform.IsChildOf(hdr.transform)))
+					if (sib != img)
 					{
-						sib.enabled = false; // button icon, old plates/backings... retired
+						sib.enabled = false; // button icon, stale prefab clones, old backings
 					}
 				}
+				// a leftover 1.25.1 prefab clone would survive as a disabled husk;
+				// make sure its subtree stays dead
+				Transform stale = iconParent.Find("EKAbilityHeader");
+				if (stale != null)
+				{
+					stale.SetActive(enable: false);
+				}
+				img.material = null;
 				img.enabled = true;
-				if (hdr != null)
-				{
-					hdr.transform.SetAsLastSibling();
-				}
-				else
-				{
-					img.transform.SetAsLastSibling();
-				}
+				img.transform.SetAsLastSibling();
 				// AddHeaderAbility paints with THE ELEMENT ITSELF as an Act
 				// ((this as Act)?.SetImage) — the pc's spells/actions ARE Act
 				// instances with the real sprite. ACT.Create(source) built a
