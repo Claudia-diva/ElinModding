@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.27.0 - 2026-07-09
+- YOUR WINDOW LAYOUTS ARE SAFE. The shop no longer moves or closes ANY window you had open; only the shop's own window (and a backpack pane if the mod itself opened one) is made invisible in place, and visibility is restored on close. Window positions are never touched again.
+- Trading with party members and pets opens an ElonaKeys two-pane menu: their items / your items, Tab switches sides, count spinner moves things either way, both carry loads in the footer. No vanilla window.
+- Delivery boxes and shipping chests take items FOR REAL now: the game secretly routes their contents into a hidden shared container (the chest itself always stays empty, which is why every earlier fix bounced). The menu now opens and fills that real container, so shipping and quest deliveries work.
+
+## 1.26.5 - 2026-07-09
+- Shipping chests, delivery boxes and other special containers accept items from the keyboard menus for real this time. They report themselves "full" through every normal check (that's how the game stops them acting as regular storage; the mouse only works because dragging onto a slot skips the check), so the menu now judges them by actual used slots vs capacity.
+
 ## 1.26.4 - 2026-07-09
 - Shop polish, per report: TAB switches buy/sell (as originally specced; z is sorting again and x examines again). Prices show in the vendor's real currency ("4,320 orens", not "moneys"), the column header says Price, and the item's weight rides in the name line. Anything bought this visit shows its BUY-BACK price in the sell view (what you paid, like the vanilla window), and your money in the footer updates after every transaction.
 

@@ -1322,6 +1322,74 @@ namespace ElonaKeys
 			MenuSystem.Show(title, rows, null, keepLayers: true);
 		}
 
+		// ---------- NPC trade (party members / pets): free two-way moves ----------
+		private static int tradeView; // 0 = their items, 1 = yours
+
+		public static void TradeMenu(Chara who)
+		{
+			tradeView = 0;
+			TradeMenu(who, replace: false);
+		}
+
+		private static void TradeMenu(Chara who, bool replace)
+		{
+			if (who == null || who.isDead || !who.IsAliveInCurrentZone)
+			{
+				Msg.SayRaw("They are not here.");
+				return;
+			}
+			bool mine = tradeView == 1;
+			string title = (mine ? "Give to " : "Take from ") + who.Name + "  (Tab = " + (mine ? "take" : "give") + ")";
+			MenuSystem.NextFooterExtra = who.Name + " " + SlotText(who) + "   you " + SlotText(pc);
+			MenuSystem.NextOnTab = delegate
+			{
+				tradeView = 1 - tradeView;
+				TradeMenu(who, replace: true);
+			};
+			MenuSystem.Show(title, BuildTradeRows(who), delegate
+			{
+				MenuSystem.SetFooterExtra(who.Name + " " + SlotText(who) + "   you " + SlotText(pc));
+				MenuSystem.SetRows(BuildTradeRows(who));
+			}, keepLayers: false, replace: replace);
+		}
+
+		private static List<MenuRow> BuildTradeRows(Chara who)
+		{
+			bool mine = tradeView == 1;
+			Chara src = mine ? pc : who;
+			Chara dst = mine ? who : pc;
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (Thing thing in src.things.List((Thing x) => !(x.trait is TraitAbility) && !x.isEquipped, onlyAccessible: true))
+			{
+				Thing t = thing;
+				rows.Add(new MenuRow
+				{
+					label = DetailName(t),
+					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
+					sortCount = t.Num,
+					closeOnAct = false,
+					maxAmount = Mathf.Max(1, t.Num),
+					onAmount = delegate(int n)
+					{
+						if (dst.things.IsFull(t))
+						{
+							Msg.SayRaw(dst.Name + " cannot carry that.");
+							return;
+						}
+						Thing moved = (n >= t.Num) ? t : t.Split(n);
+						dst.Pick(moved);
+					}
+				});
+			}
+			if (rows.Count == 0)
+			{
+				rows.Add(new MenuRow { label = "(nothing to move)" });
+			}
+			return rows;
+		}
+
 		// ---------- the ElonaKeys SHOP window ----------
 		// A real mod menu over the native trade: buy view lists the trader's
 		// stock with prices, sell view lists your bag with sell prices. Enter
@@ -1332,43 +1400,56 @@ namespace ElonaKeys
 		public static void ShopMenu()
 		{
 			shopView = 0; // every shop starts on the buy view
-			HideNativeTradeWindows();
 			ShopMenu(replace: false);
 		}
 
-		// the native shop/backpack windows stay ALIVE (their grid buttons run
-		// the transactions) but live far off-screen: the user sees ONLY the
-		// ElonaKeys window, like every other menu
-		private static void HideNativeTradeWindows()
+		// windows WE manage for the trade: the shop window itself, plus a
+		// backpack pane only if WE opened it. NEVER any pre-existing window —
+		// and NEVER by moving (positions persist in the save; parking them
+		// off-screen wrecked people's layouts). Invisibility only, in place.
+		private static readonly List<LayerInventory> shopHidden = new List<LayerInventory>();
+		internal static bool shopOpenedBackpack;
+
+		internal static void HideTradeLayer(LayerInventory li)
 		{
+			if (li == null || shopHidden.Contains(li))
+			{
+				return;
+			}
 			try
 			{
-				foreach (LayerInventory li in UnityEngine.Object.FindObjectsOfType<LayerInventory>())
-				{
-					foreach (Window w in li.windows)
-					{
-						RectTransform rt = w.transform as RectTransform;
-						if (rt != null)
-						{
-							rt.anchoredPosition = new Vector2(24000f, 24000f);
-						}
-					}
-				}
+				CanvasGroup cg = li.gameObject.GetComponent<CanvasGroup>() ?? li.gameObject.AddComponent<CanvasGroup>();
+				cg.alpha = 0f;
+				cg.interactable = false;
+				cg.blocksRaycasts = false;
+				shopHidden.Add(li);
 			}
 			catch (Exception ex)
 			{
-				Plugin.Log?.LogWarning("ElonaKeys hide trade windows failed: " + ex.Message);
+				Plugin.Log?.LogWarning("ElonaKeys hide trade layer failed: " + ex.Message);
 			}
 		}
 
-		// closing our shop menu ends the whole trade (the native windows are
-		// off-screen; leaving them open would strand the session)
+		// closing our shop menu ends the trade: restore visibility (layers are
+		// POOLED; a lingering alpha 0 would come back as invisible windows),
+		// then close only what we manage
 		private static void CloseShopLayers()
 		{
 			try
 			{
-				foreach (LayerInventory li in UnityEngine.Object.FindObjectsOfType<LayerInventory>())
+				foreach (LayerInventory li in shopHidden)
 				{
+					if (li == null || !li)
+					{
+						continue;
+					}
+					CanvasGroup cg = li.gameObject.GetComponent<CanvasGroup>();
+					if (cg != null)
+					{
+						cg.alpha = 1f;
+						cg.interactable = true;
+						cg.blocksRaycasts = true;
+					}
 					li.Close();
 				}
 			}
@@ -1376,6 +1457,8 @@ namespace ElonaKeys
 			{
 				Plugin.Log?.LogWarning("ElonaKeys close trade windows failed: " + ex.Message);
 			}
+			shopHidden.Clear();
+			shopOpenedBackpack = false;
 		}
 
 		private static void ShopMenu(bool replace)
@@ -1522,11 +1605,55 @@ namespace ElonaKeys
 
 		internal static void ContainerMenu(Thing container)
 		{
-			MenuSystem.NextFooterExtra = SlotText(container);
-			MenuSystem.Show(container.Name, BuildContainerRows(container), delegate
+			// shipping and delivery chests are FACADES: the native open swaps
+			// in a global VIRTUAL container and items go there, never into the
+			// chest thing itself (LayerInventory.CreateContainer(Card))
+			string title = container.Name;
+			try
 			{
-				MenuSystem.SetRows(BuildContainerRows(container));
+				if (container.trait is TraitShippingChest)
+				{
+					Thing v = EClass.game.cards.container_shipping;
+					v.things.SetSize(container.things.width, container.things.height);
+					EClass.player.uidLastShippedZone = EClass._zone.uid;
+					container = v;
+				}
+				else if (container.trait is TraitDeliveryChest)
+				{
+					container = EClass.game.cards.container_deliver;
+				}
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogWarning("ElonaKeys virtual container mapping failed: " + ex.Message);
+			}
+			Thing shown = container;
+			MenuSystem.NextFooterExtra = SlotText(shown);
+			MenuSystem.Show(title, BuildContainerRows(shown), delegate
+			{
+				MenuSystem.SetRows(BuildContainerRows(shown));
 			});
+		}
+
+		// can this container take t? Special containers (shipping chest,
+		// delivery/quest boxes) report IsFull() as ALWAYS true once installed
+		// and their destination search inherits that — the native drag works
+		// only because slot-targeted drops skip the check. Their real capacity
+		// is simply used grid slots vs grid size.
+		private static bool ContainerFull(Thing container, Thing t)
+		{
+			try
+			{
+				if (container.trait.IsSpecialContainer)
+				{
+					return container.things.Count >= container.things.MaxCapacity;
+				}
+				return container.things.IsFull(t);
+			}
+			catch
+			{
+				return false; // let AddThing be the judge
+			}
 		}
 
 		// used slots vs capacity ("slots 8/20") — the free space, which the
@@ -1627,11 +1754,7 @@ namespace ElonaKeys
 					maxAmount = t.Num,
 					onAmount = delegate(int n)
 					{
-						// IsFull(Thing): the plain IsFull() reports special
-						// containers (shipping chest, delivery box) as ALWAYS
-						// full once installed; the Thing overload asks for a
-						// real destination like the native drag does
-						if (dest.things.IsFull(t))
+						if (ContainerFull(dest, t))
 						{
 							Msg.SayRaw("The " + dest.Name + " is full.");
 							return;
@@ -1854,9 +1977,7 @@ namespace ElonaKeys
 				amount: (Thing t) => t.Num,
 				onAmount: delegate(Thing t, int n)
 				{
-					// IsFull(Thing), not IsFull(): special containers (shipping
-					// chest, delivery box) report plain-full forever once installed
-					if (container.things.IsFull(t))
+					if (ContainerFull(container, t))
 					{
 						Msg.SayRaw("The " + container.Name + " is full.");
 						return;

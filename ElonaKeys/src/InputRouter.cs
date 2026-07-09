@@ -495,6 +495,35 @@ namespace ElonaKeys
 		}
 	}
 
+	// "Trade" with a party member/pet opens the vanilla ally-inventory window
+	// (actTrade -> CreateContainer(chara)); party moves are free-form, so the
+	// ElonaKeys two-pane menu replaces it entirely
+	[HarmonyPatch(typeof(LayerInventory), nameof(LayerInventory.CreateContainer), new Type[] { typeof(Card) })]
+	internal static class Patch_TradeOpen
+	{
+		private static bool Prefix(Card owner)
+		{
+			if (InputRouter.VanillaLocked || !Plugin.KeyboardContainers)
+			{
+				return true;
+			}
+			if (owner is Chara ch && ch.IsPCFaction && !ch.IsPC)
+			{
+				try
+				{
+					Handlers.TradeMenu(ch);
+					return false; // no native window at all
+				}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogError("ElonaKeys trade menu failed (native kept): " + ex);
+					return true;
+				}
+			}
+			return true;
+		}
+	}
+
 	// An explicitly aimed cast may target ANYONE (classic Elona): while our
 	// force-cast helpers run, enemy-only target types accept allies too. The
 	// flag is only true inside CanForcePerform/ForceUse, so native aiming and
@@ -541,7 +570,7 @@ namespace ElonaKeys
 	[HarmonyPatch(typeof(LayerInventory), nameof(LayerInventory.CreateBuy))]
 	internal static class Patch_ShopOpen
 	{
-		private static void Postfix()
+		private static void Postfix(LayerInventory __result)
 		{
 			if (InputRouter.VanillaLocked)
 			{
@@ -550,20 +579,26 @@ namespace ElonaKeys
 			// END OF FRAME, not now: the game calls
 			// ui.AddLayer(LayerInventory.CreateBuy(...)), so at postfix time
 			// the shop layer isn't in the UI yet — anything we open here ends
-			// up UNDER it, and the window init re-applies its position over
-			// our off-screen move. After the frame the layer is settled.
+			// up UNDER it, and its window init overrides coordinate changes.
+			LayerInventory shopLayer = __result;
 			EClass.core.WaitForEndOfFrame(delegate
 			{
 				try
 				{
-					// the native toggle, the exact path Tab takes. NEVER
-					// LayerInventory.CreatePCBackpack(): it skips
-					// window.saveData and NREs in UIInventory.Update
+					// hide IN PLACE, only what we manage: the shop window, and
+					// a backpack pane only if WE open it. Pre-existing player
+					// windows are never touched (positions persist in saves).
+					Handlers.HideTradeLayer(shopLayer);
 					if (LayerInventory.GetPCLayer() == null)
 					{
+						// the native toggle, the exact path Tab takes. NEVER
+						// CreatePCBackpack(): it skips window.saveData and
+						// NREs in UIInventory.Update
 						EClass.ui.ToggleInventory();
+						Handlers.shopOpenedBackpack = true;
+						Handlers.HideTradeLayer(LayerInventory.GetPCLayer());
 					}
-					// the ElonaKeys shop window: prices, letters, z/x
+					// the ElonaKeys shop window: prices, letters, Tab
 					// buy<->sell, Enter = native transaction
 					Handlers.ShopMenu();
 				}
