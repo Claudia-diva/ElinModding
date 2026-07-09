@@ -1390,7 +1390,12 @@ namespace ElonaKeys
 			string cur = trader.currency.ToString().ToLowerInvariant();
 			string title = (sell ? "Sell to " : "Buy from ") + (trader.owner != null ? trader.owner.Name : "the shop") + "  (z/x = buy/sell)";
 			MenuSystem.NextFooterExtra = "you have " + pc.GetCurrency(cur) + " " + cur;
-			MenuSystem.Show(title, BuildShopRows(), delegate
+			List<MenuRow> shopRows = BuildShopRows();
+			if (Plugin.DebugLog)
+			{
+				Plugin.Log?.LogInfo("ElonaKeys shop menu: " + shopRows.Count + " rows, view=" + (sell ? "sell" : "buy") + ", trader=" + (trader.owner != null ? trader.owner.Name : "?"));
+			}
+			MenuSystem.Show(title, shopRows, delegate
 			{
 				MenuSystem.SetRows(BuildShopRows());
 			}, keepLayers: true, replace: replace);

@@ -547,23 +547,31 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			try
+			// END OF FRAME, not now: the game calls
+			// ui.AddLayer(LayerInventory.CreateBuy(...)), so at postfix time
+			// the shop layer isn't in the UI yet — anything we open here ends
+			// up UNDER it, and the window init re-applies its position over
+			// our off-screen move. After the frame the layer is settled.
+			EClass.core.WaitForEndOfFrame(delegate
 			{
-				// the native toggle, the exact path Tab takes. NEVER
-				// LayerInventory.CreatePCBackpack(): it skips window.saveData
-				// and the spawned pane NREs in UIInventory.Update every frame
-				if (LayerInventory.GetPCLayer() == null)
+				try
 				{
-					EClass.ui.ToggleInventory();
+					// the native toggle, the exact path Tab takes. NEVER
+					// LayerInventory.CreatePCBackpack(): it skips
+					// window.saveData and NREs in UIInventory.Update
+					if (LayerInventory.GetPCLayer() == null)
+					{
+						EClass.ui.ToggleInventory();
+					}
+					// the ElonaKeys shop window: prices, letters, z/x
+					// buy<->sell, Enter = native transaction
+					Handlers.ShopMenu();
 				}
-				// and the ElonaKeys shop window on top: prices, letters,
-				// z/x buy<->sell, Enter = native transaction
-				Handlers.ShopMenu();
-			}
-			catch (Exception ex)
-			{
-				Plugin.Log?.LogWarning("ElonaKeys shop auto-open failed: " + ex.Message);
-			}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogWarning("ElonaKeys shop auto-open failed: " + ex);
+				}
+			});
 		}
 	}
 
