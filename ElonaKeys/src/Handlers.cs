@@ -1500,17 +1500,22 @@ namespace ElonaKeys
 			MenuSystem.SetOnKill(CloseShopLayers);
 		}
 
-		// "you have 4,320 orens" in the shop's own currency
+		// "you have 4,320 orens" in the shop's own currency (or the base's
+		// resource for home boards)
 		private static string ShopFooter(InvOwner trader)
 		{
-			string cur = trader.currency.ToString().ToLowerInvariant();
 			try
 			{
+				if (trader.UseHomeResource)
+				{
+					return trader.homeResource.Name + ": " + trader.homeResource.value;
+				}
+				string cur = trader.currency.ToString().ToLowerInvariant();
 				return "you have " + Lang._currency(pc.GetCurrency(cur), cur);
 			}
 			catch
 			{
-				return "you have " + pc.GetCurrency(cur) + " " + cur;
+				return "";
 			}
 		}
 
@@ -1597,33 +1602,17 @@ namespace ElonaKeys
 				Msg.SayRaw("The shop is closed.");
 				return;
 			}
-			if (trader.UseHomeResource)
-			{
-				// home-resource boards keep the native button flow
-				ButtonGrid bg = PopupNav.FindGridButton(t);
-				if (bg != null)
-				{
-					try
-					{
-						bg.invOwner.OnRightClick(bg);
-					}
-					catch (Exception ex)
-					{
-						Plugin.Log?.LogError("ElonaKeys shop transaction failed: " + ex);
-					}
-				}
-				return;
-			}
 			try
 			{
 				string cur = trader.currency.ToString().ToLowerInvariant();
+				bool home = trader.UseHomeResource; // boards paying in a base resource
 				n = Mathf.Clamp(n, 1, Mathf.Max(1, t.Num));
 				int price = session.GetPrice(t, n, sell);
 				if (!sell)
 				{
-					if (price > pc.GetCurrency(cur))
+					if (home ? (trader.homeResource.value < price) : (price > pc.GetCurrency(cur)))
 					{
-						Msg.SayRaw("Not enough " + Lang._currency(price, cur) + ".");
+						Msg.SayRaw("Not enough " + (home ? trader.homeResource.Name : Lang._currency(price, cur)) + ".");
 						SE.Beep();
 						return;
 					}
@@ -1651,7 +1640,14 @@ namespace ElonaKeys
 				Thing moved = (n >= t.Num) ? t : t.Split(n);
 				if (sell)
 				{
-					pc.ModCurrency(price, cur);
+					if (home)
+					{
+						trader.homeResource.Mod(price);
+					}
+					else
+					{
+						pc.ModCurrency(price, cur);
+					}
 					// native quirk kept: unidentified goods identify on sale
 					// instead of registering for buy-back
 					if (!moved.IsIdentified && !session.HasBought(moved))
@@ -1667,7 +1663,14 @@ namespace ElonaKeys
 				}
 				else
 				{
-					pc.ModCurrency(-price, cur);
+					if (home)
+					{
+						trader.homeResource.Mod(-price);
+					}
+					else
+					{
+						pc.ModCurrency(-price, cur);
+					}
 					session.Process(moved, moved.Num, sell: false);
 					Msg.Say("bought", moved, Lang._currency(price, cur));
 					moved.isNPCProperty = false; // paid for: no theft branch in Pick

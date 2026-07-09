@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.27.2 - 2026-07-09
+- Home-resource boards (shops that spend your base's resources instead of money) are fully keyboard now too, no exceptions left: same direct transactions, and the footer shows the resource and its stock instead of money.
+
 ## 1.27.1 - 2026-07-09
 - Shopping needs NO windows but ours anymore. Buying and selling run as direct transactions (same prices, money, space checks, sell-identify and buy-back rules as the vanilla flow), so "Cannot reach that item's window" is gone, items inside pouches sell fine, and the mod no longer opens a backpack pane at all.
 - Stacks get the ElonaKeys count spinner in the shop (Enter on a stack, left/right sets how many, Enter confirms) instead of the vanilla amount popup.
