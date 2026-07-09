@@ -45,10 +45,25 @@ namespace ElonaKeys
 			public Action refreshSource;
 			public Action<int> sourceCycle; // z/x tab/source switching, per screen
 			public string footerExtra;      // extra footer detail (container slots...)
+			public Action onTab;            // Tab behavior override (shop buy<->sell)
+			public string rightHeader;      // right column header ("Weight" default)
 		}
 
 		// extra footer detail for the NEXT Show() call (consumed once)
 		public static string NextFooterExtra;
+		// Tab override for the NEXT Show() call (consumed once)
+		public static Action NextOnTab;
+		// right-column header for the NEXT Show() call (consumed once)
+		public static string NextRightHeader;
+
+		// live footer update for refreshable menus (money after a purchase...)
+		public static void SetFooterExtra(string s)
+		{
+			if (current != null)
+			{
+				current.footerExtra = s;
+			}
+		}
 
 		private static LayerList layer;
 		private static Screen current;
@@ -106,8 +121,10 @@ namespace ElonaKeys
 			{
 				history.Clear();
 			}
-			current = new Screen { title = _title, rows = rows, refreshSource = _refreshSource, footerExtra = NextFooterExtra };
+			current = new Screen { title = _title, rows = rows, refreshSource = _refreshSource, footerExtra = NextFooterExtra, onTab = NextOnTab, rightHeader = NextRightHeader };
 			NextFooterExtra = null;
+			NextOnTab = null;
+			NextRightHeader = null;
 			page = 0;
 			sel = 0;
 			amountRow = null;
@@ -713,7 +730,7 @@ namespace ElonaKeys
 					}
 					else
 					{
-						ht.text = "Weight";
+						ht.text = (current != null && !string.IsNullOrEmpty(current.rightHeader)) ? current.rightHeader : "Weight";
 						w = Mathf.Max(Plugin.WeightWidth, 52f);
 						x = -14f;
 					}
@@ -1212,6 +1229,12 @@ namespace ElonaKeys
 					top.Close();
 				}
 				shiftHeld = false;
+				return;
+			}
+			// per-screen Tab override first (shop: buy <-> sell, the Elona+CGX key)
+			if (Input.GetKeyDown(KeyCode.Tab) && current.onTab != null)
+			{
+				current.onTab();
 				return;
 			}
 			// Tab cycles the window family (items / equipment-chara / spells-actions).

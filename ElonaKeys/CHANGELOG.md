@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.26.4 - 2026-07-09
+- Shop polish, per report: TAB switches buy/sell (as originally specced; z is sorting again and x examines again). Prices show in the vendor's real currency ("4,320 orens", not "moneys"), the column header says Price, and the item's weight rides in the name line. Anything bought this visit shows its BUY-BACK price in the sell view (what you paid, like the vanilla window), and your money in the footer updates after every transaction.
+
 ## 1.26.3 - 2026-07-09
 - The shop list window REALLY shows now. The game finishes attaching its shop window a moment after creating it, so ours was opening underneath it and the vanilla window landed back on screen over the hidden spot. Everything now happens right after the game finishes: vanilla windows leave the screen, the ElonaKeys item list opens on top.
 

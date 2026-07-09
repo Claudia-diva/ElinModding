@@ -1387,9 +1387,18 @@ namespace ElonaKeys
 				return;
 			}
 			bool sell = shopView == 1;
-			string cur = trader.currency.ToString().ToLowerInvariant();
-			string title = (sell ? "Sell to " : "Buy from ") + (trader.owner != null ? trader.owner.Name : "the shop") + "  (z/x = buy/sell)";
-			MenuSystem.NextFooterExtra = "you have " + pc.GetCurrency(cur) + " " + cur;
+			string title = (sell ? "Sell to " : "Buy from ") + (trader.owner != null ? trader.owner.Name : "the shop") + "  (Tab = " + (sell ? "buy" : "sell") + ")";
+			MenuSystem.NextFooterExtra = ShopFooter(trader);
+			MenuSystem.NextRightHeader = "Price";
+			// TAB flips buy<->sell (Elona+CGX); z keeps sorting, x examining
+			MenuSystem.NextOnTab = delegate
+			{
+				shopView = 1 - shopView;
+				if (InvOwner.Trader != null && ShopTransaction.current != null)
+				{
+					ShopMenu(replace: true);
+				}
+			};
 			List<MenuRow> shopRows = BuildShopRows();
 			if (Plugin.DebugLog)
 			{
@@ -1397,24 +1406,36 @@ namespace ElonaKeys
 			}
 			MenuSystem.Show(title, shopRows, delegate
 			{
+				// money and buy-back prices move with every transaction
+				if (InvOwner.Trader != null)
+				{
+					MenuSystem.SetFooterExtra(ShopFooter(InvOwner.Trader));
+				}
 				MenuSystem.SetRows(BuildShopRows());
 			}, keepLayers: true, replace: replace);
-			MenuSystem.SetSourceCycle(delegate(int dir)
-			{
-				shopView = (dir == 0) ? 0 : (1 - shopView);
-				if (InvOwner.Trader != null && ShopTransaction.current != null)
-				{
-					ShopMenu(replace: true);
-				}
-			});
 			// our window IS the shop: when it goes, the whole trade goes
 			MenuSystem.SetOnKill(CloseShopLayers);
+		}
+
+		// "you have 4,320 orens" in the shop's own currency
+		private static string ShopFooter(InvOwner trader)
+		{
+			string cur = trader.currency.ToString().ToLowerInvariant();
+			try
+			{
+				return "you have " + Lang._currency(pc.GetCurrency(cur), cur);
+			}
+			catch
+			{
+				return "you have " + pc.GetCurrency(cur) + " " + cur;
+			}
 		}
 
 		private static List<MenuRow> BuildShopRows()
 		{
 			InvOwner trader = InvOwner.Trader;
-			if (trader == null || ShopTransaction.current == null)
+			ShopTransaction session = ShopTransaction.current;
+			if (trader == null || session == null)
 			{
 				return new List<MenuRow> { new MenuRow { label = "(the shop closed)" } };
 			}
@@ -1439,7 +1460,9 @@ namespace ElonaKeys
 				int price = 0;
 				try
 				{
-					price = t.GetPrice(trader.currency, sell, trader.priceType);
+					// the SESSION price: something bought this visit sells back
+					// at what was paid for it, exactly like the native window
+					price = session.GetPrice(t, t.Num, sell);
 				}
 				catch
 				{
@@ -1448,13 +1471,23 @@ namespace ElonaKeys
 				{
 					continue; // the trader won't pay for it
 				}
+				string priceText;
+				try
+				{
+					priceText = Lang._currency(price, cur);
+				}
+				catch
+				{
+					priceText = price + " " + cur;
+				}
 				rows.Add(new MenuRow
 				{
-					label = DetailName(t),
+					// weight rides along in the name line; the right column is Price
+					label = DetailName(t) + " <size=13><color=#8f8f7a>" + WeightText(t.ChildrenAndSelfWeight) + "</color></size>",
 					icon = t,
-					rightText = price + " " + cur,
+					rightText = priceText,
 					rightWidth = 110f,
-					sortWeight = price,
+					sortWeight = t.ChildrenAndSelfWeight,
 					sortCount = t.Num,
 					closeOnAct = false,
 					act = delegate { ShopAct(t); }
