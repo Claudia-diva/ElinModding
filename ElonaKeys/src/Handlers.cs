@@ -458,7 +458,13 @@ namespace ElonaKeys
 				"You have nothing to drop.",
 				refresh: true, label: null, extraRows: null, category: null,
 				amount: (Thing t) => t.Num,
-				onAmount: delegate(Thing t, int n) { pc.DropThing(t, n); });
+				onAmount: delegate(Thing t, int n)
+				{
+					// Chara.DropThing IGNORES its num parameter (drops the whole
+					// stack regardless): split ourselves first
+					Thing x = (n >= t.Num) ? t : t.Split(n);
+					pc.DropThing(x);
+				});
 		}
 
 		// Elona equipment window: body slots with what's worn, pick a slot to
@@ -2096,7 +2102,10 @@ namespace ElonaKeys
 		{
 			try
 			{
-				UIContextMenu m = EClass.ui.CreateContextMenu();
+				// CreateContextMenuInteraction, NOT CreateContextMenu: the
+				// plain factory is the system menu and CLOSES EVERY LAYER
+				// (the "nothing shows up and all windows close" report)
+				UIContextMenu m = EClass.ui.CreateContextMenuInteraction();
 				UIDistribution ud = Util.Instantiate<UIDistribution>("UI/Layer/UIDistribution");
 				ud.SetContainer(container, sd);
 				m.AddGameObject(ud);
@@ -2416,8 +2425,10 @@ namespace ElonaKeys
 
 		private static void PartyInventory(Chara c)
 		{
+			MenuSystem.NextFooterExtra = c.Name + " " + SlotText(c);
 			MenuSystem.Show(c.Name + "'s items", BuildPartyRows(c), delegate
 			{
+				MenuSystem.SetFooterExtra(c.Name + " " + SlotText(c));
 				MenuSystem.SetRows(BuildPartyRows(c));
 			});
 		}

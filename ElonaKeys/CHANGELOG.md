@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.28.2 - 2026-07-09
+- FIXED: dropping a chosen amount dropped the whole stack (the game's own drop function ignores the count; we split first now).
+- FIXED: the "[ Advanced distribution panel... ]" row closed every window and showed nothing (wrong menu host; the game has two and one of them closes all layers). The panel opens for real now.
+- That same failure could leave an invisible leftover menu that silently killed keyboard navigation in every native window afterwards (request board arrows, home board Enter, resident board). The mod now detects and clears that state on its own. If your boards felt dead, this was why.
+- Shift closes native windows too now: request/home/resident boards, dialogs, the character sheet, like it always closed the mod's menus. (Talk scenes are exempt.)
+- Enter on a yes/no popup takes the first (default) answer without arrowing to it first.
+- Party inventories (shift+q) show the member's used/total slots in the footer.
+
 ## 1.28.1 - 2026-07-09
 - The backpack-space check really covers every take now (container Take and party-member take had slipped through), and a pick-an-item window that fails to open cleans up after itself.
 

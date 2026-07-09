@@ -72,6 +72,10 @@ namespace ElonaKeys
 			}
 		}
 
+		// shift-release close tracking for native windows
+		private static bool navShiftHeld;
+		private static bool navShiftUsed;
+
 		// debounced crafting selection: highlight moves instantly, the real
 		// selection (full product-panel refresh + click sound) fires once the
 		// cursor RESTS, so holding a key to scroll doesn't strobe the window
@@ -437,6 +441,43 @@ namespace ElonaKeys
 				// THIS frame; reacting to the same press bounced it right back
 				topLayer.Close();
 				MenuCycle.Next();
+				return;
+			}
+			// Shift closes native windows too (home/resident/request boards...),
+			// same Elona muscle memory as the mod menus. Release-based so
+			// shift+digit/shift+key combos stay untouched; talk scenes exempt.
+			if (topLayer != null && !(topLayer is LayerDrama) && !EInput.isInputFieldActive)
+			{
+				if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+				{
+					navShiftHeld = true;
+					navShiftUsed = false;
+				}
+				else if (navShiftHeld && Input.anyKeyDown)
+				{
+					navShiftUsed = true;
+				}
+				if ((Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift)) && navShiftHeld)
+				{
+					navShiftHeld = false;
+					if (!navShiftUsed)
+					{
+						topLayer.Close();
+						return;
+					}
+				}
+			}
+			else
+			{
+				navShiftHeld = false;
+			}
+			// a dialog with nothing selected: Enter takes the DEFAULT (first)
+			// button, so yes/no popups confirm without arrowing first
+			if (topLayer is Dialog && g != null && g.buttons.Count > 0 && index < 0
+				&& (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
+			{
+				g.buttons[0].onClick.Invoke();
+				EInput.Consume();
 				return;
 			}
 			// crafting window: +/- adjust the count (shift = 10s), Enter crafts

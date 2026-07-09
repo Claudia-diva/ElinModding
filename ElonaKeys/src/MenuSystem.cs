@@ -1231,6 +1231,18 @@ namespace ElonaKeys
 			}
 			if (current == null)
 			{
+				// alive layer with no screen = an orphan (a failed teardown,
+				// e.g. the old distribution-panel bug closing layers mid-flow).
+				// While it lingers, PopupNav thinks a menu is open and every
+				// native window goes keyboard-dead: self-heal.
+				try
+				{
+					layer.Close();
+				}
+				catch
+				{
+				}
+				layer = null;
 				return;
 			}
 			// never react to the keystroke that opened this menu
