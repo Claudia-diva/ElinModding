@@ -531,9 +531,12 @@ namespace ElonaKeys
 			}
 			try
 			{
+				// the native toggle, the exact path Tab takes. NEVER
+				// LayerInventory.CreatePCBackpack(): it skips window.saveData
+				// and the spawned pane NREs in UIInventory.Update every frame
 				if (LayerInventory.GetPCLayer() == null)
 				{
-					LayerInventory.CreatePCBackpack();
+					EClass.ui.ToggleInventory();
 				}
 			}
 			catch (Exception ex)

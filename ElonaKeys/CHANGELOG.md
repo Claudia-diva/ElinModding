@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.25.2 - 2026-07-08
+- FIXED: opening a shop threw endless errors. The backpack auto-open used a leftover game function that creates a half-initialized window; it now opens your inventory through the exact same path the Tab key uses. If you hit the errors, reopening the game clears the broken window.
+
 ## 1.25.1 - 2026-07-08
 - Trading actually works now (1.25.0 searched for the shop windows in the wrong place and found none, silently). Same keys as advertised: arrows, Tab between panes, Enter to buy/sell, x examine. It's one generic system for every vendor; nothing is per-shop.
 - CAPSLOCK IS THE ESCAPE HATCH now, repurposed: press it and the mod pauses COMPLETELY: native windows, native keys, no redirects, until you press it again. Any time a mod window misbehaves, CapsLock gets you the normal Elin one.
