@@ -558,6 +558,7 @@ namespace ElonaKeys
 				catch (Exception ex)
 				{
 					Plugin.Log?.LogWarning("ElonaKeys draglet menu open failed: " + ex);
+					Handlers.CloseShopLayers(); // hidden pooled layers must never linger
 				}
 			});
 		}

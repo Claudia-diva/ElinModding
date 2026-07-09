@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.28.1 - 2026-07-09
+- The backpack-space check really covers every take now (container Take and party-member take had slipped through), and a pick-an-item window that fails to open cleans up after itself.
+
 ## 1.28.0 - 2026-07-09
 - EVERY "pick an item" window is an ElonaKeys menu now: altar offerings, dip/blend, identify/uncurse/enchant/material scrolls, wizard services, bank deposits, the tax box, harvest-quest chests, gacha, the recycle bin, the gene machine, the mod kit, refueling. One list, Enter uses the item, paid services charge their normal fee. (Bank withdrawals were already keyboard dialogs; now deposits match.)
 - CapsLock pause is airtight: while paused, nothing of the mod runs at all (a few fences and the Escape action-cancel used to slip through), and the movement keys can't stay stuck if you pause mid-trade.

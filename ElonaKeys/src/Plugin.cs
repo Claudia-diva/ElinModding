@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.28.0";
+		public const string Version = "1.28.1";
 
 		internal static ManualLogSource Log;
 
@@ -199,7 +199,7 @@ namespace ElonaKeys
 			familyBarHint = Config.Bind("Menus", "FamilyBarHint", true,
 				"Show the 'Tab [change]' hint line under the family bar.");
 			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
-				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Locked chests and surprise packages stay native.");
+				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Also gates ally trading and every pick-an-item flow (offerings, dip/blend, effect scrolls, wizard services, bank deposit, tax box, quest chests, gacha, recycle, gene machine, mod kit, refuel). Locked chests and surprise packages stay native.");
 			craftingStyle = Config.Bind("Menus", "CraftingStyle", "native",
 				new ConfigDescription("native = the game's crafting window, fully keyboard-driven (arrows pick recipes with live preview, +/- count, m = materials, Enter crafts). menu = replace it with the mod's list-style menu.",
 					new AcceptableValueList<string>("native", "menu")));

@@ -1358,6 +1358,7 @@ namespace ElonaKeys
 		{
 			if (owner == null || LayerDragGrid.Instance == null)
 			{
+				CloseShopLayers(); // the grid was already hidden: never strand it
 				return;
 			}
 			string title = "";
@@ -1922,6 +1923,10 @@ namespace ElonaKeys
 				maxAmount = t.Num,
 				onAmount = delegate(int n)
 				{
+					if (BackpackFull(t))
+					{
+						return;
+					}
 					Thing x = (n >= t.Num) ? t : t.Split(n);
 					pc.AddCard(x);
 					Msg.SayRaw("You take " + x.Name + ".");
@@ -2434,6 +2439,10 @@ namespace ElonaKeys
 					maxAmount = worn ? 0 : t.Num,
 					onAmount = worn ? null : ((Action<int>)delegate(int n)
 					{
+						if (BackpackFull(t))
+						{
+							return;
+						}
 						Thing take = (n >= t.Num) ? t : t.Split(n);
 						pc.AddCard(take);
 						Msg.SayRaw("You take " + take.Name + " from " + c.Name + ".");
