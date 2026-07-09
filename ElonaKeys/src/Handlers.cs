@@ -1573,7 +1573,8 @@ namespace ElonaKeys
 					sortWeight = t.ChildrenAndSelfWeight,
 					sortCount = t.Num,
 					closeOnAct = false,
-					act = delegate { ShopAct(t); }
+					maxAmount = Mathf.Max(1, t.Num),
+					onAmount = delegate(int n) { ShopAct(t, n, sell); }
 				});
 			}
 			if (rows.Count == 0)
@@ -1583,19 +1584,95 @@ namespace ElonaKeys
 			return rows;
 		}
 
-		// buy/sell one row: through the native grid button = the native
-		// transaction with every check and dialog
-		private static void ShopAct(Thing t)
+		// buy/sell n of a row: a DIRECT transaction, no native windows or grid
+		// buttons involved (the old button-click route died for anything in a
+		// closed pouch). Mirrors InvOwner.Transaction.Process's trader branch:
+		// session-aware price, money, space, identify-on-sell, session register.
+		private static void ShopAct(Thing t, int n, bool sell)
 		{
-			ButtonGrid bg = PopupNav.FindGridButton(t);
-			if (bg == null)
+			InvOwner trader = InvOwner.Trader;
+			ShopTransaction session = ShopTransaction.current;
+			if (trader == null || session == null)
 			{
-				Msg.SayRaw("Cannot reach that item's window (is the pane open?).");
+				Msg.SayRaw("The shop is closed.");
+				return;
+			}
+			if (trader.UseHomeResource)
+			{
+				// home-resource boards keep the native button flow
+				ButtonGrid bg = PopupNav.FindGridButton(t);
+				if (bg != null)
+				{
+					try
+					{
+						bg.invOwner.OnRightClick(bg);
+					}
+					catch (Exception ex)
+					{
+						Plugin.Log?.LogError("ElonaKeys shop transaction failed: " + ex);
+					}
+				}
 				return;
 			}
 			try
 			{
-				bg.invOwner.OnRightClick(bg);
+				string cur = trader.currency.ToString().ToLowerInvariant();
+				n = Mathf.Clamp(n, 1, Mathf.Max(1, t.Num));
+				int price = session.GetPrice(t, n, sell);
+				if (!sell)
+				{
+					if (price > pc.GetCurrency(cur))
+					{
+						Msg.SayRaw("Not enough " + Lang._currency(price, cur) + ".");
+						SE.Beep();
+						return;
+					}
+					if (pc.things.IsFull(t))
+					{
+						Msg.SayRaw("Your backpack is full.");
+						SE.Beep();
+						return;
+					}
+				}
+				else
+				{
+					if (t.c_isImportant)
+					{
+						Msg.SayRaw("You should keep that.");
+						return;
+					}
+					if (price <= 0 && !session.CanSellBack(t, n))
+					{
+						Msg.SayRaw("They will not pay for that.");
+						return;
+					}
+				}
+				SE.Play(sell ? "sell" : "buy");
+				Thing moved = (n >= t.Num) ? t : t.Split(n);
+				if (sell)
+				{
+					pc.ModCurrency(price, cur);
+					// native quirk kept: unidentified goods identify on sale
+					// instead of registering for buy-back
+					if (!moved.IsIdentified && !session.HasBought(moved))
+					{
+						moved.Identify(show: true, IDTSource.SuperiorIdentify);
+					}
+					else
+					{
+						session.Process(moved, moved.Num, sell: true);
+					}
+					Msg.Say("sold", moved, Lang._currency(price, cur));
+					trader.Container.AddThing(moved);
+				}
+				else
+				{
+					pc.ModCurrency(-price, cur);
+					session.Process(moved, moved.Num, sell: false);
+					Msg.Say("bought", moved, Lang._currency(price, cur));
+					moved.isNPCProperty = false; // paid for: no theft branch in Pick
+					pc.Pick(moved, msg: false);
+				}
 			}
 			catch (Exception ex)
 			{

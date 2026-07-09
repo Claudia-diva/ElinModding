@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.27.1 - 2026-07-09
+- Shopping needs NO windows but ours anymore. Buying and selling run as direct transactions (same prices, money, space checks, sell-identify and buy-back rules as the vanilla flow), so "Cannot reach that item's window" is gone, items inside pouches sell fine, and the mod no longer opens a backpack pane at all.
+- Stacks get the ElonaKeys count spinner in the shop (Enter on a stack, left/right sets how many, Enter confirms) instead of the vanilla amount popup.
+
 ## 1.27.0 - 2026-07-09
 - YOUR WINDOW LAYOUTS ARE SAFE. The shop no longer moves or closes ANY window you had open; only the shop's own window (and a backpack pane if the mod itself opened one) is made invisible in place, and visibility is restored on close. Window positions are never touched again.
 - Trading with party members and pets opens an ElonaKeys two-pane menu: their items / your items, Tab switches sides, count spinner moves things either way, both carry loads in the footer. No vanilla window.

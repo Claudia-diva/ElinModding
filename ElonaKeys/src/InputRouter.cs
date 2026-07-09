@@ -585,21 +585,12 @@ namespace ElonaKeys
 			{
 				try
 				{
-					// hide IN PLACE, only what we manage: the shop window, and
-					// a backpack pane only if WE open it. Pre-existing player
-					// windows are never touched (positions persist in saves).
+					// hide IN PLACE, only the shop's own window; transactions
+					// are direct now, so NO backpack pane is opened and no
+					// pre-existing player window is ever touched
 					Handlers.HideTradeLayer(shopLayer);
-					if (LayerInventory.GetPCLayer() == null)
-					{
-						// the native toggle, the exact path Tab takes. NEVER
-						// CreatePCBackpack(): it skips window.saveData and
-						// NREs in UIInventory.Update
-						EClass.ui.ToggleInventory();
-						Handlers.shopOpenedBackpack = true;
-						Handlers.HideTradeLayer(LayerInventory.GetPCLayer());
-					}
 					// the ElonaKeys shop window: prices, letters, Tab
-					// buy<->sell, Enter = native transaction
+					// buy<->sell, spinner counts, direct transactions
 					Handlers.ShopMenu();
 				}
 				catch (Exception ex)
