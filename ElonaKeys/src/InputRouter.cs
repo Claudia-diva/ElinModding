@@ -188,6 +188,12 @@ namespace ElonaKeys
 			{
 				EInput.action = EAction.None;
 			}
+			// keypad0 INSIDE a menu = act with the whole stack (drop all...):
+			// the GetAll world bind must not also hoover the tile
+			if (MenuSystem.Alive && entry != null && entry.name == "GetAll")
+			{
+				return;
+			}
 			// verb keys that double as movement (s/w/a/d) must not ALSO step
 			// the character — for the WHOLE press, not just the down frame:
 			// s on a collectable started the harvest, then walked south a few

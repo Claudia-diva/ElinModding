@@ -6,7 +6,7 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ The selected item's full stat card is shown automatically; press x on a row to open the examine window.
 ・ z inside a menu cycles sorting (original / name / weight or category / count or stock); the weight column sits on the right.
 ・ Shift returns to the previous window in a chain (wheel, give, equipment slots...), or closes the last one.
-・ Stacks open a count spinner "n (max)": left/right +-1, up/down +-10, Enter confirms.
+・ Stacks open a count spinner "n (max)": left/right +-1, up/down +-10, Enter confirms. numpad0 = act with the WHOLE stack, spinner skipped (drop all, take all; undroppable and important-marked items stay safe). Important-marked items show a gold star.
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
 ・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
 ・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
@@ -37,7 +37,7 @@ $Keys
 {pair|T|Throw: pick item, then the free cursor (auto-fires at your remembered HOSTILE target)}
 {pair|A (shift+a)|Load compatible ammo into your ranged weapon}
 {pair|x|Reopen the last-used item menu (Elona x)}
-{pair|shift+x|Inventory browser: z/x switch You / party members / Home stock; take with the count spinner}
+{pair|shift+x|Inventory browser: period/comma switch You / party members / Home stock; z sorts, x examines, Tab hops the window family; take with the count spinner}
 {pair|Tab in a menu|Cycle the window family: items X,d,e,r,q,Z,t,o,B,T / equipment-chara / spells-actions}
 {pair|Family bar|Elona-style diamond tabs shown while family windows are open (current = gold, click to jump). A real widget: toggle/drag/lock it in the widget manager, like the shift-page hotbar}
 

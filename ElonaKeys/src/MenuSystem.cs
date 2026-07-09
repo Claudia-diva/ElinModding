@@ -46,13 +46,19 @@ namespace ElonaKeys
 			public Action<int> sourceCycle; // z/x tab/source switching, per screen
 			public string footerExtra;      // extra footer detail (container slots...)
 			public Action onTab;            // Tab behavior override (shop buy<->sell)
+			public Action<int> onSwap;      // period/comma source cycling (browser)
 			public string rightHeader;      // right column header ("Weight" default)
 		}
 
 		// extra footer detail for the NEXT Show() call (consumed once)
 		public static string NextFooterExtra;
-		// Tab override for the NEXT Show() call (consumed once)
+		// Tab override for the NEXT Show() call (consumed once). ONLY for
+		// menus outside the window families (shop buy/sell, ally trade):
+		// inside a family Tab must keep hopping windows.
 		public static Action NextOnTab;
+		// source swap (period = next, comma = prev) for the NEXT Show() call:
+		// the family-safe way to cycle inventories/sources (browser)
+		public static Action<int> NextOnSwap;
 		// right-column header for the NEXT Show() call (consumed once)
 		public static string NextRightHeader;
 
@@ -121,9 +127,10 @@ namespace ElonaKeys
 			{
 				history.Clear();
 			}
-			current = new Screen { title = _title, rows = rows, refreshSource = _refreshSource, footerExtra = NextFooterExtra, onTab = NextOnTab, rightHeader = NextRightHeader };
+			current = new Screen { title = _title, rows = rows, refreshSource = _refreshSource, footerExtra = NextFooterExtra, onTab = NextOnTab, onSwap = NextOnSwap, rightHeader = NextRightHeader };
 			NextFooterExtra = null;
 			NextOnTab = null;
+			NextOnSwap = null;
 			NextRightHeader = null;
 			page = 0;
 			sel = 0;
@@ -151,6 +158,7 @@ namespace ElonaKeys
 			// one-shot Show() parameters must not leak onto an unrelated menu
 			NextFooterExtra = null;
 			NextOnTab = null;
+			NextOnSwap = null;
 			NextRightHeader = null;
 			// hold-v's armed manual mode: keep it ONLY when this close is part
 			// of a row-action dispatch (Run closes BEFORE the action fires and
@@ -1078,7 +1086,7 @@ namespace ElonaKeys
 				caption += "  " + pieces + " items " + (grams / 1000f).ToString("0.0") + "s";
 			}
 			// the controls, at the top where text provably renders (plain ASCII)
-			caption += abilityMenu ? "  [x aim / w party / z sort]" : "  [z sort / x info]";
+			caption += abilityMenu ? "  [x aim / w party / z sort]" : "  [z sort / x info / 0 all]";
 			layer.windows[0].SetCaption(caption);
 			bool colsPage = false;
 			bool weightPage = false;
@@ -1221,6 +1229,7 @@ namespace ElonaKeys
 					history.Clear();
 					NextFooterExtra = null;
 					NextOnTab = null;
+					NextOnSwap = null;
 					NextRightHeader = null;
 					if (Time.frameCount != dispatchFrame)
 					{
@@ -1275,11 +1284,27 @@ namespace ElonaKeys
 				shiftHeld = false;
 				return;
 			}
-			// per-screen Tab override first (shop: buy <-> sell, the Elona+CGX key)
+			// per-screen Tab override first (shop: buy <-> sell, the Elona+CGX
+			// key; ONLY on family-less menus, family windows keep Tab hopping)
 			if (Input.GetKeyDown(KeyCode.Tab) && current.onTab != null)
 			{
 				current.onTab();
 				return;
+			}
+			// period/comma cycle sources on multi-inventory screens (browser):
+			// family-safe, and z/x stay sort/examine
+			if (current.onSwap != null)
+			{
+				if (Input.GetKeyDown(KeyCode.Period))
+				{
+					current.onSwap(1);
+					return;
+				}
+				if (Input.GetKeyDown(KeyCode.Comma))
+				{
+					current.onSwap(-1);
+					return;
+				}
 			}
 			// Tab cycles the window family (items / equipment-chara / spells-actions).
 			// CycledThisFrame: one physical Tab must fire ONE hop — PopupNav
@@ -1389,6 +1414,19 @@ namespace ElonaKeys
 				ApplyPage();
 				return;
 			}
+			// numpad0 = act with the WHOLE stack, no spinner (drop all, take
+			// all...). Safety rides on the actions themselves: the game's drop
+			// refuses undroppables and important-marked items on its own.
+			if (Input.GetKeyDown(KeyCode.Keypad0) && sel >= 0 && sel < pageRows.Count)
+			{
+				MenuRow qr = pageRows[sel];
+				if (qr.onAmount != null)
+				{
+					int all = Mathf.Max(1, qr.maxAmount);
+					Run(qr, delegate { qr.onAmount(all); });
+					return;
+				}
+			}
 			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
 			{
 				// Space = Enter, deliberately (it used to fall through to uGUI)
@@ -1443,6 +1481,20 @@ namespace ElonaKeys
 			{
 				amount = Mathf.Max(1, amount - 10);
 				ApplyPage();
+			}
+			else if (Input.GetKeyDown(KeyCode.Keypad0))
+			{
+				// numpad0 inside the spinner = confirm with EVERYTHING
+				int nAll = Mathf.Max(1, r.maxAmount);
+				amountRow = null;
+				try
+				{
+					Run(r, delegate { r.onAmount(nAll); });
+				}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogError("ElonaKeys amount action failed: " + ex);
+				}
 			}
 			else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
 			{

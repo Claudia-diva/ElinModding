@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.28.3 - 2026-07-09
+- Inventory browser (shift+x): period/comma switch between You / party members / Home stock, so z is sorting again, x examines again (they had been hijacked as the switching keys, which also froze whatever sort you came in with), and Tab keeps hopping the window family.
+- numpad0 on a stack row (or inside the spinner) acts with the WHOLE stack instantly: drop all, take all, no prompt. Undroppable and important-marked items stay protected by the game's own rules.
+- Items marked as important show a gold star in every menu (the mark used to be invisible here).
+- The open-container list (o) shows each bag's weight and used/total slots and sorts properly (z: weight or item count); the utility rows stay pinned out of the sort.
+
 ## 1.28.2 - 2026-07-09
 - FIXED: dropping a chosen amount dropped the whole stack (the game's own drop function ignores the count; we split first now).
 - FIXED: the "[ Advanced distribution panel... ]" row closed every window and showed nothing (wrong menu host; the game has two and one of them closes all layers). The panel opens for real now.

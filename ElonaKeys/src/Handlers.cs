@@ -139,6 +139,12 @@ namespace ElonaKeys
 			{
 				extra = "";
 			}
+			// marked-important items carry the star everywhere (they refuse to
+			// be dropped/sold; the mark was invisible in our menus)
+			if (t.c_isImportant)
+			{
+				extra = (extra ?? "") + " <color=#c9a64f>★</color>";
+			}
 			return string.IsNullOrEmpty(extra) ? t.Name : (t.Name + " " + extra);
 		}
 
@@ -1154,8 +1160,12 @@ namespace ElonaKeys
 				bool isContainer = t.trait.CanOpenContainer;
 				rows.Add(new MenuRow
 				{
-					label = (isContainer ? "Open: " : "Use: ") + t.Name,
+					// slots + contents weight per bag, and real sort keys
+					label = (isContainer ? "Open: " : "Use: ") + t.Name + (isContainer ? "  <size=13><color=#8f8f7a>[" + t.things.Count + "/" + t.things.MaxCapacity + "]</color></size>" : ""),
 					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
+					sortCount = t.things.Count,
 					closeOnAct = !isContainer, // container menu chains for shift-back
 					act = delegate
 					{
@@ -1184,8 +1194,11 @@ namespace ElonaKeys
 						bool locked = t.c_lockLv > 0;
 						rows.Add(new MenuRow
 						{
-							label = "Open: " + t.Name + " (nearby)" + (locked ? " <color=#c08080>(locked)</color>" : ""),
+							label = "Open: " + t.Name + " (nearby)" + (locked ? " <color=#c08080>(locked)</color>" : "  <size=13><color=#8f8f7a>[" + t.things.Count + "/" + t.things.MaxCapacity + "]</color></size>"),
 							icon = t,
+							rightText = WeightText(t.ChildrenAndSelfWeight),
+							sortWeight = t.ChildrenAndSelfWeight,
+							sortCount = t.things.Count,
 							closeOnAct = locked,
 							act = delegate
 							{
@@ -1218,6 +1231,7 @@ namespace ElonaKeys
 			{
 				label = "[ Backpack settings (autopickup)... ]",
 				closeOnAct = false,
+				pinBottom = true, // sorting must not shuffle the utility row
 				act = delegate { BackpackSettings(); }
 			});
 			if (rows.Count == 1)
@@ -1881,12 +1895,14 @@ namespace ElonaKeys
 			{
 				label = "[ Put items in... ]",
 				closeOnAct = false,
+				pinTop = true,
 				act = delegate { PutMenu(container); }
 			});
 			rows.Add(new MenuRow
 			{
 				label = "[ Container settings... ]",
 				closeOnAct = false,
+				pinTop = true,
 				act = delegate { ContainerSettings(container); }
 			});
 			foreach (Thing thing in container.things)
@@ -3382,7 +3398,7 @@ namespace ElonaKeys
 			{
 				Plugin.Log?.LogInfo("ElonaKeys browser: source=" + src.name + " rows=" + rows.Count + " (of " + sources.Count + " sources)");
 			}
-			string title = "Inventory - " + src.name;
+			string title = "Inventory - " + src.name + "  (. or , = next/prev inventory)";
 			if (rows.Count == 0)
 			{
 				rows.Add(new MenuRow { label = "<color=#8f8f7a>(empty)</color>" });
@@ -3392,16 +3408,19 @@ namespace ElonaKeys
 			{
 				MenuSystem.NextFooterExtra = SlotText(src.owner);
 			}
+			// period/comma hop You / party members / Home stock. NOT Tab (the
+			// browser sits in the items family; Tab must keep hopping windows)
+			// and NOT z/x (sort/examine, which source-cycling used to eat).
+			int count = sources.Count;
+			MenuSystem.NextOnSwap = delegate(int dir)
+			{
+				browseSrc = ((browseSrc + dir) % count + count) % count;
+				ShowBrowser(replaceScreen: true);
+			};
 			MenuSystem.Show(title, rows, delegate
 			{
 				MenuSystem.SetRows(BuildBrowserRows(src.owner));
 			}, keepLayers: false, replace: replaceScreen);
-			int count = sources.Count;
-			MenuSystem.SetSourceCycle(delegate(int dir)
-			{
-				browseSrc = (dir == 0) ? 0 : (((browseSrc + dir) % count + count) % count);
-				ShowBrowser(replaceScreen: true);
-			});
 		}
 
 		private static List<MenuRow> BuildBrowserRows(Chara owner)
@@ -3415,7 +3434,7 @@ namespace ElonaKeys
 					bool held = t == pc.held;
 					rows.Add(new MenuRow
 					{
-						label = (held ? "(held) " : "") + t.Name + (t.isEquipped ? " <size=12><color=#90d090>(equipped)</color></size>" : "") + Quickbind.TagForItem(t.id),
+						label = (held ? "(held) " : "") + t.Name + (t.c_isImportant ? " <color=#c9a64f>★</color>" : "") + (t.isEquipped ? " <size=12><color=#90d090>(equipped)</color></size>" : "") + Quickbind.TagForItem(t.id),
 						icon = t,
 						pinTop = held,
 						rightText = WeightText(t.ChildrenAndSelfWeight),
