@@ -27,27 +27,16 @@ namespace ElonaKeys
 		private static int index = -1;
 		private static readonly List<Group> groups = new List<Group>();
 
-		// inventory/trade navigation is live (InputRouter fences arrows and
-		// the native Tab inventory toggle while this is true)
+		// inventory/trade navigation is live (InputRouter fences arrows, z/x
+		// and the native Tab inventory toggle while this is true)
 		private static bool invNav;
 		internal static bool InvNavActive => invNav;
 
-		// the native grid button currently showing this exact thing (the shop
-		// menu buys/sells by invoking the button's own right-click transaction)
-		internal static ButtonGrid FindGridButton(Thing t)
+		// the mod pause must not leave the movement/tab fences stuck on
+		// (OnUpdate stops running while paused, so nothing else clears this)
+		internal static void ClearInvNav()
 		{
-			if (t == null)
-			{
-				return null;
-			}
-			foreach (ButtonGrid bg in UnityEngine.Object.FindObjectsOfType<ButtonGrid>())
-			{
-				if (bg != null && bg.card == t && bg.invOwner != null && bg.gameObject.activeInHierarchy)
-				{
-					return bg;
-				}
-			}
-			return null;
+			invNav = false;
 		}
 
 		// "name  [8/40]" on inventory windows: used slots / capacity

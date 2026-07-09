@@ -765,6 +765,24 @@ namespace ElonaKeys
 			return (t != null && t.isNPCProperty) ? "  [steal]" : "";
 		}
 
+		// the space check every "take into your bag" path shares
+		private static bool BackpackFull(Thing t)
+		{
+			try
+			{
+				if (pc.things.IsFull(t))
+				{
+					Msg.SayRaw("Your backpack is full.");
+					SE.Beep();
+					return true;
+				}
+			}
+			catch
+			{
+			}
+			return false;
+		}
+
 		// numpad0: hoover the tile. Free things instantly; if any of it is
 		// someone's property, ONE crime prompt covers that part of the pile.
 		public static void GetAll()
@@ -841,6 +859,10 @@ namespace ElonaKeys
 						// split only after the crime prompt says yes
 						SafeTake(t, delegate
 						{
+							if (BackpackFull(t))
+							{
+								return;
+							}
 							Thing taken = (n >= t.Num) ? t : t.Split(n);
 							pc.Pick(taken);
 						});
@@ -879,6 +901,10 @@ namespace ElonaKeys
 							{
 								SafeTake(t, delegate
 								{
+									if (BackpackFull(t))
+									{
+										return;
+									}
 									Thing taken = (n >= t.Num) ? t : t.Split(n);
 									pc.Pick(taken);
 								});
@@ -1213,7 +1239,7 @@ namespace ElonaKeys
 			{
 				rows.Add(new MenuRow
 				{
-					label = name + ":  " + (value ? "<color=#70a070>ON</color>" : "<color=#a07070>OFF</color>"),
+					label = name + ":  " + (value ? "ON" : "OFF"), // plain: colored values are unreadable on parchment
 					closeOnAct = false,
 					act = flip
 				});
@@ -1322,6 +1348,100 @@ namespace ElonaKeys
 			MenuSystem.Show(title, rows, null, keepLayers: true);
 		}
 
+		// ---------- draglets: EVERY "pick an item for X" flow ----------
+		// One menu for the whole LayerDragGrid family: altar offerings, dip/
+		// blend, identify/uncurse/enchant/material scrolls, wizard services,
+		// bank deposit, tax box, harvest-quest chest, gacha, recycle, gene
+		// machine, mod kit, refuel. Enter mimics the native drop-on-slot:
+		// place on the current grid slot, OnProcess, pay the service price.
+		internal static void DragletMenu(InvOwnerDraglet owner)
+		{
+			if (owner == null || LayerDragGrid.Instance == null)
+			{
+				return;
+			}
+			string title = "";
+			try
+			{
+				title = owner.langWhat.IsEmpty() ? "" : owner.langWhat.lang();
+			}
+			catch
+			{
+			}
+			if (string.IsNullOrEmpty(title))
+			{
+				title = "Use which item?";
+			}
+			MenuSystem.Show(title, BuildDragletRows(owner), delegate
+			{
+				if (LayerDragGrid.Instance == null)
+				{
+					MenuSystem.Close(); // the flow finished (consumed its uses)
+					return;
+				}
+				MenuSystem.SetRows(BuildDragletRows(owner));
+			}, keepLayers: true);
+			MenuSystem.SetOnKill(CloseShopLayers);
+		}
+
+		private static List<MenuRow> BuildDragletRows(InvOwnerDraglet owner)
+		{
+			List<MenuRow> rows = new List<MenuRow>();
+			foreach (Thing thing in pc.things.List((Thing x) => !(x.trait is TraitAbility) && Safe((Thing y) => owner.ShouldShowGuide(y), x), onlyAccessible: true))
+			{
+				Thing t = thing;
+				rows.Add(new MenuRow
+				{
+					label = DetailName(t),
+					icon = t,
+					rightText = WeightText(t.ChildrenAndSelfWeight),
+					sortWeight = t.ChildrenAndSelfWeight,
+					sortCount = t.Num,
+					closeOnAct = false,
+					act = delegate { DragletAct(owner, t); }
+				});
+			}
+			if (rows.Count == 0)
+			{
+				rows.Add(new MenuRow { label = "(nothing usable in your bag)" });
+			}
+			return rows;
+		}
+
+		private static void DragletAct(InvOwnerDraglet owner, Thing t)
+		{
+			try
+			{
+				LayerDragGrid grid = LayerDragGrid.Instance;
+				if (grid == null || t == null || t.isDestroyed)
+				{
+					return;
+				}
+				// paid services (wizard identify...): charge like the native
+				// transaction; a free path here would be an exploit
+				if (owner.price > 0)
+				{
+					string cur = owner.currency.ToString().ToLowerInvariant();
+					if (pc.GetCurrency(cur) < owner.price)
+					{
+						Msg.SayRaw("Not enough " + Lang._currency(owner.price, cur) + ".");
+						SE.Beep();
+						return;
+					}
+					pc.ModCurrency(-owner.price, cur);
+					SE.Play("pay");
+				}
+				Thing use = owner.SingleTarget ? t.Split(1) : t;
+				int idx = Mathf.Clamp(grid.currentIndex, 0, owner.buttons.Count - 1);
+				owner.buttons[idx].SetCardGrid(use, owner.buttons[idx].invOwner);
+				owner.OnProcess(use);
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys draglet action failed: " + ex);
+			}
+		}
+
 		// ---------- NPC trade (party members / pets): free two-way moves ----------
 		private static int tradeView; // 0 = their items, 1 = yours
 
@@ -1403,16 +1523,16 @@ namespace ElonaKeys
 			ShopMenu(replace: false);
 		}
 
-		// windows WE manage for the trade: the shop window itself, plus a
-		// backpack pane only if WE opened it. NEVER any pre-existing window —
-		// and NEVER by moving (positions persist in the save; parking them
-		// off-screen wrecked people's layouts). Invisibility only, in place.
-		private static readonly List<LayerInventory> shopHidden = new List<LayerInventory>();
-		internal static bool shopOpenedBackpack;
+		// windows WE manage for a trade/draglet flow: the flow's own windows,
+		// NEVER any pre-existing one — and NEVER by moving (positions persist
+		// in the save; parking them off-screen wrecked people's layouts).
+		// Invisibility only, in place; restored before close (layers are
+		// POOLED, a lingering alpha 0 comes back as an invisible window).
+		private static readonly List<Layer> hiddenFlowLayers = new List<Layer>();
 
-		internal static void HideTradeLayer(LayerInventory li)
+		internal static void HideTradeLayer(Layer li)
 		{
-			if (li == null || shopHidden.Contains(li))
+			if (li == null || hiddenFlowLayers.Contains(li))
 			{
 				return;
 			}
@@ -1422,7 +1542,7 @@ namespace ElonaKeys
 				cg.alpha = 0f;
 				cg.interactable = false;
 				cg.blocksRaycasts = false;
-				shopHidden.Add(li);
+				hiddenFlowLayers.Add(li);
 			}
 			catch (Exception ex)
 			{
@@ -1430,14 +1550,11 @@ namespace ElonaKeys
 			}
 		}
 
-		// closing our shop menu ends the trade: restore visibility (layers are
-		// POOLED; a lingering alpha 0 would come back as invisible windows),
-		// then close only what we manage
-		private static void CloseShopLayers()
+		internal static void CloseShopLayers()
 		{
 			try
 			{
-				foreach (LayerInventory li in shopHidden)
+				foreach (Layer li in hiddenFlowLayers)
 				{
 					if (li == null || !li)
 					{
@@ -1457,8 +1574,7 @@ namespace ElonaKeys
 			{
 				Plugin.Log?.LogWarning("ElonaKeys close trade windows failed: " + ex.Message);
 			}
-			shopHidden.Clear();
-			shopOpenedBackpack = false;
+			hiddenFlowLayers.Clear();
 		}
 
 		private static void ShopMenu(bool replace)
@@ -1467,6 +1583,7 @@ namespace ElonaKeys
 			if (trader == null || ShopTransaction.current == null)
 			{
 				Msg.SayRaw("No shop is open.");
+				CloseShopLayers(); // never leave a hidden pooled layer behind
 				return;
 			}
 			bool sell = shopView == 1;
@@ -3329,6 +3446,10 @@ namespace ElonaKeys
 							}
 							SafeTake(t, delegate
 							{
+								if (BackpackFull(t))
+								{
+									return;
+								}
 								Thing taken = (n >= t.Num) ? t : t.Split(n);
 								pc.Pick(taken);
 							});

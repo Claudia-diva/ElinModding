@@ -46,6 +46,30 @@ namespace ElonaKeys
 			{
 				return;
 			}
+			// the pause toggle comes FIRST: while paused, NOTHING of ours runs,
+			// not even the fences (arrow/Tab/Escape all pure native)
+			foreach (Keybind kb in Plugin.SuppressAllBinds)
+			{
+				if (kb.IsDown())
+				{
+					suppressVanilla = !suppressVanilla;
+					if (suppressVanilla)
+					{
+						MenuSystem.Close();
+						TargetMode.Cancel();
+						PopupNav.ClearInvNav();
+					}
+					Msg.SayRaw(suppressVanilla
+						? Plugin.Name + " PAUSED: pure native Elin windows and keys. (" + kb + " to resume)"
+						: Plugin.Name + " resumed.");
+					EInput.Consume();
+					return;
+				}
+			}
+			if (suppressVanilla)
+			{
+				return;
+			}
 			if (RadialWheel.Active)
 			{
 				// the wheel owns the keyboard: no movement, no native actions
@@ -100,6 +124,14 @@ namespace ElonaKeys
 			{
 				EInput.axis = Vector2.zero;
 			}
+			// while PopupNav owns an inventory window's tabs, z/x are ITS keys:
+			// without this the same press also fired the Wheel/LastMenu binds
+			// (the Tab double-fire bug class)
+			if (PopupNav.InvNavActive && (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X)))
+			{
+				EInput.action = EAction.None;
+				return;
+			}
 			// Escape CANCELS the running action: crafting always (its window
 			// hides itself mid-craft), and with no window open, any running
 			// TASK — eating, processing, stealing, harvesting. HasNoGoal is
@@ -124,31 +156,8 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			// mod-pause toggle (default CapsLock), REPURPOSED by request: while
-			// ON, ElonaKeys steps aside COMPLETELY — no mod keys, no window
-			// redirects, no trade panes. Pure native Elin, the escape hatch
-			// for anything the mod gets wrong.
-			foreach (Keybind kb in Plugin.SuppressAllBinds)
-			{
-				if (kb.IsDown())
-				{
-					suppressVanilla = !suppressVanilla;
-					if (suppressVanilla)
-					{
-						MenuSystem.Close();
-						TargetMode.Cancel();
-					}
-					Msg.SayRaw(suppressVanilla
-						? Plugin.Name + " PAUSED: pure native Elin windows and keys. (" + kb + " to resume)"
-						: Plugin.Name + " resumed.");
-					EInput.Consume();
-					return;
-				}
-			}
-			if (suppressVanilla)
-			{
-				return; // paused: everything native, nothing of ours runs
-			}
+			// (the pause toggle and its early return moved to the TOP of
+			// Process: while paused even the fences must not run)
 			// swallow keys the user asked us to hide from the game entirely
 			foreach (Keybind sb in Plugin.SuppressBinds)
 			{
@@ -495,6 +504,65 @@ namespace ElonaKeys
 		}
 	}
 
+	// EVERY "pick an item for X" flow funnels through LayerDragGrid.Create:
+	// altar offerings, dip/blend, effect scrolls (identify, uncurse, enchant,
+	// change material...), wizard services, bank deposit, tax box, harvest
+	// chest, gacha, recycle bin, gene machine, mod kit, refuel. The native
+	// grid opens a float backpack OUTSIDE the main layer stack, so no nav
+	// ever reached it — the ElonaKeys item menu takes over instead.
+	[HarmonyPatch(typeof(LayerDragGrid), nameof(LayerDragGrid.Create))]
+	internal static class Patch_DragletOpen
+	{
+		private static void Prefix(out bool __state)
+		{
+			bool open = false;
+			try
+			{
+				open = LayerInventory.GetPCLayer() != null;
+			}
+			catch
+			{
+			}
+			__state = open; // was a player float inventory already open?
+		}
+
+		private static void Postfix(LayerDragGrid __result, InvOwnerDraglet owner, bool __state)
+		{
+			if (InputRouter.VanillaLocked || !Plugin.KeyboardContainers || owner == null || __result == null)
+			{
+				return;
+			}
+			if (owner is InvOwnerCraft)
+			{
+				return; // crafters have their own ingredient menu (CreateCraft postfix)
+			}
+			LayerDragGrid grid = __result;
+			bool hadInv = __state;
+			EClass.core.WaitForEndOfFrame(delegate
+			{
+				try
+				{
+					Handlers.HideTradeLayer(grid);
+					if (!hadInv)
+					{
+						// the grid auto-opened this backpack: it's part of the
+						// flow, hide it too (pre-existing windows stay put)
+						LayerInventory pcl = LayerInventory.GetPCLayer();
+						if (pcl != null)
+						{
+							Handlers.HideTradeLayer(pcl);
+						}
+					}
+					Handlers.DragletMenu(owner);
+				}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogWarning("ElonaKeys draglet menu open failed: " + ex);
+				}
+			});
+		}
+	}
+
 	// "Trade" with a party member/pet opens the vanilla ally-inventory window
 	// (actTrade -> CreateContainer(chara)); party moves are free-form, so the
 	// ElonaKeys two-pane menu replaces it entirely
@@ -505,6 +573,12 @@ namespace ElonaKeys
 		{
 			if (InputRouter.VanillaLocked || !Plugin.KeyboardContainers)
 			{
+				return true;
+			}
+			if (EClass.ui != null && EClass.ui.TopLayer is LayerDrama)
+			{
+				// custom-drama "trade" choices AddLayer() the result and would
+				// NRE on our null: let those stay native
 				return true;
 			}
 			if (owner is Chara ch && ch.IsPCFaction && !ch.IsPC)
@@ -596,6 +670,7 @@ namespace ElonaKeys
 				catch (Exception ex)
 				{
 					Plugin.Log?.LogWarning("ElonaKeys shop auto-open failed: " + ex);
+					Handlers.CloseShopLayers(); // a hidden pooled layer must never linger
 				}
 			});
 		}

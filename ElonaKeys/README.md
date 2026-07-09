@@ -21,12 +21,15 @@ Every item key opens a paginated Elona-style window:
 
 | Key | Action |
 |-----|--------|
-| g / numpad 0 | Get everything pickable on your tile |
+| numpad 0 | Instantly pick up EVERYTHING on your tile (owned goods prompt once) |
+| g | Pick up: single item instant, several = selection menu; HOLD g = grab anything nearby (furniture, dropped containers) |
 | d | Drop menu |
 | e / q / r | Eat / Quaff / Read menus (quaff includes wells) |
 | Z | Zap a rod |
-| v | Cast: spells with sprite, Lv, cast chance, dice, power, cost, casts left |
+| v | Cast: spells with sprite and Lv / Attr / Pow / Hit / Dmg / Cost / Left columns (order via `AbilityColumns`); hold v (or press x on a row) = manual aim at anyone, allies included |
 | a | Special actions (same columns, sp cost + potential %) |
+| Shift+W | Wide Skill: list everything castable on your whole party, Enter casts on all |
+| Shift+E | Empty your hands (held item/tool, grabbed furniture, stuck hotbar selection) |
 | w | Equipment window: body slots, pick one to equip/remove |
 | t | Hold ANY usable item (brush, whip, syringe, tools...), then i / Space / s applies it; pick again to put away |
 | u | Use an item on yourself |
@@ -57,6 +60,9 @@ Movement stays on numpad/arrows/WASD as in vanilla. Journal (j), log and help re
 
 ## Beyond the keys
 
+- **Shops are ElonaKeys windows** (nothing vanilla opens): stock with prices, Enter buys (count spinner for stacks), Tab flips to the sell view with payout prices (this-visit purchases sell back at what you paid), your money (or base resource) in the footer. Covers every vendor: shopkeepers, wandering merchants, spell vendors, the duplication shops, home-resource boards.
+- **Ally trading**: "Trade" on a party member or pet opens a two-pane menu (their items / yours, Tab switches, spinner moves stacks).
+- **Every pick-an-item flow** (altar offerings, dip/blend, identify/uncurse/enchant/material scrolls, wizard services, bank deposit, tax box, quest chests, gacha, recycle, gene machine, mod kit, refuel) opens an ElonaKeys item list; services charge their normal fee.
 - **Held items are generic**: whatever the game (or another mod) lets you right-click with while holding, the same acts appear through i / Space / s. No per-item special cases.
 - **Chests/containers** open the keyboard take/put menu from ANY route (bump, space, mouse); locked chests lockpick natively. Container settings cover the full native set: sort mode/ascending/always, distribution priority, cooler mode, refuse rotten, advanced distribution, per-category allow/block, autodump mode, name filter.
 - **Crafting is Elona-style**: stations and quick craft open a keyboard recipe list (craftable first, skill + max count); Enter a recipe to cycle each ingredient through every owned material (inventory + home storage) and craft with a count spinner. Native window on the last row; `KeyboardCrafting` config.
@@ -71,7 +77,7 @@ Movement stays on numpad/arrows/WASD as in vanilla. Journal (j), log and help re
 
 - Every key rebindable: `e`, `shift+t`, `period`, comma-separated alternatives, `none`.
 - `OverrideGameKeys` (default **true**): mod keys beat native Elin bindings on clash. If keys ever behave "native", check this first.
-- `SuppressAllKey` (default **CapsLock**, unused by the game): toggles a full vanilla-key lock: while ON only mod keys, movement, and digit quickslots act. No need to unbind anything in Elin's settings.
+- `SuppressAllKey` (default **CapsLock**, unused by the game): PAUSES the whole mod. While ON, everything is pure native Elin (windows, keys, no redirects) until pressed again. The escape hatch if any mod window ever misbehaves.
 - `SuppressNativeKeys`: swallow game keys entirely. `KeyboardContainers` / `KeyboardCrafters`: the container/processor redirects. `FamilyBarVisible` / `ShiftBarVisible` / `FamilyBarScale` / `FamilyBarHint`: widget/overlay options. `IsoAim`, `BumpToTalk`, `BumpToUse`, `ShiftDirTool`, `MenuPageSize`, `NameDisplay`, `MacroN`.
 - `DebugLog` explains every ignored keypress in `BepInEx/LogOutput.log`.
 
@@ -81,6 +87,11 @@ Movement stays on numpad/arrows/WASD as in vanilla. Journal (j), log and help re
 - No Rest key (Elin rests via beds / native Meditate).
 - No separate look key; * targeting shows the same info card as mouse hover instead.
 - Dip uses Elin's blend system, ammo switching uses Elin's reload.
+
+## Boundaries (mouse land, for now)
+
+- Build/designation modes (construction, zone designations, deconstruct, move-installed, the house editor) are mouse-driven; mod keys sleep there.
+- Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 ## Install / Build
 

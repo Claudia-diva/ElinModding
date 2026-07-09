@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.28.0 - 2026-07-09
+- EVERY "pick an item" window is an ElonaKeys menu now: altar offerings, dip/blend, identify/uncurse/enchant/material scrolls, wizard services, bank deposits, the tax box, harvest-quest chests, gacha, the recycle bin, the gene machine, the mod kit, refueling. One list, Enter uses the item, paid services charge their normal fee. (Bank withdrawals were already keyboard dialogs; now deposits match.)
+- CapsLock pause is airtight: while paused, nothing of the mod runs at all (a few fences and the Escape action-cancel used to slip through), and the movement keys can't stay stuck if you pause mid-trade.
+- z and x no longer double-fire (window tab switch AND wheel/last-menu) when a vanilla inventory window has keyboard focus.
+- Holding v to arm manual targeting, then closing the menu without casting, no longer leaves the next hotkey cast aiming manually.
+- Every "take" path (containers, party members, browser, pickup) refuses politely when your backpack is full instead of half-working.
+- A shop that fails to open can no longer leave an invisible window behind.
+- In-game help fully rewritten: current shop/trading/pick-item flows, the real CapsLock behavior, the full column list, plain-text symbols the game font can render, and a catch-up changelog. README matches.
+
 ## 1.27.2 - 2026-07-09
 - Home-resource boards (shops that spend your base's resources instead of money) are fully keyboard now too, no exceptions left: same direct transactions, and the footer shows the resource and its stock instead of money.
 
@@ -27,7 +36,7 @@
 
 ## 1.26.1 - 2026-07-08
 - The shop is ONLY the ElonaKeys window now, like Drop and Wear. The vanilla shop and backpack windows never show (they exist off-screen because the game's own transaction machinery lives in them); closing the menu closes the whole trade.
-- Spell/action icons are BACK. The tooltip-prefab experiment carried a whole header layout into the rows and rendered nothing; icons paint on a plain image again, the way the action list looked before.
+- Spell/action icons are BACK. The previous icon experiment drew nothing at all in menu rows; icons render the way the action list looked before.
 
 ## 1.26.0 - 2026-07-08
 - THE SHOP WINDOW IS OURS NOW. Talking to any vendor opens an ElonaKeys menu: the stock with prices and letters, Enter buys (stack popups included), z/x flips to the SELL view of your bag with what they'd pay, the footer shows your money. All of it still runs through the game's own transaction, so prices, space checks and karma are untouched. Works for every vendor, duplication shops included.
@@ -54,7 +63,7 @@
 ## 1.24.3 - 2026-07-08
 - FIXED: dropping/giving the last item on a menu's last page left the window stuck on a page that no longer existed ("None", arrows dead).
 - FIXED: Escape opens the system menu again. The new "Escape cancels your action" feature considered the idle state a running action and swallowed every press.
-- Spell icons draw onto a plain fresh image now, the exact same setup as the tooltip, instead of the row button's own icon (a skinned component that re-tints itself; white action icons hid the drift, colored spell icons showed it).
+- Spell icons draw the exact same way the tooltip draws them; the row's built-in icon slot was quietly recoloring them (white action icons hid it, colored spell icons showed it).
 - Ability icons sit on a pale parchment plate like the tooltip's. Window skins are saved per save file, and on a dark skin the bare colored glyphs turned to mud, which is why one save looked deep-fried and the other didn't.
 
 ## 1.24.2 - 2026-07-08

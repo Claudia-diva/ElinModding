@@ -2,18 +2,18 @@ $About
 {topic|Elona Keys}
 Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optional.
 
-・ Item keys open a paginated menu: ► cursor with up/down (HOLD to keep scrolling), Enter or letter or click to act, left/right arrows switch pages.
+・ Item keys open a paginated menu: cursor with up/down (HOLD to keep scrolling), Enter or letter or click to act, left/right arrows switch pages.
 ・ The selected item's full stat card is shown automatically; press x on a row to open the examine window.
-・ z inside a menu cycles sorting (original / name / weight); the weight column sits on the right.
+・ z inside a menu cycles sorting (original / name / weight or category / count or stock); the weight column sits on the right.
 ・ Shift returns to the previous window in a chain (wheel, give, equipment slots...), or closes the last one.
-・ Stacks open a « n (max) » count spinner: left/right ±1, up/down ±10, Enter confirms.
+・ Stacks open a count spinner "n (max)": left/right +-1, up/down +-10, Enter confirms.
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
 ・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
 ・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
-・ Native windows: ↑↓ move, ←→ switch group (list/grid/dropdowns/buttons), z/x switch window tabs (character sheet, quest board, crafting), Enter acts, x examines in item grids. Tab stays native (chat) except inside window families.
-・ Quest boards: ↑↓ scroll the requests, ←→ switch tabs, r = reroll.
-・ Crafting (stations + quick craft): the normal window, keyboard-driven: ↑↓ pick recipes (preview follows when the cursor rests), +/- count (shift = 10s), m = material picker (again = next slot), Enter crafts, Esc cancels a running craft, z/x categories. (CraftingStyle=menu for a list-style menu instead.)
-・ Menu titles show the page, item count and total weight. In-menu keys: ↑↓ move (hold = scroll), ←→ pages, Enter/letter/Space use, z sort (or z/x tabs in crafting/browser, hold x = reset), x examine, 1-9 or Ctrl+1-9 bind, Tab window family, Shift back.
+・ Native windows: up/down move, left/right switch group (list/grid/dropdowns/buttons), z/x switch window tabs (character sheet, quest board, crafting), Enter acts, x examines in item grids. Tab stays native (chat) except inside window families.
+・ Quest boards: up/down scroll the requests, left/right switch tabs, r = reroll.
+・ Crafting (stations + quick craft): the normal window, keyboard-driven: up/down pick recipes (preview follows when the cursor rests), +/- count (shift = 10s), m = material picker (again = next slot), Enter crafts, Esc cancels a running craft, z/x categories. (CraftingStyle=menu for a list-style menu instead.)
+・ Menu titles show the page, item count and total weight; the bottom line carries page/items/weight/slots. In-menu keys: up/down move (hold = scroll), left/right pages, Enter/letter/Space use, z sort (or z/x tabs in crafting/browser, hold x = reset), x examine, 1-9 or Ctrl+1-9 bind, Tab window family, Shift back.
 
 {pair|Config|BepInEx/config/elin.elonakeys.cfg}
 {pair|Source and issues|github.com/Claudia-diva/ElinModding}
@@ -37,12 +37,12 @@ $Keys
 {pair|T|Throw: pick item, then the free cursor (auto-fires at your remembered HOSTILE target)}
 {pair|A (shift+a)|Load compatible ammo into your ranged weapon}
 {pair|x|Reopen the last-used item menu (Elona x)}
-{pair|shift+x|Inventory browser: z/x switch You ↔ party members ↔ Home stock; take with the count spinner}
-{pair|Tab in a menu|Cycle the window family: items X,d,e,r,q,Z,t,o,B,T / equipment↔chara / spells↔actions}
+{pair|shift+x|Inventory browser: z/x switch You / party members / Home stock; take with the count spinner}
+{pair|Tab in a menu|Cycle the window family: items X,d,e,r,q,Z,t,o,B,T / equipment-chara / spells-actions}
 {pair|Family bar|Elona-style diamond tabs shown while family windows are open (current = gold, click to jump). A real widget: toggle/drag/lock it in the widget manager, like the shift-page hotbar}
 
 {topic|Action Keys}
-{pair|v|Spells: tap = quick cast flow, HOLD = manual targeting (aim at anyone). x on a spell = aim that cast manually (self/party casts just cast with Enter). Columns: Lv, power, chance, dice, cost, casts left. w = cast on whole party. z sorts by category/stock}
+{pair|v|Spells: tap = quick cast flow, HOLD = manual targeting (aim at anyone, allies included). x on a spell = aim that cast manually (self/party casts just cast with Enter). Columns: Lv, Attr, Pow, Hit, Dmg, Cost, Left (order/set = AbilityColumns config). w = cast on whole party. z sorts by category/stock}
 {pair|a|Special actions: same keys and columns, with sp cost and potential %}
 {pair|W (shift+w)|Wide Skill: list everything castable on your party; Enter casts it on ALL of them}
 {pair|* (keypad) or '|Free targeting cursor: arrows/numpad move (any visible tile), Space next character, Enter confirm; hover info follows the cursor}
@@ -54,7 +54,9 @@ $Keys
 {pair|D|Dig/mine a wall (auto-holds your digging tool)}
 {pair|o|Open containers and crafting kits; also the backpack autopickup settings}
 {pair|(any route)|Chests/containers always open the keyboard menu; item processors open a keyboard ingredient picker (KeyboardContainers / KeyboardCrafters config)}
-{pair|Shops|Your backpack opens beside the shop. Arrows walk the items, Tab hops shop stock <-> your inventory, Enter buys/sells (native prices and dialogs), x examines. Same keys for the duplication shops and spell vendors. Titles show slots [used/max]}
+{pair|Shops|Vendors open an ElonaKeys window ONLY (no vanilla shop UI): the stock with prices, Enter buys (spinner for stacks), Tab flips to the sell view of your bag with payout prices (things bought this visit sell back at what you paid), z sorts, x examines. Your money (or the base resource for home boards) sits in the footer. Same window for duplication shops, spell vendors, wandering merchants}
+{pair|Trade with allies|"Trade" on a party member or pet: their items / your items, Tab switches sides, spinner moves stacks, both carry loads shown}
+{pair|Pick-an-item flows|Altar offerings, dip/blend, identify/uncurse/enchant/material scrolls, wizard services, bank deposit, tax box, quest chests, gacha, recycle, gene machine, mod kit, refuel: all open an ElonaKeys item list; Enter uses the selected item (services charge their normal fee)}
 {pair|C|Open or close a door in a chosen direction}
 {pair|p|Pray}
 {pair|O|Offer at an adjacent altar}
@@ -75,7 +77,7 @@ $Keys
 {pair|F1-F8|Fire the Extra bar natively}
 {pair|shift + move|Use held tool on the adjacent tile (mine/chop/till)}
 {pair|SuppressNativeKeys|Config list of game keys to swallow (e.g. z)}
-{pair|CapsLock|Vanilla lock toggle: while ON, no vanilla key action fires (mod keys, movement, quickslots only). SuppressAllKey config}
+{pair|CapsLock|PAUSE the mod: everything goes back to pure native Elin (windows, keys, no redirects) until you press it again. THE escape hatch if any mod window misbehaves. SuppressAllKey config}
 
 {topic|Deliberate differences from Elona}
 ・ Quantity for stacks is an arrow-key spinner instead of typed numbers.
@@ -83,9 +85,25 @@ $Keys
 ・ No dedicated look key: * targeting shows the same info card as mouse hover instead.
 ・ Journal (j), log and help stay on Elin's own keys.
 
+{topic|Boundaries (mouse land, for now)}
+・ Build/designation modes (construction, zone designations, deconstruct, move-installed, house editor) are mouse-driven; mod keys sleep there.
+・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
+
 $Changelog
-{topic|1.25.0}
-・ Keyboard trading: shops open with your backpack beside them; arrows/Tab/Enter buy and sell through the native flow. Inventory titles show slot counts. (1.24.3: Escape menu fixed, page-stuck fixed, spell icon colors fixed.)
+{topic|1.28.0}
+・ EVERY pick-an-item flow is an ElonaKeys menu now: offerings, dip/blend, effect scrolls, wizard services, bank deposit, tax box, quest chests, gacha, recycle, gene machine, mod kit, refuel.
+・ CapsLock pause is airtight (nothing of the mod runs at all while paused), taking things always respects backpack space, and a shop that fails to open can no longer leave an invisible window behind.
+
+{topic|1.27.x}
+・ Shops became fully self-contained: the ElonaKeys window is the ONLY thing that opens; buying and selling are direct (prices, buy-backs, money and space checks identical to vanilla); home-resource boards included; your open windows are never moved, hidden or closed.
+・ Trading with party members and pets: two-pane menu, Tab flips sides.
+・ Delivery boxes and shipping chests accept items (their contents live in a hidden game container; the menu now fills the real one).
+
+{topic|1.26.x}
+・ The shop list window (prices, letters, Tab buy/sell, money in the footer). Attr column in ability lists. Aimed casts can hit allies with hostile abilities (classic Elona). Escape menu restored; page-stuck-after-drop fixed; spell icons back on the plain painter.
+
+{topic|1.25.x}
+・ First keyboard trading pass; slot counts in inventory titles; CapsLock became the full mod-pause; shipping chest puts; empty-hands works on toolbelt tools; container settings readable. (1.24.3: Escape menu fixed, page-stuck fixed, spell icon colors fixed.)
 
 {topic|1.24.2}
 ・ Column headers actually sit over their columns now (the window layout had been stacking them at the bottom). Weight header on item/equipment windows. No more white square for icon-less scaling stats.
@@ -115,7 +133,7 @@ $Changelog
 ・ z/x category tabs in the crafting menu; key-hint line under every menu window.
 
 {topic|1.19.0}
-・ Elona-style crafting menu (recipes → ingredients cycle owned+stored materials → Craft xN). KeyboardCrafting config.
+・ Elona-style crafting menu (recipes, then ingredients cycling owned+stored materials, then Craft xN). KeyboardCrafting config.
 ・ Inventory browser: z/x cycle You / party / Home stock; spinner-take. Processors use home storage too.
 
 {topic|1.18.0}
@@ -143,8 +161,8 @@ $Changelog
 ・ Family bar + shift-page hotbar are real Elin widgets now: manage them in the widget manager; positions save with widget themes.
 
 {topic|1.13.0}
-・ Tab cycles window families (items X,d,e,r,q,Z,t,o,B,T / equipment↔chara / spells↔actions); x reopens the last item menu.
-・ Quest boards: ↑↓ scroll, ←→ tabs, r rerolls.
+・ Tab cycles window families (items X,d,e,r,q,Z,t,o,B,T / equipment-chara / spells-actions); x reopens the last item menu.
+・ Quest boards: up/down scroll, left/right tabs, r rerolls.
 ・ z wheel confirms on key RELEASE (diagonals compose while holding); the pending diamond glows.
 
 {topic|1.12.0}

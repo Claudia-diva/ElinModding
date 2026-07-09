@@ -148,10 +148,18 @@ namespace ElonaKeys
 			history.Clear();
 			current = null;
 			amountRow = null;
-			// NOTE: ManualCastMode is NOT reset here. Run() closes the menu
-			// BEFORE the row action fires, so a reset here made hold-v useless
-			// (CastAbility always saw manual mode off and insta-cast on self).
-			// CastAbility consumes the flag itself.
+			// one-shot Show() parameters must not leak onto an unrelated menu
+			NextFooterExtra = null;
+			NextOnTab = null;
+			NextRightHeader = null;
+			// hold-v's armed manual mode: keep it ONLY when this close is part
+			// of a row-action dispatch (Run closes BEFORE the action fires and
+			// CastAbility consumes the flag); an Escape/shift/Tab close clears
+			// it, or a later quickbind cast would silently aim manually once
+			if (Time.frameCount != dispatchFrame)
+			{
+				Handlers.ManualCastMode = false;
+			}
 			if (Alive)
 			{
 				layer.Close();
@@ -943,12 +951,17 @@ namespace ElonaKeys
 			}
 		}
 
+		// frame stamp of a row-action dispatch: Close() during dispatch keeps
+		// ManualCastMode alive for the action; any OTHER close clears it
+		private static int dispatchFrame = -1;
+
 		private static void Run(MenuRow r, Action action)
 		{
 			if (action == null)
 			{
 				return;
 			}
+			dispatchFrame = Time.frameCount;
 			if (r.closeOnAct)
 			{
 				Close();
@@ -1197,7 +1210,26 @@ namespace ElonaKeys
 
 		public static void HandleKeys()
 		{
-			if (!Alive || current == null)
+			if (!Alive)
+			{
+				if (current != null)
+				{
+					// the layer died without Close() (Escape kills it directly):
+					// run the same state cleanup so nothing sticks
+					current = null;
+					amountRow = null;
+					history.Clear();
+					NextFooterExtra = null;
+					NextOnTab = null;
+					NextRightHeader = null;
+					if (Time.frameCount != dispatchFrame)
+					{
+						Handlers.ManualCastMode = false;
+					}
+				}
+				return;
+			}
+			if (current == null)
 			{
 				return;
 			}
