@@ -43,7 +43,7 @@ namespace ElonaKeys
 			if (Time.unscaledTime - started > Timeout)
 			{
 				Cancel();
-				Msg.SayRaw("(cancelled)");
+				Msg.SayRaw(EKLang.T("(cancelled)"));
 				return false;
 			}
 			// a modal opening on top of the prompt orphans it: bail out

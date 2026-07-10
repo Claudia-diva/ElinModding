@@ -1,0 +1,84 @@
+# ElonaKeys translation template. Copy this file to LangMod/<your language code>/elonakeys.tsv
+# inside the Mod_ElonaKeys package (codes: CN, JP, ... matching the game language).
+# Each line: english<TAB>translation. Keep {0}/{1} placeholders. \n = line break.
+(cancelled)	
+(held) put away — 	
+(hostile)	
+(i / Space toward a target, s on yourself.)	
+(party)	
+(tile)	
+[ Container settings... ]	
+[ Put items in... ]	
+[ Take everything ]	
+{0} cannot reach any enemy from here. (No cost spent.)	
+{0} cannot reach anyone from here. (No cost spent.)	
+{0} cannot reach that spot. (No cost spent.)	
+{0} cannot target {1} (enemy-only or out of reach). (No cost spent.)	
+{0} cannot target you. (No cost spent.)	
+{0} is marked as important.	
+{0} is on cooldown ({1} more turns).	
+{0} PAUSED: pure native Elin windows and keys. ({1} to resume)	
+{0} resumed.	
+Action canceled.	
+Action wheel	
+Actions here	
+Aim {0} where? (wait key = your tile)	
+Ally lock: {0}.	
+Ally: 	
+Around you	
+arrows move, Space next target, Enter confirm, Esc cancel	
+Backpack autopickup	
+Could not open the distribution panel.	
+dist 	
+Drop at your feet	
+Enemy lock: {0}.	
+Enemy: 	
+Filter by type	
+Give to whom?	
+Grab what?	
+Holding {0}.	
+It cannot be closed right now.	
+Manual targeting: casts aim freely at friend or foe.	
+Move to: 	
+No one to remember there.	
+No shared container takes {0}. (Mark containers as Share in their distribution settings.)	
+No shop is open.	
+Not keyboard-ready yet: open the chest with the mod paused (CapsLock) and use the gear button.	
+Offer where?	
+Open what?	
+Party	
+Pick up what?	
+SWAP armed: next cast at the OPPOSITE lock	
+Swap armed: the NEXT cast aims at the opposite lock (hostile at your ally, buffs/heals at the enemy).	
+Swap canceled.	
+Take	
+The {0} is full.	
+The craft failed to start (see log).	
+The materials don't check out.	
+The panel is behind the window's gear button (mouse).	
+The shop is closed.	
+There is no door there.	
+There is no one there.	
+There is nothing here to pick up.	
+There is nothing here to pick up. (Hold g to grab nearby objects.)	
+There is nothing nearby to grab.	
+There is nothing to open here.	
+They are not here.	
+They will not pay for that.	
+This macro is empty (set it in the config).	
+Toggle favorites	
+Wide cast on the party - what?	
+You are not equipping a ranged weapon.	
+You cannot aim there (blocked or invalid target). (No cost spent.)	
+You cannot dig there.	
+You cannot equip that.	
+You move {0} to {1}.	
+You need a digging tool.	
+You no longer have the materials.	
+You own nothing that fits.	
+You put {0} away.	
+You search the ground but find nothing.	
+You should keep that.	
+You take {0}.	
+Your backpack is full.	
+yourself	

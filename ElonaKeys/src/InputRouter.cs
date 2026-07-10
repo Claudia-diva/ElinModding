@@ -61,8 +61,8 @@ namespace ElonaKeys
 						PopupNav.ClearInvNav();
 					}
 					Msg.SayRaw(suppressVanilla
-						? Plugin.Name + " PAUSED: pure native Elin windows and keys. (" + kb + " to resume)"
-						: Plugin.Name + " resumed.");
+						? EKLang.F("{0} PAUSED: pure native Elin windows and keys. ({1} to resume)", Plugin.Name, kb)
+						: EKLang.F("{0} resumed.", Plugin.Name));
 					EInput.Consume();
 					return;
 				}
@@ -144,7 +144,7 @@ namespace ElonaKeys
 				&& (EClass.pc.ai is AI_UseCrafter || EClass.pc.ai is TaskCraft || EClass.ui.TopLayer == null))
 			{
 				EClass.pc.ai.TryCancel(EClass.pc);
-				Msg.SayRaw("Action canceled.");
+				Msg.SayRaw(EKLang.T("Action canceled."));
 				EInput.action = EAction.None;
 				EInput.Consume();
 				return;

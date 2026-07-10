@@ -54,8 +54,8 @@ namespace ElonaKeys
 		{
 			swapArmed = !swapArmed;
 			Msg.SayRaw(swapArmed
-				? "Swap armed: the NEXT cast aims at the opposite lock (hostile at your ally, buffs/heals at the enemy)."
-				: "Swap canceled.");
+				? EKLang.T("Swap armed: the NEXT cast aims at the opposite lock (hostile at your ally, buffs/heals at the enemy).")
+				: EKLang.T("Swap canceled."));
 			RefreshLockHud();
 		}
 
@@ -82,15 +82,15 @@ namespace ElonaKeys
 			string s = "";
 			if (foe != null)
 			{
-				s += "<color=#ff9090>Enemy: " + foe.Name + "</color>   ";
+				s += "<color=#ff9090>" + EKLang.T("Enemy: ") + foe.Name + "</color>   ";
 			}
 			if (pal != null)
 			{
-				s += "<color=#90d090>Ally: " + (pal == EClass.pc ? "yourself" : pal.Name) + "</color>   ";
+				s += "<color=#90d090>" + EKLang.T("Ally: ") + (pal == EClass.pc ? EKLang.T("yourself") : pal.Name) + "</color>   ";
 			}
 			if (swapArmed)
 			{
-				s += "<color=#ffd070>SWAP armed: next cast at the OPPOSITE lock</color>";
+				s += "<color=#ffd070>" + EKLang.T("SWAP armed: next cast at the OPPOSITE lock") + "</color>";
 			}
 			s = s.TrimEnd();
 			if (s == lockHudLast)
@@ -441,12 +441,12 @@ namespace ElonaKeys
 			string line2;
 			if (c != null)
 			{
-				string tag = EClass.pc.IsHostile(c) ? " <color=#ff9090>(hostile)</color>" : (c.IsPCParty ? " <color=#90d090>(party)</color>" : "");
+				string tag = EClass.pc.IsHostile(c) ? " <color=#ff9090>" + EKLang.T("(hostile)") + "</color>" : (c.IsPCParty ? " <color=#90d090>" + EKLang.T("(party)") + "</color>" : "");
 				line1 = "► " + verb + ": " + c.Name + tag;
 				string details = "";
 				try
 				{
-					details = "Lv" + c.LV + "   HP " + c.hp + "/" + c.MaxHP + "   dist " + EClass.pc.pos.Distance(c.pos);
+					details = "Lv" + c.LV + "   HP " + c.hp + "/" + c.MaxHP + "   " + EKLang.T("dist ") + EClass.pc.pos.Distance(c.pos);
 				}
 				catch
 				{
@@ -455,10 +455,10 @@ namespace ElonaKeys
 			}
 			else
 			{
-				line1 = "► " + verb + ": (tile)";
-				line2 = "dist " + EClass.pc.pos.Distance(cursor);
+				line1 = "► " + verb + ": " + EKLang.T("(tile)");
+				line2 = EKLang.T("dist ") + EClass.pc.pos.Distance(cursor);
 			}
-			label.text = line1 + "\n<size=16>" + line2 + "   |   arrows move, Space next target, Enter confirm, Esc cancel</size>";
+			label.text = line1 + "\n<size=16>" + line2 + "   |   " + EKLang.T("arrows move, Space next target, Enter confirm, Esc cancel") + "</size>";
 		}
 
 		// screen-direction key → tile delta (iso-aware like the direction prompts)

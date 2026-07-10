@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.35.0 - 2026-07-10
+- The mod is translatable. Every message, menu title, overlay text and label goes through a translation table; grab verbs already use the game's own localized act names. Translators: copy LangMod/EN/elonakeys.tsv (inside the mod package) to LangMod/<your language code>/elonakeys.tsv and fill in the second column (english TAB translation, {0}/{1} placeholders stay). The game's language setting picks the file automatically; anything untranslated stays English.
+
 ## 1.34.2 - 2026-07-10
 - The targeting texts are configurable (config > Overlay, also in the mod config screen): LockHudX/LockHudY move the lock readout from its top-center spot, AimLabelY moves the aim label up from the bottom, and the two FontSize entries resize them. Size 0 hides that text entirely. Changes apply live, no restart.
 

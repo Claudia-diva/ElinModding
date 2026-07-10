@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.35.0}
+・ Translatable: copy LangMod/EN/elonakeys.tsv to LangMod/<language code>/elonakeys.tsv in the mod package and fill the second column. The game language picks it up; untranslated lines stay English. Overlay texts configurable (Overlay config section). DebugLog quiet by default.
+
 {topic|1.34.1}
 ・ Combat arts (bladestorm, swarm, rush...) attack properly: the classifier reads the ability-type data too. Cooldowns are announced instead of silently eating the keypress.
 

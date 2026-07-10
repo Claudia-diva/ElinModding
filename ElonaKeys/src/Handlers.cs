@@ -673,7 +673,7 @@ namespace ElonaKeys
 					{
 						if (!pc.body.Equip(t, slot))
 						{
-							Msg.SayRaw("You cannot equip that.");
+							Msg.SayRaw(EKLang.T("You cannot equip that."));
 						}
 					}
 				});
@@ -694,7 +694,7 @@ namespace ElonaKeys
 			{
 				rows.Add(new MenuRow
 				{
-					label = "(held) put away — " + h.Name,
+					label = EKLang.T("(held) put away — ") + h.Name,
 					icon = h,
 					act = delegate { ToggleHold(h); }
 				});
@@ -723,7 +723,7 @@ namespace ElonaKeys
 				{
 					Plugin.Log?.LogInfo("ElonaKeys: unheld " + t.Name + " uid=" + t.uid + ", hotItem=" + EClass.player.currentHotItem?.GetType().Name);
 				}
-				Msg.SayRaw("You put " + t.Name + " away.");
+				Msg.SayRaw(EKLang.F("You put {0} away.", t.Name));
 				return;
 			}
 			EClass.player.SetCurrentHotItem(new HotItemHeld(t));
@@ -742,7 +742,7 @@ namespace ElonaKeys
 			catch
 			{
 			}
-			Msg.SayRaw("Holding " + t.Name + "." + (hasUseActs ? " (i / Space toward a target, s on yourself.)" : ""));
+			Msg.SayRaw(EKLang.F("Holding {0}.", t.Name) + (hasUseActs ? " " + EKLang.T("(i / Space toward a target, s on yourself.)") : ""));
 		}
 
 		public static void Use()
@@ -803,7 +803,7 @@ namespace ElonaKeys
 			Thing weapon = pc.ranged;
 			if (weapon == null || !(weapon.trait is TraitToolRange range))
 			{
-				Msg.SayRaw("You are not equipping a ranged weapon.");
+				Msg.SayRaw(EKLang.T("You are not equipping a ranged weapon."));
 				return;
 			}
 			List<MenuRow> rows = new List<MenuRow>();
@@ -873,7 +873,7 @@ namespace ElonaKeys
 			{
 				if (pc.things.IsFull(t))
 				{
-					Msg.SayRaw("Your backpack is full.");
+					Msg.SayRaw(EKLang.T("Your backpack is full."));
 					SE.Beep();
 					return true;
 				}
@@ -891,7 +891,7 @@ namespace ElonaKeys
 			List<Thing> here = TilePickables();
 			if (here.Count == 0)
 			{
-				Msg.SayRaw("There is nothing here to pick up.");
+				Msg.SayRaw(EKLang.T("There is nothing here to pick up."));
 				return;
 			}
 			List<Thing> owned = new List<Thing>();
@@ -948,7 +948,7 @@ namespace ElonaKeys
 			List<Thing> here = TilePickables();
 			if (here.Count == 0)
 			{
-				Msg.SayRaw("There is nothing here to pick up. (Hold g to grab nearby objects.)");
+				Msg.SayRaw(EKLang.T("There is nothing here to pick up. (Hold g to grab nearby objects.)"));
 				return;
 			}
 			if (here.Count == 1)
@@ -957,7 +957,7 @@ namespace ElonaKeys
 				SafeTake(single, delegate { pc.Pick(single); });
 				return;
 			}
-			MenuSystem.Show("Pick up what?", BuildGetRows(), delegate
+			MenuSystem.Show(EKLang.T("Pick up what?"), BuildGetRows(), delegate
 			{
 				MenuSystem.SetRows(BuildGetRows());
 			});
@@ -1001,7 +1001,7 @@ namespace ElonaKeys
 			{
 				rows.Add(new MenuRow
 				{
-					label = "[ Take everything ]",
+					label = EKLang.T("[ Take everything ]"),
 					pinBottom = true,
 					act = delegate { GetAll(); }
 				});
@@ -1065,10 +1065,10 @@ namespace ElonaKeys
 			List<MenuRow> rows = BuildGrabRows();
 			if (rows.Count == 0)
 			{
-				Msg.SayRaw("There is nothing nearby to grab.");
+				Msg.SayRaw(EKLang.T("There is nothing nearby to grab."));
 				return;
 			}
-			MenuSystem.Show("Grab what?", rows, delegate
+			MenuSystem.Show(EKLang.T("Grab what?"), rows, delegate
 			{
 				MenuSystem.SetRows(BuildGrabRows());
 			});
@@ -1345,7 +1345,7 @@ namespace ElonaKeys
 				// nothing else here: classic Elona search-the-ground
 				if (!ActWait.SearchMedal(pc, p))
 				{
-					Msg.SayRaw("You search the ground but find nothing.");
+					Msg.SayRaw(EKLang.T("You search the ground but find nothing."));
 				}
 				EClass.player.EndTurn();
 				return;
@@ -1357,12 +1357,12 @@ namespace ElonaKeys
 				{
 					if (!ActWait.SearchMedal(pc, pc.pos))
 					{
-						Msg.SayRaw("You search the ground but find nothing.");
+						Msg.SayRaw(EKLang.T("You search the ground but find nothing."));
 					}
 					EClass.player.EndTurn();
 				}
 			});
-			MenuSystem.Show("Actions here", rows);
+			MenuSystem.Show(EKLang.T("Actions here"), rows);
 		}
 
 		// Elona Space: everything doable on and around you, one action fires instantly.
@@ -1396,7 +1396,7 @@ namespace ElonaKeys
 				InputRouter.QueueNative(EAction.Wait);
 				return;
 			}
-			RunRows("Around you", rows, "There is nothing to interact with here.");
+			RunRows(EKLang.T("Around you"), rows, "There is nothing to interact with here.");
 		}
 
 		public static void Open()
@@ -1485,16 +1485,16 @@ namespace ElonaKeys
 			});
 			if (rows.Count == 1)
 			{
-				Msg.SayRaw("There is nothing to open here.");
+				Msg.SayRaw(EKLang.T("There is nothing to open here."));
 			}
-			MenuSystem.Show("Open what?", rows); // never auto-fire a single row
+			MenuSystem.Show(EKLang.T("Open what?"), rows); // never auto-fire a single row
 		}
 
 		// autopickup config: which categories get picked up, rotten filter,
 		// advanced distribution, name filter — stored on EClass.player.dataPick
 		private static void BackpackSettings()
 		{
-			MenuSystem.Show("Backpack autopickup", BuildAutopickRows(), delegate
+			MenuSystem.Show(EKLang.T("Backpack autopickup"), BuildAutopickRows(), delegate
 			{
 				MenuSystem.SetRows(BuildAutopickRows());
 			});
@@ -1725,7 +1725,7 @@ namespace ElonaKeys
 		{
 			if (who == null || who.isDead || !who.IsAliveInCurrentZone)
 			{
-				Msg.SayRaw("They are not here.");
+				Msg.SayRaw(EKLang.T("They are not here."));
 				return;
 			}
 			bool mine = tradeView == 1;
@@ -1864,7 +1864,7 @@ namespace ElonaKeys
 			InvOwner trader = InvOwner.Trader;
 			if (trader == null || ShopTransaction.current == null)
 			{
-				Msg.SayRaw("No shop is open.");
+				Msg.SayRaw(EKLang.T("No shop is open."));
 				CloseShopLayers(); // never leave a hidden pooled layer behind
 				return;
 			}
@@ -1998,7 +1998,7 @@ namespace ElonaKeys
 			ShopTransaction session = ShopTransaction.current;
 			if (trader == null || session == null)
 			{
-				Msg.SayRaw("The shop is closed.");
+				Msg.SayRaw(EKLang.T("The shop is closed."));
 				return;
 			}
 			try
@@ -2017,7 +2017,7 @@ namespace ElonaKeys
 					}
 					if (pc.things.IsFull(t))
 					{
-						Msg.SayRaw("Your backpack is full.");
+						Msg.SayRaw(EKLang.T("Your backpack is full."));
 						SE.Beep();
 						return;
 					}
@@ -2026,7 +2026,7 @@ namespace ElonaKeys
 				{
 					if (t.c_isImportant)
 					{
-						Msg.SayRaw("You should keep that.");
+						Msg.SayRaw(EKLang.T("You should keep that."));
 						return;
 					}
 					if (RefuseFilledContainer(t))
@@ -2035,7 +2035,7 @@ namespace ElonaKeys
 					}
 					if (price <= 0 && !session.CanSellBack(t, n))
 					{
-						Msg.SayRaw("They will not pay for that.");
+						Msg.SayRaw(EKLang.T("They will not pay for that."));
 						return;
 					}
 				}
@@ -2149,7 +2149,7 @@ namespace ElonaKeys
 					|| container == EClass.game.cards.container_deliver;
 				if (special && t.c_isImportant)
 				{
-					Msg.SayRaw(t.Name + " is marked as important.");
+					Msg.SayRaw(EKLang.F("{0} is marked as important.", t.Name));
 					SE.Beep();
 					return true;
 				}
@@ -2242,14 +2242,14 @@ namespace ElonaKeys
 			List<MenuRow> rows = new List<MenuRow>();
 			rows.Add(new MenuRow
 			{
-				label = "[ Put items in... ]",
+				label = EKLang.T("[ Put items in... ]"),
 				closeOnAct = false,
 				pinTop = true,
 				act = delegate { PutMenu(container); }
 			});
 			rows.Add(new MenuRow
 			{
-				label = "[ Container settings... ]",
+				label = EKLang.T("[ Container settings... ]"),
 				closeOnAct = false,
 				pinTop = true,
 				act = delegate { ContainerSettings(container); }
@@ -2274,7 +2274,7 @@ namespace ElonaKeys
 							return;
 						}
 						pc.AddCard(t);
-						Msg.SayRaw("You take " + t.Name + ".");
+						Msg.SayRaw(EKLang.F("You take {0}.", t.Name));
 					}
 				});
 			}
@@ -2299,7 +2299,7 @@ namespace ElonaKeys
 			}
 			rows.Add(new MenuRow
 			{
-				label = "Take",
+				label = EKLang.T("Take"),
 				icon = t,
 				closeOnAct = false,
 				maxAmount = t.Num,
@@ -2311,12 +2311,12 @@ namespace ElonaKeys
 					}
 					Thing x = (n >= t.Num) ? t : t.Split(n);
 					pc.AddCard(x);
-					Msg.SayRaw("You take " + x.Name + ".");
+					Msg.SayRaw(EKLang.F("You take {0}.", x.Name));
 				}
 			});
 			rows.Add(new MenuRow
 			{
-				label = "Drop at your feet",
+				label = EKLang.T("Drop at your feet"),
 				icon = t,
 				closeOnAct = false,
 				maxAmount = t.Num,
@@ -2332,7 +2332,7 @@ namespace ElonaKeys
 				Thing dest = other;
 				rows.Add(new MenuRow
 				{
-					label = "Move to: " + dest.Name,
+					label = EKLang.T("Move to: ") + dest.Name,
 					icon = dest,
 					closeOnAct = false,
 					maxAmount = t.Num,
@@ -2344,12 +2344,12 @@ namespace ElonaKeys
 						}
 						if (ContainerFull(dest, t))
 						{
-							Msg.SayRaw("The " + dest.Name + " is full.");
+							Msg.SayRaw(EKLang.F("The {0} is full.", dest.Name));
 							return;
 						}
 						Thing x = (n >= t.Num) ? t : t.Split(n);
 						dest.AddThing(x);
-						Msg.SayRaw("You move " + x.Name + " to " + dest.Name + ".");
+						Msg.SayRaw(EKLang.F("You move {0} to {1}.", x.Name, dest.Name));
 					}
 				});
 			}
@@ -2447,7 +2447,7 @@ namespace ElonaKeys
 				// Parked per user until the theming/custom-UI update.
 				label = "<color=#9a9a9a>[ Advanced distribution - TODO, use the mouse on a vanilla chest window ]</color>",
 				closeOnAct = false,
-				act = delegate { Msg.SayRaw("Not keyboard-ready yet: open the chest with the mod paused (CapsLock) and use the gear button."); }
+				act = delegate { Msg.SayRaw(EKLang.T("Not keyboard-ready yet: open the chest with the mod paused (CapsLock) and use the gear button.")); }
 			});
 			// --- autodump ---
 			rows.Add(new MenuRow
@@ -2500,7 +2500,7 @@ namespace ElonaKeys
 				{
 					LayerInventory.CreateContainer(EClass.pc, container);
 				}
-				Msg.SayRaw("The panel is behind the window's gear button (mouse).");
+				Msg.SayRaw(EKLang.T("The panel is behind the window's gear button (mouse)."));
 			}
 			catch (Exception ex)
 			{
@@ -2544,7 +2544,7 @@ namespace ElonaKeys
 			catch (Exception ex)
 			{
 				Plugin.Log?.LogError("ElonaKeys adv distribution panel failed: " + ex);
-				Msg.SayRaw("Could not open the distribution panel.");
+				Msg.SayRaw(EKLang.T("Could not open the distribution panel."));
 			}
 		}
 
@@ -2662,12 +2662,12 @@ namespace ElonaKeys
 						}
 						else
 						{
-							Msg.SayRaw("It cannot be closed right now.");
+							Msg.SayRaw(EKLang.T("It cannot be closed right now."));
 						}
 						return;
 					}
 				}
-				Msg.SayRaw("There is no door there.");
+				Msg.SayRaw(EKLang.T("There is no door there."));
 			});
 		}
 
@@ -2732,7 +2732,7 @@ namespace ElonaKeys
 				}
 				if (tool == null)
 				{
-					Msg.SayRaw("You need a digging tool.");
+					Msg.SayRaw(EKLang.T("You need a digging tool."));
 					return;
 				}
 				EClass.player.SetCurrentHotItem(new HotItemHeld(tool));
@@ -2742,7 +2742,7 @@ namespace ElonaKeys
 			{
 				if (!p.HasBlock || !TaskMine.CanMine(p, held))
 				{
-					Msg.SayRaw("You cannot dig there.");
+					Msg.SayRaw(EKLang.T("You cannot dig there."));
 					return;
 				}
 				pc.SetAIImmediate(new TaskMine { pos = p.Copy() });
@@ -2776,7 +2776,7 @@ namespace ElonaKeys
 					}
 				}
 			}
-			RunRows("Offer where?", rows, "There is no altar nearby.");
+			RunRows(EKLang.T("Offer where?"), rows, "There is no altar nearby.");
 		}
 
 		public static void Give()
@@ -2812,7 +2812,7 @@ namespace ElonaKeys
 					}
 				}
 			}
-			RunRows("Give to whom?", rows, "There is nobody here to give things to.");
+			RunRows(EKLang.T("Give to whom?"), rows, "There is nobody here to give things to.");
 		}
 
 		private static void GiveTo(Chara c)
@@ -2871,7 +2871,7 @@ namespace ElonaKeys
 					act = delegate { TradeMenu(c); }
 				});
 			}
-			RunRows("Party", rows, "You have no party members with you.");
+			RunRows(EKLang.T("Party"), rows, "You have no party members with you.");
 		}
 
 		private static void PartyInventory(Chara c)
@@ -3086,7 +3086,7 @@ namespace ElonaKeys
 			Sub("Give", Give);
 			Sub("Party", Party);
 			Direct("Inventory", ExamineInventory);
-			MenuSystem.Show("Action wheel", rows);
+			MenuSystem.Show(EKLang.T("Action wheel"), rows);
 		}
 
 		// ---------- spells and abilities ----------
@@ -3443,7 +3443,7 @@ namespace ElonaKeys
 					rows.Add(row);
 				}
 			}
-			RunRows("Wide cast on the party - what?", rows, "Nothing you know can multicast on your party.");
+			RunRows(EKLang.T("Wide cast on the party - what?"), rows, "Nothing you know can multicast on your party.");
 		}
 
 		private static void FilterMenu(bool spells)
@@ -3459,13 +3459,13 @@ namespace ElonaKeys
 					act = delegate { AbilityMenu(spells, bucket, favOnly: false); }
 				});
 			}
-			MenuSystem.Show("Filter by type", rows);
+			MenuSystem.Show(EKLang.T("Filter by type"), rows);
 		}
 
 		// Enter toggles the star instead of casting
 		private static void FavoriteMenu(bool spells)
 		{
-			MenuSystem.Show("Toggle favorites", BuildFavRows(spells), delegate
+			MenuSystem.Show(EKLang.T("Toggle favorites"), BuildFavRows(spells), delegate
 			{
 				MenuSystem.SetRows(BuildFavRows(spells));
 			});
@@ -3540,7 +3540,7 @@ namespace ElonaKeys
 			if (pc.HasCooldown(act.id))
 			{
 				ManualCastMode = false;
-				Msg.SayRaw(act.GetText() + " is on cooldown (" + pc.GetCooldown(act.id) + " more turns).");
+				Msg.SayRaw(EKLang.F("{0} is on cooldown ({1} more turns).", act.GetText(), pc.GetCooldown(act.id)));
 				return;
 			}
 			if (Plugin.DebugLog)
@@ -3575,7 +3575,7 @@ namespace ElonaKeys
 					{
 						if (!SafeCanPerformAt(act, p))
 						{
-							Msg.SayRaw(act.GetText() + " cannot reach that spot. (No cost spent.)");
+							Msg.SayRaw(EKLang.F("{0} cannot reach that spot. (No cost spent.)", act.GetText()));
 							return;
 						}
 						ok = ForceUse(act, null, p);
@@ -3584,7 +3584,7 @@ namespace ElonaKeys
 					{
 						if (!CanForcePerform(act, ch, ch.pos))
 						{
-							Msg.SayRaw(act.GetText() + " cannot target " + ch.Name + " (enemy-only or out of reach). (No cost spent.)");
+							Msg.SayRaw(EKLang.F("{0} cannot target {1} (enemy-only or out of reach). (No cost spent.)", act.GetText(), ch.Name));
 							return;
 						}
 						ok = ForceUse(act, ch, ch.pos);
@@ -3593,14 +3593,14 @@ namespace ElonaKeys
 					{
 						if (!CanForcePerform(act, pc, pc.pos))
 						{
-							Msg.SayRaw(act.GetText() + " cannot target you. (No cost spent.)");
+							Msg.SayRaw(EKLang.F("{0} cannot target you. (No cost spent.)", act.GetText()));
 							return;
 						}
 						ok = ForceUse(act, pc, pc.pos);
 					}
 					else
 					{
-						Msg.SayRaw("There is no one there.");
+						Msg.SayRaw(EKLang.T("There is no one there."));
 						return;
 					}
 					if (ok)
@@ -3645,14 +3645,14 @@ namespace ElonaKeys
 					}
 					return;
 				}
-				DirPrompt.Ask("Aim " + act.GetText() + " where? (wait key = your tile)", self: true, delegate(Point p)
+				DirPrompt.Ask(EKLang.F("Aim {0} where? (wait key = your tile)", act.GetText()), self: true, delegate(Point p)
 				{
 					// touch acts want the CHARA on that tile, not the bare
 					// tile — with a null target many refuse and do nothing
 					Chara ch = p.FirstVisibleChara();
 					if (!CanForcePerform(act, ch, p))
 					{
-						Msg.SayRaw("You cannot aim there (blocked or invalid target). (No cost spent.)");
+						Msg.SayRaw(EKLang.T("You cannot aim there (blocked or invalid target). (No cost spent.)"));
 						return;
 					}
 					if (ForceUse(act, ch, p))
@@ -3695,7 +3695,7 @@ namespace ElonaKeys
 				{
 					if (!SafeCanPerformAt(act, p))
 					{
-						Msg.SayRaw(act.GetText() + " cannot reach that spot. (No cost spent.)");
+						Msg.SayRaw(EKLang.F("{0} cannot reach that spot. (No cost spent.)", act.GetText()));
 						return;
 					}
 					// UseAbility failures explain themselves; no double messages
@@ -3753,7 +3753,7 @@ namespace ElonaKeys
 					{
 						Plugin.Log?.LogInfo("EK cast " + e.source.alias + ": no reachable foe (quick=" + (quick?.Name ?? "null") + ", cands=" + cands.Count + ")");
 					}
-					Msg.SayRaw(act.GetText() + " cannot reach any enemy from here. (No cost spent.)");
+					Msg.SayRaw(EKLang.F("{0} cannot reach any enemy from here. (No cost spent.)", act.GetText()));
 					return;
 				}
 				if (Plugin.DebugLog)
@@ -3774,18 +3774,18 @@ namespace ElonaKeys
 			// beneficial with nobody in reach: same honest refusal
 			if (cands.Count == 0)
 			{
-				Msg.SayRaw(act.GetText() + " cannot reach anyone from here. (No cost spent.)");
+				Msg.SayRaw(EKLang.F("{0} cannot reach anyone from here. (No cost spent.)", act.GetText()));
 				return;
 			}
 			TargetMode.Begin(act.GetText(), cands, delegate(Point p, Chara c)
 			{
 				if (c == null)
 				{
-					Msg.SayRaw("There is no one there.");
+					Msg.SayRaw(EKLang.T("There is no one there."));
 				}
 				else if (!CanForcePerform(act, c, c.pos))
 				{
-					Msg.SayRaw(act.GetText() + " cannot target " + c.Name + " (enemy-only or out of reach). (No cost spent.)");
+					Msg.SayRaw(EKLang.F("{0} cannot target {1} (enemy-only or out of reach). (No cost spent.)", act.GetText(), c.Name));
 				}
 				else if (ForceUse(act, c, c.pos))
 				{
@@ -3894,7 +3894,7 @@ namespace ElonaKeys
 			{
 				if (c == null)
 				{
-					Msg.SayRaw("No one to remember there.");
+					Msg.SayRaw(EKLang.T("No one to remember there."));
 				}
 				else
 				{
@@ -3910,7 +3910,7 @@ namespace ElonaKeys
 					// two locks live side by side: hostile casts use the enemy
 					// lock (or auto-acquire), buffs/heals the ally lock; the
 					// Swap key aims one cast at the opposite lock
-					Msg.SayRaw((foe ? "Enemy lock: " : "Ally lock: ") + (c == pc ? "yourself" : c.Name) + ".");
+					Msg.SayRaw(foe ? EKLang.F("Enemy lock: {0}.", c.Name) : EKLang.F("Ally lock: {0}.", c == pc ? EKLang.T("yourself") : c.Name));
 				}
 			});
 		}
@@ -3920,7 +3920,7 @@ namespace ElonaKeys
 		{
 			if (string.IsNullOrWhiteSpace(csv))
 			{
-				Msg.SayRaw("This macro is empty (set it in the config).");
+				Msg.SayRaw(EKLang.T("This macro is empty (set it in the config)."));
 				return;
 			}
 			foreach (string raw in csv.Split(','))
@@ -4055,7 +4055,7 @@ namespace ElonaKeys
 			}
 			if (!stored)
 			{
-				Msg.SayRaw("No shared container takes " + t.Name + ". (Mark containers as Share in their distribution settings.)");
+				Msg.SayRaw(EKLang.F("No shared container takes {0}. (Mark containers as Share in their distribution settings.)", t.Name));
 				SE.Beep();
 			}
 		}

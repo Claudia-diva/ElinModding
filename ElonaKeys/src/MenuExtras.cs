@@ -104,7 +104,7 @@ namespace ElonaKeys
 			{
 				Handlers.ManualCastMode = true;
 				SE.Tab();
-				Msg.SayRaw("Manual targeting: casts aim freely at friend or foe.");
+				Msg.SayRaw(EKLang.T("Manual targeting: casts aim freely at friend or foe."));
 			}, requireMenuAlive: true);
 		}
 

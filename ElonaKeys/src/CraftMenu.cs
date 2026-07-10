@@ -385,7 +385,7 @@ namespace ElonaKeys
 				ThingStack st = EClass._map.Stocked.ListThingStack(ing, StockSearchMode.AroundPC);
 				if (st.list.Count == 0)
 				{
-					Msg.SayRaw("You own nothing that fits.");
+					Msg.SayRaw(EKLang.T("You own nothing that fits."));
 					return;
 				}
 				List<MenuRow> rows = new List<MenuRow>();
@@ -450,7 +450,7 @@ namespace ElonaKeys
 			AutoAssign(r); // things may have died since the menu opened
 			if (!SafeCraftable(r) || SafeMaxCount(r) < num)
 			{
-				Msg.SayRaw("You no longer have the materials.");
+				Msg.SayRaw(EKLang.T("You no longer have the materials."));
 				return;
 			}
 			try
@@ -470,7 +470,7 @@ namespace ElonaKeys
 				if (!taskCraft.IsIngredientsValid(destoryResources: false, taskCraft.num))
 				{
 					SE.Beep();
-					Msg.SayRaw("The materials don't check out.");
+					Msg.SayRaw(EKLang.T("The materials don't check out."));
 					return;
 				}
 				MenuSystem.Close();
@@ -480,7 +480,7 @@ namespace ElonaKeys
 			catch (Exception ex)
 			{
 				Plugin.Log?.LogError("ElonaKeys craft failed: " + ex);
-				Msg.SayRaw("The craft failed to start (see log).");
+				Msg.SayRaw(EKLang.T("The craft failed to start (see log)."));
 			}
 		}
 
