@@ -51,7 +51,7 @@ $Keys
 {pair|c|Character sheet}
 {pair|i|Interact with a direction: keyboard menu of everything there}
 {pair|s|Your own tile: harvests/collects instantly if something grows here, else menu + search the ground}
-{pair|f|Fire ranged weapon}
+{pair|f|Fire: ranged weapon at your enemy lock (or auto-acquire); with no ranged weapon it repeats your last ATTACK spell/action. Buffs never ride f}
 {pair|b|Bash a direction}
 {pair|D|Dig/mine a wall (auto-holds your digging tool)}
 {pair|o|Open containers and crafting kits; also the backpack autopickup settings}

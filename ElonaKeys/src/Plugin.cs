@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.34.2";
+		public const string Version = "1.34.3";
 
 		internal static ManualLogSource Log;
 
@@ -152,8 +152,8 @@ namespace ElonaKeys
 			Log = Logger;
 			overrideGameKeys = Config.Bind("General", "OverrideGameKeys", true,
 				"If true, keys bound below take priority over Elin's own keybinds on conflict. If false, the game's binding wins and the mod key is ignored.");
-			debugLog = Config.Bind("General", "DebugLog", true,
-				"Log why key presses are ignored (for troubleshooting 'keys stopped working'). On by default while the mod stabilizes; set false to quiet the log.");
+			debugLog = Config.Bind("General", "DebugLog", false,
+				"Verbose troubleshooting log: why key presses are ignored, how each cast classifies and targets. Turn on when reporting a problem.");
 			menuCategories = Config.Bind("Menus", "CategoryFilter", true,
 				"When an item menu would list more than CategoryThreshold items, show a category menu first.");
 			categoryThreshold = Config.Bind("Menus", "CategoryThreshold", 25,
