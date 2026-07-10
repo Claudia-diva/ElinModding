@@ -207,7 +207,7 @@ namespace ElonaKeys
 			if (sp >= 0)
 			{
 				bool hurts = sp >= EClass.pc.stamina.value;
-				n.AddText("Stamina: " + sp + " per craft  (you: " + EClass.pc.stamina.value + ")" + (hurts ? "  DRAINS YOU" : ""));
+				n.AddText("Stamina: " + sp + " per craft  (you: " + EClass.pc.stamina.value + ")" + (hurts ? " It hurts!" : ""));
 			}
 			int max = SafeMaxCount(r);
 			n.AddText("Craftable now: " + ((max > 0) ? ("x" + max) : "none"));

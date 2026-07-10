@@ -188,9 +188,10 @@ namespace ElonaKeys
 			{
 				EInput.action = EAction.None;
 			}
-			// keypad0 INSIDE a menu = act with the whole stack (drop all...):
-			// the GetAll world bind must not also hoover the tile
-			if (MenuSystem.Alive && entry != null && entry.name == "GetAll")
+			// keypad0 INSIDE a menu = act with the whole stack (drop all...),
+			// keypadMultiply = toggle the important mark: the GetAll and
+			// Target world binds must not also fire
+			if (MenuSystem.Alive && entry != null && (entry.name == "GetAll" || entry.name == "Target"))
 			{
 				return;
 			}
@@ -471,9 +472,9 @@ namespace ElonaKeys
 	{
 		private static bool Prefix(TraitContainer __instance)
 		{
-			if (InputRouter.VanillaLocked || !Plugin.KeyboardContainers || __instance.owner == null || __instance.HasChara || !(__instance.owner is Thing))
+			if (InputRouter.VanillaLocked || Handlers.containerRedirectBypass || !Plugin.KeyboardContainers || __instance.owner == null || __instance.HasChara || !(__instance.owner is Thing))
 			{
-				return true; // paused = the normal Elin window
+				return true; // paused/bypassed = the normal Elin window
 			}
 			try
 			{

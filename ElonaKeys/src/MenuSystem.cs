@@ -32,6 +32,7 @@ namespace ElonaKeys
 		public string[] cols;                // aligned right-side columns (ability rows: Lv/Hit/Dmg/Cost/Left)
 		public bool pinTop;                  // stays first in every sort mode (the held item)
 		public bool pinBottom;               // stays last in every sort mode (utility rows)
+		public Action altAct;                // numpad0 on rows WITHOUT a spinner (hold in hands...)
 	}
 
 	public static class MenuSystem
@@ -68,6 +69,22 @@ namespace ElonaKeys
 			if (current != null)
 			{
 				current.footerExtra = s;
+			}
+		}
+
+		// configurable page-turn sound (PageSound config; "none" silences)
+		private static void PageSound()
+		{
+			try
+			{
+				string id = Plugin.PageSound;
+				if (!string.IsNullOrEmpty(id) && id != "none")
+				{
+					SE.Play(id);
+				}
+			}
+			catch
+			{
 			}
 		}
 
@@ -1400,7 +1417,7 @@ namespace ElonaKeys
 				{
 					page = (page + 1) % PageCount;
 					sel = 0;
-					SE.Play("paper"); // the Elona page-turn rustle
+					PageSound();
 					ApplyPage();
 				}
 				return;
@@ -1411,7 +1428,7 @@ namespace ElonaKeys
 				{
 					page = (page - 1 + PageCount) % PageCount;
 					sel = 0;
-					SE.Play("paper");
+					PageSound();
 					ApplyPage();
 				}
 				return;
@@ -1440,6 +1457,26 @@ namespace ElonaKeys
 					Run(qr, delegate { qr.onAmount(all); });
 					return;
 				}
+				if (qr.altAct != null)
+				{
+					Run(qr, qr.altAct);
+					return;
+				}
+			}
+			// keypadMultiply = toggle the important mark on the selected item
+			// (Elona's * marking; the star refuses drops/sales/shipping)
+			if (Input.GetKeyDown(KeyCode.KeypadMultiply) && sel >= 0 && sel < pageRows.Count && pageRows[sel].icon != null)
+			{
+				Thing mt = pageRows[sel].icon;
+				mt.c_isImportant = !mt.c_isImportant;
+				Msg.SayRaw(mt.Name + (mt.c_isImportant ? " is marked as important." : " is no longer marked."));
+				SE.Tab();
+				Refresh();
+				if (!Alive || current == null || current.refreshSource == null)
+				{
+					ApplyPage(); // static menus: at least redraw the star
+				}
+				return;
 			}
 			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
 			{

@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.29.0 - 2026-07-10
+- shift+q "Items" opens the same two-way trade Give uses (their items / yours, Tab flips sides), so party inventories finally move both ways from either door.
+- Containers with things still inside can no longer be put into other containers, shipped, delivered, sold or handed to allies (the game's own rule; our menus were sidestepping it).
+- Home stock in the browser (shift+x) lists your CONTAINERS: open one for full take/put/settings, so things go back into the chest they came from. The old everything-in-one-list view is the top row if you want it.
+- Counts formatted properly: [Inv 33/35] [Worn 17/20] [Wgt 45.2/58.0s], with worn gear shown against your body slots instead of inflating the inventory number.
+- numpad0 on your items in the browser takes them into your hands (holdable, unequipped items only). numpad* (the Target key) toggles the important mark on any selected item, Elona style; the gold star updates everywhere.
+- Advanced distribution: per request, the row now just opens the vanilla container window; the real slider panel lives behind its gear button (mouse). Every keyboard host the game offers kills the panel on its own.
+- Boards: z = previous tab, x = next tab, r = reroll (the x-reroll experiment is gone; directions are consistent across every menu).
+- The family-Tab skip only jumps stops that genuinely have nothing to show, and logs each skip when DebugLog is on (a stop can look "skipped" if all its items are equipped or held).
+- PageSound config: pick any game sound for page turns, or 'none'. Full window theming (skins, text colors) is on the roadmap.
+
 ## 1.28.5 - 2026-07-10
 - Menus remember your cursor: reopening Drop/Cast/anything returns to the page and row you left. Pages turn with the paper rustle.
 - Space and s list what you're STANDING ON and nearby things first; your mount and hosted pets moved to the bottom.

@@ -119,6 +119,10 @@ namespace ElonaKeys
 				{
 					break; // something opened (our menu or a native window)
 				}
+				if (Plugin.DebugLog)
+				{
+					Plugin.Log?.LogInfo("ElonaKeys: family stop '" + c[ni].name + "' had nothing to show, skipping");
+				}
 			}
 			return true;
 		}
@@ -1595,6 +1599,10 @@ namespace ElonaKeys
 					maxAmount = Mathf.Max(1, t.Num),
 					onAmount = delegate(int n)
 					{
+						if (dst != pc && RefuseFilledContainer(t))
+						{
+							return; // filled bags only travel into YOUR pack
+						}
 						if (dst.things.IsFull(t))
 						{
 							Msg.SayRaw(dst.Name + " cannot carry that.");
@@ -1857,6 +1865,10 @@ namespace ElonaKeys
 						Msg.SayRaw("You should keep that.");
 						return;
 					}
+					if (RefuseFilledContainer(t))
+					{
+						return; // no selling bags with things still inside
+					}
 					if (price <= 0 && !session.CanSellBack(t, n))
 					{
 						Msg.SayRaw("They will not pay for that.");
@@ -1942,6 +1954,26 @@ namespace ElonaKeys
 			});
 		}
 
+		// the native transfer rule our puts bypassed: a container that still
+		// has THINGS INSIDE cannot go into another container (or be sold/
+		// given) — only your own backpack may hold filled bags
+		private static bool RefuseFilledContainer(Thing t)
+		{
+			try
+			{
+				if (t.trait.IsContainer && t.things.Count > 0)
+				{
+					Msg.SayRaw(t.Name + " must be emptied first.");
+					SE.Beep();
+					return true;
+				}
+			}
+			catch
+			{
+			}
+			return false;
+		}
+
 		// shipping/delivery/tax destinations DESTROY or sell their contents:
 		// important-marked (starred) items must never slip in
 		private static bool RefuseImportantInto(Thing container, Thing t)
@@ -1985,9 +2017,9 @@ namespace ElonaKeys
 			}
 		}
 
-		// used slots vs capacity, with equipment counted SEPARATELY: equipped
-		// things live inside the same container and were inflating the count
-		// ("52/35" on the player)
+		// "[Inv 33/35] [Worn 17/20] [Wgt 45.2/58.0s]": equipment counted apart
+		// from carried slots (they share the container and inflated the count),
+		// worn shown against the body's slot count, weight against the limit
 		private static string SlotText(Card holder)
 		{
 			try
@@ -2005,10 +2037,33 @@ namespace ElonaKeys
 						carried++;
 					}
 				}
-				string s = "slots " + carried + "/" + holder.things.MaxCapacity;
-				if (worn > 0)
+				string s = "[Inv " + carried + "/" + holder.things.MaxCapacity + "]";
+				Chara ch = holder as Chara;
+				if (ch != null)
 				{
-					s += "   worn " + worn;
+					int slots = 0;
+					try
+					{
+						slots = ch.body.slots.Count;
+					}
+					catch
+					{
+					}
+					if (worn > 0 || slots > 0)
+					{
+						s += " [Worn " + worn + (slots > 0 ? "/" + slots : "") + "]";
+					}
+					try
+					{
+						s += " [Wgt " + WeightText(ch.ChildrenWeight).TrimEnd('s') + "/" + WeightText(ch.WeightLimit) + "]";
+					}
+					catch
+					{
+					}
+				}
+				else if (worn > 0)
+				{
+					s += " [Worn " + worn + "]";
 				}
 				return s;
 			}
@@ -2108,7 +2163,7 @@ namespace ElonaKeys
 					maxAmount = t.Num,
 					onAmount = delegate(int n)
 					{
-						if (RefuseImportantInto(dest, t))
+						if (RefuseImportantInto(dest, t) || RefuseFilledContainer(t))
 						{
 							return; // it already said why
 						}
@@ -2211,8 +2266,11 @@ namespace ElonaKeys
 			});
 			rows.Add(new MenuRow
 			{
-				label = "[ Advanced distribution panel... ]",
-				act = delegate { OpenAdvDistribution(container, sd); }
+				// the panel's sliders live in the NATIVE window's gear menu;
+				// every keyboard host we tried left it dim and dead, so this
+				// opens the vanilla container window for mouse use (per user)
+				label = "[ Advanced distribution (opens the vanilla window)... ]",
+				act = delegate { OpenNativeContainer(container); }
 			});
 			// --- autodump ---
 			rows.Add(new MenuRow
@@ -2248,6 +2306,35 @@ namespace ElonaKeys
 
 		// the game's real slider/categorization panel, hosted like the native
 		// window-settings menu hosts it (UIInventory.ShowAdvDistribution)
+		// the vanilla container window, our redirect bypassed once: its gear
+		// button hosts the real distribution panel (mouse territory)
+		internal static bool containerRedirectBypass;
+
+		private static void OpenNativeContainer(Card container)
+		{
+			try
+			{
+				containerRedirectBypass = true;
+				if (container is Thing ct && ct.trait is TraitContainer tc)
+				{
+					tc.TryOpen();
+				}
+				else
+				{
+					LayerInventory.CreateContainer(EClass.pc, container);
+				}
+				Msg.SayRaw("The panel is behind the window's gear button (mouse).");
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys native container open failed: " + ex);
+			}
+			finally
+			{
+				containerRedirectBypass = false;
+			}
+		}
+
 		private static void OpenAdvDistribution(Card container, Window.SaveData sd)
 		{
 			try
@@ -2354,7 +2441,7 @@ namespace ElonaKeys
 				amount: (Thing t) => t.Num,
 				onAmount: delegate(Thing t, int n)
 				{
-					if (RefuseImportantInto(container, t))
+					if (RefuseImportantInto(container, t) || RefuseFilledContainer(t))
 					{
 						return; // it already said why
 					}
@@ -2601,7 +2688,10 @@ namespace ElonaKeys
 					label = c.Name + " - Items",
 					iconCard = c,
 					closeOnAct = false,
-					act = delegate { PartyInventory(c); }
+					// the SAME two-way trade the Give menu opens: their items /
+					// yours, Tab flips sides (the old browse-only view had no
+					// give direction and no working Tab)
+					act = delegate { TradeMenu(c); }
 				});
 			}
 			RunRows("Party", rows, "You have no party members with you.");
@@ -3554,15 +3644,17 @@ namespace ElonaKeys
 
 		// ---------- simple toggles ----------
 
-		// Elona x: the inventory BROWSER. z/x cycle the shown inventory:
-		// you -> each party member -> home stock (owned storage in this zone).
+		// Elona x: the inventory BROWSER. period/comma cycle the shown
+		// inventory: you -> each party member -> home stock (containers).
 		// Enter = stat card for your own things, count-spinner take elsewhere.
 		private static int browseSrc;
+		private static bool browseHomeFlat; // home view: containers vs one flat list
 
 		public static void ExamineInventory()
 		{
 			MenuCycle.Set("items", 0);
 			browseSrc = 0;
+			browseHomeFlat = false;
 			ShowBrowser(replaceScreen: false);
 		}
 
@@ -3610,6 +3702,7 @@ namespace ElonaKeys
 			MenuSystem.NextOnSwap = delegate(int dir)
 			{
 				browseSrc = ((browseSrc + dir) % count + count) % count;
+				browseHomeFlat = false; // fresh home visit starts on containers
 				ShowBrowser(replaceScreen: true);
 			};
 			MenuSystem.Show(title, rows, delegate
@@ -3638,8 +3731,49 @@ namespace ElonaKeys
 						act = delegate
 						{
 							EClass.ui.AddLayerDontCloseOthers<LayerInfo>().SetThing(t);
-						}
+						},
+						// numpad0 = take it into your hands (safe subset only)
+						altAct = (!t.isEquipped && t.trait.CanBeHeld && !held) ? ((Action)delegate
+						{
+							ToggleHold(t);
+						}) : null
 					});
+				}
+				return rows;
+			}
+			// HOME: list the CONTAINERS (open one = full take/put/settings via
+			// the container menu, so things go back into the chest they came
+			// from), with the old flat everything-list one row away — 83 pages
+			// of loose items was unusable
+			if (owner == null && !browseHomeFlat)
+			{
+				rows.Add(new MenuRow
+				{
+					label = "[ All items in one list... ]",
+					pinTop = true,
+					closeOnAct = false,
+					act = delegate
+					{
+						browseHomeFlat = true;
+						ShowBrowser(replaceScreen: true);
+					}
+				});
+				foreach (Thing thing in EClass._map.things)
+				{
+					Thing t = thing;
+					if (t != null && !t.isDestroyed && t.IsInstalled && t.trait.CanOpenContainer && t.c_lockLv == 0)
+					{
+						rows.Add(new MenuRow
+						{
+							label = t.Name + "  <size=13><color=#8f8f7a>[" + t.things.Count + "/" + t.things.MaxCapacity + "]</color></size>",
+							icon = t,
+							rightText = WeightText(t.ChildrenAndSelfWeight),
+							sortWeight = t.ChildrenAndSelfWeight,
+							sortCount = t.things.Count,
+							closeOnAct = false,
+							act = delegate { ContainerMenu(t); }
+						});
+					}
 				}
 				return rows;
 			}

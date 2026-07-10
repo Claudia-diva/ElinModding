@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.28.5";
+		public const string Version = "1.29.0";
 
 		internal static ManualLogSource Log;
 
@@ -67,6 +67,7 @@ namespace ElonaKeys
 		private static ConfigEntry<float> familyBarScale;
 		private static ConfigEntry<bool> familyBarHint;
 		private static ConfigEntry<string> abilityColumns;
+		private static ConfigEntry<string> pageSound;
 		private static ConfigEntry<int> weightWidth;
 		private static ConfigEntry<int> menuWidth;
 		private static ConfigEntry<int> nameScrollSlack;
@@ -111,6 +112,7 @@ namespace ElonaKeys
 			set { familyBarHint.Value = value; }
 		}
 		internal static string AbilityColumns => abilityColumns != null ? abilityColumns.Value : "";
+		internal static string PageSound => pageSound != null ? pageSound.Value : "paper";
 		internal static float WeightWidth => Mathf.Clamp(weightWidth.Value, 30, 160);
 		internal static float MenuWidth => Mathf.Clamp(menuWidth.Value, 480, 1100);
 		internal static float NameScrollSlack => Mathf.Clamp(nameScrollSlack.Value, 0, 100);
@@ -182,6 +184,8 @@ namespace ElonaKeys
 				"shift = shift+1..9 fires ElonaKeys quickbind slots (plain digits stay native quickslots). off = disable. Bind: select an item or spell in any mod menu and press 1-9. Bindings resolve dynamically: bind a rod of identify, ANY rod of identify in your inventory fires.");
 			quickbinds = Config.Bind("Hotkeys", "Quickbinds", "",
 				"ElonaKeys quickbind registry storage (slot:kind:id:name;...). Edited automatically; clear to reset all slots.");
+			pageSound = Config.Bind("Menus", "PageSound", "paper",
+				"Sound played when a menu page turns: any game SE id (paper, pop_paper, click...), or 'none' to silence. Broader menu theming (skins, text colors) is planned.");
 			abilityColumns = Config.Bind("Menus", "AbilityColumns", "lv,attr,pow,hit,dmg,cost,left",
 				"Order of the spell/action list columns, comma-separated. Reorder or REMOVE entries (e.g. 'lv,dmg,cost,left'). Valid: lv, attr, pow, hit, dmg, cost, left.");
 			weightWidth = Config.Bind("Menus", "WeightWidth", 48,

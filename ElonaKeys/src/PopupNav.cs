@@ -91,7 +91,7 @@ namespace ElonaKeys
 				string hint = null;
 				if (topLayer is LayerQuestBoard)
 				{
-					hint = "  [up/down move, Enter take, z tabs, x/r reroll, Shift close]";
+					hint = "  [up/down move, Enter take, z/x tabs, r reroll, Shift close]";
 				}
 				if (hint != null)
 				{
@@ -641,15 +641,9 @@ namespace ElonaKeys
 					return;
 				}
 			}
-			// quest boards: x = reroll (same as r; z alone covers the two tabs,
-			// having BOTH z and x cycle them was redundant)
-			if (topLayer is LayerQuestBoard && Input.GetKeyDown(KeyCode.X))
-			{
-				ClickMenuRight(topLayer);
-				return;
-			}
-			// z / x cycle the window's tabs, Elona style (Tab stays native for
-			// chat). x keeps its examine meaning while an item grid is focused.
+			// z / x cycle the window's tabs (z = PREVIOUS, x = NEXT, the
+			// direction law), r rerolls on boards. x keeps its examine
+			// meaning while an item grid is focused.
 			bool hasTabs = topLayer != null && topLayer.windows != null && topLayer.windows.Count > 0;
 			bool gridFocused = g != null && g.grid && index >= 0 && index < g.buttons.Count;
 			if (hasTabs && Input.GetKeyDown(KeyCode.Z))
