@@ -98,7 +98,7 @@ namespace ElonaKeys
 				return;
 			}
 			lockHudLast = s;
-			if (string.IsNullOrEmpty(s))
+			if (string.IsNullOrEmpty(s) || Plugin.LockHudSize <= 0)
 			{
 				if ((bool)lockHud)
 				{
@@ -110,6 +110,10 @@ namespace ElonaKeys
 			{
 				BuildLockHud();
 			}
+			// position/size re-applied on every text change: config edits
+			// (modconfig) land without a restart
+			lockHudText.fontSize = Plugin.LockHudSize;
+			lockHudText.rectTransform.anchoredPosition = new Vector2(Plugin.LockHudX, -Plugin.LockHudY);
 			lockHud.SetActive(true);
 			lockHudText.text = s;
 		}
@@ -124,7 +128,7 @@ namespace ElonaKeys
 			lockHud.transform.SetParent(EClass.ui.transform, worldPositionStays: false);
 			lockHudText = lockHud.AddComponent<Text>();
 			lockHudText.font = UiFont();
-			lockHudText.fontSize = 17;
+			lockHudText.fontSize = Plugin.LockHudSize;
 			lockHudText.alignment = TextAnchor.UpperCenter;
 			lockHudText.horizontalOverflow = HorizontalWrapMode.Overflow;
 			lockHudText.verticalOverflow = VerticalWrapMode.Overflow;
@@ -134,7 +138,7 @@ namespace ElonaKeys
 			rt.anchorMin = new Vector2(0.5f, 1f);
 			rt.anchorMax = new Vector2(0.5f, 1f);
 			rt.pivot = new Vector2(0.5f, 1f);
-			rt.anchoredPosition = new Vector2(0f, -40f);
+			rt.anchoredPosition = new Vector2(Plugin.LockHudX, -Plugin.LockHudY);
 			rt.sizeDelta = new Vector2(900f, 28f);
 			Outline o = lockHud.AddComponent<Outline>();
 			o.effectColor = new Color(0f, 0f, 0f, 0.95f);
@@ -390,11 +394,15 @@ namespace ElonaKeys
 			Image dim = overlay.AddComponent<Image>();
 			dim.color = new Color(0f, 0f, 0f, 0.22f); // slight dim, no flashbang
 			dim.raycastTarget = false;                 // mouse stays free
+			if (Plugin.AimLabelSize <= 0)
+			{
+				return; // label hidden by config; the cursor still works
+			}
 			GameObject lg = new GameObject("label");
 			lg.transform.SetParent(overlay.transform, worldPositionStays: false);
 			label = lg.AddComponent<Text>();
 			label.font = UiFont();
-			label.fontSize = 20;
+			label.fontSize = Plugin.AimLabelSize;
 			label.verticalOverflow = VerticalWrapMode.Overflow;
 			label.alignment = TextAnchor.MiddleCenter;
 			label.horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -403,7 +411,7 @@ namespace ElonaKeys
 			RectTransform lrt = label.rectTransform;
 			lrt.anchorMin = new Vector2(0.5f, 0f);
 			lrt.anchorMax = new Vector2(0.5f, 0f);
-			lrt.anchoredPosition = new Vector2(0f, 130f);
+			lrt.anchoredPosition = new Vector2(0f, Plugin.AimLabelY);
 			lrt.sizeDelta = new Vector2(760f, 58f);
 			Outline o = lg.AddComponent<Outline>();
 			o.effectColor = new Color(0f, 0f, 0f, 0.95f);

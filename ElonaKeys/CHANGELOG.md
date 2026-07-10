@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.34.2 - 2026-07-10
+- The targeting texts are configurable (config > Overlay, also in the mod config screen): LockHudX/LockHudY move the lock readout from its top-center spot, AimLabelY moves the aim label up from the bottom, and the two FontSize entries resize them. Size 0 hides that text entirely. Changes apply live, no restart.
+
 ## 1.34.1 - 2026-07-10
 - Bladestorm, swarm, rush and every other combat art now actually attack. They carry none of the game's usual hostile markers; the classifier now also reads the ability-type column (attack / dot / debuff), the same data the menu's category buckets use. Melee arts hit the adjacent enemy instantly, ranged ones auto-acquire, hexes go to the enemy lock.
 - Abilities on cooldown SAY they are on cooldown and how many turns remain. The game refuses those casts silently, which looked like the key doing nothing.

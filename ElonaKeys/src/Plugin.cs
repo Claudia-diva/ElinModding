@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.34.1";
+		public const string Version = "1.34.2";
 
 		internal static ManualLogSource Log;
 
@@ -68,6 +68,11 @@ namespace ElonaKeys
 		private static ConfigEntry<bool> familyBarHint;
 		private static ConfigEntry<string> abilityColumns;
 		private static ConfigEntry<string> pageSound;
+		private static ConfigEntry<int> lockHudX;
+		private static ConfigEntry<int> lockHudY;
+		private static ConfigEntry<int> lockHudSize;
+		private static ConfigEntry<int> aimLabelY;
+		private static ConfigEntry<int> aimLabelSize;
 		private static ConfigEntry<int> weightWidth;
 		private static ConfigEntry<int> menuWidth;
 		private static ConfigEntry<int> nameScrollSlack;
@@ -113,6 +118,11 @@ namespace ElonaKeys
 		}
 		internal static string AbilityColumns => abilityColumns != null ? abilityColumns.Value : "";
 		internal static string PageSound => pageSound != null ? pageSound.Value : "paper";
+		internal static int LockHudX => lockHudX != null ? lockHudX.Value : 0;
+		internal static int LockHudY => lockHudY != null ? lockHudY.Value : 40;
+		internal static int LockHudSize => lockHudSize != null ? Mathf.Clamp(lockHudSize.Value, 0, 48) : 17;
+		internal static int AimLabelY => aimLabelY != null ? aimLabelY.Value : 130;
+		internal static int AimLabelSize => aimLabelSize != null ? Mathf.Clamp(aimLabelSize.Value, 0, 48) : 20;
 		internal static float WeightWidth => Mathf.Clamp(weightWidth.Value, 30, 160);
 		internal static float MenuWidth => Mathf.Clamp(menuWidth.Value, 480, 1100);
 		internal static float NameScrollSlack => Mathf.Clamp(nameScrollSlack.Value, 0, 100);
@@ -186,6 +196,16 @@ namespace ElonaKeys
 				"ElonaKeys quickbind registry storage (slot:kind:id:name;...). Edited automatically; clear to reset all slots.");
 			pageSound = Config.Bind("Menus", "PageSound", "paper",
 				"Sound played when a menu page turns: any game SE id (paper, pop_paper, click...), or 'none' to silence. Broader menu theming (skins, text colors) is planned.");
+			lockHudX = Config.Bind("Overlay", "LockHudX", 0,
+				"Horizontal offset of the target-lock readout in pixels from screen center (negative = left).");
+			lockHudY = Config.Bind("Overlay", "LockHudY", 40,
+				"Distance of the target-lock readout from the TOP edge in pixels.");
+			lockHudSize = Config.Bind("Overlay", "LockHudFontSize", 17,
+				"Font size of the target-lock readout (enemy/ally locks, Swap warning). 0 hides it entirely.");
+			aimLabelY = Config.Bind("Overlay", "AimLabelY", 130,
+				"Distance of the aim-mode label (target info + key hints) from the BOTTOM edge in pixels.");
+			aimLabelSize = Config.Bind("Overlay", "AimLabelFontSize", 20,
+				"Font size of the aim-mode label. 0 hides it (the aim cursor itself stays).");
 			abilityColumns = Config.Bind("Menus", "AbilityColumns", "lv,attr,pow,hit,dmg,cost,left",
 				"Order of the spell/action list columns, comma-separated. Reorder or REMOVE entries (e.g. 'lv,dmg,cost,left'). Valid: lv, attr, pow, hit, dmg, cost, left.");
 			weightWidth = Config.Bind("Menus", "WeightWidth", 48,

@@ -47,7 +47,7 @@ $Keys
 {pair|W (shift+w)|Wide Skill: list everything castable on your party; Enter casts it on ALL of them}
 {pair|* (keypad) or '|Set your target locks with the free cursor: arrows/numpad move, Space next character, Enter confirm. Enemies and allies lock SEPARATELY and both hold at once; locking yourself is fine (solo buffing). Hostile casts, f, bows and throws always use the enemy lock (or auto-acquire the nearest foe); buffs and heals always use the ally lock. Neither ever crosses over on its own}
 {pair|/ (keypad) or ;|Swap: the NEXT cast aims at the opposite lock (a hex at your locked ally, a heal at your locked enemy). Tap to arm, tap again to cancel, or hold it while casting}
-{pair|Lock readout|Whenever a lock is set, the top center of the screen shows it live: enemy lock in red, ally lock in green, plus a warning while Swap is armed}
+{pair|Lock readout|Whenever a lock is set, the top center of the screen shows it live: enemy lock in red, ally lock in green, plus a warning while Swap is armed. Position and size are in the config (Overlay section: LockHudX/Y, AimLabelY, font sizes; 0 hides a text)}
 {pair|c|Character sheet}
 {pair|i|Interact with a direction: keyboard menu of everything there}
 {pair|s|Your own tile: harvests/collects instantly if something grows here, else menu + search the ground}
