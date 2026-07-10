@@ -113,6 +113,33 @@ namespace ElonaKeys
 		}
 	}
 
+	// Restores a hidden layer's visibility no matter how it dies (pooled
+	// layers keep their components; alpha 0 must never survive a despawn)
+	internal class EKHideGuard : MonoBehaviour
+	{
+		private void OnDisable()
+		{
+			Restore();
+		}
+
+		private void OnDestroy()
+		{
+			Restore();
+		}
+
+		private void Restore()
+		{
+			CanvasGroup cg = GetComponent<CanvasGroup>();
+			if (cg != null)
+			{
+				cg.alpha = 1f;
+				cg.interactable = true;
+				cg.blocksRaycasts = true;
+			}
+			Destroy(this);
+		}
+	}
+
 	// Implementations of each classic Elona action on top of Elin's systems.
 	// All menus go through MenuSystem (paginated, keyboard-navigable, weight
 	// column, z-sort, shift = back, count spinner on stacks).
@@ -1563,6 +1590,14 @@ namespace ElonaKeys
 				cg.alpha = 0f;
 				cg.interactable = false;
 				cg.blocksRaycasts = false;
+				// the guard restores visibility no matter HOW the layer dies:
+				// teleports/zone changes close layers without our menu's kill
+				// hook, and a pooled layer stuck at alpha 0 infects whatever
+				// window reuses it next
+				if (li.gameObject.GetComponent<EKHideGuard>() == null)
+				{
+					li.gameObject.AddComponent<EKHideGuard>();
+				}
 				hiddenFlowLayers.Add(li);
 			}
 			catch (Exception ex)
@@ -2119,13 +2154,17 @@ namespace ElonaKeys
 			try
 			{
 				// CreateContextMenuInteraction, NOT CreateContextMenu: the
-				// plain factory is the system menu and CLOSES EVERY LAYER
-				// (the "nothing shows up and all windows close" report)
+				// plain factory is the system menu and CLOSES EVERY LAYER.
+				// hideOnMouseLeave OFF: context menus self-close the moment
+				// the mouse isn't over them, which for a keyboard user is
+				// INSTANTLY (the "nothing shows up" report). Centered so it
+				// doesn't spawn at a stale mouse position.
 				UIContextMenu m = EClass.ui.CreateContextMenuInteraction();
+				m.hideOnMouseLeave = false;
 				UIDistribution ud = Util.Instantiate<UIDistribution>("UI/Layer/UIDistribution");
 				ud.SetContainer(container, sd);
 				m.AddGameObject(ud);
-				m.Show();
+				m.Show(new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
 			}
 			catch (Exception ex)
 			{

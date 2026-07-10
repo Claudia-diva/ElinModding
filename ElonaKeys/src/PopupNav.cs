@@ -405,7 +405,15 @@ namespace ElonaKeys
 			}
 			foreach (UIList.ButtonPair pair in list.buttons)
 			{
+				// rows come in three shapes: ItemGeneral (our menus), a plain
+				// UIButton, or a composite holder with a button INSIDE it
+				// (ItemQuest on the request boards — those rows were never
+				// collected, which is why the boards would not scroll)
 				UIButton b = (pair.component is ItemGeneral item) ? item.button1 : (pair.component as UIButton);
+				if (b == null && pair.component != null)
+				{
+					b = pair.component.GetComponentInChildren<UIButton>(includeInactive: false);
+				}
 				if ((bool)b && b.interactable && b.gameObject.activeInHierarchy)
 				{
 					into.Add(b);
@@ -576,6 +584,13 @@ namespace ElonaKeys
 					ClickMenuRight(topLayer);
 					return;
 				}
+			}
+			// quest boards: x = reroll (same as r; z alone covers the two tabs,
+			// having BOTH z and x cycle them was redundant)
+			if (topLayer is LayerQuestBoard && Input.GetKeyDown(KeyCode.X))
+			{
+				ClickMenuRight(topLayer);
+				return;
 			}
 			// z / x cycle the window's tabs, Elona style (Tab stays native for
 			// chat). x keeps its examine meaning while an item grid is focused.

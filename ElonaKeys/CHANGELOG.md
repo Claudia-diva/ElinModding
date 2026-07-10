@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.28.4 - 2026-07-10
+- Request boards scroll with up/down for real now: their rows are a composite type the navigator never recognized as buttons. x on a board rerolls (same as r); z alone covers the two tabs.
+- The advanced distribution panel shows for real now: popup menus self-close the instant the mouse isn't over them, which for a keyboard user is immediately. It opens centered and stays until Escape.
+- Teleporting (or any zone change) while a shop/service window was open could leave an invisible window in the game's reuse pool, causing flicker and windows that open blank. Hidden windows now restore themselves no matter how they get closed.
+
 ## 1.28.3 - 2026-07-09
 - Inventory browser (shift+x): period/comma switch between You / party members / Home stock, so z is sorting again, x examines again (they had been hijacked as the switching keys, which also froze whatever sort you came in with), and Tab keeps hopping the window family.
 - numpad0 on a stack row (or inside the spinner) acts with the WHOLE stack instantly: drop all, take all, no prompt. Undroppable and important-marked items stay protected by the game's own rules.
