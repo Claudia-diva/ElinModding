@@ -5,7 +5,7 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Item keys open a paginated menu: cursor with up/down (HOLD to keep scrolling), Enter or letter or click to act, left/right arrows switch pages.
 ・ The selected item's full stat card is shown automatically; press x on a row to open the examine window.
 ・ z inside a menu cycles sorting (original / name / weight or category / count or stock); the weight column sits on the right.
-・ Shift returns to the previous window in a chain (wheel, give, equipment slots...), or closes the last one.
+・ Shift returns to the previous window in a chain (wheel, give, equipment slots...), or closes the last one. Escape closes the WHOLE window stack at once (conversations and yes/no prompts keep their own Escape).
 ・ Stacks open a count spinner "n (max)": left/right +-1, up/down +-10, Enter confirms. numpad0 = act with the WHOLE stack, spinner skipped (drop all, take all; undroppable and important-marked items stay safe). Important-marked items show a gold star.
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
 ・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
@@ -23,7 +23,7 @@ Mod keys beat Elin's own bindings on clash by default (OverrideGameKeys). If key
 $Keys
 {topic|Item Keys}
 {pair|numpad 0|Instantly pick up EVERYTHING on your tile (someone's property = one crime prompt first)}
-{pair|g|Pick up: single item instant, several = selection list, owned items tagged [steal] and confirmed like the game's Steal. HOLD g = grab anything nearby (furniture, dropped containers)}
+{pair|g|Pick up: single item instant, several = selection list, owned items tagged [steal] and confirmed like the game's Steal. HOLD g = grab anything nearby: Take = into the backpack, Grab (carry) = furniture into your hands (Space then places it at your feet), Hold (place / throw) = loose items into your hands}
 {pair|d|Drop menu (count spinner for stacks, stays open)}
 {pair|e|Eat menu}
 {pair|q|Quaff menu, includes nearby wells and fountains}
@@ -90,6 +90,12 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.30.0}
+・ Escape closes every open window at once (shift stays one-step back). Touch-range abilities fire instantly at your locked target and aim at whoever stands on the chosen tile, so interactions work freely on allies. Hold-g spells out both grab flavors (carry in hands vs. straight to backpack); carried furniture places at your feet with Space; the grab window refreshes after every take instead of re-collecting.
+
+{topic|1.29.x}
+・ Two target locks: enemy and ally held at once; attacks auto-acquire enemies and never touch the ally lock, heals go to the ally lock, SHIFT aims anything at your ally. f repeats the last cast. Space places held items at your feet only. Home stock browses by container. Counts formatted [Inv] [Worn] [Wgt]. z/x = prev/next everywhere, r rerolls boards.
+
 {topic|1.28.x}
 ・ Menus remember your cursor; pages rustle; numpad0 = whole stack; important items show a gold star and refuse shipping/delivery boxes. Space/s list the tile first, mounts last. Party bags hop with Tab; carried and worn counted separately. Give = two-way trade for party. Boards: scrolling fixed, x rerolls, hints in the title. Distribution panel opens in its own overlay. Teleport-safe window handling.
 

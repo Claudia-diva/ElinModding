@@ -371,6 +371,9 @@ namespace ElonaKeys
 			}
 		}
 
+		// see the recipe heal in the held-act merge below
+		private static int healedHeldUid = -1;
+
 		internal static ActPlan BuildPlan(Point p, ActInput input = ActInput.AllAction, bool includeHeld = true)
 		{
 			ActPlan plan = new ActPlan
@@ -394,6 +397,15 @@ namespace ElonaKeys
 			{
 				try
 				{
+					// a held thing whose HotItemHeld never went through
+					// OnSetCurrentItem (no WidgetCurrentTool on screen, holds
+					// from other code paths) has the static build recipe at
+					// null — and with it NO "place" act. Heal once per thing.
+					if (hot is HotItemHeld && HotItemHeld.recipe == null && pc.held is Thing heldT && heldT.uid != healedHeldUid)
+					{
+						healedHeldUid = heldT.uid;
+						hot.OnSetCurrentItem();
+					}
 					PointTarget mt = EClass.scene.mouseTarget;
 					bool wasMouse = mt.mouse;
 					mt.mouse = false;
@@ -909,6 +921,21 @@ namespace ElonaKeys
 			}
 		}
 
+		// a row can outlive its thing (menus stay open across takes; the
+		// crime prompt is async): a taken or destroyed thing must not be
+		// acted on twice — that was the hold-g "collect x10" log spam
+		private static bool Gone(Thing t)
+		{
+			try
+			{
+				return t == null || t.isDestroyed || !t.ExistsOnMap;
+			}
+			catch
+			{
+				return true;
+			}
+		}
+
 		// g: SELECT what to pick up (with counts). HOLD g = grab anything
 		// nearby, including installed things like a dropped purse.
 		public static void Get()
@@ -926,8 +953,16 @@ namespace ElonaKeys
 				SafeTake(single, delegate { pc.Pick(single); });
 				return;
 			}
+			MenuSystem.Show("Pick up what?", BuildGetRows(), delegate
+			{
+				MenuSystem.SetRows(BuildGetRows());
+			});
+		}
+
+		private static List<MenuRow> BuildGetRows()
+		{
 			List<MenuRow> rows = new List<MenuRow>();
-			foreach (Thing thing in here)
+			foreach (Thing thing in TilePickables())
 			{
 				Thing t = thing;
 				rows.Add(new MenuRow
@@ -941,10 +976,14 @@ namespace ElonaKeys
 					maxAmount = Mathf.Max(1, t.Num),
 					onAmount = delegate(int n)
 					{
+						if (Gone(t))
+						{
+							return;
+						}
 						// split only after the crime prompt says yes
 						SafeTake(t, delegate
 						{
-							if (BackpackFull(t))
+							if (Gone(t) || BackpackFull(t))
 							{
 								return;
 							}
@@ -954,18 +993,61 @@ namespace ElonaKeys
 					}
 				});
 			}
-			rows.Add(new MenuRow
+			if (rows.Count > 0)
 			{
-				label = "[ Take everything ]",
-				pinBottom = true,
-				act = delegate { GetAll(); }
-			});
-			MenuSystem.Show("Pick up what?", rows);
+				rows.Add(new MenuRow
+				{
+					label = "[ Take everything ]",
+					pinBottom = true,
+					act = delegate { GetAll(); }
+				});
+			}
+			return rows;
 		}
 
-		// hold-g: every grabbable in interaction range, loose AND installed
-		// (the dropped-purse case: installed things grab via HoldCard)
+		// the FULL native hold, hands version of a grab: SetCurrentHotItem
+		// runs HotItemHeld.OnSetCurrentItem, which sets the static build
+		// recipe — without it carried furniture has no "place" act anywhere
+		private static void HoldInHands(Thing t)
+		{
+			SafeTake(t, delegate
+			{
+				if (Gone(t))
+				{
+					return;
+				}
+				if (!pc.CanLift(t))
+				{
+					pc.Say("tooHeavy", t);
+					return;
+				}
+				EClass.player.SetCurrentHotItem(new HotItemHeld(t));
+				if (pc.held == t)
+				{
+					t.PlaySoundHold(spatial: false);
+					pc.renderer.Refresh();
+				}
+			});
+		}
+
+		// hold-g: every grabbable in interaction range, loose AND installed.
+		// TWO grab flavors, spelled out per row: carry in your hands (place
+		// it back down or throw it) vs. straight into the backpack.
 		public static void GrabNearby()
+		{
+			List<MenuRow> rows = BuildGrabRows();
+			if (rows.Count == 0)
+			{
+				Msg.SayRaw("There is nothing nearby to grab.");
+				return;
+			}
+			MenuSystem.Show("Grab what?", rows, delegate
+			{
+				MenuSystem.SetRows(BuildGrabRows());
+			});
+		}
+
+		private static List<MenuRow> BuildGrabRows()
 		{
 			List<MenuRow> rows = new List<MenuRow>();
 			foreach (Point point in Nearby())
@@ -977,16 +1059,20 @@ namespace ElonaKeys
 					{
 						rows.Add(new MenuRow
 						{
-							label = t.Name + StealTag(t),
+							label = "Take: " + t.Name + StealTag(t),
 							icon = t,
 							sortCount = t.Num,
 							closeOnAct = false,
 							maxAmount = Mathf.Max(1, t.Num),
 							onAmount = delegate(int n)
 							{
+								if (Gone(t))
+								{
+									return;
+								}
 								SafeTake(t, delegate
 								{
-									if (BackpackFull(t))
+									if (Gone(t) || BackpackFull(t))
 									{
 										return;
 									}
@@ -995,36 +1081,58 @@ namespace ElonaKeys
 								});
 							}
 						});
+						// grab-to-throw/place: the same native hold the
+						// installed grab uses (only for holdable things)
+						if (t.trait.CanBeHeld && t.TileType.CanBeHeld)
+						{
+							rows.Add(new MenuRow
+							{
+								label = "Hold: " + t.Name + StealTag(t) + "  (place / throw)",
+								icon = t,
+								act = delegate { HoldInHands(t); }
+							});
+						}
 					}
 					else if (t.IsInstalled)
 					{
 						rows.Add(new MenuRow
 						{
-							label = "Grab: " + t.Name + StealTag(t),
+							label = "Grab: " + t.Name + StealTag(t) + "  (carry)",
+							icon = t,
+							act = delegate { HoldInHands(t); }
+						});
+						rows.Add(new MenuRow
+						{
+							label = "Take: " + t.Name + StealTag(t) + "  (to backpack)",
 							icon = t,
 							act = delegate
 							{
 								SafeTake(t, delegate
 								{
+									if (Gone(t) || BackpackFull(t))
+									{
+										return;
+									}
 									if (!pc.CanLift(t))
 									{
 										pc.Say("tooHeavy", t);
 										return;
 									}
+									// HoldCard is the native uninstall; PickHeld
+									// stows it — grab-and-pocket in one motion
 									pc.HoldCard(t);
-									if (pc.held != null)
+									if (pc.held == t)
 									{
-										t.PlaySoundHold(spatial: false);
-										EClass.player.RefreshCurrentHotItem();
-										pc.renderer.Refresh();
+										pc.PickHeld();
 									}
+									EClass.player.RefreshCurrentHotItem();
 								});
 							}
 						});
 					}
 				}
 			}
-			RunRows("Grab what?", rows, "There is nothing nearby to grab.");
+			return rows;
 		}
 
 		// shift+e: put away whatever occupies your hands — a held item/tool,
@@ -3450,18 +3558,37 @@ namespace ElonaKeys
 				}
 				return;
 			}
-			// neighbor-only spells: iso-aware direction prompt
+			// neighbor-only abilities (touch spells, interaction acts): a
+			// remembered target standing in reach fires instantly — this is
+			// what keeps them freely usable on your own people
 			if (tt.Range == TargetRange.Neighbor)
 			{
+				Chara qn = TargetMode.QuickTarget(act);
+				if (qn != null && CanForcePerform(act, qn, qn.pos))
+				{
+					if (ForceUse(act, qn, qn.pos))
+					{
+						TargetMode.Remember(qn);
+						EClass.player.EndTurn();
+					}
+					return;
+				}
 				DirPrompt.Ask("Aim " + act.GetText() + " where? (wait key = your tile)", self: true, delegate(Point p)
 				{
-					if (!SafeCanPerformAt(act, p))
+					// touch acts want the CHARA on that tile, not the bare
+					// tile — with a null target many refuse and do nothing
+					Chara ch = p.FirstVisibleChara();
+					if (!CanForcePerform(act, ch, p))
 					{
-						Msg.SayRaw("You cannot aim there (enemy-only or blocked). (No cost spent.)");
+						Msg.SayRaw("You cannot aim there (blocked or invalid target). (No cost spent.)");
 						return;
 					}
-					if (ForceUse(act, null, p))
+					if (ForceUse(act, ch, p))
 					{
+						if (ch != null)
+						{
+							TargetMode.Remember(ch);
+						}
 						EClass.player.EndTurn();
 					}
 				});

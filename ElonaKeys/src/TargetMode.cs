@@ -56,10 +56,14 @@ namespace ElonaKeys
 					return f;
 				}
 			}
-			bool hostileIntent = act == null || SafeHostileAct(act) || EnemyOnly(act);
-			if (hostileIntent)
+			// STRICT hostile = throws and truly enemy-only acts: those never
+			// consider the ally lock and auto-acquire foes. Merely
+			// hostile-FLAGGED acts that CAN target anyone (hexes, interaction
+			// abilities from other mods) are NEUTRAL: enemy lock first, ally
+			// lock second, so they stay freely usable on your own people.
+			bool strictHostile = act == null || EnemyOnly(act);
+			if (strictHostile)
 			{
-				// hostile chain only: ally lock is never a candidate here
 				Chara c = AliveOr(lastHostile);
 				if (c != null && IsFoe(c))
 				{
@@ -81,8 +85,14 @@ namespace ElonaKeys
 			{
 				return AliveOr(lastFriendly); // null = the normal flows take over
 			}
-			// neutral acts: hostile lock first, then the ally lock
-			return AliveOr(lastHostile) ?? AliveOr(lastFriendly);
+			// neutral (incl. hostile-flagged-but-anyone acts): enemy lock
+			// leads so hexes hit the locked foe; the ally lock follows
+			Chara foe = AliveOr(lastHostile);
+			if (foe != null && IsFoe(foe))
+			{
+				return foe;
+			}
+			return AliveOr(lastFriendly);
 		}
 
 		private static bool IsFoe(Chara c)
@@ -145,18 +155,6 @@ namespace ElonaKeys
 			catch
 			{
 				return false;
-			}
-		}
-
-		private static bool SafeHostileAct(Act act)
-		{
-			try
-			{
-				return act.IsHostileAct;
-			}
-			catch
-			{
-				return true;
 			}
 		}
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.30.0 - 2026-07-10
+- Escape closes EVERY open window at once and takes you straight back to the map; shift stays the one-step back key. Conversations and yes/no prompts keep their normal Escape.
+- Touch-range abilities (interactions included) finally aim like everything else: with a target locked and in reach they fire instantly, and the direction prompt now targets whoever stands on that tile instead of refusing. Use them on your allies freely.
+- The two grab flavors are spelled out in the hold-g menu: "Grab (carry)" lifts furniture into your hands so Space can place it at your feet, "Take (to backpack)" pockets it directly. Loose holdable items also offer "Hold (place / throw)".
+- Furniture carried with hold-g now actually offers "Place" on Space (the carry never registered as a proper hold before, so only put-away and drop showed).
+- Fixed the hold-g window re-collecting the same item when you kept pressing Enter: taken items go inert immediately, and the pickup windows refresh their list live after every take.
+
 ## 1.29.1 - 2026-07-10
 - TWO TARGET LOCKS: * on an enemy sets your enemy lock, * on an ally sets a separate ally lock, and both hold at once. Attacks and debuffs fire at the enemy lock (or auto-acquire the nearest visible enemy when none is set) and never touch the ally lock; heals and buffs go to the ally lock instantly. Hold SHIFT while casting to deliberately aim anything, harmful included, at your locked ally. The message tells you which lock you set.
 - f repeats your LAST cast spell/action at its usual target when no ranged weapon is equipped (ranged still fires natively). Spam away.

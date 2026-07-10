@@ -146,6 +146,31 @@ namespace ElonaKeys
 				EInput.Consume();
 				return;
 			}
+			// Escape closes the WHOLE window stack at once (ours and native);
+			// shift stays the one-step back key. Conversations and yes/no
+			// dialogs keep their native Escape handling.
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				Layer top = EClass.ui.TopLayer;
+				if ((MenuSystem.Alive || top != null) && !(top is LayerDrama) && !(top is Dialog))
+				{
+					if (MenuSystem.Alive)
+					{
+						MenuSystem.Close();
+					}
+					try
+					{
+						EClass.ui.CloseLayers();
+					}
+					catch
+					{
+					}
+					PopupNav.ClearInvNav();
+					EInput.action = EAction.None;
+					EInput.Consume();
+					return;
+				}
+			}
 			if (queuedNative != EAction.None)
 			{
 				EInput.action = queuedNative;
