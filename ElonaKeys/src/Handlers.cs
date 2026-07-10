@@ -3796,10 +3796,11 @@ namespace ElonaKeys
 			return targets;
 		}
 
-		// classic '*': set or change the remembered target without acting
+		// classic '*': set or change the remembered target without acting.
+		// YOURSELF is a valid ally lock (solo buffing); Space cycles to you.
 		public static void PickTarget()
 		{
-			List<Chara> targets = new List<Chara>();
+			List<Chara> targets = new List<Chara> { pc };
 			foreach (Chara c in EClass._map.charas)
 			{
 				if (c != pc && !c.isDead && pc.CanSee(c) && pc.pos.Distance(c.pos) <= 12)
@@ -3824,10 +3825,10 @@ namespace ElonaKeys
 					catch
 					{
 					}
-					// two locks live side by side: offense uses the enemy lock
-					// (or auto-acquires), heals/buffs use the ally lock;
-					// shift+cast aims ANYTHING at the ally lock deliberately
-					Msg.SayRaw((foe ? "Enemy lock: " : "Ally lock: ") + c.Name + ".");
+					// two locks live side by side: hostile casts use the enemy
+					// lock (or auto-acquire), buffs/heals the ally lock; the
+					// Swap key aims one cast at the opposite lock
+					Msg.SayRaw((foe ? "Enemy lock: " : "Ally lock: ") + (c == pc ? "yourself" : c.Name) + ".");
 				}
 			});
 		}

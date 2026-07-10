@@ -43,29 +43,44 @@ namespace ElonaKeys
 			return Active ? cursor : null;
 		}
 
-		// instantly usable target for this act; act == null = hostile intent (throw)
+		// numpad/ : the next cast aims at the OPPOSITE lock. Tap to arm
+		// (one cast), tap again to cancel; holding it while casting works
+		// too. This is the ONLY way to cross the streams — hostile at your
+		// ally, heals/buffs at the enemy. Shift is NOT a modifier here:
+		// shift+1-9 fires quickbinds and must never re-aim them.
+		private static bool swapArmed;
+
+		public static void ToggleSwap()
+		{
+			swapArmed = !swapArmed;
+			Msg.SayRaw(swapArmed
+				? "Swap armed: the NEXT cast aims at the opposite lock (hostile at your ally, buffs/heals at the enemy)."
+				: "Swap canceled.");
+		}
+
+		private static bool ConsumeSwap()
+		{
+			if (swapArmed)
+			{
+				swapArmed = false;
+				return true;
+			}
+			return Plugin.BindHeld("SwapTarget");
+		}
+
+		// instantly usable target for this act; act == null = hostile intent
+		// (throws, ranged). TWO CLASSES, TWO LOCKS: hostile acts aim at the
+		// enemy lock (or auto-acquire the nearest foe) and NEVER at your
+		// people; everything else aims at the ally lock — which may be
+		// YOURSELF — and never at a foe. numpad/ swaps for one cast.
 		public static Chara QuickTarget(Act act)
 		{
-			// SHIFT = deliberate: whatever the act, aim it at the ALLY lock
-			// (harmful included; the force-cast path lets it fire)
-			if (EInput.isShiftDown)
+			bool hostile = act == null || EnemyOnly(act) || SafeHostileAct(act);
+			if (ConsumeSwap())
 			{
-				Chara f = AliveOr(lastFriendly);
-				if (f != null)
-				{
-					return f;
-				}
+				hostile = !hostile;
 			}
-			// STRICT hostile: throws, enemy-only acts, and RANGED hostile
-			// acts (attack spells, hexes). These never consider the ally
-			// lock — "buff her, then shoot him" must keep the locks apart.
-			// The one exception: TOUCH-range hostile-flagged acts that can
-			// target anyone (interaction abilities from other mods) stay
-			// NEUTRAL so they remain freely usable on your own people;
-			// real touch attacks are enemy-only and stay strict.
-			bool strictHostile = act == null || EnemyOnly(act)
-				|| (SafeHostileAct(act) && RangeOf(act) != TargetRange.Neighbor);
-			if (strictHostile)
+			if (hostile)
 			{
 				Chara c = AliveOr(lastHostile);
 				if (c != null && IsFoe(c))
@@ -84,17 +99,8 @@ namespace ElonaKeys
 				}
 				return NearestFoe();
 			}
-			if (Helpful(act))
-			{
-				return AliveOr(lastFriendly); // null = the normal flows take over
-			}
-			// neutral (incl. touch interactions): enemy lock leads, the
-			// ally lock follows
-			Chara foe = AliveOr(lastHostile);
-			if (foe != null && IsFoe(foe))
-			{
-				return foe;
-			}
+			// beneficial (or swapped-hostile): the ally lock; null = the
+			// act's normal flow takes over (self-cast, member picker...)
 			return AliveOr(lastFriendly);
 		}
 
@@ -148,19 +154,6 @@ namespace ElonaKeys
 			}
 		}
 
-		private static bool Helpful(Act act)
-		{
-			try
-			{
-				TargetType tt = act.TargetType;
-				return tt.CanSelectParty || tt.ForceParty || tt.Range == TargetRange.Party;
-			}
-			catch
-			{
-				return false;
-			}
-		}
-
 		private static bool SafeHostileAct(Act act)
 		{
 			try
@@ -173,24 +166,11 @@ namespace ElonaKeys
 			}
 		}
 
-		private static TargetRange RangeOf(Act act)
-		{
-			try
-			{
-				return act.TargetType.Range;
-			}
-			catch
-			{
-				return TargetRange.Self;
-			}
-		}
-
 		public static void Remember(Chara c)
 		{
-			// never lock YOURSELF as the ally: a self-buff confirmed in the
-			// cursor was becoming the ally lock, and every later neutral cast
-			// quietly fired at the player instead of opening the aim
-			if (c == null || c == EClass.pc)
+			// YOURSELF is a valid ally lock (solo play: keep your buffs on
+			// you while attacks auto-acquire); attacks never read this side
+			if (c == null)
 			{
 				return;
 			}

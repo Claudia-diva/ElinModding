@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.31.0";
+		public const string Version = "1.32.0";
 
 		internal static ManualLogSource Log;
 
@@ -247,7 +247,8 @@ namespace ElonaKeys
 			Def("Context", "space", Handlers.ContextAll, "Everything interactable on and around you; a single action fires instantly (Elona Space).");
 			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
 			Def("Party", "shift+q", Handlers.Party, "Party menu: character sheets, browse and take members' items.");
-			Def("Target", "keypadMultiply, quote", Handlers.PickTarget, "Classic *: set/change the remembered target (spells and throws then fire at it instantly). Also on the apostrophe key for keyboards without a numpad.");
+			Def("Target", "keypadMultiply, quote", Handlers.PickTarget, "Classic *: set/change the remembered target (spells and throws then fire at it instantly). Enemies and allies lock separately; yourself counts as an ally. Also on the apostrophe key for keyboards without a numpad.");
+			Def("SwapTarget", "keypadDivide, semicolon", TargetMode.ToggleSwap, "Aim the NEXT cast at the opposite lock: a hostile spell at your locked ally, a buff/heal at your locked enemy. Tap to arm (tap again cancels), or hold it while casting.");
 			Def("Wheel", "z", Handlers.Wheel, "Action wheel: every verb of this mod in one menu, like classic Elona's z.");
 			Def("MacroKey1", "none", delegate { Handlers.RunMacro(Macro1); }, "Casts the Macro1 ability sequence.");
 			Def("MacroKey2", "none", delegate { Handlers.RunMacro(Macro2); }, "Casts the Macro2 ability sequence.");
@@ -313,6 +314,26 @@ namespace ElonaKeys
 				}
 			}
 			return KeyCode.None;
+		}
+
+		// any key of a NAMED bind physically held (swap-while-casting etc.)
+		internal static bool BindHeld(string name)
+		{
+			foreach (Entry e in entries)
+			{
+				if (e.name != name)
+				{
+					continue;
+				}
+				foreach (Keybind b in e.binds)
+				{
+					if (b.IsHeld())
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		internal static Entry FindPressed()

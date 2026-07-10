@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.32.0 - 2026-07-10
+- Target locks, final form. Enemies and allies lock separately with * and both hold at once; yourself is a valid ally lock. Hostile casts, f, bows and throws ALWAYS use the enemy lock (or auto-acquire the nearest foe). Buffs and heals ALWAYS use the ally lock. Neither side ever crosses over on its own: buff your girl while shooting her attacker, or solo-buff yourself between volleys, without touching the target key.
+- numpad / (or ;) = Swap: the next cast aims at the opposite lock, for hexing your own ally or healing an enemy on purpose. Tap to arm, tap again to cancel, or hold it while casting.
+- Shift no longer re-aims casts. shift+1-9 quickbinds fire at their natural target (buffs at your ally lock, attacks at your enemy lock), no surprises.
+
 ## 1.31.0 - 2026-07-10
 - Attack casting and the ally lock are properly separated: hostile spells never fall back to the ally lock or to yourself, f repeats attacks at enemies only, and the aim cursor for a hostile cast starts on a foe instead of whoever you buffed last. Locking yourself as your own ally is ignored. Touch interactions keep working freely on your people.
 - The aim cursor no longer eats the same Enter press that selected the spell, so the choice actually confirms when YOU press it.
