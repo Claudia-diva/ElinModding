@@ -123,19 +123,19 @@ namespace ElonaKeys
 			lockHud = new GameObject("ElonaKeysLocks");
 			lockHud.transform.SetParent(EClass.ui.transform, worldPositionStays: false);
 			lockHudText = lockHud.AddComponent<Text>();
-			Text existing = UnityEngine.Object.FindObjectOfType<Text>();
-			lockHudText.font = (existing != null && existing.font != null) ? existing.font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-			lockHudText.fontSize = 16;
+			lockHudText.font = UiFont();
+			lockHudText.fontSize = 17;
 			lockHudText.alignment = TextAnchor.UpperCenter;
 			lockHudText.horizontalOverflow = HorizontalWrapMode.Overflow;
+			lockHudText.verticalOverflow = VerticalWrapMode.Overflow;
 			lockHudText.color = new Color(1f, 0.97f, 0.85f);
 			lockHudText.raycastTarget = false;
 			RectTransform rt = lockHudText.rectTransform;
 			rt.anchorMin = new Vector2(0.5f, 1f);
 			rt.anchorMax = new Vector2(0.5f, 1f);
 			rt.pivot = new Vector2(0.5f, 1f);
-			rt.anchoredPosition = new Vector2(0f, -6f);
-			rt.sizeDelta = new Vector2(900f, 26f);
+			rt.anchoredPosition = new Vector2(0f, -40f);
+			rt.sizeDelta = new Vector2(900f, 28f);
 			Outline o = lockHud.AddComponent<Outline>();
 			o.effectColor = new Color(0f, 0f, 0f, 0.95f);
 			o.effectDistance = new Vector2(1.2f, -1.2f);
@@ -338,6 +338,32 @@ namespace ElonaKeys
 			}
 		}
 
+		// the game's REAL UI font (skin-configured): an arbitrary
+		// FindObjectOfType<Text> font renders NOTHING half the time — the
+		// exact failure the column headers went through (v1 lesson)
+		private static Font UiFont()
+		{
+			try
+			{
+				Font f = SkinManager.Instance?.fontSet?.ui?.source?.font;
+				if (f != null)
+				{
+					return f;
+				}
+			}
+			catch
+			{
+			}
+			try
+			{
+				return Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
 		private static void BuildOverlay()
 		{
 			overlay = new GameObject("ElonaKeysTarget");
@@ -353,9 +379,9 @@ namespace ElonaKeys
 			GameObject lg = new GameObject("label");
 			lg.transform.SetParent(overlay.transform, worldPositionStays: false);
 			label = lg.AddComponent<Text>();
-			Text existing = UnityEngine.Object.FindObjectOfType<Text>();
-			label.font = (existing != null && existing.font != null) ? existing.font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+			label.font = UiFont();
 			label.fontSize = 20;
+			label.verticalOverflow = VerticalWrapMode.Overflow;
 			label.alignment = TextAnchor.MiddleCenter;
 			label.horizontalOverflow = HorizontalWrapMode.Overflow;
 			label.color = new Color(1f, 0.95f, 0.7f);
@@ -468,6 +494,26 @@ namespace ElonaKeys
 			try
 			{
 				cursor.SetHighlight(8);
+			}
+			catch
+			{
+			}
+			// enemy highlight, same as the game's own (AM_Adv.OnRenderTile):
+			// respects the "highlight enemies" game setting — the native pass
+			// doesn't always run while we own the input
+			try
+			{
+				if (EClass.core.config.game.highlightEnemy)
+				{
+					foreach (Chara ch in EClass._map.charas)
+					{
+						if (ch.isSynced && ch.IsHostile(EClass.pc) && !ch.IsMultisize && EClass.pc.CanSee(ch) && (ch.mimicry == null || !ch.mimicry.IsThing))
+						{
+							Vector3 hv = ch.pos.Position();
+							EClass.screen.guide.passGuideFloor.Add(hv.x, hv.y, hv.z - 0.01f, 23f, 0.3f);
+						}
+					}
+				}
 			}
 			catch
 			{

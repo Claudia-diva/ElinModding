@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.34.0 - 2026-07-10
+- The on-screen text finally uses the game's own skin font (the lock readout and the aim label were drawing with a font that renders blank on most setups, which is why you never saw them). Lock readout sits top center: enemy in red, ally in green, Swap warning in amber.
+- Melee-reach abilities (bladestorm and friends) just FIGHT: a hostile cast hits the nearest enemy it can actually perform on, so pressing the key with an enemy next to you swings immediately. When no enemy is in the act's reach it says so and spends nothing, instead of opening a target selection over enemies the cast could never touch.
+- Targeting mode highlights enemies on the ground exactly like the game's own "highlight enemies" setting (and stays off when you keep that setting off).
+- numpad0 moves items without the submenu dance: on a chest's item it takes the whole stack straight to your backpack; on your own items in the browser (shift+x) it STORES them wherever your containers' distribution settings say (priority, filters, the Share toggle decide the chest). Holding items in hands stays on q/e/r/t/E and the verb menus.
+
 ## 1.33.0 - 2026-07-10
 - Attack spells are recognized properly now. The lock routing was reading a flag the game never sets on spells; it now uses the game's own negative-ability marker (the same one that colors those abilities red in your ability window). Attacks and hexes go to the enemy lock or auto-acquire, buffs and heals go to your ally lock (yourself included), and casting one never re-aims the other. The shift-row quickbinds route by the same rule whether they hold buffs or attacks.
 - f repeats your last ATTACK, not your last cast: buff yourself mid-fight and f still shoots the enemy. With no attack cast yet, f falls back to native fire.

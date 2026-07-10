@@ -2264,7 +2264,18 @@ namespace ElonaKeys
 					rightText = WeightText(t.ChildrenAndSelfWeight),
 					sortWeight = t.ChildrenAndSelfWeight,
 					closeOnAct = false,
-					act = delegate { ContainerItemMenu(container, t); }
+					act = delegate { ContainerItemMenu(container, t); },
+					// numpad0 = the whole stack straight into your backpack,
+					// no take/drop/move submenu
+					altAct = delegate
+					{
+						if (t.isDestroyed || t.parent != container || BackpackFull(t))
+						{
+							return;
+						}
+						pc.AddCard(t);
+						Msg.SayRaw("You take " + t.Name + ".");
+					}
 				});
 			}
 			return rows;
@@ -3681,7 +3692,7 @@ namespace ElonaKeys
 			// otherwise the in-world targeting mode (dim + cycle), no window.
 			// The quick shot only fires when the game can perform on that
 			// target — a refused one (ally for an enemy-only spell) used to
-			// eat the cost with no visible effect. Refusal opens the cursor.
+			// eat the cost with no visible effect.
 			Chara quick = TargetMode.QuickTarget(act);
 			if (quick != null && CanForcePerform(act, quick, quick.pos))
 			{
@@ -3693,7 +3704,50 @@ namespace ElonaKeys
 				}
 				return;
 			}
-			TargetMode.Begin(act.GetText(), CastCandidates(act, tt), delegate(Point p, Chara c)
+			List<Chara> cands = CastCandidates(act, tt);
+			// hostile casts just FIGHT (Elona): when the lock is out of reach,
+			// hit the nearest foe the act can actually perform on — melee-reach
+			// acts (bladestorm...) whack the adjacent enemy instead of opening
+			// a pointless target selection
+			if (HostileAim(act))
+			{
+				Chara best = null;
+				int bd = int.MaxValue;
+				foreach (Chara c in cands)
+				{
+					if (!pc.IsHostile(c) || c.IsPCParty)
+					{
+						continue;
+					}
+					int d = pc.pos.Distance(c.pos);
+					if (d < bd && CanForcePerform(act, c, c.pos))
+					{
+						bd = d;
+						best = c;
+					}
+				}
+				if (best == null)
+				{
+					// no foe in the act's reach: say so, spend nothing — no
+					// dead cursor over enemies the cast could never touch
+					// (aiming it at your own people takes the Swap key)
+					Msg.SayRaw(act.GetText() + " cannot reach any enemy from here. (No cost spent.)");
+					return;
+				}
+				if (ForceUse(act, best, best.pos))
+				{
+					TargetMode.Remember(best);
+					EClass.player.EndTurn();
+				}
+				return;
+			}
+			// beneficial with nobody in reach: same honest refusal
+			if (cands.Count == 0)
+			{
+				Msg.SayRaw(act.GetText() + " cannot reach anyone from here. (No cost spent.)");
+				return;
+			}
+			TargetMode.Begin(act.GetText(), cands, delegate(Point p, Chara c)
 			{
 				if (c == null)
 				{
@@ -3948,6 +4002,34 @@ namespace ElonaKeys
 			}, keepLayers: false, replace: replaceScreen);
 		}
 
+		// numpad0 in the browser: send the item wherever the DISTRIBUTION
+		// settings say (the same shared-container search the game itself
+		// runs: container priority, name filters, the Share toggle)
+		private static void AutoStore(Thing t)
+		{
+			if (t == null || t.isDestroyed || t.isEquipped || t == pc.held)
+			{
+				return;
+			}
+			if (RefuseFilledContainer(t))
+			{
+				return; // it already said why
+			}
+			bool stored = false;
+			try
+			{
+				stored = EClass._zone.TryAddThingInSharedContainer(t, null, add: true, msg: true, chara: pc, sharedOnly: true);
+			}
+			catch
+			{
+			}
+			if (!stored)
+			{
+				Msg.SayRaw("No shared container takes " + t.Name + ". (Mark containers as Share in their distribution settings.)");
+				SE.Beep();
+			}
+		}
+
 		private static List<MenuRow> BuildBrowserRows(Chara owner)
 		{
 			List<MenuRow> rows = new List<MenuRow>();
@@ -3969,10 +4051,12 @@ namespace ElonaKeys
 						{
 							EClass.ui.AddLayerDontCloseOthers<LayerInfo>().SetThing(t);
 						},
-						// numpad0 = take it into your hands (safe subset only)
-						altAct = (!t.isEquipped && t.trait.CanBeHeld && !held) ? ((Action)delegate
+						// numpad0 = STORE it: the game's shared-container
+						// distribution picks the right chest (priority, filters,
+						// Share toggle). Holding an item stays on q/e/r/t/E.
+						altAct = (!t.isEquipped && !held) ? ((Action)delegate
 						{
-							ToggleHold(t);
+							AutoStore(t);
 						}) : null
 					});
 				}
