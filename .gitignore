@@ -1,14 +1,9 @@
 decomp/
+decomp-*/
+*-reworked/
 Elin-Decompiled/
 Elin.Docs/
 bin/
 obj/
 *.user
-decomp-b/
-decomp-a/
 source-sheets/raw/
-decomp-c/
-lib-r/
-
-decomp-instantactions/
-decomp-modoptions/
