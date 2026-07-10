@@ -90,6 +90,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.28.x}
+・ Menus remember your cursor; pages rustle; numpad0 = whole stack; important items show a gold star and refuse shipping/delivery boxes. Space/s list the tile first, mounts last. Party bags hop with Tab; carried and worn counted separately. Give = two-way trade for party. Boards: scrolling fixed, x rerolls, hints in the title. Distribution panel opens in its own overlay. Teleport-safe window handling.
+
 {topic|1.28.0}
 ・ EVERY pick-an-item flow is an ElonaKeys menu now: offerings, dip/blend, effect scrolls, wizard services, bank deposit, tax box, quest chests, gacha, recycle, gene machine, mod kit, refuel.
 ・ CapsLock pause is airtight (nothing of the mod runs at all while paused), taking things always respects backpack space, and a shop that fails to open can no longer leave an invisible window behind.

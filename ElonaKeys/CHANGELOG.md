@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.28.5 - 2026-07-10
+- Menus remember your cursor: reopening Drop/Cast/anything returns to the page and row you left. Pages turn with the paper rustle.
+- Space and s list what you're STANDING ON and nearby things first; your mount and hosted pets moved to the bottom.
+- Spell icons that rendered as black discs (death funnel...) show their real art: their colors are encoded for the game's icon shader, the same fix item sprites needed long ago.
+- shift+q party inventories: Tab (or period/comma) hops between members' bags; slot counts show carried items and worn equipment separately everywhere (no more "52/35").
+- Give: party members and pets get the two-way trade window (Tab flips give/take); gifting outsiders stays one-way.
+- Favorited/important items can no longer be put into shipping chests, delivery boxes or the tax box.
+- Tab-cycling into an empty menu (Zap with no rods, Read with no scrolls) skips to the next window instead of killing the chain.
+- The advanced distribution panel opens in its own centered overlay (Escape or click outside to close); the popup-menu host it used before self-closes without mouse-over, which is why it kept showing nothing.
+- Request boards show their controls in the title bar.
+
 ## 1.28.4 - 2026-07-10
 - Request boards scroll with up/down for real now: their rows are a composite type the navigator never recognized as buttons. x on a board rerolls (same as r); z alone covers the two tabs.
 - The advanced distribution panel shows for real now: popup menus self-close the instant the mouse isn't over them, which for a keyboard user is immediately. It opens centered and stays until Escape.

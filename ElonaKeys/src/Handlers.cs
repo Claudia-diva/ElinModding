@@ -94,22 +94,50 @@ namespace ElonaKeys
 				}
 				return false;
 			}
-			int ni = (index + 1) % c.Length;
 			cycleFrame = Time.frameCount;
-			if (Plugin.DebugLog)
-			{
-				Plugin.Log?.LogInfo("ElonaKeys: Tab cycle " + group + " -> " + c[ni].name);
-			}
 			MenuSystem.Close();
-			try
+			// hop until a stop actually OPENS something: an empty stop (Zap
+			// with no rods, Read with no books...) used to kill the chain
+			for (int attempt = 1; attempt <= c.Length; attempt++)
 			{
-				c[ni].open(); // the opener re-registers its own position
-			}
-			catch (Exception ex)
-			{
-				Plugin.Log?.LogError("ElonaKeys menu cycle failed: " + ex);
+				int ni = (index + attempt) % c.Length;
+				Layer before = (EClass.ui != null) ? EClass.ui.TopLayer : null;
+				if (Plugin.DebugLog)
+				{
+					Plugin.Log?.LogInfo("ElonaKeys: Tab cycle " + group + " -> " + c[ni].name);
+				}
+				try
+				{
+					c[ni].open(); // the opener re-registers its own position
+				}
+				catch (Exception ex)
+				{
+					Plugin.Log?.LogError("ElonaKeys menu cycle failed: " + ex);
+					break;
+				}
+				if (MenuSystem.Alive || (EClass.ui != null && (object)EClass.ui.TopLayer != (object)before))
+				{
+					break; // something opened (our menu or a native window)
+				}
 			}
 			return true;
+		}
+	}
+
+	// Closes the distribution panel host on Escape or a click on the dim
+	internal class EKPanelCloser : MonoBehaviour, UnityEngine.EventSystems.IPointerClickHandler
+	{
+		private void Update()
+		{
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				Destroy(gameObject);
+			}
+		}
+
+		public void OnPointerClick(UnityEngine.EventSystems.PointerEventData eventData)
+		{
+			Destroy(gameObject); // clicked the dim outside the panel
 		}
 	}
 
@@ -1019,11 +1047,39 @@ namespace ElonaKeys
 		{
 			ActPlan plan = BuildPlan(p);
 			List<MenuRow> rows = new List<MenuRow>();
-			foreach (ActPlan.Item i in plan.list)
-			{
-				rows.Add(PlanRow(i, plan.HasMultipleTargets));
-			}
+			AddPlanRowsOrdered(rows, plan.list, plan.HasMultipleTargets);
 			RunRows(title, rows, emptyMsg);
+		}
+
+		// space/s row ORDER (user spec): the tile and its items/buildings come
+		// FIRST; strangers after; your own party (the mount you sit on, the
+		// pet you host) LAST — not the other way around
+		private static int PlanBucket(ActPlan.Item item)
+		{
+			Card tc = item.tc;
+			if (tc == null || tc.isThing)
+			{
+				return 0;
+			}
+			if (tc.isChara && (tc == pc || tc.Chara.IsPCParty))
+			{
+				return 2;
+			}
+			return 1;
+		}
+
+		private static void AddPlanRowsOrdered(List<MenuRow> rows, List<ActPlan.Item> items, bool forceName)
+		{
+			for (int bucket = 0; bucket <= 2; bucket++)
+			{
+				foreach (ActPlan.Item item in items)
+				{
+					if (PlanBucket(item) == bucket)
+					{
+						rows.Add(PlanRow(item, forceName));
+					}
+				}
+			}
 		}
 
 		private static MenuRow PlanRow(ActPlan.Item item, bool forceName)
@@ -1119,10 +1175,7 @@ namespace ElonaKeys
 			}
 			ActPlan plan = BuildPlan(p);
 			List<MenuRow> rows = new List<MenuRow>();
-			foreach (ActPlan.Item i in plan.list)
-			{
-				rows.Add(PlanRow(i, plan.HasMultipleTargets));
-			}
+			AddPlanRowsOrdered(rows, plan.list, plan.HasMultipleTargets);
 			if (rows.Count == 0)
 			{
 				// nothing else here: classic Elona search-the-ground
@@ -1152,21 +1205,22 @@ namespace ElonaKeys
 		public static void ContextAll()
 		{
 			List<MenuRow> rows = new List<MenuRow>();
+			List<ActPlan.Item> gathered = new List<ActPlan.Item>();
 			foreach (Point point in Nearby())
 			{
 				Point p = point;
 				ActPlan plan = BuildPlan(p);
 				foreach (ActPlan.Item i in plan.list)
 				{
-					ActPlan.Item item = i;
 					// pickup belongs to g; the native per-tile pick acts only confuse
-					if (item.act is DynamicAct da && (da.id == "actPickAll" || da.id == "actPickOne"))
+					if (i.act is DynamicAct da && (da.id == "actPickAll" || da.id == "actPickOne"))
 					{
 						continue;
 					}
-					rows.Add(PlanRow(item, forceName: true));
+					gathered.Add(i);
 				}
 			}
+			AddPlanRowsOrdered(rows, gathered, forceName: true);
 			if (rows.Count == 0)
 			{
 				// Elona Space: nothing to interact with = WAIT (and since only the
@@ -1888,6 +1942,28 @@ namespace ElonaKeys
 			});
 		}
 
+		// shipping/delivery/tax destinations DESTROY or sell their contents:
+		// important-marked (starred) items must never slip in
+		private static bool RefuseImportantInto(Thing container, Thing t)
+		{
+			try
+			{
+				bool special = container.trait.IsSpecialContainer
+					|| container == EClass.game.cards.container_shipping
+					|| container == EClass.game.cards.container_deliver;
+				if (special && t.c_isImportant)
+				{
+					Msg.SayRaw(t.Name + " is marked as important.");
+					SE.Beep();
+					return true;
+				}
+			}
+			catch
+			{
+			}
+			return false;
+		}
+
 		// can this container take t? Special containers (shipping chest,
 		// delivery/quest boxes) report IsFull() as ALWAYS true once installed
 		// and their destination search inherits that — the native drag works
@@ -1909,13 +1985,32 @@ namespace ElonaKeys
 			}
 		}
 
-		// used slots vs capacity ("slots 8/20") — the free space, which the
-		// weight line never told you
+		// used slots vs capacity, with equipment counted SEPARATELY: equipped
+		// things live inside the same container and were inflating the count
+		// ("52/35" on the player)
 		private static string SlotText(Card holder)
 		{
 			try
 			{
-				return "slots " + holder.things.Count + "/" + holder.things.MaxCapacity;
+				int worn = 0;
+				int carried = 0;
+				foreach (Thing t in holder.things)
+				{
+					if (t.isEquipped)
+					{
+						worn++;
+					}
+					else
+					{
+						carried++;
+					}
+				}
+				string s = "slots " + carried + "/" + holder.things.MaxCapacity;
+				if (worn > 0)
+				{
+					s += "   worn " + worn;
+				}
+				return s;
 			}
 			catch
 			{
@@ -2013,6 +2108,10 @@ namespace ElonaKeys
 					maxAmount = t.Num,
 					onAmount = delegate(int n)
 					{
+						if (RefuseImportantInto(dest, t))
+						{
+							return; // it already said why
+						}
 						if (ContainerFull(dest, t))
 						{
 							Msg.SayRaw("The " + dest.Name + " is full.");
@@ -2153,18 +2252,30 @@ namespace ElonaKeys
 		{
 			try
 			{
-				// CreateContextMenuInteraction, NOT CreateContextMenu: the
-				// plain factory is the system menu and CLOSES EVERY LAYER.
-				// hideOnMouseLeave OFF: context menus self-close the moment
-				// the mouse isn't over them, which for a keyboard user is
-				// INSTANTLY (the "nothing shows up" report). Centered so it
-				// doesn't spawn at a stale mouse position.
-				UIContextMenu m = EClass.ui.CreateContextMenuInteraction();
-				m.hideOnMouseLeave = false;
-				UIDistribution ud = Util.Instantiate<UIDistribution>("UI/Layer/UIDistribution");
+				// OUR OWN host, no context menus: those self-close the moment
+				// the mouse isn't over them (v1) or when input shifts (v2),
+				// which for a keyboard user means the panel never survives a
+				// frame. A plain dimmed overlay + the panel, Escape or a
+				// click outside closes it.
+				GameObject host = new GameObject("EKPanelHost", typeof(RectTransform));
+				host.transform.SetParent(EClass.ui.transform, worldPositionStays: false);
+				RectTransform hrt = (RectTransform)host.transform;
+				hrt.anchorMin = Vector2.zero;
+				hrt.anchorMax = Vector2.one;
+				hrt.offsetMin = Vector2.zero;
+				hrt.offsetMax = Vector2.zero;
+				Image dim = host.AddComponent<Image>();
+				dim.color = new Color(0f, 0f, 0f, 0.35f);
+				dim.raycastTarget = true; // clicks outside the panel land here
+				UIDistribution ud = Util.Instantiate<UIDistribution>("UI/Layer/UIDistribution", host.transform);
+				RectTransform prt = ud.transform as RectTransform;
+				prt.anchorMin = new Vector2(0.5f, 0.5f);
+				prt.anchorMax = new Vector2(0.5f, 0.5f);
+				prt.pivot = new Vector2(0.5f, 0.5f);
+				prt.anchoredPosition = Vector2.zero;
 				ud.SetContainer(container, sd);
-				m.AddGameObject(ud);
-				m.Show(new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
+				host.AddComponent<EKPanelCloser>();
+				SE.Tab();
 			}
 			catch (Exception ex)
 			{
@@ -2243,6 +2354,10 @@ namespace ElonaKeys
 				amount: (Thing t) => t.Num,
 				onAmount: delegate(Thing t, int n)
 				{
+					if (RefuseImportantInto(container, t))
+					{
+						return; // it already said why
+					}
 					if (ContainerFull(container, t))
 					{
 						Msg.SayRaw("The " + container.Name + " is full.");
@@ -2410,11 +2525,25 @@ namespace ElonaKeys
 					if (c != pc)
 					{
 						Chara target = c;
+						bool party = c.IsPCParty;
 						rows.Add(new MenuRow
 						{
-							label = "Give to: " + c.Name,
+							// party members get the two-way trade (Tab flips
+							// give/take); gifting stays one-way for outsiders
+							label = (party ? "Trade with: " : "Give to: ") + c.Name,
+							iconCard = c,
 							closeOnAct = false, // shift returns to this list
-							act = delegate { GiveTo(target); }
+							act = delegate
+							{
+								if (party)
+								{
+									TradeMenu(target);
+								}
+								else
+								{
+									GiveTo(target);
+								}
+							}
 						});
 					}
 				}
@@ -2480,12 +2609,39 @@ namespace ElonaKeys
 
 		private static void PartyInventory(Chara c)
 		{
+			PartyInventory(c, replace: false);
+		}
+
+		private static void PartyInventory(Chara c, bool replace)
+		{
+			// Tab (or period/comma) hops to the next party member's bag
+			List<Chara> members = new List<Chara>();
+			foreach (Chara m in pc.party.members)
+			{
+				if (m != pc && !m.isDead)
+				{
+					members.Add(m);
+				}
+			}
+			int idx = Mathf.Max(0, members.IndexOf(c));
+			int count = Mathf.Max(1, members.Count);
 			MenuSystem.NextFooterExtra = c.Name + " " + SlotText(c);
-			MenuSystem.Show(c.Name + "'s items", BuildPartyRows(c), delegate
+			if (members.Count > 1)
+			{
+				MenuSystem.NextOnTab = delegate
+				{
+					PartyInventory(members[(idx + 1) % count], replace: true);
+				};
+				MenuSystem.NextOnSwap = delegate(int dir)
+				{
+					PartyInventory(members[((idx + dir) % count + count) % count], replace: true);
+				};
+			}
+			MenuSystem.Show(c.Name + "'s items" + (members.Count > 1 ? "  (Tab = next member)" : ""), BuildPartyRows(c), delegate
 			{
 				MenuSystem.SetFooterExtra(c.Name + " " + SlotText(c));
 				MenuSystem.SetRows(BuildPartyRows(c));
-			});
+			}, keepLayers: false, replace: replace);
 		}
 
 		private static List<MenuRow> BuildPartyRows(Chara c)

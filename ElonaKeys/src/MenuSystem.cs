@@ -71,6 +71,10 @@ namespace ElonaKeys
 			}
 		}
 
+		// per-menu cursor memory: reopening Drop/Cast/etc lands where you left
+		// it (clamped by ApplyPage if rows shrank)
+		private static readonly Dictionary<string, (int page, int sel)> cursorMemo = new Dictionary<string, (int page, int sel)>();
+
 		private static LayerList layer;
 		private static Screen current;
 		private static readonly List<Screen> history = new List<Screen>();
@@ -134,6 +138,11 @@ namespace ElonaKeys
 			NextRightHeader = null;
 			page = 0;
 			sel = 0;
+			if (cursorMemo.TryGetValue(_title, out var memo))
+			{
+				page = memo.page;
+				sel = memo.sel;
+			}
 			amountRow = null;
 			openFrame = Time.frameCount;
 			if (!Alive)
@@ -458,7 +467,11 @@ namespace ElonaKeys
 				{
 					stale.SetActive(enable: false);
 				}
-				img.material = null;
+				// the UI-object material, same fix item icons needed years of
+				// versions ago: some sprite tints are ENCODED for the game's
+				// shader and render as black discs on the default material
+				// (death funnel was black in the row, purple in the tooltip)
+				img.material = ItemMaterial();
 				img.enabled = true;
 				img.transform.SetAsLastSibling();
 				// AddHeaderAbility paints with THE ELEMENT ITSELF as an Act
@@ -498,10 +511,6 @@ namespace ElonaKeys
 				if (!drawn)
 				{
 					ab.SetImage(img);
-				}
-				if (Plugin.DebugLog)
-				{
-					Plugin.Log?.LogInfo("ElonaKeys ability icon: " + ab.source.alias + " ownAct=" + (own != null) + " sprite=" + (img.sprite != null ? img.sprite.name : "NULL") + " color=" + img.color);
 				}
 				RectTransform art = img.rectTransform;
 				art.pivot = new Vector2(0.5f, 0.5f);
@@ -1105,6 +1114,9 @@ namespace ElonaKeys
 			RefreshColsHeader(colsPage ? 1 : (weightPage ? 2 : 0));
 			RefreshFooter(pieces, grams);
 			ShowSelTooltip();
+			// remember where the cursor sits, per menu title (Elona habit:
+			// reopening Drop/Cast returns to your place)
+			cursorMemo[current.title] = (page, sel);
 		}
 
 		// Elona-style bottom line, anchored to the LAST row's rendered
@@ -1388,6 +1400,7 @@ namespace ElonaKeys
 				{
 					page = (page + 1) % PageCount;
 					sel = 0;
+					SE.Play("paper"); // the Elona page-turn rustle
 					ApplyPage();
 				}
 				return;
@@ -1398,6 +1411,7 @@ namespace ElonaKeys
 				{
 					page = (page - 1 + PageCount) % PageCount;
 					sel = 0;
+					SE.Play("paper");
 					ApplyPage();
 				}
 				return;

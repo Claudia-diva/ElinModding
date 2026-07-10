@@ -76,6 +76,59 @@ namespace ElonaKeys
 		private static bool navShiftHeld;
 		private static bool navShiftUsed;
 
+		// caption key-hints for native windows + a per-type structure dump
+		// (DebugLog) so misbehaving boards can be diagnosed from the log
+		private static string lastDumpedLayer;
+
+		private static void AnnotateNativeWindow(Layer topLayer)
+		{
+			try
+			{
+				if (topLayer.windows == null || topLayer.windows.Count == 0)
+				{
+					return;
+				}
+				string hint = null;
+				if (topLayer is LayerQuestBoard)
+				{
+					hint = "  [up/down move, Enter take, z tabs, x/r reroll, Shift close]";
+				}
+				if (hint != null)
+				{
+					Window w = topLayer.windows[0];
+					if (w.textCaption != null && w.textCaption.text != null && !w.textCaption.text.EndsWith("]"))
+					{
+						w.SetCaption(w.textCaption.text + hint);
+					}
+				}
+				if (Plugin.DebugLog && lastDumpedLayer != topLayer.GetType().Name)
+				{
+					lastDumpedLayer = topLayer.GetType().Name;
+					int dyn = topLayer.GetComponentsInChildren<UIDynamicList>(includeInactive: false).Length;
+					int lists = 0;
+					int listBtns = 0;
+					foreach (UIList ul in topLayer.GetComponentsInChildren<UIList>(includeInactive: false))
+					{
+						lists++;
+						listBtns += (ul.buttons != null) ? ul.buttons.Count : 0;
+					}
+					int grids = 0;
+					foreach (ButtonGrid bg in topLayer.GetComponentsInChildren<ButtonGrid>(includeInactive: false))
+					{
+						if (bg.card != null)
+						{
+							grids++;
+						}
+					}
+					int loose = topLayer.GetComponentsInChildren<UIButton>(includeInactive: false).Length;
+					Plugin.Log?.LogInfo("ElonaKeys window dump: " + lastDumpedLayer + " dyn=" + dyn + " lists=" + lists + " listRows=" + listBtns + " grids=" + grids + " buttons=" + loose);
+				}
+			}
+			catch
+			{
+			}
+		}
+
 		// debounced crafting selection: highlight moves instantly, the real
 		// selection (full product-panel refresh + click sound) fires once the
 		// cursor RESTS, so holding a key to scroll doesn't strobe the window
@@ -222,6 +275,9 @@ namespace ElonaKeys
 				}
 				else if (topLayer != null && (EClass.ui.BlockActions || topLayer is LayerCraftFloat))
 				{
+					// controls in the caption (quest boards asked for it), and
+					// a one-shot structure dump for boards that misbehave
+					AnnotateNativeWindow(topLayer);
 					// generic window: build all group kinds. LayerCraftFloat (quick
 					// craft) is non-modal but still wants keyboard navigation.
 					target = topLayer;
