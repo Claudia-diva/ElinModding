@@ -56,6 +56,89 @@ namespace ElonaKeys
 			Msg.SayRaw(swapArmed
 				? "Swap armed: the NEXT cast aims at the opposite lock (hostile at your ally, buffs/heals at the enemy)."
 				: "Swap canceled.");
+			RefreshLockHud();
+		}
+
+		// ---- the always-on lock readout (top center): nobody reads configs,
+		// the screen has to SAY what the locks are and that swap is armed ----
+		private static GameObject lockHud;
+		private static Text lockHudText;
+		private static string lockHudLast;
+
+		public static void HideLockHud()
+		{
+			lockHudLast = null;
+			if ((bool)lockHud)
+			{
+				lockHud.SetActive(false);
+			}
+		}
+
+		// called every frame from InputRouter (cheap: bails on same string)
+		public static void RefreshLockHud()
+		{
+			Chara foe = AliveOr(lastHostile);
+			Chara pal = AliveOr(lastFriendly);
+			string s = "";
+			if (foe != null)
+			{
+				s += "<color=#ff9090>Enemy: " + foe.Name + "</color>   ";
+			}
+			if (pal != null)
+			{
+				s += "<color=#90d090>Ally: " + (pal == EClass.pc ? "yourself" : pal.Name) + "</color>   ";
+			}
+			if (swapArmed)
+			{
+				s += "<color=#ffd070>SWAP armed: next cast at the OPPOSITE lock</color>";
+			}
+			s = s.TrimEnd();
+			if (s == lockHudLast)
+			{
+				return;
+			}
+			lockHudLast = s;
+			if (string.IsNullOrEmpty(s))
+			{
+				if ((bool)lockHud)
+				{
+					lockHud.SetActive(false);
+				}
+				return;
+			}
+			if (!lockHud || !lockHudText)
+			{
+				BuildLockHud();
+			}
+			lockHud.SetActive(true);
+			lockHudText.text = s;
+		}
+
+		private static void BuildLockHud()
+		{
+			if ((bool)lockHud)
+			{
+				UnityEngine.Object.Destroy(lockHud);
+			}
+			lockHud = new GameObject("ElonaKeysLocks");
+			lockHud.transform.SetParent(EClass.ui.transform, worldPositionStays: false);
+			lockHudText = lockHud.AddComponent<Text>();
+			Text existing = UnityEngine.Object.FindObjectOfType<Text>();
+			lockHudText.font = (existing != null && existing.font != null) ? existing.font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+			lockHudText.fontSize = 16;
+			lockHudText.alignment = TextAnchor.UpperCenter;
+			lockHudText.horizontalOverflow = HorizontalWrapMode.Overflow;
+			lockHudText.color = new Color(1f, 0.97f, 0.85f);
+			lockHudText.raycastTarget = false;
+			RectTransform rt = lockHudText.rectTransform;
+			rt.anchorMin = new Vector2(0.5f, 1f);
+			rt.anchorMax = new Vector2(0.5f, 1f);
+			rt.pivot = new Vector2(0.5f, 1f);
+			rt.anchoredPosition = new Vector2(0f, -6f);
+			rt.sizeDelta = new Vector2(900f, 26f);
+			Outline o = lockHud.AddComponent<Outline>();
+			o.effectColor = new Color(0f, 0f, 0f, 0.95f);
+			o.effectDistance = new Vector2(1.2f, -1.2f);
 		}
 
 		private static bool ConsumeSwap()
@@ -75,7 +158,7 @@ namespace ElonaKeys
 		// YOURSELF — and never at a foe. numpad/ swaps for one cast.
 		public static Chara QuickTarget(Act act)
 		{
-			bool hostile = act == null || EnemyOnly(act) || SafeHostileAct(act);
+			bool hostile = HostileAct(act);
 			if (ConsumeSwap())
 			{
 				hostile = !hostile;
@@ -142,23 +225,22 @@ namespace ElonaKeys
 			return best;
 		}
 
-		private static bool EnemyOnly(Act act)
+		// hostile = the game's OWN signals, all three: an enemy-only target
+		// type, an act that declares IsHostileAct (bloodsuck, steal...), or
+		// the "neg" element tag — the exact marker ACT.CanPerform uses to
+		// protect your party from your negative abilities (ACT.cs:355) and
+		// the ability window uses to color them red (ButtonElement.cs:108).
+		// SPELLS NEVER SET IsHostileAct; the tag is the only truth for them,
+		// which is why attack spells kept reading as friendly.
+		internal static bool HostileAct(Act act)
 		{
+			if (act == null)
+			{
+				return true; // throws, ranged fire
+			}
 			try
 			{
-				return act.TargetType.CanOnlyTargetEnemy;
-			}
-			catch
-			{
-				return false;
-			}
-		}
-
-		private static bool SafeHostileAct(Act act)
-		{
-			try
-			{
-				return act.IsHostileAct;
+				return act.IsHostileAct || act.TargetType.CanOnlyTargetEnemy || act.HasTag("neg");
 			}
 			catch
 			{

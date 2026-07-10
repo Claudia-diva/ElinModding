@@ -3484,10 +3484,12 @@ namespace ElonaKeys
 			return rows;
 		}
 
-		// the last spell/action the player cast: f repeats it (Elona spam-cast)
-		private static Element lastCast;
+		// the last HOSTILE spell/action the player cast: f repeats it (Elona
+		// spam-cast). Buffs are excluded on purpose — casting a buff between
+		// volleys must not turn f into a buff repeater.
+		private static Element lastAttack;
 
-		// f: ranged weapon first (native Fire), else repeat the last cast
+		// f: ranged weapon first (native Fire), else repeat the last ATTACK
 		public static void FireSmart()
 		{
 			try
@@ -3502,9 +3504,9 @@ namespace ElonaKeys
 			catch
 			{
 			}
-			if (lastCast != null && lastCast.Value != 0)
+			if (lastAttack != null && lastAttack.Value != 0)
 			{
-				CastAbility(lastCast);
+				CastAbility(lastAttack);
 			}
 			else
 			{
@@ -3516,9 +3518,12 @@ namespace ElonaKeys
 		// Chara.UseAbility pt-flag loops the whole party = native multi-cast).
 		internal static void CastAbility(Element e)
 		{
-			lastCast = e; // f repeats this
 			Act act = (e as Act) ?? ACT.Create(e.source);
 			TargetType tt = act.TargetType;
+			if (TargetMode.HostileAct(act))
+			{
+				lastAttack = e; // f repeats this, and ONLY this class
+			}
 			// MANUAL mode (hold-v, or x on the row): no quick-cast, no hostility
 			// pre-filters: the free cursor aims at anyone. The flag is consumed
 			// HERE, one cast per arm — Close() must not touch it (Run() closes
@@ -3708,14 +3713,7 @@ namespace ElonaKeys
 		// a hostile aim starts its cursor on a FOE, never the ally lock
 		private static bool HostileAim(Act act)
 		{
-			try
-			{
-				return act.IsHostileAct || act.TargetType.CanOnlyTargetEnemy;
-			}
-			catch
-			{
-				return true;
-			}
+			return TargetMode.HostileAct(act);
 		}
 
 		private static bool SafeCanPerformAt(Act act, Point p)

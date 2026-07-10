@@ -47,6 +47,7 @@ $Keys
 {pair|W (shift+w)|Wide Skill: list everything castable on your party; Enter casts it on ALL of them}
 {pair|* (keypad) or '|Set your target locks with the free cursor: arrows/numpad move, Space next character, Enter confirm. Enemies and allies lock SEPARATELY and both hold at once; locking yourself is fine (solo buffing). Hostile casts, f, bows and throws always use the enemy lock (or auto-acquire the nearest foe); buffs and heals always use the ally lock. Neither ever crosses over on its own}
 {pair|/ (keypad) or ;|Swap: the NEXT cast aims at the opposite lock (a hex at your locked ally, a heal at your locked enemy). Tap to arm, tap again to cancel, or hold it while casting}
+{pair|Lock readout|Whenever a lock is set, the top center of the screen shows it live: enemy lock in red, ally lock in green, plus a warning while Swap is armed}
 {pair|c|Character sheet}
 {pair|i|Interact with a direction: keyboard menu of everything there}
 {pair|s|Your own tile: harvests/collects instantly if something grows here, else menu + search the ground}
@@ -91,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.33.0}
+・ Attack spells classified by the game's own negative-ability marker (locks finally route right). f repeats your last ATTACK only. A live readout at the top center shows your enemy lock, ally lock and Swap state.
+
 {topic|1.32.0}
 ・ Target locks final form: hostile casts/f/bows/throws use the enemy lock (or auto-acquire), buffs/heals use the ally lock, yourself is a valid ally lock, and nothing crosses over on its own. numpad/ (or ;) swaps the next cast to the opposite lock. Shift no longer re-aims anything, so shift+1-9 quickbinds fire at their natural target.
 

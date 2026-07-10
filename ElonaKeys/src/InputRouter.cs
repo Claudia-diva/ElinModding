@@ -57,6 +57,7 @@ namespace ElonaKeys
 					{
 						MenuSystem.Close();
 						TargetMode.Cancel();
+						TargetMode.HideLockHud();
 						PopupNav.ClearInvNav();
 					}
 					Msg.SayRaw(suppressVanilla
@@ -70,6 +71,8 @@ namespace ElonaKeys
 			{
 				return;
 			}
+			// the lock readout stays current every frame (cheap string bail)
+			TargetMode.RefreshLockHud();
 			if (RadialWheel.Active)
 			{
 				// the wheel owns the keyboard: no movement, no native actions

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.33.0 - 2026-07-10
+- Attack spells are recognized properly now. The lock routing was reading a flag the game never sets on spells; it now uses the game's own negative-ability marker (the same one that colors those abilities red in your ability window). Attacks and hexes go to the enemy lock or auto-acquire, buffs and heals go to your ally lock (yourself included), and casting one never re-aims the other. The shift-row quickbinds route by the same rule whether they hold buffs or attacks.
+- f repeats your last ATTACK, not your last cast: buff yourself mid-fight and f still shoots the enemy. With no attack cast yet, f falls back to native fire.
+- Your locks are on screen now: a readout at the top center shows the current enemy lock, ally lock, and a warning while Swap is armed, updating live. The aim cursor keeps its key hints at the bottom of the screen.
+
 ## 1.32.0 - 2026-07-10
 - Target locks, final form. Enemies and allies lock separately with * and both hold at once; yourself is a valid ally lock. Hostile casts, f, bows and throws ALWAYS use the enemy lock (or auto-acquire the nearest foe). Buffs and heals ALWAYS use the ally lock. Neither side ever crosses over on its own: buff your girl while shooting her attacker, or solo-buff yourself between volleys, without touching the target key.
 - numpad / (or ;) = Swap: the next cast aims at the opposite lock, for hexing your own ally or healing an enemy on purpose. Tap to arm, tap again to cancel, or hold it while casting.
