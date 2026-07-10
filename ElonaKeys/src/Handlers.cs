@@ -404,7 +404,11 @@ namespace ElonaKeys
 					if (hot is HotItemHeld && HotItemHeld.recipe == null && pc.held is Thing heldT && heldT.uid != healedHeldUid)
 					{
 						healedHeldUid = heldT.uid;
+						// OnSetCurrentItem resets disableTool; a grab-as-furniture
+						// hold must keep it or potions go back to throw-only
+						bool dt = HotItemHeld.disableTool;
 						hot.OnSetCurrentItem();
+						HotItemHeld.disableTool = dt;
 					}
 					PointTarget mt = EClass.scene.mouseTarget;
 					bool wasMouse = mt.mouse;
@@ -789,7 +793,7 @@ namespace ElonaKeys
 					{
 						ActThrow.Throw(pc, p, t);
 						EClass.player.EndTurn();
-					});
+					}, preferFoe: true);
 				},
 				"You have nothing to throw.");
 		}
@@ -1007,12 +1011,14 @@ namespace ElonaKeys
 
 		// the FULL native hold, hands version of a grab: SetCurrentHotItem
 		// runs HotItemHeld.OnSetCurrentItem, which sets the static build
-		// recipe — without it carried furniture has no "place" act anywhere
-		private static void HoldInHands(Thing t)
+		// recipe — without it carried furniture has no "place" act anywhere.
+		// asFurniture = the vanilla "actHoldTool" flavor: disableTool makes
+		// throw-main items (potions!) and tools PLACE instead of throw/use.
+		private static void HoldInHands(Thing t, bool asFurniture)
 		{
 			SafeTake(t, delegate
 			{
-				if (Gone(t))
+				if (Gone(t) && t.GetRootCard() != pc)
 				{
 					return;
 				}
@@ -1022,6 +1028,11 @@ namespace ElonaKeys
 					return;
 				}
 				EClass.player.SetCurrentHotItem(new HotItemHeld(t));
+				if (asFurniture)
+				{
+					// AFTER the hold: OnSetCurrentItem resets this flag
+					HotItemHeld.disableTool = true;
+				}
 				if (pc.held == t)
 				{
 					t.PlaySoundHold(spatial: false);
@@ -1030,9 +1041,25 @@ namespace ElonaKeys
 			});
 		}
 
-		// hold-g: every grabbable in interaction range, loose AND installed.
-		// TWO grab flavors, spelled out per row: carry in your hands (place
-		// it back down or throw it) vs. straight into the backpack.
+		// the game's own act names, so our rows read exactly like the
+		// vanilla context menu (Pick up / Grab / Grab as furniture)
+		private static string VerbLang(string idLang, string fallback)
+		{
+			try
+			{
+				string s = Lang.Get(idLang);
+				return string.IsNullOrEmpty(s) || s == idLang ? fallback : s;
+			}
+			catch
+			{
+				return fallback;
+			}
+		}
+
+		// hold-g: every grabbable in interaction range, loose AND installed,
+		// with the vanilla verbs: Pick up = into the backpack, Grab = into
+		// your hands, Grab as furniture = hands but Space places it (the
+		// actHoldTool flavor for potions, tools and other throw/use items)
 		public static void GrabNearby()
 		{
 			List<MenuRow> rows = BuildGrabRows();
@@ -1049,17 +1076,25 @@ namespace ElonaKeys
 
 		private static List<MenuRow> BuildGrabRows()
 		{
+			string pickVerb = VerbLang("actPickOne", "Pick up");
+			string grabVerb = VerbLang("actHold", "Grab");
+			string furnitureVerb = VerbLang("actHoldTool", "Grab as furniture");
 			List<MenuRow> rows = new List<MenuRow>();
 			foreach (Point point in Nearby())
 			{
 				foreach (Thing thing in point.Things)
 				{
 					Thing t = thing;
-					if (!t.IsInstalled && t.placeState == PlaceState.roaming && pc.CanPick(t))
+					bool roaming = !t.IsInstalled && t.placeState == PlaceState.roaming && pc.CanPick(t);
+					if (!roaming && !t.IsInstalled)
+					{
+						continue;
+					}
+					if (roaming)
 					{
 						rows.Add(new MenuRow
 						{
-							label = "Take: " + t.Name + StealTag(t),
+							label = pickVerb + ": " + t.Name + StealTag(t),
 							icon = t,
 							sortCount = t.Num,
 							closeOnAct = false,
@@ -1081,29 +1116,14 @@ namespace ElonaKeys
 								});
 							}
 						});
-						// grab-to-throw/place: the same native hold the
-						// installed grab uses (only for holdable things)
-						if (t.trait.CanBeHeld && t.TileType.CanBeHeld)
-						{
-							rows.Add(new MenuRow
-							{
-								label = "Hold: " + t.Name + StealTag(t) + "  (place / throw)",
-								icon = t,
-								act = delegate { HoldInHands(t); }
-							});
-						}
 					}
-					else if (t.IsInstalled)
+					else
 					{
+						// installed things can go straight to the backpack too:
+						// the native uninstall is HoldCard, PickHeld stows it
 						rows.Add(new MenuRow
 						{
-							label = "Grab: " + t.Name + StealTag(t) + "  (carry)",
-							icon = t,
-							act = delegate { HoldInHands(t); }
-						});
-						rows.Add(new MenuRow
-						{
-							label = "Take: " + t.Name + StealTag(t) + "  (to backpack)",
+							label = pickVerb + ": " + t.Name + StealTag(t),
 							icon = t,
 							act = delegate
 							{
@@ -1118,8 +1138,6 @@ namespace ElonaKeys
 										pc.Say("tooHeavy", t);
 										return;
 									}
-									// HoldCard is the native uninstall; PickHeld
-									// stows it — grab-and-pocket in one motion
 									pc.HoldCard(t);
 									if (pc.held == t)
 									{
@@ -1129,6 +1147,26 @@ namespace ElonaKeys
 								});
 							}
 						});
+					}
+					// hands flavors, vanilla gates: AllowHold checks CanBeDropped;
+					// actHoldTool appears for CanBeHeldAsFurniture (potions, tools)
+					if (t.trait.CanBeDropped && !t.isEquipped)
+					{
+						rows.Add(new MenuRow
+						{
+							label = grabVerb + ": " + t.Name + StealTag(t),
+							icon = t,
+							act = delegate { HoldInHands(t, asFurniture: false); }
+						});
+						if (t.trait.CanBeHeldAsFurniture)
+						{
+							rows.Add(new MenuRow
+							{
+								label = furnitureVerb + ": " + t.Name + StealTag(t),
+								icon = t,
+								act = delegate { HoldInHands(t, asFurniture: true); }
+							});
+						}
 					}
 				}
 			}
@@ -3536,7 +3574,7 @@ namespace ElonaKeys
 						EClass.player.EndTurn();
 					}
 					// false = the game already printed the reason
-				});
+				}, preferFoe: HostileAim(act));
 				return;
 			}
 			// self-only: instant
@@ -3631,7 +3669,7 @@ namespace ElonaKeys
 					{
 						EClass.player.EndTurn();
 					}
-				});
+				}, preferFoe: HostileAim(act));
 				return;
 			}
 			// chara-targeted: remembered target fires INSTANTLY (Elona flow);
@@ -3664,7 +3702,20 @@ namespace ElonaKeys
 				{
 					EClass.player.EndTurn();
 				}
-			});
+			}, preferFoe: HostileAim(act));
+		}
+
+		// a hostile aim starts its cursor on a FOE, never the ally lock
+		private static bool HostileAim(Act act)
+		{
+			try
+			{
+				return act.IsHostileAct || act.TargetType.CanOnlyTargetEnemy;
+			}
+			catch
+			{
+				return true;
+			}
 		}
 
 		private static bool SafeCanPerformAt(Act act, Point p)

@@ -56,12 +56,15 @@ namespace ElonaKeys
 					return f;
 				}
 			}
-			// STRICT hostile = throws and truly enemy-only acts: those never
-			// consider the ally lock and auto-acquire foes. Merely
-			// hostile-FLAGGED acts that CAN target anyone (hexes, interaction
-			// abilities from other mods) are NEUTRAL: enemy lock first, ally
-			// lock second, so they stay freely usable on your own people.
-			bool strictHostile = act == null || EnemyOnly(act);
+			// STRICT hostile: throws, enemy-only acts, and RANGED hostile
+			// acts (attack spells, hexes). These never consider the ally
+			// lock — "buff her, then shoot him" must keep the locks apart.
+			// The one exception: TOUCH-range hostile-flagged acts that can
+			// target anyone (interaction abilities from other mods) stay
+			// NEUTRAL so they remain freely usable on your own people;
+			// real touch attacks are enemy-only and stay strict.
+			bool strictHostile = act == null || EnemyOnly(act)
+				|| (SafeHostileAct(act) && RangeOf(act) != TargetRange.Neighbor);
 			if (strictHostile)
 			{
 				Chara c = AliveOr(lastHostile);
@@ -85,8 +88,8 @@ namespace ElonaKeys
 			{
 				return AliveOr(lastFriendly); // null = the normal flows take over
 			}
-			// neutral (incl. hostile-flagged-but-anyone acts): enemy lock
-			// leads so hexes hit the locked foe; the ally lock follows
+			// neutral (incl. touch interactions): enemy lock leads, the
+			// ally lock follows
 			Chara foe = AliveOr(lastHostile);
 			if (foe != null && IsFoe(foe))
 			{
@@ -158,9 +161,36 @@ namespace ElonaKeys
 			}
 		}
 
+		private static bool SafeHostileAct(Act act)
+		{
+			try
+			{
+				return act.IsHostileAct;
+			}
+			catch
+			{
+				return true;
+			}
+		}
+
+		private static TargetRange RangeOf(Act act)
+		{
+			try
+			{
+				return act.TargetType.Range;
+			}
+			catch
+			{
+				return TargetRange.Self;
+			}
+		}
+
 		public static void Remember(Chara c)
 		{
-			if (c == null)
+			// never lock YOURSELF as the ally: a self-buff confirmed in the
+			// cursor was becoming the ally lock, and every later neutral cast
+			// quietly fired at the player instead of opening the aim
+			if (c == null || c == EClass.pc)
 			{
 				return;
 			}
@@ -186,7 +216,11 @@ namespace ElonaKeys
 			}
 		}
 
-		public static void Begin(string _verb, List<Chara> _candidates, Action<Point, Chara> _onPick)
+		// the frame Begin ran: the confirm key that OPENED this aim (Enter on
+		// a menu row) must not also confirm the aim in the same frame
+		private static int beginFrame = -1;
+
+		public static void Begin(string _verb, List<Chara> _candidates, Action<Point, Chara> _onPick, bool preferFoe = false)
 		{
 			Cancel();
 			candidates = _candidates ?? new List<Chara>();
@@ -203,9 +237,20 @@ namespace ElonaKeys
 			});
 			onPick = _onPick;
 			verb = _verb;
-			// cursor: remembered target, else nearest hostile, else nearest, else self
+			beginFrame = Time.frameCount;
+			// cursor start: hostile aims begin on a FOE (the enemy lock or the
+			// nearest hostile candidate), never on the ally lock or yourself;
+			// everything else starts on the remembered target
 			Chara start = null;
-			if (lastTarget != null && !lastTarget.isDead && lastTarget.IsAliveInCurrentZone && EClass.pc.CanSee(lastTarget))
+			if (preferFoe)
+			{
+				start = AliveOr(lastHostile);
+				if (start != null && !IsFoe(start))
+				{
+					start = null;
+				}
+			}
+			else if (lastTarget != null && !lastTarget.isDead && lastTarget.IsAliveInCurrentZone && EClass.pc.CanSee(lastTarget))
 			{
 				start = lastTarget;
 			}
@@ -413,7 +458,7 @@ namespace ElonaKeys
 				RefreshLabel();
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+			if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && Time.frameCount != beginFrame)
 			{
 				Point p = cursor.Copy();
 				Chara c = CursorChara();

@@ -1462,6 +1462,14 @@ namespace ElonaKeys
 					Run(qr, qr.altAct);
 					return;
 				}
+				// otherwise numpad0 = hold the item in your hands (same as the
+				// browser): q, hover a potion, 0 — armed for throwing without
+				// digging through the inventory for the hold menu
+				if (qr.icon is Thing ht && ht.GetRootCard() == EClass.pc && !ht.isEquipped && ht.trait.CanBeHeld)
+				{
+					Run(qr, delegate { Handlers.ToggleHold(ht); });
+					return;
+				}
 			}
 			// keypadMultiply = toggle the important mark on the selected item
 			// (Elona's * marking; the star refuses drops/sales/shipping)

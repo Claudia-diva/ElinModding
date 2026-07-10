@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.31.0 - 2026-07-10
+- Attack casting and the ally lock are properly separated: hostile spells never fall back to the ally lock or to yourself, f repeats attacks at enemies only, and the aim cursor for a hostile cast starts on a foe instead of whoever you buffed last. Locking yourself as your own ally is ignored. Touch interactions keep working freely on your people.
+- The aim cursor no longer eats the same Enter press that selected the spell, so the choice actually confirms when YOU press it.
+- numpad0 on a plain menu row holds that item in your hands, same as in the browser: q, hover a potion, 0, and it is armed for throwing. No digging through the inventory.
+- The grab menu speaks vanilla now: "Pick up" (into the backpack), "Grab" (into your hands), "Grab as furniture" (in hands, Space places it at your feet). The furniture option appears for potions, tools and everything else the game itself offers it for.
+
 ## 1.30.0 - 2026-07-10
 - Escape closes EVERY open window at once and takes you straight back to the map; shift stays the one-step back key. Conversations and yes/no prompts keep their normal Escape.
 - Touch-range abilities (interactions included) finally aim like everything else: with a target locked and in reach they fire instantly, and the direction prompt now targets whoever stands on that tile instead of refusing. Use them on your allies freely.
