@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.29.1 - 2026-07-10
+- TWO TARGET LOCKS: * on an enemy sets your enemy lock, * on an ally sets a separate ally lock, and both hold at once. Attacks and debuffs fire at the enemy lock (or auto-acquire the nearest visible enemy when none is set) and never touch the ally lock; heals and buffs go to the ally lock instantly. Hold SHIFT while casting to deliberately aim anything, harmful included, at your locked ally. The message tells you which lock you set.
+- f repeats your LAST cast spell/action at its usual target when no ranged weapon is equipped (ranged still fires natively). Spam away.
+- Space menu cleaned: held-item "Place" appears once, for YOUR tile (place at your feet); directional placing stays on i. No more eight anonymous Place rows.
+- The hold message only promises i/Space/s when the item really has such actions; scrolls and potions say just "Holding X" (read/quaff them with r/q, they sit pinned on top).
+- Tab-cycling fixed for real: a skipped stop was throwing off the count and jumping past the next window too (the log proved Tool was never tried).
+- Advanced distribution is parked as TODO: the row is grayed and tells you the workaround (CapsLock pause + the vanilla chest's gear button). Its keyboard version comes with the theming update.
+
 ## 1.29.0 - 2026-07-10
 - shift+q "Items" opens the same two-way trade Give uses (their items / yours, Tab flips sides), so party inventories finally move both ways from either door.
 - Containers with things still inside can no longer be put into other containers, shipped, delivered, sold or handed to allies (the game's own rule; our menus were sidestepping it).

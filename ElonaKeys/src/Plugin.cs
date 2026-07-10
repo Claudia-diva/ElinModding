@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.29.0";
+		public const string Version = "1.29.1";
 
 		internal static ManualLogSource Log;
 
@@ -254,7 +254,7 @@ namespace ElonaKeys
 			Def("MacroKey3", "none", delegate { Handlers.RunMacro(Macro3); }, "Casts the Macro3 ability sequence.");
 			Def("ExamineInventory", "shift+x", Handlers.ExamineInventory, "Open/close your inventory.");
 			Def("Hold", "none", Handlers.Hold, "Hold any item in your hands (Elin-specific, unbound by default).");
-			DefNative("Fire", "f", EAction.Fire, "Fire your ranged weapon (native Fire action).");
+			Def("Fire", "f", Handlers.FireSmart, "Fire: ranged weapon at your target if equipped, otherwise repeat your LAST cast spell/action at its usual target.");
 			Rebuild();
 			Config.SettingChanged += delegate { Rebuild(); };
 			try

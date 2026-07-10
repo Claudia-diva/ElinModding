@@ -97,10 +97,13 @@ namespace ElonaKeys
 			cycleFrame = Time.frameCount;
 			MenuSystem.Close();
 			// hop until a stop actually OPENS something: an empty stop (Zap
-			// with no rods, Read with no books...) used to kill the chain
+			// with no rods, Read with no books...) used to kill the chain.
+			// baseIndex is captured ONCE: each opener re-registers the family
+			// index, which made attempt arithmetic double-skip past stops
+			int baseIndex = index;
 			for (int attempt = 1; attempt <= c.Length; attempt++)
 			{
-				int ni = (index + attempt) % c.Length;
+				int ni = (baseIndex + attempt) % c.Length;
 				Layer before = (EClass.ui != null) ? EClass.ui.TopLayer : null;
 				if (Plugin.DebugLog)
 				{
@@ -712,7 +715,18 @@ namespace ElonaKeys
 			{
 				Plugin.Log?.LogInfo("ElonaKeys: held " + t.Name + " uid=" + t.uid + ", pc.held=" + (pc.held?.Name ?? "null") + ", hotItem=" + EClass.player.currentHotItem?.GetType().Name);
 			}
-			Msg.SayRaw("Holding " + t.Name + ": i / Space toward a target, s on yourself.");
+			// only promise target-use when the item actually has use-on acts
+			// (tools, brushes, syringes); scrolls/books/potions use their own
+			// verbs (r/q/e work on the held item too, it's pinned on top)
+			bool hasUseActs = false;
+			try
+			{
+				hasUseActs = t.trait.CanUse(pc) || t.trait is TraitTool;
+			}
+			catch
+			{
+			}
+			Msg.SayRaw("Holding " + t.Name + "." + (hasUseActs ? " (i / Space toward a target, s on yourself.)" : ""));
 		}
 
 		public static void Use()
@@ -1213,7 +1227,11 @@ namespace ElonaKeys
 			foreach (Point point in Nearby())
 			{
 				Point p = point;
-				ActPlan plan = BuildPlan(p);
+				// held-item acts (Place, tool use...) only for YOUR OWN tile:
+				// merging them for every neighbor flooded the list with eight
+				// anonymous "Place" rows aimed who-knows-where. Directional
+				// placing lives on i; Space places at your feet.
+				ActPlan plan = BuildPlan(p, ActInput.AllAction, includeHeld: p.Equals(pc.pos));
 				foreach (ActPlan.Item i in plan.list)
 				{
 					// pickup belongs to g; the native per-tile pick acts only confuse
@@ -2266,11 +2284,13 @@ namespace ElonaKeys
 			});
 			rows.Add(new MenuRow
 			{
-				// the panel's sliders live in the NATIVE window's gear menu;
-				// every keyboard host we tried left it dim and dead, so this
-				// opens the vanilla container window for mouse use (per user)
-				label = "[ Advanced distribution (opens the vanilla window)... ]",
-				act = delegate { OpenNativeContainer(container); }
+				// TODO: the slider panel refuses every host we give it (both
+				// popup factories self-close, our overlay showed it dim and
+				// dead, the vanilla-window bypass toggled the chest shut).
+				// Parked per user until the theming/custom-UI update.
+				label = "<color=#9a9a9a>[ Advanced distribution - TODO, use the mouse on a vanilla chest window ]</color>",
+				closeOnAct = false,
+				act = delegate { Msg.SayRaw("Not keyboard-ready yet: open the chest with the mod paused (CapsLock) and use the gear button."); }
 			});
 			// --- autodump ---
 			rows.Add(new MenuRow
@@ -3318,10 +3338,39 @@ namespace ElonaKeys
 			return rows;
 		}
 
+		// the last spell/action the player cast: f repeats it (Elona spam-cast)
+		private static Element lastCast;
+
+		// f: ranged weapon first (native Fire), else repeat the last cast
+		public static void FireSmart()
+		{
+			try
+			{
+				Thing ranged = pc.things.Find((Thing t) => t.isEquipped && t.trait is TraitToolRange);
+				if (ranged != null)
+				{
+					InputRouter.QueueNative(EAction.Fire);
+					return;
+				}
+			}
+			catch
+			{
+			}
+			if (lastCast != null && lastCast.Value != 0)
+			{
+				CastAbility(lastCast);
+			}
+			else
+			{
+				InputRouter.QueueNative(EAction.Fire); // native message/behavior
+			}
+		}
+
 		// Cast honoring the spell's real TargetType (research: TargetType.cs,
 		// Chara.UseAbility pt-flag loops the whole party = native multi-cast).
 		internal static void CastAbility(Element e)
 		{
+			lastCast = e; // f repeats this
 			Act act = (e as Act) ?? ACT.Create(e.source);
 			TargetType tt = act.TargetType;
 			// MANUAL mode (hold-v, or x on the row): no quick-cast, no hostility
@@ -3589,7 +3638,18 @@ namespace ElonaKeys
 				else
 				{
 					TargetMode.Remember(c);
-					Msg.SayRaw("Targeting " + c.Name + ".");
+					bool foe = false;
+					try
+					{
+						foe = pc.IsHostile(c) && !c.IsPCParty;
+					}
+					catch
+					{
+					}
+					// two locks live side by side: offense uses the enemy lock
+					// (or auto-acquires), heals/buffs use the ally lock;
+					// shift+cast aims ANYTHING at the ally lock deliberately
+					Msg.SayRaw((foe ? "Enemy lock: " : "Ally lock: ") + c.Name + ".");
 				}
 			});
 		}

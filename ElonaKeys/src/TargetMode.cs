@@ -13,7 +13,13 @@ namespace ElonaKeys
 	// A confirmed character is REMEMBERED so later casts/throws fire instantly.
 	public static class TargetMode
 	{
-		private static Chara lastTarget;
+		// TWO locks (user spec): a HOSTILE lock for offense and an ALLY lock
+		// for heals/buffs, held at the same time. Offensive casts NEVER
+		// auto-fire at the ally lock; holding SHIFT while casting harms the
+		// locked ally deliberately. With no hostile lock, offense
+		// auto-acquires the nearest visible enemy — combat stays pure spam.
+		private static Chara lastHostile;
+		private static Chara lastFriendly;
 
 		private static Point cursor;
 		private static List<Chara> candidates;
@@ -24,26 +30,122 @@ namespace ElonaKeys
 
 		public static bool Active => onPick != null;
 
+		// where the cursor should start: the hostile lock leads
+		private static Chara lastTarget => AliveOr(lastHostile) ?? AliveOr(lastFriendly);
+
+		private static Chara AliveOr(Chara c)
+		{
+			return (c != null && !c.isDead && c.IsAliveInCurrentZone && EClass.pc.CanSee(c)) ? c : null;
+		}
+
 		public static Point SelectedPos()
 		{
 			return Active ? cursor : null;
 		}
 
-		// instantly usable remembered target (or current enemy) for this act;
-		// act == null means a hostile intent (throw)
+		// instantly usable target for this act; act == null = hostile intent (throw)
 		public static Chara QuickTarget(Act act)
 		{
-			bool needHostile = act == null || SafeHostileAct(act);
-			Chara c = lastTarget;
-			if (!Valid(c, act, needHostile))
+			// SHIFT = deliberate: whatever the act, aim it at the ALLY lock
+			// (harmful included; the force-cast path lets it fire)
+			if (EInput.isShiftDown)
 			{
-				c = EClass.player.target; // the native key's pick counts too
+				Chara f = AliveOr(lastFriendly);
+				if (f != null)
+				{
+					return f;
+				}
 			}
-			if (!Valid(c, act, needHostile))
+			bool hostileIntent = act == null || SafeHostileAct(act) || EnemyOnly(act);
+			if (hostileIntent)
 			{
-				c = EClass.pc.enemy;
+				// hostile chain only: ally lock is never a candidate here
+				Chara c = AliveOr(lastHostile);
+				if (c != null && IsFoe(c))
+				{
+					return c;
+				}
+				c = AliveOr(EClass.player.target);
+				if (c != null && IsFoe(c))
+				{
+					return c;
+				}
+				c = AliveOr(EClass.pc.enemy);
+				if (c != null && IsFoe(c))
+				{
+					return c;
+				}
+				return NearestFoe();
 			}
-			return Valid(c, act, needHostile) ? c : null;
+			if (Helpful(act))
+			{
+				return AliveOr(lastFriendly); // null = the normal flows take over
+			}
+			// neutral acts: hostile lock first, then the ally lock
+			return AliveOr(lastHostile) ?? AliveOr(lastFriendly);
+		}
+
+		private static bool IsFoe(Chara c)
+		{
+			try
+			{
+				return EClass.pc.IsHostile(c) && !c.IsPCParty;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static Chara NearestFoe()
+		{
+			Chara best = null;
+			int bestDist = int.MaxValue;
+			try
+			{
+				foreach (Chara c in EClass._map.charas)
+				{
+					if (c == EClass.pc || c.isDead || !EClass.pc.CanSee(c) || !IsFoe(c))
+					{
+						continue;
+					}
+					int d = EClass.pc.pos.Distance(c.pos);
+					if (d < bestDist)
+					{
+						bestDist = d;
+						best = c;
+					}
+				}
+			}
+			catch
+			{
+			}
+			return best;
+		}
+
+		private static bool EnemyOnly(Act act)
+		{
+			try
+			{
+				return act.TargetType.CanOnlyTargetEnemy;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static bool Helpful(Act act)
+		{
+			try
+			{
+				TargetType tt = act.TargetType;
+				return tt.CanSelectParty || tt.ForceParty || tt.Range == TargetRange.Party;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		private static bool SafeHostileAct(Act act)
@@ -60,36 +162,30 @@ namespace ElonaKeys
 
 		public static void Remember(Chara c)
 		{
-			lastTarget = c;
-			// feed the NATIVE target too: that's what draws the on-map target
-			// marker and what auto-fire reads — with only our private memory,
-			// * left no visible indicator on the picked character
-			try
+			if (c == null)
 			{
-				if (c != null && EClass.player.target != c)
+				return;
+			}
+			if (IsFoe(c))
+			{
+				lastHostile = c;
+				// the NATIVE target: the on-map marker and ranged auto-fire.
+				// Only for FOES — pointing it at an ally would auto-shoot her
+				try
 				{
-					EClass.player.target = c;
+					if (EClass.player.target != c)
+					{
+						EClass.player.target = c;
+					}
+				}
+				catch
+				{
 				}
 			}
-			catch
+			else
 			{
+				lastFriendly = c;
 			}
-		}
-
-		private static bool Valid(Chara c, Act act, bool needHostile)
-		{
-			if (c == null || c.isDead || !c.IsAliveInCurrentZone || !EClass.pc.CanSee(c))
-			{
-				return false;
-			}
-			// throws (act == null) keep the hostile preference so they never
-			// auto-hit a friend; SPELLS force-cast at the remembered target,
-			// friend or foe (user directive) — the game validates on cast
-			if (act == null && needHostile && (!EClass.pc.IsHostile(c) || c.IsPCParty))
-			{
-				return false;
-			}
-			return true;
 		}
 
 		public static void Begin(string _verb, List<Chara> _candidates, Action<Point, Chara> _onPick)
@@ -327,7 +423,7 @@ namespace ElonaKeys
 				Cancel();
 				if (c != null)
 				{
-					lastTarget = c;
+					Remember(c); // routes into the right lock (enemy vs ally)
 				}
 				try
 				{
