@@ -3535,6 +3535,24 @@ namespace ElonaKeys
 			{
 				lastAttack = e; // f repeats this, and ONLY this class
 			}
+			// UseAbility refuses a cooling ability with NO message at all
+			// (Chara.cs:6093) — say it instead of eating the keypress
+			if (pc.HasCooldown(act.id))
+			{
+				ManualCastMode = false;
+				Msg.SayRaw(act.GetText() + " is on cooldown (" + pc.GetCooldown(act.id) + " more turns).");
+				return;
+			}
+			if (Plugin.DebugLog)
+			{
+				try
+				{
+					Plugin.Log?.LogInfo("EK cast " + e.source.alias + ": hostile=" + TargetMode.HostileAct(act) + " range=" + tt.Range + " enemyOnly=" + tt.CanOnlyTargetEnemy + " val=" + act.Value + " pot=" + act.vPotential + " type=" + ((act.source.abilityType != null && act.source.abilityType.Length > 0) ? act.source.abilityType[0] : "-"));
+				}
+				catch
+				{
+				}
+			}
 			// MANUAL mode (hold-v, or x on the row): no quick-cast, no hostility
 			// pre-filters: the free cursor aims at anyone. The flag is consumed
 			// HERE, one cast per arm — Close() must not touch it (Run() closes
@@ -3731,13 +3749,25 @@ namespace ElonaKeys
 					// no foe in the act's reach: say so, spend nothing — no
 					// dead cursor over enemies the cast could never touch
 					// (aiming it at your own people takes the Swap key)
+					if (Plugin.DebugLog)
+					{
+						Plugin.Log?.LogInfo("EK cast " + e.source.alias + ": no reachable foe (quick=" + (quick?.Name ?? "null") + ", cands=" + cands.Count + ")");
+					}
 					Msg.SayRaw(act.GetText() + " cannot reach any enemy from here. (No cost spent.)");
 					return;
+				}
+				if (Plugin.DebugLog)
+				{
+					Plugin.Log?.LogInfo("EK cast " + e.source.alias + ": auto-fight -> " + best.Name + " dist=" + pc.pos.Distance(best.pos));
 				}
 				if (ForceUse(act, best, best.pos))
 				{
 					TargetMode.Remember(best);
 					EClass.player.EndTurn();
+				}
+				else if (Plugin.DebugLog)
+				{
+					Plugin.Log?.LogInfo("EK cast " + e.source.alias + ": UseAbility returned FALSE on " + best.Name);
 				}
 				return;
 			}

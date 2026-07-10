@@ -225,13 +225,14 @@ namespace ElonaKeys
 			return best;
 		}
 
-		// hostile = the game's OWN signals, all three: an enemy-only target
-		// type, an act that declares IsHostileAct (bloodsuck, steal...), or
-		// the "neg" element tag — the exact marker ACT.CanPerform uses to
-		// protect your party from your negative abilities (ACT.cs:355) and
-		// the ability window uses to color them red (ButtonElement.cs:108).
-		// SPELLS NEVER SET IsHostileAct; the tag is the only truth for them,
-		// which is why attack spells kept reading as friendly.
+		// hostile = the game's OWN signals, all four: an enemy-only target
+		// type, an act that declares IsHostileAct (bloodsuck, steal...),
+		// the "neg" element tag (what ACT.CanPerform uses to protect your
+		// party, ACT.cs:355; what colors abilities red, ButtonElement.cs:108),
+		// or an offensive abilityType on the element row (attack / dot /
+		// debuff — the same column our menu buckets read). Melee arts like
+		// bladestorm carry ONLY the abilityType; they have no tag and no
+		// enemy-only target type, which is how they kept reading friendly.
 		internal static bool HostileAct(Act act)
 		{
 			if (act == null)
@@ -240,12 +241,25 @@ namespace ElonaKeys
 			}
 			try
 			{
-				return act.IsHostileAct || act.TargetType.CanOnlyTargetEnemy || act.HasTag("neg");
+				if (act.IsHostileAct || act.TargetType.CanOnlyTargetEnemy || act.HasTag("neg"))
+				{
+					return true;
+				}
+				string[] at = act.source.abilityType;
+				if (at != null && at.Length > 0)
+				{
+					string t = at[0];
+					if (t == "attack" || t == "dot" || t == "debuff" || t == "debuffStats")
+					{
+						return true;
+					}
+				}
 			}
 			catch
 			{
 				return true;
 			}
+			return false;
 		}
 
 		public static void Remember(Chara c)

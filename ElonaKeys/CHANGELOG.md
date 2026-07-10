@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.34.1 - 2026-07-10
+- Bladestorm, swarm, rush and every other combat art now actually attack. They carry none of the game's usual hostile markers; the classifier now also reads the ability-type column (attack / dot / debuff), the same data the menu's category buckets use. Melee arts hit the adjacent enemy instantly, ranged ones auto-acquire, hexes go to the enemy lock.
+- Abilities on cooldown SAY they are on cooldown and how many turns remain. The game refuses those casts silently, which looked like the key doing nothing.
+
 ## 1.34.0 - 2026-07-10
 - The on-screen text finally uses the game's own skin font (the lock readout and the aim label were drawing with a font that renders blank on most setups, which is why you never saw them). Lock readout sits top center: enemy in red, ally in green, Swap warning in amber.
 - Melee-reach abilities (bladestorm and friends) just FIGHT: a hostile cast hits the nearest enemy it can actually perform on, so pressing the key with an enemy next to you swings immediately. When no enemy is in the act's reach it says so and spends nothing, instead of opening a target selection over enemies the cast could never touch.

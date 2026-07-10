@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.34.1}
+・ Combat arts (bladestorm, swarm, rush...) attack properly: the classifier reads the ability-type data too. Cooldowns are announced instead of silently eating the keypress.
+
 {topic|1.34.0}
 ・ Lock readout and aim label draw with the game's skin font (they were invisible). Melee-reach abilities hit the nearest enemy in reach instantly or refuse honestly. Targeting mode respects the enemy-highlight game setting. numpad0: chest item = take all to backpack, your item in the browser = auto-store by distribution settings.
 
