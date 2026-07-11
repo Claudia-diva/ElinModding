@@ -53,8 +53,50 @@ namespace ElonaKeys
 				Cancel();
 				return false;
 			}
-			if (Input.GetKeyDown(KeyCode.Escape) || EInput.rightMouse.down || EInput.leftMouse.down)
+			if (Input.GetKeyDown(KeyCode.Escape) || EInput.rightMouse.down)
 			{
+				Cancel();
+				EInput.action = EAction.None;
+				EInput.Consume(consumeAxis: true);
+				return true;
+			}
+			if (EInput.leftMouse.down)
+			{
+				// click a highlighted tile = pick that direction (your own
+				// tile too when allowed); clicking anywhere else cancels
+				try
+				{
+					Point hit = Scene.HitPoint;
+					bool overUI = false;
+					try
+					{
+						overUI = EClass.ui.isPointerOverUI;
+					}
+					catch
+					{
+					}
+					if (hit != null && hit.IsValid && !overUI)
+					{
+						int dx = Math.Abs(hit.x - EClass.pc.pos.x);
+						int dz = Math.Abs(hit.z - EClass.pc.pos.z);
+						bool self = dx == 0 && dz == 0;
+						if (dx <= 1 && dz <= 1 && (!self || allowSelf))
+						{
+							try
+							{
+								EInput.leftMouse.Consume();
+							}
+							catch
+							{
+							}
+							Fire(hit.Copy());
+							return true;
+						}
+					}
+				}
+				catch
+				{
+				}
 				Cancel();
 				EInput.action = EAction.None;
 				EInput.Consume(consumeAxis: true);

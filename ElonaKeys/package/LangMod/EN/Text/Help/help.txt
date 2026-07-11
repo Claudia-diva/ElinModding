@@ -8,7 +8,7 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 ・ Shift returns to the previous window in a chain (wheel, give, equipment slots...), or closes the last one. Escape closes the WHOLE window stack at once (conversations and yes/no prompts keep their own Escape).
 ・ Stacks open a count spinner "n (max)": left/right +-1, up/down +-10, Enter confirms. numpad0 = act with the WHOLE stack, spinner skipped (drop all, take all; undroppable and important-marked items stay safe). On plain rows numpad0 holds the item in your hands instead (q, hover a potion, 0 = armed for throwing). Important-marked items show a gold star.
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
-・ Directional actions highlight the nearby tiles and wait for a movement key (wait key = yourself, Escape/click = cancel).
+・ Directional actions highlight the nearby tiles and wait for a movement key OR a click on a highlighted tile (wait key = yourself, Escape/right-click or clicking elsewhere = cancel).
 ・ Native game popups (right-click menus, yes/no dialogs, list windows) also take arrows + Enter.
 ・ Native windows: up/down move, left/right switch group (list/grid/dropdowns/buttons), z/x switch window tabs (character sheet, quest board, crafting), Enter acts, x examines in item grids. Tab stays native (chat) except inside window families.
 ・ Quest boards: up/down scroll the requests, left/right switch tabs, r = reroll.
@@ -45,7 +45,7 @@ $Keys
 {pair|v|Spells: tap = quick cast flow, HOLD = manual targeting (aim at anyone, allies included). x on a spell = aim that cast manually (self/party casts just cast with Enter). Columns: Lv, Attr, Pow, Hit, Dmg, Cost, Left (order/set = AbilityColumns config). w = cast on whole party. z sorts by category/stock}
 {pair|a|Special actions: same keys and columns, with sp cost and potential %}
 {pair|W (shift+w)|Wide Skill: list everything castable on your party; Enter casts it on ALL of them}
-{pair|* (keypad) or '|Set your target locks with the free cursor: arrows/numpad move, Space next character, Enter confirm. Enemies and allies lock SEPARATELY and both hold at once; locking yourself is fine (solo buffing). Hostile casts, f, bows and throws always use the enemy lock (or auto-acquire the nearest foe); buffs and heals always use the ally lock. Neither ever crosses over on its own}
+{pair|* (keypad) or '|Set your target locks with the free cursor: arrows/numpad or the MOUSE move it, Space next character, Enter or left-click confirm. Enemies and allies lock SEPARATELY and both hold at once; locking yourself is fine (solo buffing). Hostile casts, f, bows and throws always use the enemy lock (or auto-acquire the nearest foe); buffs and heals always use the ally lock. Neither ever crosses over on its own}
 {pair|/ (keypad) or ;|Swap: the NEXT cast aims at the opposite lock (a hex at your locked ally, a heal at your locked enemy). Tap to arm, tap again to cancel, or hold it while casting}
 {pair|Lock readout|Whenever a lock is set, the top center of the screen shows it live: enemy lock in red, ally lock in green, plus a warning while Swap is armed. Position and size are in the config (Overlay section: LockHudX/Y, AimLabelY, font sizes; 0 hides a text)}
 {pair|c|Character sheet}
@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.36.0}
+・ Mouse aiming everywhere: the targeting cursor follows the mouse, left-click fires, direction prompts take a click on a highlighted tile. KeyboardShops config = false brings the vanilla shop windows back.
+
 {topic|1.35.0}
 ・ Translatable: copy LangMod/EN/elonakeys.tsv to LangMod/<language code>/elonakeys.tsv in the mod package and fill the second column. The game language picks it up; untranslated lines stay English. Overlay texts configurable (Overlay config section). DebugLog quiet by default.
 

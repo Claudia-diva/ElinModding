@@ -318,6 +318,7 @@ namespace ElonaKeys
 			onPick = _onPick;
 			verb = _verb;
 			beginFrame = Time.frameCount;
+			lastMouse = Input.mousePosition; // a stale delta must not yank the cursor off the smart start
 			// cursor start: hostile aims begin on a FOE (the enemy lock or the
 			// nearest hostile candidate), never on the ally lock or yourself;
 			// everything else starts on the remembered target
@@ -458,7 +459,7 @@ namespace ElonaKeys
 				line1 = "► " + verb + ": " + EKLang.T("(tile)");
 				line2 = EKLang.T("dist ") + EClass.pc.pos.Distance(cursor);
 			}
-			label.text = line1 + "\n<size=16>" + line2 + "   |   " + EKLang.T("arrows move, Space next target, Enter confirm, Esc cancel") + "</size>";
+			label.text = line1 + "\n<size=16>" + line2 + "   |   " + EKLang.T("arrows/mouse move, Space next target, Enter/click confirm, Esc cancel") + "</size>";
 		}
 
 		// screen-direction key → tile delta (iso-aware like the direction prompts)
@@ -545,6 +546,48 @@ namespace ElonaKeys
 				Cancel();
 				return;
 			}
+			// MOUSE aim: moving the mouse steers the cursor to the hovered
+			// tile and left-click fires there — the keyboard cursor is an
+			// addition, never a replacement
+			try
+			{
+				Vector3 mp = Input.mousePosition;
+				bool mouseMoved = (mp - lastMouse).sqrMagnitude > 4f;
+				lastMouse = mp;
+				Point hit = Scene.HitPoint;
+				bool overUI = false;
+				try
+				{
+					overUI = EClass.ui.isPointerOverUI;
+				}
+				catch
+				{
+				}
+				if (hit != null && hit.IsValid && !overUI && EClass.pc.CanSeeSimple(hit))
+				{
+					if (mouseMoved && !hit.Equals(cursor))
+					{
+						cursor = hit.Copy();
+						RefreshLabel();
+					}
+					if (Input.GetMouseButtonDown(0) && Time.frameCount != beginFrame)
+					{
+						cursor = hit.Copy();
+						try
+						{
+							EInput.leftMouse.Consume();
+						}
+						catch
+						{
+						}
+						Confirm();
+						return;
+					}
+				}
+			}
+			catch
+			{
+			}
 			Vector2 d = ReadDir();
 			if (d != Vector2.zero)
 			{
@@ -590,22 +633,30 @@ namespace ElonaKeys
 			}
 			if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && Time.frameCount != beginFrame)
 			{
-				Point p = cursor.Copy();
-				Chara c = CursorChara();
-				Action<Point, Chara> cb = onPick;
-				Cancel();
-				if (c != null)
-				{
-					Remember(c); // routes into the right lock (enemy vs ally)
-				}
-				try
-				{
-					cb(p, c);
-				}
-				catch (Exception ex)
-				{
-					Plugin.Log?.LogError("ElonaKeys target action failed: " + ex);
-				}
+				Confirm();
+			}
+		}
+
+		private static Vector3 lastMouse;
+
+		// fire the aim at the current cursor (Enter and left-click share this)
+		private static void Confirm()
+		{
+			Point p = cursor.Copy();
+			Chara c = CursorChara();
+			Action<Point, Chara> cb = onPick;
+			Cancel();
+			if (c != null)
+			{
+				Remember(c); // routes into the right lock (enemy vs ally)
+			}
+			try
+			{
+				cb(p, c);
+			}
+			catch (Exception ex)
+			{
+				Plugin.Log?.LogError("ElonaKeys target action failed: " + ex);
 			}
 		}
 	}

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.36.0 - 2026-07-10
+- Mouse aiming is back everywhere: in targeting mode the cursor follows your mouse and left-click fires at the hovered tile (arrows, Space and Enter all still work; right-click or Escape cancels). Direction prompts take a click on any highlighted tile, your own included when allowed. Keyboard-first was never meant to be keyboard-only.
+- KeyboardShops config (Menus section): set false and shopkeepers, vendors and dupe machines open the vanilla shop windows again, with all our shop handling out of the way. CapsLock pause keeps bypassing everything regardless.
+
 ## 1.35.0 - 2026-07-10
 - The mod is translatable. Every message, menu title, overlay text and label goes through a translation table; grab verbs already use the game's own localized act names. Translators: copy LangMod/EN/elonakeys.tsv (inside the mod package) to LangMod/<your language code>/elonakeys.tsv and fill in the second column (english TAB translation, {0}/{1} placeholders stay). The game's language setting picks the file automatically; anything untranslated stays English.
 

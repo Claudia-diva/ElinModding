@@ -682,9 +682,9 @@ namespace ElonaKeys
 	{
 		private static void Postfix(LayerInventory __result)
 		{
-			if (InputRouter.VanillaLocked)
+			if (InputRouter.VanillaLocked || !Plugin.KeyboardShops)
 			{
-				return;
+				return; // paused or disabled: the vanilla shop window
 			}
 			// END OF FRAME, not now: the game calls
 			// ui.AddLayer(LayerInventory.CreateBuy(...)), so at postfix time

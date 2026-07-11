@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.35.0";
+		public const string Version = "1.36.0";
 
 		internal static ManualLogSource Log;
 
@@ -78,6 +78,7 @@ namespace ElonaKeys
 		private static ConfigEntry<int> nameScrollSlack;
 		private static ConfigEntry<string> quickbinds;
 		private static ConfigEntry<bool> keyboardContainers;
+		private static ConfigEntry<bool> keyboardShops;
 		private static ConfigEntry<bool> keyboardCrafters;
 		private static ConfigEntry<string> craftingStyle;
 		private static ConfigEntry<string> macro1;
@@ -132,6 +133,7 @@ namespace ElonaKeys
 			quickbinds.Value = v;
 		}
 		internal static bool KeyboardContainers => keyboardContainers.Value;
+		internal static bool KeyboardShops => keyboardShops != null ? keyboardShops.Value : true;
 		internal static bool KeyboardCrafters => keyboardCrafters.Value;
 		internal static string CraftingStyle => craftingStyle.Value;
 		internal static string Macro1 => macro1.Value;
@@ -224,6 +226,8 @@ namespace ElonaKeys
 				"Show the 'Tab [change]' hint line under the family bar.");
 			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
 				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Also gates ally trading and every pick-an-item flow (offerings, dip/blend, effect scrolls, wizard services, bank deposit, tax box, quest chests, gacha, recycle, gene machine, mod kit, refuel). Locked chests and surprise packages stay native.");
+			keyboardShops = Config.Bind("Menus", "KeyboardShops", true,
+				"Shopkeepers, vendors and dupe machines open the ElonaKeys shop window (keyboard buy/sell). Set false for the vanilla shop windows. CapsLock pause also bypasses this while paused.");
 			craftingStyle = Config.Bind("Menus", "CraftingStyle", "native",
 				new ConfigDescription("native = the game's crafting window, fully keyboard-driven (arrows pick recipes with live preview, +/- count, m = materials, Enter crafts). menu = replace it with the mod's list-style menu.",
 					new AcceptableValueList<string>("native", "menu")));
