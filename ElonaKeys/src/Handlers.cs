@@ -767,6 +767,21 @@ namespace ElonaKeys
 				"You have nothing to blend with (potions, blessed water and other liquids).");
 		}
 
+		// vanilla throws ONE from a stack (ActThrow.cs:60: Split(1) unless the
+		// thing has element 410); passing the whole stack threw all 10 capture
+		// balls in one toss and every ball captured
+		private static Thing ThrowOne(Thing t)
+		{
+			try
+			{
+				return (t.Num > 1 && !t.HasElement(410)) ? t.Split(1) : t;
+			}
+			catch
+			{
+				return t;
+			}
+		}
+
 		public static void Throw()
 		{
 			MenuCycle.Set("items", 9);
@@ -777,7 +792,7 @@ namespace ElonaKeys
 					Chara quick = TargetMode.QuickTarget(null);
 					if (quick != null && pc.pos.Distance(quick.pos) <= 8)
 					{
-						ActThrow.Throw(pc, quick.pos, t);
+						ActThrow.Throw(pc, quick.pos, ThrowOne(t));
 						EClass.player.EndTurn();
 						return;
 					}
@@ -791,7 +806,7 @@ namespace ElonaKeys
 					}
 					TargetMode.Begin("Throw " + t.Name, targets, delegate(Point p, Chara c)
 					{
-						ActThrow.Throw(pc, p, t);
+						ActThrow.Throw(pc, p, ThrowOne(t));
 						EClass.player.EndTurn();
 					}, preferFoe: true);
 				},

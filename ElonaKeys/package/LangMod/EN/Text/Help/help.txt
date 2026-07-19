@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.36.1}
+・ Throwing from a stack throws one item, like vanilla (10 capture balls no longer fly as one clump).
+
 {topic|1.36.0}
 ・ Mouse aiming everywhere: the targeting cursor follows the mouse, left-click fires, direction prompts take a click on a highlighted tile. KeyboardShops config = false brings the vanilla shop windows back.
 

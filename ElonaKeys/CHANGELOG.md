@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.36.1 - 2026-07-10
+- Throwing from a stack throws ONE, like the vanilla throw (a stack of 10 capture balls went flying as one clump and every ball captured). Items the game itself hurls whole keep that behavior.
+
 ## 1.36.0 - 2026-07-10
 - Mouse aiming is back everywhere: in targeting mode the cursor follows your mouse and left-click fires at the hovered tile (arrows, Space and Enter all still work; right-click or Escape cancels). Direction prompts take a click on any highlighted tile, your own included when allowed. Keyboard-first was never meant to be keyboard-only.
 - KeyboardShops config (Menus section): set false and shopkeepers, vendors and dupe machines open the vanilla shop windows again, with all our shop handling out of the way. CapsLock pause keeps bypassing everything regardless.
