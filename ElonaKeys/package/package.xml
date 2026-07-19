@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Meta>
-  <title>Elona Keys</title>
-  <id>elin.elonakeys</id>
+  <title>Elona Keybinds</title>
+  <id>elin.elonakeyss</id>
   <author>Anon</author>
+  <tags>QoL</tags>
   <builtin>false</builtin>
   <loadPriority>100</loadPriority>
   <version>1.37.0</version>
-  <description>Classic Elona keybinds for Elin. Play with the keyboard instead of the mouse: e to eat, q to quaff, r to read, Z to zap, g to get, d to drop, w to wear, v to cast, o to open, p to pray, i to interact and more, with Elona-style selection menus. All keys rebindable in BepInEx/config/elin.elonakeys.cfg or by using modconfig gui.</description>
+  <description>Classic Elona keybinds for Elin. Play with the keyboard instead of the mouse: e to eat, q to quaff, r to read, Z to zap, g to get, d to drop, w to wear, v to cast, o to open, p to pray, i to interact and more, with Elona-style selection menus. All keys rebindable in BepInEx/config/elin.elonakeys.cfg or by using modconfig gui.
+
+
+  I spent 2 weeks debugging and devving so I kinda gave up and pushed it out so I can get some real people testing and reporting bugs. There are just too many things to test and handle. If you find a bug, turn on debugging and reproduce it before sending me a log.
+
+
+  Still a lot of stuff to add/fix.
+  Theming
+  Container Settings, may be out of scope given Elona inventory
+  Menu Nav
+
+  </description>
 </Meta>
