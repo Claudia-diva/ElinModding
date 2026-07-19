@@ -782,34 +782,38 @@ namespace ElonaKeys
 			}
 		}
 
+		// ONE throw at the enemy lock (or aim): shared by the T menu, f with
+		// a held throwable, and quickbound throwables — the ball-spam loop
+		internal static void ThrowAt(Thing t)
+		{
+			// remembered target throws instantly; otherwise in-world targeting
+			Chara quick = TargetMode.QuickTarget(null);
+			if (quick != null && pc.pos.Distance(quick.pos) <= 8)
+			{
+				ActThrow.Throw(pc, quick.pos, ThrowOne(t));
+				EClass.player.EndTurn();
+				return;
+			}
+			List<Chara> targets = new List<Chara>();
+			foreach (Chara c in EClass._map.charas)
+			{
+				if (c != pc && !c.isDead && pc.CanSee(c) && pc.pos.Distance(c.pos) <= 8)
+				{
+					targets.Add(c);
+				}
+			}
+			TargetMode.Begin(EKLang.T("Throw ") + t.Name, targets, delegate(Point p, Chara c)
+			{
+				ActThrow.Throw(pc, p, ThrowOne(t));
+				EClass.player.EndTurn();
+			}, preferFoe: true);
+		}
+
 		public static void Throw()
 		{
 			MenuCycle.Set("items", 9);
 			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld && !(t.trait is TraitToolBelt),
-				delegate(Thing t)
-				{
-					// remembered target throws instantly; otherwise in-world targeting
-					Chara quick = TargetMode.QuickTarget(null);
-					if (quick != null && pc.pos.Distance(quick.pos) <= 8)
-					{
-						ActThrow.Throw(pc, quick.pos, ThrowOne(t));
-						EClass.player.EndTurn();
-						return;
-					}
-					List<Chara> targets = new List<Chara>();
-					foreach (Chara c in EClass._map.charas)
-					{
-						if (c != pc && !c.isDead && pc.CanSee(c) && pc.pos.Distance(c.pos) <= 8)
-						{
-							targets.Add(c);
-						}
-					}
-					TargetMode.Begin("Throw " + t.Name, targets, delegate(Point p, Chara c)
-					{
-						ActThrow.Throw(pc, p, ThrowOne(t));
-						EClass.player.EndTurn();
-					}, preferFoe: true);
-				},
+				delegate(Thing t) { ThrowAt(t); },
 				"You have nothing to throw.");
 		}
 
@@ -3524,6 +3528,19 @@ namespace ElonaKeys
 				if (ranged != null)
 				{
 					InputRouter.QueueNative(EAction.Fire);
+					return;
+				}
+			}
+			catch
+			{
+			}
+			// a held throwable fires like ammo: one per press at the enemy
+			// lock (hold the ball stack, then f f f — the Elona ball spam)
+			try
+			{
+				if (pc.held is Thing heldT && heldT.trait.IsThrowMainAction)
+				{
+					ThrowAt(heldT);
 					return;
 				}
 			}

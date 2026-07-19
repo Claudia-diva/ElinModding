@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.37.0 - 2026-07-10
+- Throw spam, three ways: hold a stack of throwables (t / numpad0 on the item) and f throws ONE per press at your enemy lock, like firing a bow. Quickbinding a throwable (shift+digit) throws one directly instead of just holding it. The T menu keeps working and remembers your last item. All of it aims at the enemy lock or auto-acquires, and opens the cursor when nothing is in range.
+
 ## 1.36.1 - 2026-07-10
 - Throwing from a stack throws ONE, like the vanilla throw (a stack of 10 capture balls went flying as one clump and every ball captured). Items the game itself hurls whole keep that behavior.
 

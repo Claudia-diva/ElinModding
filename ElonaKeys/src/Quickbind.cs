@@ -226,6 +226,13 @@ namespace ElonaKeys
 				t.DoAct(new AI_Read { target = t });
 				return;
 			}
+			// throwables THROW (one at the enemy lock or the aim cursor):
+			// a quickbound capture ball is for throwing, not for holding
+			if (t.trait.IsThrowMainAction)
+			{
+				Handlers.ThrowAt(t);
+				return;
+			}
 			Handlers.ToggleHold(t);
 		}
 

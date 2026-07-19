@@ -34,7 +34,7 @@ $Keys
 {pair|u|Use an item}
 {pair|E (shift+e)|Empty your hands: put away the held item/tool, grabbed furniture, or a stuck hotbar selection}
 {pair|B|Dip/blend: pick a liquid, then mix items into it}
-{pair|T|Throw: pick item, then the free cursor (auto-fires at your remembered HOSTILE target)}
+{pair|T|Throw: pick item, one flies at your enemy lock instantly (cursor when nothing is in range; reopening remembers the item). For ball spam: hold the stack, then f throws one per press; or quickbind it and shift+digit throws one}
 {pair|A (shift+a)|Load compatible ammo into your ranged weapon}
 {pair|x|Reopen the last-used item menu (Elona x)}
 {pair|shift+x|Inventory browser: period/comma switch You / party members / Home stock; z sorts, x examines, Tab hops the window family; take with the count spinner}
@@ -51,7 +51,7 @@ $Keys
 {pair|c|Character sheet}
 {pair|i|Interact with a direction: keyboard menu of everything there}
 {pair|s|Your own tile: harvests/collects instantly if something grows here, else menu + search the ground}
-{pair|f|Fire: ranged weapon at your enemy lock (or auto-acquire); with no ranged weapon it repeats your last ATTACK spell/action. Buffs never ride f}
+{pair|f|Fire: ranged weapon at your enemy lock (or auto-acquire); holding a throwable (capture ball...) throws ONE per press instead; otherwise repeats your last ATTACK spell/action. Buffs never ride f}
 {pair|b|Bash a direction}
 {pair|D|Dig/mine a wall (auto-holds your digging tool)}
 {pair|o|Open containers and crafting kits; also the backpack autopickup settings}
@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.37.0}
+・ Ball spam: f throws one from a held throwable stack per press; quickbound throwables throw instead of holding; the T menu remembers your item.
+
 {topic|1.36.1}
 ・ Throwing from a stack throws one item, like vanilla (10 capture balls no longer fly as one clump).
 
