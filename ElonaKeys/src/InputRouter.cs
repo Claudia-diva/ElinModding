@@ -376,12 +376,18 @@ namespace ElonaKeys
 					return;
 				}
 				// nothing else there: let the HELD TOOL work the tile on bump
-				// (run into a tree with an axe = chop; wall with pickaxe = mine).
-				// Always-run friendly: no shift needed.
+				// (run into a tree with an axe = chop; wall with pickaxe = mine,
+				// ore veins included). Always-run friendly: no shift needed.
+				// TASKS like TaskMine are hostile-FLAGGED because they can be a
+				// crime, not because they attack — allow them whenever the zone
+				// says it's legal, so bump-mining works outside towns.
 				if (EClass.player.currentHotItem is HotItemHeld)
 				{
 					ActPlan toolPlan = Handlers.BuildPlan(p, ActInput.RightMouse);
-					if (toolPlan.HasAct && !toolPlan.list[0].act.IsHostileAct && !(toolPlan.list[0].act is ActMelee))
+					bool safeAct = toolPlan.HasAct && !(toolPlan.list[0].act is ActMelee)
+						&& (!toolPlan.list[0].act.IsHostileAct
+							|| (toolPlan.list[0].act is Task && !EClass._zone.IsCrime(EClass.pc, toolPlan.list[0].act)));
+					if (safeAct)
 					{
 						if (Plugin.DebugLog)
 						{

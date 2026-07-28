@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.37.1 - 2026-07-10
+- Mining reworked. The Dig key is now m (shift+d stays as a spare, but it fights the dash-east movement, which is why it felt like it shoved you around). m auto-holds your mining tool; with exactly one minable wall next to you it just mines it, ore veins included; several walls ask for a direction, and refusals say WHY (no wall there / your tool cannot mine that wall).
+- Bump-mining actually works now: walk into a wall (ore veins too) with your pickaxe held and mining starts, same as bump-chopping trees. Mining is flagged like a crime internally, and the bump filter mistook that for "dangerous" and refused; it now checks the zone's actual law instead, so you cannot accidentally mine a town wall by walking into it.
+
 ## 1.37.0 - 2026-07-10
 - Throw spam, three ways: hold a stack of throwables (t / numpad0 on the item) and f throws ONE per press at your enemy lock, like firing a bow. Quickbinding a throwable (shift+digit) throws one directly instead of just holding it. The T menu keeps working and remembers your last item. All of it aims at the enemy lock or auto-acquires, and opens the cursor when nothing is in range.
 

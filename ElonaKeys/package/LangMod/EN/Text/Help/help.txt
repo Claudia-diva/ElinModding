@@ -53,7 +53,7 @@ $Keys
 {pair|s|Your own tile: harvests/collects instantly if something grows here, else menu + search the ground}
 {pair|f|Fire: ranged weapon at your enemy lock (or auto-acquire); holding a throwable (capture ball...) throws ONE per press instead; otherwise repeats your last ATTACK spell/action. Buffs never ride f}
 {pair|b|Bash a direction}
-{pair|D|Dig/mine a wall (auto-holds your digging tool)}
+{pair|m|Mine: auto-holds your digging tool. Exactly one minable wall next to you = mines it instantly (ore veins included); several = direction prompt. Walking into a wall with the tool held also mines (outside towns)}
 {pair|o|Open containers and crafting kits; also the backpack autopickup settings}
 {pair|(any route)|Chests/containers always open the keyboard menu; item processors open a keyboard ingredient picker (KeyboardContainers / KeyboardCrafters config)}
 {pair|Shops|Vendors open an ElonaKeys window ONLY (no vanilla shop UI): the stock with prices, Enter buys (spinner for stacks), Tab flips to the sell view of your bag with payout prices (things bought this visit sell back at what you paid), z sorts, x examines. Your money (or the base resource for home boards) sits in the footer. Same window for duplication shops, spell vendors, wandering merchants}
@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.37.1}
+・ Mining reworked: m = mine (auto-holds the tool; one adjacent wall mines instantly, ores included; several ask a direction, refusals say why). Bump-mining works: walk into the wall with the pickaxe held (respects town law).
+
 {topic|1.37.0}
 ・ Ball spam: f throws one from a held throwable stack per press; quickbound throwables throw instead of holding; the T menu remembers your item.
 

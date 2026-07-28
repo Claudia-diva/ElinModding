@@ -29,6 +29,7 @@ Around you
 arrows/mouse move, Space next target, Enter/click confirm, Esc cancel	
 Backpack autopickup	
 Could not open the distribution panel.	
+Dig in which direction?	
 dist 	
 Drop at your feet	
 Enemy lock: {0}.	
@@ -40,6 +41,7 @@ Holding {0}.
 It cannot be closed right now.	
 Manual targeting: casts aim freely at friend or foe.	
 Move to: 	
+No minable wall next to you. (Walking into a wall with the tool held also mines it.)	
 No one to remember there.	
 No shared container takes {0}. (Mark containers as Share in their distribution settings.)	
 No shop is open.	
@@ -59,6 +61,7 @@ The panel is behind the window's gear button (mouse).
 The shop is closed.	
 There is no door there.	
 There is no one there.	
+There is no wall there.	
 There is nothing here to pick up.	
 There is nothing here to pick up. (Hold g to grab nearby objects.)	
 There is nothing nearby to grab.	
@@ -71,7 +74,6 @@ Toggle favorites
 Wide cast on the party - what?	
 You are not equipping a ranged weapon.	
 You cannot aim there (blocked or invalid target). (No cost spent.)	
-You cannot dig there.	
 You cannot equip that.	
 You move {0} to {1}.	
 You need a digging tool.	
@@ -82,4 +84,5 @@ You search the ground but find nothing.
 You should keep that.	
 You take {0}.	
 Your backpack is full.	
+Your tool cannot mine that wall.	
 yourself	

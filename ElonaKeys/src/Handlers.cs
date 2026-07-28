@@ -2738,13 +2738,17 @@ namespace ElonaKeys
 			});
 		}
 
+		// Elona-flow mining: auto-holds a mining tool, and when exactly ONE
+		// adjacent wall is minable it just mines it (ore veins included) —
+		// the direction prompt only appears when there is a real choice.
+		// Walking into a wall with the tool held also mines (bump-mine).
 		public static void Dig()
 		{
 			Thing tool = pc.held as Thing;
-			if (tool == null || !tool.HasElement(220))
+			if (tool == null || !(tool.HasElement(220) || tool.HasElement(225)))
 			{
 				tool = null;
-				foreach (Thing t in pc.things.List((Thing x) => x.HasElement(220) && x.trait is TraitTool, onlyAccessible: true))
+				foreach (Thing t in pc.things.List((Thing x) => x.HasElement(220), onlyAccessible: true))
 				{
 					tool = t;
 					break;
@@ -2757,11 +2761,34 @@ namespace ElonaKeys
 				EClass.player.SetCurrentHotItem(new HotItemHeld(tool));
 			}
 			Thing held = tool;
-			DirPrompt.Ask("Dig in which direction?", self: false, delegate(Point p)
+			List<Point> minable = new List<Point>();
+			foreach (Point n in Nearby())
 			{
-				if (!p.HasBlock || !TaskMine.CanMine(p, held))
+				if (!n.Equals(pc.pos) && n.HasBlock && TaskMine.CanMine(n, held))
 				{
-					Msg.SayRaw(EKLang.T("You cannot dig there."));
+					minable.Add(n.Copy());
+				}
+			}
+			if (minable.Count == 1)
+			{
+				pc.SetAIImmediate(new TaskMine { pos = minable[0] });
+				return;
+			}
+			if (minable.Count == 0)
+			{
+				Msg.SayRaw(EKLang.T("No minable wall next to you. (Walking into a wall with the tool held also mines it.)"));
+				return;
+			}
+			DirPrompt.Ask(EKLang.T("Dig in which direction?"), self: false, delegate(Point p)
+			{
+				if (!p.HasBlock)
+				{
+					Msg.SayRaw(EKLang.T("There is no wall there."));
+					return;
+				}
+				if (!TaskMine.CanMine(p, held))
+				{
+					Msg.SayRaw(EKLang.T("Your tool cannot mine that wall."));
 					return;
 				}
 				pc.SetAIImmediate(new TaskMine { pos = p.Copy() });
