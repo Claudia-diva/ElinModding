@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.38.3 - 2026-07-10
+- The Dig key is m alone; the shift+d spare is gone for good. Shift belongs to dashing AND to auto-repeat mods (AutoAct chains ANY task started while shift is held), so a shift-based dig bind auto-mined the map by accident. If your saved config still says shift+d (or "m, shift+d"), change Dig to m. With AutoAct installed the split becomes deliberate: m or bump-mining digs once, shift+direction with the pickaxe held starts a chain on purpose, and any fresh key or Escape still stops a running chain.
+
 ## 1.38.2 - 2026-07-10
 - The Throw menu no longer forces the [recent] sort. The sort choice is one global setting that follows you between windows, so seeding it anywhere polluted everywhere; no window overrides it, ever. Your z choice is yours. The blue (new) tags still mark fresh pickups in every list, and [recent] stays available in the z cycle.
 

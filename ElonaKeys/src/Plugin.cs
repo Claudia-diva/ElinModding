@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.38.2";
+		public const string Version = "1.38.3";
 
 		internal static ManualLogSource Log;
 
@@ -255,7 +255,7 @@ namespace ElonaKeys
 			Def("Blend", "shift+b", Handlers.Blend, "Dip/blend: pick a potion or liquid, then mix items into it.");
 			Def("Throw", "shift+t", Handlers.Throw, "Throw: pick an item, then a target from the list or a direction.");
 			Def("Bash", "b", Handlers.Bash, "Bash in a chosen direction.");
-			Def("Dig", "m, shift+d", Handlers.Dig, "Mine: auto-holds your digging tool; one adjacent minable wall mines instantly (ores included), several ask for a direction. Walking into a wall with the tool held also mines. (shift+d kept for old habits; it clashes with dash-east, m is the clean key.)");
+			Def("Dig", "m", Handlers.Dig, "Mine: auto-holds your digging tool; one adjacent minable wall mines instantly (ores included), several ask for a direction. Walking into a wall with the tool held also mines. Do NOT bind this to shift+anything: shift is the dash modifier, and auto-repeat mods (AutoAct) treat shift as their chain-everything modifier.");
 			Def("Open", "o", Handlers.Open, "Open containers and crafting kits in your inventory, or nearby ones.");
 			Def("Close", "shift+c", Handlers.DoorToggle, "Open or close a door in a chosen direction.");
 			Def("Pray", "p", Handlers.Pray, "Pray to your god.");

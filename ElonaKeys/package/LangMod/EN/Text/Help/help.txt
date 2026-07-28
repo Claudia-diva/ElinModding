@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.38.3}
+・ Dig = m only (shift binds collide with dash and with auto-repeat mods that read shift as their chain trigger; fix your saved config if it still says shift+d). With AutoAct: m digs once, shift+direction with a pickaxe chains on purpose.
+
 {topic|1.38.2}
 ・ No window seeds the sort mode anymore (the throw menu briefly did): your z choice is global and stays yours. (new) tags and the [recent] sort remain.
 
