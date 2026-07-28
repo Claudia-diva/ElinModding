@@ -19,6 +19,7 @@ namespace ElonaKeys
 		public bool closeOnAct = true;
 		public string rightText;             // usually the weight column
 		public int sortWeight;               // for the weight sort mode
+		public long sortRecent;              // pickup recency (PickLog sequence)
 		public int maxAmount;                // >1 enables the count spinner
 		public Action<int> onAmount;         // called with the chosen count
 		public SourceElement.Row actSrc;     // ability rows: enables digit hotkeying
@@ -99,7 +100,10 @@ namespace ElonaKeys
 		private static List<MenuRow> view = new List<MenuRow>();
 		private static int page;
 		private static int sel;
-		private static int sortMode; // 0 original, 1 name, 2 weight/category, 3 count/stock
+		private static int sortMode; // 0 original, 1 name, 2 weight/category, 3 count/stock, 4 recent
+		// one-shot sort default for the NEXT Show (the throw menu opens on
+		// "recent": freshly picked junk sits on top, ready to fly back out)
+		internal static int NextSortMode = -1;
 		private static int openFrame;
 
 		// count spinner state
@@ -149,6 +153,11 @@ namespace ElonaKeys
 				history.Clear();
 			}
 			current = new Screen { title = _title, rows = rows, refreshSource = _refreshSource, footerExtra = NextFooterExtra, onTab = NextOnTab, onSwap = NextOnSwap, rightHeader = NextRightHeader };
+			if (NextSortMode >= 0)
+			{
+				sortMode = NextSortMode;
+				NextSortMode = -1;
+			}
 			NextFooterExtra = null;
 			NextOnTab = null;
 			NextOnSwap = null;
@@ -186,6 +195,7 @@ namespace ElonaKeys
 			NextOnTab = null;
 			NextOnSwap = null;
 			NextRightHeader = null;
+			NextSortMode = -1;
 			// hold-v's armed manual mode: keep it ONLY when this close is part
 			// of a row-action dispatch (Run closes BEFORE the action fires and
 			// CastAbility consumes the flag); an Escape/shift/Tab close clears
@@ -1027,6 +1037,21 @@ namespace ElonaKeys
 			{
 				view.Sort((MenuRow a, MenuRow b) => b.sortCount.CompareTo(a.sortCount));
 			}
+			else if (sortMode == 4)
+			{
+				// most recently picked up first; never-picked items keep
+				// their original order below (stable: index tiebreak)
+				Dictionary<MenuRow, int> idx = new Dictionary<MenuRow, int>();
+				for (int i = 0; i < view.Count; i++)
+				{
+					idx[view[i]] = i;
+				}
+				view.Sort(delegate(MenuRow a, MenuRow b)
+				{
+					int byRecent = b.sortRecent.CompareTo(a.sortRecent);
+					return (byRecent != 0) ? byRecent : idx[a].CompareTo(idx[b]);
+				});
+			}
 			// pinned rows ignore the sort: held item on top, utility rows
 			// ([ Filter... ], [ Take everything ]...) at the bottom
 			List<MenuRow> pinnedTop = null;
@@ -1091,7 +1116,8 @@ namespace ElonaKeys
 			{
 				caption += (sortMode == 1) ? " [name]"
 					: ((sortMode == 2) ? (abilityMenu ? " [category]" : " [weight]")
-					: (abilityMenu ? " [stock]" : " [count]"));
+					: ((sortMode == 3) ? (abilityMenu ? " [stock]" : " [count]")
+					: " [recent]"));
 			}
 			if (PageCount > 1)
 			{
@@ -1260,6 +1286,7 @@ namespace ElonaKeys
 					NextOnTab = null;
 					NextOnSwap = null;
 					NextRightHeader = null;
+					NextSortMode = -1;
 					if (Time.frameCount != dispatchFrame)
 					{
 						Handlers.ManualCastMode = false;
@@ -1500,7 +1527,7 @@ namespace ElonaKeys
 			string typed = Input.inputString;
 			if (typed == "z" && !EInput.isShiftDown && !EInput.isCtrlDown && !EInput.isAltDown)
 			{
-				sortMode = (sortMode + 1) % 4;
+				sortMode = (sortMode + 1) % 5;
 				sel = 0;
 				page = 0;
 				ApplyPage();

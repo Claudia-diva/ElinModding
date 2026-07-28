@@ -5,6 +5,7 @@
 (held) put away — 	
 (hostile)	
 (i / Space toward a target, s on yourself.)	
+(new)	
 (party)	
 (tile)	
 [ Container settings... ]	
@@ -19,6 +20,7 @@
 {0} is on cooldown ({1} more turns).	
 {0} PAUSED: pure native Elin windows and keys. ({1} to resume)	
 {0} resumed.	
+{0} still has things inside.	
 Action canceled.	
 Action wheel	
 Actions here	
@@ -82,6 +84,7 @@ You own nothing that fits.
 You put {0} away.	
 You search the ground but find nothing.	
 You should keep that.	
+You take {0} from {1}.	
 You take {0}.	
 Your backpack is full.	
 Your tool cannot mine that wall.	

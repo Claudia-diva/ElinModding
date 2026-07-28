@@ -524,6 +524,22 @@ namespace ElonaKeys
 		}
 	}
 
+	// every PC pickup records recency: feeds the "recent" sort and the (new)
+	// tag ("I picked up random junk and need to find it to throw it"). The
+	// RESULT is noted, not the argument — a stack merge moves the recency
+	// onto the merged stack.
+	[HarmonyPatch(typeof(Chara), nameof(Chara.Pick))]
+	internal static class Patch_PickLog
+	{
+		private static void Postfix(Chara __instance, Thing __result)
+		{
+			if (__instance != null && __instance.IsPC && __result != null)
+			{
+				Handlers.PickLog.Note(__result);
+			}
+		}
+	}
+
 	// Every container-open route (mouse, bump, space, interact) funnels into
 	// TraitContainer.Open: redirect to the keyboard take/put menu. TryOpen's
 	// lockpick branch and Open's surprise-package (mimic) branch stay native.

@@ -247,6 +247,36 @@ namespace ElonaKeys
 			return things;
 		}
 
+		// session-scoped pickup recency: what came into the backpack LAST.
+		// Feeds the "recent" sort mode (z) and the (new) tag on the last few
+		// pickups — "I picked up random junk and need to throw it" needs the
+		// junk visible on top, not buried on page 7.
+		internal static class PickLog
+		{
+			private static readonly Dictionary<int, long> seqByUid = new Dictionary<int, long>();
+			private static long counter;
+
+			internal static void Note(Thing t)
+			{
+				if (t != null)
+				{
+					seqByUid[t.uid] = ++counter;
+				}
+			}
+
+			internal static long Seq(Thing t)
+			{
+				return (t != null && seqByUid.TryGetValue(t.uid, out long s)) ? s : 0;
+			}
+
+			// the last handful of pickups get the visible tag
+			internal static bool IsFresh(Thing t)
+			{
+				long s = Seq(t);
+				return s > 0 && counter - s < 8;
+			}
+		}
+
 		private static List<MenuRow> BuildRows(List<Thing> things, Action<Thing> onSelect, Func<Thing, string> label, bool refresh, List<MenuRow> extraRows, Func<Thing, int> amount = null, Action<Thing, int> onAmount = null)
 		{
 			List<MenuRow> rows = new List<MenuRow>();
@@ -265,11 +295,13 @@ namespace ElonaKeys
 				rows.Add(new MenuRow
 				{
 					// the held item leads the list, marked, in every menu (Elona)
-					label = (held ? "(held) " : "") + ((label != null) ? label(t) : DetailName(t)) + Quickbind.TagForItem(t.id),
+					label = (held ? "(held) " : "") + ((label != null) ? label(t) : DetailName(t)) + Quickbind.TagForItem(t.id)
+						+ (PickLog.IsFresh(t) ? " <size=12><color=#7fd8ff>" + EKLang.T("(new)") + "</color></size>" : ""),
 					icon = t,
 					pinTop = held,
 					rightText = WeightText(t.ChildrenAndSelfWeight),
 					sortWeight = t.ChildrenAndSelfWeight,
+					sortRecent = PickLog.Seq(t),
 					sortCount = t.Num,
 					closeOnAct = !refresh,
 					maxAmount = (amount != null) ? amount(t) : 0,
@@ -325,12 +357,25 @@ namespace ElonaKeys
 				closeOnAct = false, // keep this window in the back-stack for shift
 				act = delegate { ItemMenu(title, filter, onSelect, emptyMsg, refresh, label, null, "", amount, onAmount); }
 			});
+			// each category row wears the FIRST matching item as its icon:
+			// a picture beats a bare word for telling categories apart
+			Dictionary<string, Thing> samples = new Dictionary<string, Thing>();
+			foreach (Thing t in things)
+			{
+				string c = CategoryName(t);
+				if (!samples.ContainsKey(c))
+				{
+					samples[c] = t;
+				}
+			}
 			foreach (KeyValuePair<string, int> kv in counts)
 			{
 				string cat = kv.Key;
+				samples.TryGetValue(cat, out Thing sample);
 				rows.Add(new MenuRow
 				{
 					label = cat + " (" + kv.Value + ")",
+					icon = sample,
 					rightText = WeightText(weights[cat]),
 					sortWeight = weights[cat],
 					sortCount = nums[cat],
@@ -786,6 +831,21 @@ namespace ElonaKeys
 		// a held throwable, and quickbound throwables — the ball-spam loop
 		internal static void ThrowAt(Thing t)
 		{
+			// important-marked things and filled containers NEVER fly: this
+			// guard sits on the shared path so no throw route bypasses it
+			// (a whole container of starred keepsakes went out the window)
+			if (t != null && t.c_isImportant)
+			{
+				Msg.SayRaw(EKLang.F("{0} is marked as important.", t.Name));
+				SE.Beep();
+				return;
+			}
+			if (t != null && t.trait.IsContainer && t.things.Count > 0)
+			{
+				Msg.SayRaw(EKLang.F("{0} still has things inside.", t.Name));
+				SE.Beep();
+				return;
+			}
 			// remembered target throws instantly; otherwise in-world targeting
 			Chara quick = TargetMode.QuickTarget(null);
 			if (quick != null && pc.pos.Distance(quick.pos) <= 8)
@@ -812,7 +872,12 @@ namespace ElonaKeys
 		public static void Throw()
 		{
 			MenuCycle.Set("items", 9);
-			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld && !(t.trait is TraitToolBelt),
+			// the throw list opens on RECENT sort: the junk you just picked
+			// up sits on top, ready to fly back out. Important-marked items
+			// and filled containers are not even listed.
+			MenuSystem.NextSortMode = 4;
+			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld && !(t.trait is TraitToolBelt)
+					&& !t.c_isImportant && !(t.trait.IsContainer && t.things.Count > 0),
 				delegate(Thing t) { ThrowAt(t); },
 				"You have nothing to throw.");
 		}
@@ -2293,6 +2358,7 @@ namespace ElonaKeys
 							return;
 						}
 						pc.AddCard(t);
+						PickLog.Note(t);
 						Msg.SayRaw(EKLang.F("You take {0}.", t.Name));
 					}
 				});
@@ -2330,6 +2396,7 @@ namespace ElonaKeys
 					}
 					Thing x = (n >= t.Num) ? t : t.Split(n);
 					pc.AddCard(x);
+					PickLog.Note(x);
 					Msg.SayRaw(EKLang.F("You take {0}.", x.Name));
 				}
 			});
@@ -2980,7 +3047,8 @@ namespace ElonaKeys
 						}
 						Thing take = (n >= t.Num) ? t : t.Split(n);
 						pc.AddCard(take);
-						Msg.SayRaw("You take " + take.Name + " from " + c.Name + ".");
+						PickLog.Note(take);
+						Msg.SayRaw(EKLang.F("You take {0} from {1}.", take.Name, c.Name));
 					}),
 					act = worn ? ((Action)delegate { Msg.SayRaw("Unequip it through " + c.Name + "'s sheet first."); }) : null
 				});
@@ -4130,11 +4198,12 @@ namespace ElonaKeys
 					bool held = t == pc.held;
 					rows.Add(new MenuRow
 					{
-						label = (held ? "(held) " : "") + t.Name + (t.c_isImportant ? " <color=#c9a64f>★</color>" : "") + (t.isEquipped ? " <size=12><color=#90d090>(equipped)</color></size>" : "") + Quickbind.TagForItem(t.id),
+						label = (held ? "(held) " : "") + t.Name + (t.c_isImportant ? " <color=#c9a64f>★</color>" : "") + (t.isEquipped ? " <size=12><color=#90d090>(equipped)</color></size>" : "") + Quickbind.TagForItem(t.id) + (PickLog.IsFresh(t) ? " <size=12><color=#7fd8ff>" + EKLang.T("(new)") + "</color></size>" : ""),
 						icon = t,
 						pinTop = held,
 						rightText = WeightText(t.ChildrenAndSelfWeight),
 						sortWeight = t.ChildrenAndSelfWeight,
+						sortRecent = PickLog.Seq(t),
 						closeOnAct = false,
 						act = delegate
 						{

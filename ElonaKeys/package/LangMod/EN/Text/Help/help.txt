@@ -4,7 +4,7 @@ Classic Elona keybinds for Elin. Play with the keyboard; the mouse becomes optio
 
 ・ Item keys open a paginated menu: cursor with up/down (HOLD to keep scrolling), Enter or letter or click to act, left/right arrows switch pages.
 ・ The selected item's full stat card is shown automatically; press x on a row to open the examine window.
-・ z inside a menu cycles sorting (original / name / weight or category / count or stock); the weight column sits on the right.
+・ z inside a menu cycles sorting (original / name / weight or category / count or stock / recent = newest pickups first); the weight column sits on the right. The last few things you picked up carry a blue (new) tag.
 ・ Shift returns to the previous window in a chain (wheel, give, equipment slots...), or closes the last one. Escape closes the WHOLE window stack at once (conversations and yes/no prompts keep their own Escape).
 ・ Stacks open a count spinner "n (max)": left/right +-1, up/down +-10, Enter confirms. numpad0 = act with the WHOLE stack, spinner skipped (drop all, take all; undroppable and important-marked items stay safe). On plain rows numpad0 holds the item in your hands instead (q, hover a potion, 0 = armed for throwing). Important-marked items show a gold star.
 ・ Hover or select an item/spell and press 0-9 to assign it to a hotkey (shift+digit for slots 11-20).
@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.38.0}
+・ Recent pickups: blue (new) tag on the last few pickups, z gains a [recent] sort (newest first), and the Throw menu opens on it. Important-starred items and filled containers refuse ALL throw routes. Category rows show a sample item icon.
+
 {topic|1.37.2}
 ・ Movement (fresh press or direction change) and Escape interrupt any running action, auto-repeat chains included. The held direction that STARTED a bump-mine does not interrupt it.
 

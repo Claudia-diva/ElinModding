@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.38.0 - 2026-07-10
+- Category selection rows show the first matching item as their icon, so the categories read at a glance instead of as bare words.
+- Recent pickups are visible now. The last few things you picked up carry a blue (new) tag in every item menu, and z gains a fifth sort: [recent], newest pickups first. The Throw menu OPENS on recent sort, so the junk you just grabbed sits on top ready to fly; z still switches to any other order. Recency counts ground pickups, container takes and ally takes alike.
+- Throwing respects your marks: important-starred items and containers with things inside are not listed in Throw and refuse every other throw route too (f-spam, quickbinds). No more launching a container full of keepsakes.
+
 ## 1.37.2 - 2026-07-10
 - Movement interrupts everything. A fresh direction press cancels whatever your character is doing (mining, chopping, hauling, riding) and your step goes through. Escape does the same and both now also stop auto-repeat chains (auto-act style mods requeue the next task instantly; the cancel keeps swatting them for half a second so the whole chain dies, not just one link). Bump-mining is unaffected: the direction you were already holding when the task started does not count as an interrupt.
 
