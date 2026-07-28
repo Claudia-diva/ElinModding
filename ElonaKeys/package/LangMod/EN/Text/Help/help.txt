@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.37.2}
+・ Movement (fresh press or direction change) and Escape interrupt any running action, auto-repeat chains included. The held direction that STARTED a bump-mine does not interrupt it.
+
 {topic|1.37.1}
 ・ Mining reworked: m = mine (auto-holds the tool; one adjacent wall mines instantly, ores included; several ask a direction, refusals say why). Bump-mining works: walk into the wall with the pickaxe held (respects town law).
 

@@ -16,6 +16,9 @@ namespace ElonaKeys
 		private static float lastLog;
 		private static float lastError;
 		private static EAction queuedNative = EAction.None;
+		// movement-interrupt state (see the interrupt block)
+		private static float taskKillUntil;
+		private static Vector2 prevInterruptAxis;
 
 		// let handlers (e.g. the wheel's Fire) trigger a native EAction next frame
 		public static void QueueNative(EAction a)
@@ -135,6 +138,28 @@ namespace ElonaKeys
 				EInput.action = EAction.None;
 				return;
 			}
+			// MOVEMENT INTERRUPTS EVERYTHING (user law): a FRESH direction
+			// press cancels the running action — mining, chopping, hauling,
+			// cart rides — and opens a short kill-window so auto-repeat mods
+			// cannot requeue the next task under the player's feet. FRESH is
+			// the key part: bump-mining starts by HOLDING a direction into
+			// the wall, so a key already held when the task began must not
+			// cancel it.
+			bool freshMove = EInput.axis != Vector2.zero && EInput.axis != prevInterruptAxis;
+			prevInterruptAxis = EInput.axis;
+			if (freshMove && !MenuSystem.Alive
+				&& EClass.pc.ai != null && EClass.pc.ai.IsRunning && !EClass.pc.HasNoGoal)
+			{
+				EClass.pc.ai.TryCancel(EClass.pc);
+				taskKillUntil = Time.unscaledTime + 0.5f;
+			}
+			// the kill-window: keep swatting re-queued TASKS briefly after an
+			// interrupt, so one press stops an auto-repeat CHAIN, not one link
+			if (taskKillUntil > Time.unscaledTime
+				&& EClass.pc.ai is Task && EClass.pc.ai.IsRunning && !EClass.pc.HasNoGoal)
+			{
+				EClass.pc.ai.TryCancel(EClass.pc);
+			}
 			// Escape CANCELS the running action: crafting always (its window
 			// hides itself mid-craft), and with no window open, any running
 			// TASK — eating, processing, stealing, harvesting. HasNoGoal is
@@ -144,6 +169,7 @@ namespace ElonaKeys
 				&& (EClass.pc.ai is AI_UseCrafter || EClass.pc.ai is TaskCraft || EClass.ui.TopLayer == null))
 			{
 				EClass.pc.ai.TryCancel(EClass.pc);
+				taskKillUntil = Time.unscaledTime + 0.5f;
 				Msg.SayRaw(EKLang.T("Action canceled."));
 				EInput.action = EAction.None;
 				EInput.Consume();

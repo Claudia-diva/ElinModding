@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.37.2 - 2026-07-10
+- Movement interrupts everything. A fresh direction press cancels whatever your character is doing (mining, chopping, hauling, riding) and your step goes through. Escape does the same and both now also stop auto-repeat chains (auto-act style mods requeue the next task instantly; the cancel keeps swatting them for half a second so the whole chain dies, not just one link). Bump-mining is unaffected: the direction you were already holding when the task started does not count as an interrupt.
+
 ## 1.37.1 - 2026-07-10
 - Mining reworked. The Dig key is now m (shift+d stays as a spare, but it fights the dash-east movement, which is why it felt like it shoved you around). m auto-holds your mining tool; with exactly one minable wall next to you it just mines it, ore veins included; several walls ask for a direction, and refusals say WHY (no wall there / your tool cannot mine that wall).
 - Bump-mining actually works now: walk into a wall (ore veins too) with your pickaxe held and mining starts, same as bump-chopping trees. Mining is flagged like a crime internally, and the bump filter mistook that for "dangerous" and refused; it now checks the zone's actual law instead, so you cannot accidentally mine a town wall by walking into it.
