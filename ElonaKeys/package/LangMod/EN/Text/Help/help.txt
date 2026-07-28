@@ -92,11 +92,14 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.38.2}
+・ No window seeds the sort mode anymore (the throw menu briefly did): your z choice is global and stays yours. (new) tags and the [recent] sort remain.
+
 {topic|1.38.1}
 ・ Bump-mining beats the wall-avoidance slide: a held direction works the wall when you stand before it and parks you while the dig runs. Hold into rock = tunnel; any other press stops it.
 
 {topic|1.38.0}
-・ Recent pickups: blue (new) tag on the last few pickups, z gains a [recent] sort (newest first), and the Throw menu opens on it. Important-starred items and filled containers refuse ALL throw routes. Category rows show a sample item icon.
+・ Recent pickups: blue (new) tag on the last few pickups, z gains a [recent] sort (newest first). Important-starred items and filled containers refuse ALL throw routes. Category rows show a sample item icon.
 
 {topic|1.37.2}
 ・ Movement (fresh press or direction change) and Escape interrupt any running action, auto-repeat chains included. The held direction that STARTED a bump-mine does not interrupt it.

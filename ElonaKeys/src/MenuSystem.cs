@@ -101,9 +101,8 @@ namespace ElonaKeys
 		private static int page;
 		private static int sel;
 		private static int sortMode; // 0 original, 1 name, 2 weight/category, 3 count/stock, 4 recent
-		// one-shot sort default for the NEXT Show (the throw menu opens on
-		// "recent": freshly picked junk sits on top, ready to fly back out)
-		internal static int NextSortMode = -1;
+		// sortMode is ONE GLOBAL STICKY setting (user law): no window may
+		// seed or override it — the player's z choice carries everywhere
 		private static int openFrame;
 
 		// count spinner state
@@ -153,11 +152,6 @@ namespace ElonaKeys
 				history.Clear();
 			}
 			current = new Screen { title = _title, rows = rows, refreshSource = _refreshSource, footerExtra = NextFooterExtra, onTab = NextOnTab, onSwap = NextOnSwap, rightHeader = NextRightHeader };
-			if (NextSortMode >= 0)
-			{
-				sortMode = NextSortMode;
-				NextSortMode = -1;
-			}
 			NextFooterExtra = null;
 			NextOnTab = null;
 			NextOnSwap = null;
@@ -195,7 +189,6 @@ namespace ElonaKeys
 			NextOnTab = null;
 			NextOnSwap = null;
 			NextRightHeader = null;
-			NextSortMode = -1;
 			// hold-v's armed manual mode: keep it ONLY when this close is part
 			// of a row-action dispatch (Run closes BEFORE the action fires and
 			// CastAbility consumes the flag); an Escape/shift/Tab close clears
@@ -1286,7 +1279,6 @@ namespace ElonaKeys
 					NextOnTab = null;
 					NextOnSwap = null;
 					NextRightHeader = null;
-					NextSortMode = -1;
 					if (Time.frameCount != dispatchFrame)
 					{
 						Handlers.ManualCastMode = false;

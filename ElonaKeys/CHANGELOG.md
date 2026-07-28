@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.38.2 - 2026-07-10
+- The Throw menu no longer forces the [recent] sort. The sort choice is one global setting that follows you between windows, so seeding it anywhere polluted everywhere; no window overrides it, ever. Your z choice is yours. The blue (new) tags still mark fresh pickups in every list, and [recent] stays available in the z cycle.
+
 ## 1.38.1 - 2026-07-10
 - Bump-mining beats the game's wall avoidance. Holding a direction while WALKING to a wall never counted as a bump (only a fresh press did), so the movement assist slid you along the face instead of digging. A held key now keeps working the tile whenever you stand idle in front of it, and while the dig runs the held key holds your position instead of feeding the wall-slide. Result: hold a direction into rock with a pickaxe and you tunnel wall after wall; release, or press any OTHER direction, to stop. Bump-talk still needs a deliberate fresh press (no chat spam from held keys).
 

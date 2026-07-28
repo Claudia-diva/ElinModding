@@ -872,10 +872,10 @@ namespace ElonaKeys
 		public static void Throw()
 		{
 			MenuCycle.Set("items", 9);
-			// the throw list opens on RECENT sort: the junk you just picked
-			// up sits on top, ready to fly back out. Important-marked items
-			// and filled containers are not even listed.
-			MenuSystem.NextSortMode = 4;
+			// important-marked items and filled containers are not listed;
+			// the (new) tags mark fresh pickups, and z reaches the [recent]
+			// sort — the sort itself is the PLAYER'S sticky choice, never
+			// seeded per window (it is one global setting)
 			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld && !(t.trait is TraitToolBelt)
 					&& !t.c_isImportant && !(t.trait.IsContainer && t.things.Count > 0),
 				delegate(Thing t) { ThrowAt(t); },
