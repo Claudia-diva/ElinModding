@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.38.1 - 2026-07-10
+- Bump-mining beats the game's wall avoidance. Holding a direction while WALKING to a wall never counted as a bump (only a fresh press did), so the movement assist slid you along the face instead of digging. A held key now keeps working the tile whenever you stand idle in front of it, and while the dig runs the held key holds your position instead of feeding the wall-slide. Result: hold a direction into rock with a pickaxe and you tunnel wall after wall; release, or press any OTHER direction, to stop. Bump-talk still needs a deliberate fresh press (no chat spam from held keys).
+
 ## 1.38.0 - 2026-07-10
 - Category selection rows show the first matching item as their icon, so the categories read at a glance instead of as bare words.
 - Recent pickups are visible now. The last few things you picked up carry a blue (new) tag in every item menu, and z gains a fifth sort: [recent], newest pickups first. The Throw menu OPENS on recent sort, so the junk you just grabbed sits on top ready to fly; z still switches to any other order. Recency counts ground pickups, container takes and ally takes alike.

@@ -19,6 +19,8 @@ namespace ElonaKeys
 		// movement-interrupt state (see the interrupt block)
 		private static float taskKillUntil;
 		private static Vector2 prevInterruptAxis;
+		// held-direction bump retrigger (tunneling cadence)
+		private static float nextHeldBump;
 
 		// let handlers (e.g. the wheel's Fire) trigger a native EAction next frame
 		public static void QueueNative(EAction a)
@@ -153,6 +155,15 @@ namespace ElonaKeys
 				EClass.pc.ai.TryCancel(EClass.pc);
 				taskKillUntil = Time.unscaledTime + 0.5f;
 			}
+			// while a bump-started task works the wall, the STILL-HELD key must
+			// not feed the game's wall avoidance (it slides the character along
+			// the face, abandoning the dig): held-from-start parks; only a
+			// fresh press (above) interrupts
+			if (!freshMove && EInput.axis != Vector2.zero
+				&& EClass.pc.ai is Task && EClass.pc.ai.IsRunning && !EClass.pc.HasNoGoal)
+			{
+				EInput.axis = Vector2.zero;
+			}
 			// the kill-window: keep swatting re-queued TASKS briefly after an
 			// interrupt, so one press stops an auto-repeat CHAIN, not one link
 			if (taskKillUntil > Time.unscaledTime
@@ -265,7 +276,17 @@ namespace ElonaKeys
 				{
 					if (bumpFresh)
 					{
-						TryBump(axisNow);
+						TryBump(axisNow, fresh: true);
+					}
+					else if (axisNow != Vector2.zero && EClass.pc.HasNoGoal && Time.unscaledTime >= nextHeldBump)
+					{
+						// HELD direction into a wall: the walk there consumed
+						// the fresh edge, and the game's wall avoidance would
+						// slide the character along the face instead of
+						// bumping. A held key keeps working the tile — and
+						// each broken wall chains the next one (tunneling).
+						nextHeldBump = Time.unscaledTime + 0.25f;
+						TryBump(axisNow, fresh: false);
 					}
 					return; // nothing of ours pressed
 				}
@@ -348,8 +369,9 @@ namespace ElonaKeys
 		internal static bool VanillaLocked => suppressVanilla;
 
 		// Elona habits: walking into a friendly NPC talks to them; walking into a
-		// solid interactable (quest board, gacha, fountain) uses it.
-		private static void TryBump(Vector2 a)
+		// solid interactable (quest board, gacha, fountain) uses it. fresh =
+		// a new keypress; held keys only re-bump (tunneling), never re-talk.
+		private static void TryBump(Vector2 a, bool fresh)
 		{
 			if (EInput.isShiftDown || EInput.IsConsumed)
 			{
@@ -375,7 +397,7 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			if (Plugin.BumpToTalk)
+			if (Plugin.BumpToTalk && fresh)
 			{
 				foreach (Chara c in p.Charas)
 				{
