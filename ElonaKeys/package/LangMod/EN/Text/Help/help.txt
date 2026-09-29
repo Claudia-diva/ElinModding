@@ -45,9 +45,9 @@ $Keys
 {pair|v|Spells: tap = quick cast flow, HOLD = manual targeting (aim at anyone, allies included). x on a spell = aim that cast manually (self/party casts just cast with Enter). Columns: Lv, Attr, Pow, Hit, Dmg, Cost, Left (order/set = AbilityColumns config). w = cast on whole party. z sorts by category/stock}
 {pair|a|Special actions: same keys and columns, with sp cost and potential %}
 {pair|W (shift+w)|Wide Skill: list everything castable on your party; Enter casts it on ALL of them}
-{pair|* (keypad) or '|Set your target locks with the free cursor: arrows/numpad or the MOUSE move it, Space next character, Enter or left-click confirm. Enemies and allies lock SEPARATELY and both hold at once; locking yourself is fine (solo buffing). Hostile casts, f, bows and throws always use the enemy lock (or auto-acquire the nearest foe); buffs and heals always use the ally lock. Neither ever crosses over on its own. A NEUTRAL creature (a little sister for a capture ball) locks on the target side: throws fly at her, while attack spells keep ignoring her and pick real enemies}
+{pair|* (keypad) or '|Set your target locks with the free cursor: arrows/numpad or the MOUSE move it, Space next character, Enter or left-click confirm. Enemies and allies lock SEPARATELY and both hold at once; locking yourself is fine (solo buffing), and your faction (party, livestock, residents, minions) always counts as ally. Hostile casts, f, bows and throws use the enemy lock (or auto-acquire the nearest foe); buffs and heals use the NEWEST beneficial lock. A NEUTRAL creature (a little sister for a capture ball) locks on the target side: throws and heals aim at her, attack spells keep ignoring her and pick real enemies, and attack spam does not evict her lock. The NeutralLock config picks other flavors: all = every act aims at her (classic Elona), ally = the pre-1.39 sorting}
 {pair|/ (keypad) or ;|Swap: the NEXT cast aims at the opposite lock (a hex at your locked ally, a heal at your locked enemy). Tap to arm, tap again to cancel, or hold it while casting}
-{pair|Lock readout|Whenever a lock is set, the top center of the screen shows it live: enemy lock in red, a locked neutral as "Target:" in orange, ally lock in green, plus a warning while Swap is armed. Position and size are in the config (Overlay section: LockHudX/Y, AimLabelY, font sizes; 0 hides a text)}
+{pair|Lock readout|Whenever a lock is set, the top center of the screen shows it live: enemy lock in red, a locked neutral as "Target:" in orange (with the enemy your attacks still auto-hit shown beside her), ally lock in green, plus a warning while Swap is armed. Position and size are in the config (Overlay section: LockHudX/Y, AimLabelY, font sizes; 0 hides a text)}
 {pair|c|Character sheet}
 {pair|i|Interact with a direction: keyboard menu of everything there}
 {pair|s|Your own tile: harvests/collects instantly if something grows here, else menu + search the ground}
@@ -92,6 +92,9 @@ $Keys
 ・ Pixel paint, casino games, the PCC editor and the jukebox are inherently mouse activities.
 
 $Changelog
+{topic|1.39.0}
+・ The neutral lock holds: attack spam no longer evicts your capture target, heals follow the newest lock (a wounded neutral included), your faction always counts as ally, throws obey the game's own throw rules (no walls, no own tile, no seeds/tents), the armed Swap announces when it finds nothing instead of vanishing, and attack cursors never start parked on the neutral. New config General > NeutralLock: smart / all (classic Elona *) / ally (old sorting).
+
 {topic|1.38.4}
 ・ Capture balls fly at the creature you targeted: a neutral (little sister) now locks on the target side, so * then shift+T throws at HER, not at some old enemy lock. Attack spells still ignore locked neutrals and pick real enemies.
 

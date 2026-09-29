@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.38.4";
+		public const string Version = "1.39.0";
 
 		internal static ManualLogSource Log;
 
@@ -52,6 +52,7 @@ namespace ElonaKeys
 		private static ConfigEntry<bool> bumpToTalk;
 		private static ConfigEntry<bool> bumpToUse;
 		private static ConfigEntry<bool> isoAim;
+		private static ConfigEntry<string> neutralLock;
 		private static ConfigEntry<string> suppressNativeKeys;
 		private static ConfigEntry<string> suppressAllKey;
 		private static ConfigEntry<string> wheelStyle;
@@ -96,6 +97,15 @@ namespace ElonaKeys
 		internal static bool BumpToTalk => bumpToTalk.Value;
 		internal static bool BumpToUse => bumpToUse.Value;
 		internal static bool IsoAim => isoAim.Value;
+		internal static string NeutralLockMode
+		{
+			get
+			{
+				string v = neutralLock != null ? neutralLock.Value : "smart";
+				v = (v ?? "smart").Trim().ToLowerInvariant();
+				return (v == "all" || v == "ally") ? v : "smart";
+			}
+		}
 		internal static string WheelStyle => wheelStyle.Value;
 		internal static string WheelInfo => wheelInfo.Value;
 		internal static string WheelAction => wheelAction.Value;
@@ -173,6 +183,9 @@ namespace ElonaKeys
 				"Walking into a solid interactable (quest board, gacha, fountain...) uses it, like Elona's walk-over + Space.");
 			isoAim = Config.Bind("General", "IsoAim", true,
 				"Direction prompts aim at the tile that LOOKS that way on screen (Elin's grid is rotated 45 degrees). Off = raw grid directions matching movement.");
+			neutralLock = Config.Bind("General", "NeutralLock", "smart",
+				new ConfigDescription("What a * lock on a NEUTRAL creature (little sister, shopkeeper, wildlife) feeds. smart: throws and heals aim at it, attack spells still pick real enemies. all: every act aims at it, classic Elona. ally: pre-1.38.4 sorting - neutrals lock on the ally side and throws ignore them.",
+					new AcceptableValueList<string>("smart", "all", "ally")));
 			suppressNativeKeys = Config.Bind("General", "SuppressNativeKeys", "",
 				"Comma-separated keys hidden from the game entirely (use when a native Elin key annoys you and you don't want either binding).");
 			suppressAllKey = Config.Bind("General", "SuppressAllKey", "capsLock",
@@ -271,7 +284,7 @@ namespace ElonaKeys
 			Def("Context", "space", Handlers.ContextAll, "Everything interactable on and around you; a single action fires instantly (Elona Space).");
 			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
 			Def("Party", "shift+q", Handlers.Party, "Party menu: character sheets, browse and take members' items.");
-			Def("Target", "keypadMultiply, quote", Handlers.PickTarget, "Classic *: set/change the remembered target (spells and throws then fire at it instantly). Enemies and allies lock separately; yourself counts as an ally. A neutral creature (a little sister for capture balls) locks as a throw target without exposing it to attack spells. Also on the apostrophe key for keyboards without a numpad.");
+			Def("Target", "keypadMultiply, quote", Handlers.PickTarget, "Classic *: set/change the remembered target (spells and throws then fire at it instantly). Enemies and allies lock separately; yourself counts as an ally. A neutral creature (a little sister for capture balls) locks as a target for throws and heals without exposing it to attack spells - the NeutralLock config picks other flavors. Also on the apostrophe key for keyboards without a numpad.");
 			Def("SwapTarget", "keypadDivide, semicolon", TargetMode.ToggleSwap, "Aim the NEXT cast at the opposite lock: a hostile spell at your locked ally, a buff/heal at your locked enemy. Tap to arm (tap again cancels), or hold it while casting.");
 			Def("Wheel", "z", Handlers.Wheel, "Action wheel: every verb of this mod in one menu, like classic Elona's z.");
 			Def("MacroKey1", "none", delegate { Handlers.RunMacro(Macro1); }, "Casts the Macro1 ability sequence.");

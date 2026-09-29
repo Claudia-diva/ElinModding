@@ -846,9 +846,20 @@ namespace ElonaKeys
 				SE.Beep();
 				return;
 			}
-			// remembered target throws instantly; otherwise in-world targeting
+			// what vanilla CanThrow forbids by trait (seeds, tents, carried
+			// altars...): refuse here so quickbinds cannot launch them either
+			if (t != null && (t.trait.CanExtendBuild || t.trait.CanOnlyCarry))
+			{
+				Msg.SayRaw(EKLang.F("{0} cannot be thrown.", t.Name));
+				SE.Beep();
+				return;
+			}
+			// remembered target throws instantly; otherwise in-world targeting.
+			// CanSeeLos closes the telepathy hole (a target sensed through a
+			// wall must not eat a ball through it) and CanThrow applies the
+			// game's own destination rules the direct Throw call would skip
 			Chara quick = TargetMode.QuickTarget(null);
-			if (quick != null && pc.pos.Distance(quick.pos) <= 8)
+			if (quick != null && pc.pos.Distance(quick.pos) <= 8 && pc.CanSeeLos(quick) && ActThrow.CanThrow(pc, t, quick))
 			{
 				ActThrow.Throw(pc, quick.pos, ThrowOne(t));
 				EClass.player.EndTurn();
@@ -864,9 +875,16 @@ namespace ElonaKeys
 			}
 			TargetMode.Begin(EKLang.T("Throw ") + t.Name, targets, delegate(Point p, Chara c)
 			{
+				// same gate as vanilla: no throwing at your own tile, at a
+				// blocked tile, or through a wall you only sense
+				if (!pc.CanSeeLos(p) || !ActThrow.CanThrow(pc, t, c, p))
+				{
+					Msg.SayRaw(EKLang.T("You cannot throw there."));
+					return;
+				}
 				ActThrow.Throw(pc, p, ThrowOne(t));
 				EClass.player.EndTurn();
-			}, preferFoe: true);
+			}, TargetMode.AimKind.Throw);
 		}
 
 		public static void Throw()
@@ -877,7 +895,8 @@ namespace ElonaKeys
 			// sort — the sort itself is the PLAYER'S sticky choice, never
 			// seeded per window (it is one global setting)
 			ItemMenu("Throw what?", (Thing t) => !t.isEquipped && t.trait.CanBeHeld && !(t.trait is TraitToolBelt)
-					&& !t.c_isImportant && !(t.trait.IsContainer && t.things.Count > 0),
+					&& !t.c_isImportant && !(t.trait.IsContainer && t.things.Count > 0)
+					&& !t.trait.CanExtendBuild && !t.trait.CanOnlyCarry,
 				delegate(Thing t) { ThrowAt(t); },
 				"You have nothing to throw.");
 		}
@@ -3735,7 +3754,7 @@ namespace ElonaKeys
 						EClass.player.EndTurn();
 					}
 					// false = the game already printed the reason
-				}, preferFoe: HostileAim(act));
+				}, HostileAim(act) ? TargetMode.AimKind.Attack : TargetMode.AimKind.Benefit);
 				return;
 			}
 			// self-only: instant
@@ -3767,7 +3786,7 @@ namespace ElonaKeys
 				{
 					if (ForceUse(act, qn, qn.pos))
 					{
-						TargetMode.Remember(qn);
+						TargetMode.RememberAuto(qn);
 						EClass.player.EndTurn();
 					}
 					return;
@@ -3786,7 +3805,9 @@ namespace ElonaKeys
 					{
 						if (ch != null)
 						{
-							TargetMode.Remember(ch);
+							// a deliberate aim: neutrals lock by the act's
+							// nature (a heal must not arm the throw lock)
+							TargetMode.Remember(ch, HostileAim(act));
 						}
 						EClass.player.EndTurn();
 					}
@@ -3805,7 +3826,7 @@ namespace ElonaKeys
 					// a false return means the game already said why — stay quiet
 					if (ForceUse(act, null, quickG.pos))
 					{
-						TargetMode.Remember(quickG);
+						TargetMode.RememberAuto(quickG);
 						EClass.player.EndTurn();
 					}
 					return;
@@ -3830,7 +3851,7 @@ namespace ElonaKeys
 					{
 						EClass.player.EndTurn();
 					}
-				}, preferFoe: HostileAim(act));
+				}, HostileAim(act) ? TargetMode.AimKind.Attack : TargetMode.AimKind.Benefit);
 				return;
 			}
 			// chara-targeted: remembered target fires INSTANTLY (Elona flow);
@@ -3844,7 +3865,7 @@ namespace ElonaKeys
 				// force-cast, friend or foe; silent on false (the game speaks)
 				if (ForceUse(act, quick, quick.pos))
 				{
-					TargetMode.Remember(quick);
+					TargetMode.RememberAuto(quick);
 					EClass.player.EndTurn();
 				}
 				return;
@@ -3889,7 +3910,7 @@ namespace ElonaKeys
 				}
 				if (ForceUse(act, best, best.pos))
 				{
-					TargetMode.Remember(best);
+					TargetMode.RememberAuto(best);
 					EClass.player.EndTurn();
 				}
 				else if (Plugin.DebugLog)
@@ -3918,7 +3939,7 @@ namespace ElonaKeys
 				{
 					EClass.player.EndTurn();
 				}
-			}, preferFoe: HostileAim(act));
+			}, HostileAim(act) ? TargetMode.AimKind.Attack : TargetMode.AimKind.Benefit);
 		}
 
 		// a hostile aim starts its cursor on a FOE, never the ally lock
@@ -4026,24 +4047,29 @@ namespace ElonaKeys
 				else
 				{
 					TargetMode.Remember(c);
-					bool foe = false;
-					bool own = true;
-					try
-					{
-						foe = pc.IsHostile(c) && !c.IsPCParty;
-						own = c == pc || c.IsPCParty;
-					}
-					catch
-					{
-					}
 					// two locks live side by side: hostile casts use the enemy
 					// lock (or auto-acquire), buffs/heals the ally lock; the
 					// Swap key aims one cast at the opposite lock. A NEUTRAL
-					// (little sister) locks as a throw target — the message
-					// says exactly what will and will not fly at her
-					Msg.SayRaw(foe ? EKLang.F("Enemy lock: {0}.", c.Name)
-						: own ? EKLang.F("Ally lock: {0}.", c == pc ? EKLang.T("yourself") : c.Name)
-						: EKLang.F("Target lock: {0}. Throws aim here; attack spells still pick real enemies.", c.Name));
+					// (little sister) locks per the NeutralLock config — the
+					// message says exactly what will and will not fly at her
+					string msg;
+					if (TargetMode.IsFoe(c))
+					{
+						msg = EKLang.F("Enemy lock: {0}.", c.Name);
+					}
+					else if (TargetMode.IsOwnPeople(c) || Plugin.NeutralLockMode == "ally")
+					{
+						msg = EKLang.F("Ally lock: {0}.", c == pc ? EKLang.T("yourself") : c.Name);
+					}
+					else if (Plugin.NeutralLockMode == "all")
+					{
+						msg = EKLang.F("Target lock: {0}. Everything aims here.", c.Name);
+					}
+					else
+					{
+						msg = EKLang.F("Target lock: {0}. Throws and heals aim here; attack spells still pick real enemies.", c.Name);
+					}
+					Msg.SayRaw(msg);
 				}
 			});
 		}

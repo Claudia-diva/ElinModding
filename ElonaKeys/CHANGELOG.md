@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.39.0 - 2026-09-28
+- The neutral target lock survives combat, heals it too, and is configurable. Follow-ups to yesterday's capture-ball fix, from a code audit against the freshly updated game source:
+  - Attack spells no longer evict a locked neutral: quick casts still follow the fight (the on-map marker tracks the foe they auto-acquired), but the next ball keeps flying at your capture target. This silently re-broke the 1.38.4 fix one spell after you locked her.
+  - Heals and buffs follow the NEWEST deliberate lock, so * on a wounded neutral then Heal Other heals HER, not the stale ally lock (which was often yourself). A lock whose owner turned hostile is never healed.
+  - Your faction is "your people" now: livestock, residents and minions lock on the ally side like party members, instead of becoming throw targets. Same circle vanilla's friendly-fire gate protects.
+  - Aiming a heal manually at a neutral makes her a patient, not a throw target; only *, throw aims and attack aims arm the target-side lock.
+  - Throws respect the game's own rules the direct call skipped: no throwing through walls you only sense with telepathy, at your own tile, at blocked tiles; seeds, tents and carried-only things refuse every throw route.
+  - The armed Swap is honest: when the opposite lock has nothing usable it says "Swap canceled" and aims normally instead of being silently eaten (and a HELD swap opens the aim rather than misfiring).
+  - Attack aim cursors never start parked on the locked neutral (one Enter used to nuke her); heal cursors start on your people and cycle allies first instead of opening on a foe.
+  - The lock readout shows the stale enemy the game still auto-attacks next to a neutral "Target:" entry, and Space in aim mode skips characters that left your vision.
+  - New config General > NeutralLock: smart (default, the above), all (every act aims at the locked neutral, classic Elona *), ally (pre-1.38.4 sorting - neutrals lock on the ally side).
+
 ## 1.38.4 - 2026-09-28
 - Capture balls fly at the creature you targeted (user report: * on a little sister, shift+T, and the ball hit some other enemy). The locks sorted everyone into enemy vs ally, so a NEUTRAL creature landed on the ally side, which throws never read; the ball then fell back to the old enemy lock. Neutrals now lock on the target side: throws and swapped casts aim at her, the lock readout says "Target:" instead of "Enemy:", and attack spells still ignore her and pick real enemies, so spell spam mid-fight cannot nuke your capture.
 

@@ -15,16 +15,60 @@ namespace ElonaKeys
 	{
 		// TWO locks (user spec): a TARGET lock for offense and an ALLY lock
 		// for heals/buffs, held at the same time. The ally lock is YOUR
-		// people only (yourself, party); everyone else — foes AND neutrals
-		// like a little sister marked for a capture ball — goes to the
-		// target side. Offensive casts NEVER auto-fire at the ally lock.
-		// A neutral in the target lock is honored by THROWS (that is what
-		// locking her means) but attack acts stay foe-only: spamming spells
-		// mid-fight must never nuke the bystander you want to capture.
+		// people (yourself, party, faction and minions); foes and NEUTRALS
+		// like a little sister marked for a capture ball go to the target
+		// side. Offensive casts NEVER auto-fire at the ally lock. What a
+		// locked neutral receives is the NeutralLock config:
+		//   smart (default) — throws and heals aim at her; attack acts stay
+		//     foe-only, so spell spam mid-fight cannot nuke the capture
+		//   all — every act aims at her (classic Elona *)
+		//   ally — pre-1.38.4: neutrals sort into the ally lock instead
 		// With no target lock, offense auto-acquires the nearest visible
-		// enemy — combat stays pure spam.
+		// enemy — combat stays pure spam. Each lock carries a STAMP so
+		// beneficial casts can follow the newest deliberate lock.
 		private static Chara lastHostile;
 		private static Chara lastFriendly;
+		private static int lockStamp;
+		private static int hostileStamp;
+		private static int friendlyStamp;
+
+		private static string Mode => Plugin.NeutralLockMode;
+
+		private static void SetHostileLock(Chara c)
+		{
+			lastHostile = c;
+			hostileStamp = ++lockStamp;
+			// a chara that just became a deliberate offense target must not
+			// linger on the ally side (heals would keep chasing a foe)
+			if (lastFriendly == c)
+			{
+				lastFriendly = null;
+			}
+		}
+
+		// NOTE: does not clear the same chara from the target side — heal-
+		// aiming at your capture target must not disarm the throw lock
+		private static void SetFriendlyLock(Chara c)
+		{
+			lastFriendly = c;
+			friendlyStamp = ++lockStamp;
+		}
+
+		// the NATIVE target: the on-map marker and the game's ranged
+		// auto-fire. Only ever pointed at FOES — a neutral would get shot
+		private static void SetNativeTarget(Chara c)
+		{
+			try
+			{
+				if (EClass.player.target != c)
+				{
+					EClass.player.target = c;
+				}
+			}
+			catch
+			{
+			}
+		}
 
 		private static Point cursor;
 		private static List<Chara> candidates;
@@ -88,12 +132,24 @@ namespace ElonaKeys
 			if (foe != null)
 			{
 				// a locked NEUTRAL (capture target) reads differently from a
-				// foe: throws fly at her, attacks still pick real enemies
-				s += IsFoe(foe)
-					? "<color=#ff9090>" + EKLang.T("Enemy: ") + foe.Name + "</color>   "
-					: "<color=#ffcf90>" + EKLang.T("Target: ") + foe.Name + "</color>   ";
+				// foe: throws fly at her, attacks still pick real enemies —
+				// and when the native target still holds a live foe, SAY so,
+				// because that is where those attacks will actually go
+				if (IsFoe(foe))
+				{
+					s += "<color=#ff9090>" + EKLang.T("Enemy: ") + foe.Name + "</color>   ";
+				}
+				else
+				{
+					s += "<color=#ffcf90>" + EKLang.T("Target: ") + foe.Name + "</color>   ";
+					Chara nat = AliveOr(EClass.player?.target);
+					if (nat != null && IsFoe(nat))
+					{
+						s += "<color=#ff9090>" + EKLang.T("Enemy: ") + nat.Name + "</color>   ";
+					}
+				}
 			}
-			if (pal != null)
+			if (pal != null && pal != foe)
 			{
 				s += "<color=#90d090>" + EKLang.T("Ally: ") + (pal == EClass.pc ? EKLang.T("yourself") : pal.Name) + "</color>   ";
 			}
@@ -154,36 +210,60 @@ namespace ElonaKeys
 			o.effectDistance = new Vector2(1.2f, -1.2f);
 		}
 
-		private static bool ConsumeSwap()
+		private static bool SwapActive()
 		{
-			if (swapArmed)
-			{
-				swapArmed = false;
-				return true;
-			}
-			return Plugin.BindHeld("SwapTarget");
+			return swapArmed || Plugin.BindHeld("SwapTarget");
 		}
 
 		// instantly usable target for this act; act == null = hostile intent
 		// (throws, ranged). TWO CLASSES, TWO LOCKS: hostile acts aim at the
-		// enemy lock (or auto-acquire the nearest foe) and NEVER at your
-		// people; everything else aims at the ally lock — which may be
-		// YOURSELF — and never at a foe. numpad/ swaps for one cast.
+		// target lock (or auto-acquire the nearest foe) and NEVER at your
+		// people; everything else aims at the newest beneficial lock — which
+		// may be YOURSELF — and never at a foe. numpad/ swaps for one cast;
+		// a swap that finds nothing usable SAYS SO instead of being eaten.
 		public static Chara QuickTarget(Act act)
 		{
 			bool hostile = HostileAct(act);
-			bool swapped = ConsumeSwap();
-			if (swapped)
+			if (SwapActive())
 			{
-				hostile = !hostile;
+				Chara sw = PickQuick(!hostile, act, swapped: true);
+				if (sw != null)
+				{
+					if (swapArmed)
+					{
+						swapArmed = false;
+						RefreshLockHud();
+					}
+					return sw;
+				}
+				if (swapArmed)
+				{
+					// tap-armed but the opposite lock is unusable: announce
+					// the cancel, then aim normally — never silently cross
+					swapArmed = false;
+					RefreshLockHud();
+					Msg.SayRaw(EKLang.T("Swap canceled: nothing usable on the opposite lock."));
+				}
+				else
+				{
+					// swap key HELD with nothing usable: open the aim rather
+					// than firing at the natural target against the held intent
+					return null;
+				}
 			}
+			return PickQuick(hostile, act, swapped: false);
+		}
+
+		private static Chara PickQuick(bool hostile, Act act, bool swapped)
+		{
 			if (hostile)
 			{
 				Chara c = AliveOr(lastHostile);
 				// the lock may be a NEUTRAL (little sister + capture ball):
-				// throws (act == null) and swapped casts honor it; attack
-				// acts require a real foe and fall through to auto-acquire
-				if (c != null && !IsOwnPeople(c) && (IsFoe(c) || act == null || swapped))
+				// throws (act == null), swapped casts and "all" mode honor
+				// it; attack acts need a real foe and fall to auto-acquire
+				if (c != null && !IsOwnPeople(c)
+					&& (IsFoe(c) || (Mode != "ally" && (act == null || swapped || Mode == "all"))))
 				{
 					return c;
 				}
@@ -199,12 +279,26 @@ namespace ElonaKeys
 				}
 				return NearestFoe();
 			}
-			// beneficial (or swapped-hostile): the ally lock; null = the
-			// act's normal flow takes over (self-cast, member picker...)
-			return AliveOr(lastFriendly);
+			// beneficial: the newest deliberate lock wins between the ally
+			// lock and a locked neutral; a lock gone hostile is never healed.
+			// null = the act's normal flow (self-cast, member picker...)
+			Chara pal = AliveOr(lastFriendly);
+			if (pal != null && IsFoe(pal))
+			{
+				pal = null;
+			}
+			if (Mode != "ally")
+			{
+				Chara n = AliveOr(lastHostile);
+				if (n != null && !IsFoe(n) && !IsOwnPeople(n) && (pal == null || hostileStamp > friendlyStamp))
+				{
+					return n;
+				}
+			}
+			return pal;
 		}
 
-		private static bool IsFoe(Chara c)
+		internal static bool IsFoe(Chara c)
 		{
 			try
 			{
@@ -216,12 +310,14 @@ namespace ElonaKeys
 			}
 		}
 
-		// the people the offense side must never touch: you and your party
-		private static bool IsOwnPeople(Chara c)
+		// the people the offense side must never touch: you, your party,
+		// your faction (livestock, residents) and your minions — the same
+		// circle vanilla's friendly-fire shift-gate protects (ActThrow.cs)
+		internal static bool IsOwnPeople(Chara c)
 		{
 			try
 			{
-				return c == EClass.pc || c.IsPCParty;
+				return c == EClass.pc || c.IsPCParty || c.IsPCFactionOrMinion;
 			}
 			catch
 			{
@@ -294,6 +390,15 @@ namespace ElonaKeys
 
 		public static void Remember(Chara c)
 		{
+			Remember(c, hostileIntent: true);
+		}
+
+		// hostileIntent: which side a NEUTRAL lands on. The * key and
+		// throw/attack aims say true (she is a deliberate target); a
+		// beneficial aim confirmed on her says false (she is a patient,
+		// not a capture — the throw lock must not silently arm at her)
+		public static void Remember(Chara c, bool hostileIntent)
+		{
 			// YOURSELF is a valid ally lock (solo play: keep your buffs on
 			// you while attacks auto-acquire); attacks never read this side
 			if (c == null)
@@ -302,46 +407,74 @@ namespace ElonaKeys
 			}
 			if (IsOwnPeople(c))
 			{
-				lastFriendly = c;
+				SetFriendlyLock(c);
 				return;
 			}
-			// foes and NEUTRALS both live on the target side — a * on the
-			// little sister must make the capture ball fly at HER, not at
-			// whatever old enemy the lock still held (v1.38.4 user report)
-			lastHostile = c;
 			if (IsFoe(c))
 			{
-				// the NATIVE target: the on-map marker and ranged auto-fire.
-				// Only for FOES — a neutral here would get auto-shot
-				try
-				{
-					if (EClass.player.target != c)
-					{
-						EClass.player.target = c;
-					}
-				}
-				catch
-				{
-				}
+				SetHostileLock(c);
+				SetNativeTarget(c);
+				return;
 			}
+			// neutral: a * on the little sister must make the capture ball
+			// fly at HER, not at whatever old enemy the lock still held
+			// (v1.38.4 user report); the ally mode keeps the old sorting
+			if (Mode == "ally" || !hostileIntent)
+			{
+				SetFriendlyLock(c);
+				return;
+			}
+			SetHostileLock(c);
+		}
+
+		// quick casts FOLLOW THE FIGHT without evicting a deliberate
+		// neutral lock — one attack spell mid-capture must not re-point
+		// the next ball at the foe it auto-acquired
+		public static void RememberAuto(Chara c)
+		{
+			if (c == null || !IsFoe(c))
+			{
+				return;
+			}
+			Chara cur = AliveOr(lastHostile);
+			if (cur != null && !IsFoe(cur))
+			{
+				SetNativeTarget(c); // the on-map marker still tracks the foe
+				return;
+			}
+			SetHostileLock(c);
+			SetNativeTarget(c);
 		}
 
 		// the frame Begin ran: the confirm key that OPENED this aim (Enter on
 		// a menu row) must not also confirm the aim in the same frame
 		private static int beginFrame = -1;
 
-		public static void Begin(string _verb, List<Chara> _candidates, Action<Point, Chara> _onPick, bool preferFoe = false)
+		public enum AimKind
+		{
+			Free,    // the * key: any character, start on the newest lock
+			Throw,   // hostile intent; a locked neutral is a valid start
+			Attack,  // hostile intent; start only on a real FOE
+			Benefit  // heals/buffs: allies cycle first, start on the beneficial lock
+		}
+
+		private static AimKind aimKind;
+
+		public static void Begin(string _verb, List<Chara> _candidates, Action<Point, Chara> _onPick, AimKind kind = AimKind.Free)
 		{
 			Cancel();
+			aimKind = kind;
 			candidates = _candidates ?? new List<Chara>();
-			// hostiles first, then by distance: Space cycles in this order
+			// Space cycles the act's natural victims first (hostiles for
+			// offense, everyone else for heals), then by distance
+			bool alliesFirst = kind == AimKind.Benefit;
 			candidates.Sort(delegate(Chara a, Chara b)
 			{
 				bool ha = EClass.pc.IsHostile(a);
 				bool hb = EClass.pc.IsHostile(b);
 				if (ha != hb)
 				{
-					return ha ? -1 : 1;
+					return (ha != alliesFirst) ? -1 : 1;
 				}
 				return EClass.pc.pos.Distance(a.pos) - EClass.pc.pos.Distance(b.pos);
 			});
@@ -349,21 +482,33 @@ namespace ElonaKeys
 			verb = _verb;
 			beginFrame = Time.frameCount;
 			lastMouse = Input.mousePosition; // a stale delta must not yank the cursor off the smart start
-			// cursor start: hostile aims begin on the target lock (a foe or a
-			// locked neutral), never on the ally lock or yourself; everything
-			// else starts on the remembered target
+			// cursor start: Attack insists on a real FOE (never pre-aim the
+			// capture target — one Enter would nuke her); Throw takes the
+			// locked neutral too; Benefit starts on the newest beneficial
+			// lock; Free starts on the newest lock of either side
 			Chara start = null;
-			if (preferFoe)
+			switch (kind)
 			{
+			case AimKind.Throw:
 				start = AliveOr(lastHostile);
 				if (start != null && IsOwnPeople(start))
 				{
 					start = null;
 				}
-			}
-			else if (lastTarget != null && !lastTarget.isDead && lastTarget.IsAliveInCurrentZone && EClass.pc.CanSee(lastTarget))
-			{
-				start = lastTarget;
+				break;
+			case AimKind.Attack:
+				start = AliveOr(lastHostile);
+				if (start != null && !IsFoe(start))
+				{
+					start = null;
+				}
+				break;
+			case AimKind.Benefit:
+				start = PickQuick(hostile: false, act: null, swapped: false);
+				break;
+			default:
+				start = AliveOr(lastTarget);
+				break;
 			}
 			if (start == null && candidates.Count > 0)
 			{
@@ -542,7 +687,9 @@ namespace ElonaKeys
 			{
 				return;
 			}
-			candidates.RemoveAll((Chara c) => c == null || c.isDead || !c.IsAliveInCurrentZone);
+			// prune the unseeable too: Space must not jump the cursor onto a
+			// chara that walked out of vision (arrows then refuse to move)
+			candidates.RemoveAll((Chara c) => c == null || c.isDead || !c.IsAliveInCurrentZone || !EClass.pc.CanSee(c));
 			// highlight the cursor tile every frame
 			try
 			{
@@ -678,7 +825,9 @@ namespace ElonaKeys
 			Cancel();
 			if (c != null)
 			{
-				Remember(c); // routes into the right lock (enemy vs ally)
+				// routes into the right lock; a beneficial aim on a neutral
+				// keeps her a patient, not a throw target
+				Remember(c, hostileIntent: aimKind != AimKind.Benefit);
 			}
 			try
 			{

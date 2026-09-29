@@ -11,6 +11,7 @@
 [ Container settings... ]	
 [ Put items in... ]	
 [ Take everything ]	
+{0} cannot be thrown.	
 {0} cannot reach any enemy from here. (No cost spent.)	
 {0} cannot reach anyone from here. (No cost spent.)	
 {0} cannot reach that spot. (No cost spent.)	
@@ -55,8 +56,10 @@ Pick up what?
 SWAP armed: next cast at the OPPOSITE lock	
 Swap armed: the NEXT cast aims at the opposite lock (hostile at your ally, buffs/heals at the enemy).	
 Swap canceled.	
+Swap canceled: nothing usable on the opposite lock.	
 Take	
-Target lock: {0}. Throws aim here; attack spells still pick real enemies.	
+Target lock: {0}. Everything aims here.	
+Target lock: {0}. Throws and heals aim here; attack spells still pick real enemies.	
 Target: 	
 The {0} is full.	
 The craft failed to start (see log).	
@@ -78,6 +81,7 @@ Toggle favorites
 Wide cast on the party - what?	
 You are not equipping a ranged weapon.	
 You cannot aim there (blocked or invalid target). (No cost spent.)	
+You cannot throw there.	
 You cannot equip that.	
 You move {0} to {1}.	
 You need a digging tool.	
