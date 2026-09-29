@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.38.4 - 2026-09-28
+- Capture balls fly at the creature you targeted (user report: * on a little sister, shift+T, and the ball hit some other enemy). The locks sorted everyone into enemy vs ally, so a NEUTRAL creature landed on the ally side, which throws never read; the ball then fell back to the old enemy lock. Neutrals now lock on the target side: throws and swapped casts aim at her, the lock readout says "Target:" instead of "Enemy:", and attack spells still ignore her and pick real enemies, so spell spam mid-fight cannot nuke your capture.
+
 ## 1.38.3 - 2026-07-10
 - The Dig key is m alone; the shift+d spare is gone for good. Shift belongs to dashing AND to auto-repeat mods (AutoAct chains ANY task started while shift is held), so a shift-based dig bind auto-mined the map by accident. If your saved config still says shift+d (or "m, shift+d"), change Dig to m. With AutoAct installed the split becomes deliberate: m or bump-mining digs once, shift+direction with the pickaxe held starts a chain on purpose, and any fresh key or Escape still stops a running chain.
 

@@ -13,11 +13,16 @@ namespace ElonaKeys
 	// A confirmed character is REMEMBERED so later casts/throws fire instantly.
 	public static class TargetMode
 	{
-		// TWO locks (user spec): a HOSTILE lock for offense and an ALLY lock
-		// for heals/buffs, held at the same time. Offensive casts NEVER
-		// auto-fire at the ally lock; holding SHIFT while casting harms the
-		// locked ally deliberately. With no hostile lock, offense
-		// auto-acquires the nearest visible enemy — combat stays pure spam.
+		// TWO locks (user spec): a TARGET lock for offense and an ALLY lock
+		// for heals/buffs, held at the same time. The ally lock is YOUR
+		// people only (yourself, party); everyone else — foes AND neutrals
+		// like a little sister marked for a capture ball — goes to the
+		// target side. Offensive casts NEVER auto-fire at the ally lock.
+		// A neutral in the target lock is honored by THROWS (that is what
+		// locking her means) but attack acts stay foe-only: spamming spells
+		// mid-fight must never nuke the bystander you want to capture.
+		// With no target lock, offense auto-acquires the nearest visible
+		// enemy — combat stays pure spam.
 		private static Chara lastHostile;
 		private static Chara lastFriendly;
 
@@ -82,7 +87,11 @@ namespace ElonaKeys
 			string s = "";
 			if (foe != null)
 			{
-				s += "<color=#ff9090>" + EKLang.T("Enemy: ") + foe.Name + "</color>   ";
+				// a locked NEUTRAL (capture target) reads differently from a
+				// foe: throws fly at her, attacks still pick real enemies
+				s += IsFoe(foe)
+					? "<color=#ff9090>" + EKLang.T("Enemy: ") + foe.Name + "</color>   "
+					: "<color=#ffcf90>" + EKLang.T("Target: ") + foe.Name + "</color>   ";
 			}
 			if (pal != null)
 			{
@@ -163,14 +172,18 @@ namespace ElonaKeys
 		public static Chara QuickTarget(Act act)
 		{
 			bool hostile = HostileAct(act);
-			if (ConsumeSwap())
+			bool swapped = ConsumeSwap();
+			if (swapped)
 			{
 				hostile = !hostile;
 			}
 			if (hostile)
 			{
 				Chara c = AliveOr(lastHostile);
-				if (c != null && IsFoe(c))
+				// the lock may be a NEUTRAL (little sister + capture ball):
+				// throws (act == null) and swapped casts honor it; attack
+				// acts require a real foe and fall through to auto-acquire
+				if (c != null && !IsOwnPeople(c) && (IsFoe(c) || act == null || swapped))
 				{
 					return c;
 				}
@@ -200,6 +213,19 @@ namespace ElonaKeys
 			catch
 			{
 				return false;
+			}
+		}
+
+		// the people the offense side must never touch: you and your party
+		private static bool IsOwnPeople(Chara c)
+		{
+			try
+			{
+				return c == EClass.pc || c.IsPCParty;
+			}
+			catch
+			{
+				return true; // when in doubt, protect
 			}
 		}
 
@@ -274,11 +300,19 @@ namespace ElonaKeys
 			{
 				return;
 			}
+			if (IsOwnPeople(c))
+			{
+				lastFriendly = c;
+				return;
+			}
+			// foes and NEUTRALS both live on the target side — a * on the
+			// little sister must make the capture ball fly at HER, not at
+			// whatever old enemy the lock still held (v1.38.4 user report)
+			lastHostile = c;
 			if (IsFoe(c))
 			{
-				lastHostile = c;
 				// the NATIVE target: the on-map marker and ranged auto-fire.
-				// Only for FOES — pointing it at an ally would auto-shoot her
+				// Only for FOES — a neutral here would get auto-shot
 				try
 				{
 					if (EClass.player.target != c)
@@ -289,10 +323,6 @@ namespace ElonaKeys
 				catch
 				{
 				}
-			}
-			else
-			{
-				lastFriendly = c;
 			}
 		}
 
@@ -319,14 +349,14 @@ namespace ElonaKeys
 			verb = _verb;
 			beginFrame = Time.frameCount;
 			lastMouse = Input.mousePosition; // a stale delta must not yank the cursor off the smart start
-			// cursor start: hostile aims begin on a FOE (the enemy lock or the
-			// nearest hostile candidate), never on the ally lock or yourself;
-			// everything else starts on the remembered target
+			// cursor start: hostile aims begin on the target lock (a foe or a
+			// locked neutral), never on the ally lock or yourself; everything
+			// else starts on the remembered target
 			Chara start = null;
 			if (preferFoe)
 			{
 				start = AliveOr(lastHostile);
-				if (start != null && !IsFoe(start))
+				if (start != null && IsOwnPeople(start))
 				{
 					start = null;
 				}

@@ -4027,17 +4027,23 @@ namespace ElonaKeys
 				{
 					TargetMode.Remember(c);
 					bool foe = false;
+					bool own = true;
 					try
 					{
 						foe = pc.IsHostile(c) && !c.IsPCParty;
+						own = c == pc || c.IsPCParty;
 					}
 					catch
 					{
 					}
 					// two locks live side by side: hostile casts use the enemy
 					// lock (or auto-acquire), buffs/heals the ally lock; the
-					// Swap key aims one cast at the opposite lock
-					Msg.SayRaw(foe ? EKLang.F("Enemy lock: {0}.", c.Name) : EKLang.F("Ally lock: {0}.", c == pc ? EKLang.T("yourself") : c.Name));
+					// Swap key aims one cast at the opposite lock. A NEUTRAL
+					// (little sister) locks as a throw target — the message
+					// says exactly what will and will not fly at her
+					Msg.SayRaw(foe ? EKLang.F("Enemy lock: {0}.", c.Name)
+						: own ? EKLang.F("Ally lock: {0}.", c == pc ? EKLang.T("yourself") : c.Name)
+						: EKLang.F("Target lock: {0}. Throws aim here; attack spells still pick real enemies.", c.Name));
 				}
 			});
 		}

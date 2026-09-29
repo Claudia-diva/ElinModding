@@ -56,6 +56,8 @@ SWAP armed: next cast at the OPPOSITE lock
 Swap armed: the NEXT cast aims at the opposite lock (hostile at your ally, buffs/heals at the enemy).	
 Swap canceled.	
 Take	
+Target lock: {0}. Throws aim here; attack spells still pick real enemies.	
+Target: 	
 The {0} is full.	
 The craft failed to start (see log).	
 The materials don't check out.	
