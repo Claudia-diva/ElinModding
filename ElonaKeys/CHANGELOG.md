@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.39.1 - 2026-09-28
+- Config tooltips are readable. Every setting and keybind description was one long paragraph on a single line; they are now shorter and broken into lines, with each option on its own line (NeutralLock, NameDisplay, WheelStyle, CraftingStyle and friends). The key-format note moved to its own line at the end of every keybind. Applies to the in-game mod config screen and to the comments in elin.elonakeys.cfg, which BepInEx rewrites on the next launch.
+
 ## 1.39.0 - 2026-09-28
 - The neutral target lock survives combat, heals it too, and is configurable. Follow-ups to yesterday's capture-ball fix, from a code audit against the freshly updated game source:
   - Attack spells no longer evict a locked neutral: quick casts still follow the fight (the on-map marker tracks the foe they auto-acquired), but the next ball keeps flying at your capture target. This silently re-broke the 1.38.4 fix one spell after you locked her.

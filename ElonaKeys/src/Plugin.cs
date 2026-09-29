@@ -13,7 +13,7 @@ namespace ElonaKeys
 	{
 		public const string Guid = "elin.elonakeys";
 		public const string Name = "Elona Keys";
-		public const string Version = "1.39.0";
+		public const string Version = "1.39.1";
 
 		internal static ManualLogSource Log;
 
@@ -163,136 +163,141 @@ namespace ElonaKeys
 		{
 			Log = Logger;
 			overrideGameKeys = Config.Bind("General", "OverrideGameKeys", true,
-				"If true, keys bound below take priority over Elin's own keybinds on conflict. If false, the game's binding wins and the mod key is ignored.");
+				"Who wins when a mod key collides with an Elin key.\ntrue = the mod key fires.\nfalse = the game keeps the key and the mod bind is ignored.");
 			debugLog = Config.Bind("General", "DebugLog", false,
-				"Verbose troubleshooting log: why key presses are ignored, how each cast classifies and targets. Turn on when reporting a problem.");
+				"Verbose troubleshooting log.\nRecords why a key press was ignored and how each cast classifies and targets.\nTurn this on before reporting a problem.");
 			menuCategories = Config.Bind("Menus", "CategoryFilter", true,
-				"When an item menu would list more than CategoryThreshold items, show a category menu first.");
+				"Show a category picker first when an item menu would be long.\nShorter lists (under CategoryThreshold) open directly.");
 			categoryThreshold = Config.Bind("Menus", "CategoryThreshold", 25,
-				"Item count above which the category menu kicks in.");
+				"Item count above which the category picker kicks in.\nOnly used while CategoryFilter is on.");
 			nameDisplay = Config.Bind("Menus", "NameDisplay", "pingpong",
-				new ConfigDescription("How long item names are displayed in menus: truncate, pingpong (scroll back and forth), or wrap.",
+				new ConfigDescription("How item names too long for their column are shown.\npingpong = scroll back and forth\ntruncate = cut them short\nwrap = break onto a second line",
 					new AcceptableValueList<string>("pingpong", "truncate", "wrap")));
 			menuPageSize = Config.Bind("Menus", "MenuPageSize", 15,
-				"Rows per menu page. Multiple pages are switched with the left/right arrow keys.");
+				"Rows per menu page.\nThe rest go to further pages; left/right arrows switch pages.");
 			shiftDirTool = Config.Bind("General", "ShiftDirTool", true,
-				"While holding a tool, shift+direction uses it on the adjacent tile (mine, chop, till...) like drag-right-click.");
+				"shift+direction uses your held tool on that tile (mine, chop, till...), like a right-click drag.\nOff = shift+direction only dashes.");
 			bumpToTalk = Config.Bind("General", "BumpToTalk", true,
-				"Walking into a friendly NPC talks to them, Elona style (party members still swap places).");
+				"Walking into a friendly NPC talks to them, Elona style.\nParty members still swap places instead.");
 			bumpToUse = Config.Bind("General", "BumpToUse", true,
-				"Walking into a solid interactable (quest board, gacha, fountain...) uses it, like Elona's walk-over + Space.");
+				"Walking into a solid interactable uses it: quest board, gacha, fountain...\nThe Elona walk-over + Space shortcut.");
 			isoAim = Config.Bind("General", "IsoAim", true,
-				"Direction prompts aim at the tile that LOOKS that way on screen (Elin's grid is rotated 45 degrees). Off = raw grid directions matching movement.");
+				"Which way the arrow keys point in direction prompts.\ntrue = the tile that LOOKS that way on screen (Elin's grid is rotated 45 degrees).\nfalse = raw grid directions, matching the movement keys.");
 			neutralLock = Config.Bind("General", "NeutralLock", "smart",
-				new ConfigDescription("What a * lock on a NEUTRAL creature (little sister, shopkeeper, wildlife) feeds. smart: throws and heals aim at it, attack spells still pick real enemies. all: every act aims at it, classic Elona. ally: pre-1.38.4 sorting - neutrals lock on the ally side and throws ignore them.",
+				new ConfigDescription("What a * lock on a NEUTRAL creature feeds: a little sister, shopkeeper, wildlife.\nsmart = throws and heals aim at it; attack spells still pick real enemies.\nall = every act aims at it, classic Elona *.\nally = pre-1.39 sorting; neutrals lock on the ally side and throws ignore them.",
 					new AcceptableValueList<string>("smart", "all", "ally")));
 			suppressNativeKeys = Config.Bind("General", "SuppressNativeKeys", "",
-				"Comma-separated keys hidden from the game entirely (use when a native Elin key annoys you and you don't want either binding).");
+				"Keys hidden from the game entirely, comma-separated.\nFor when a native Elin key annoys you and you do not want the mod bind either.");
 			suppressAllKey = Config.Bind("General", "SuppressAllKey", "capsLock",
-				"PAUSE toggle: while ON, this mod steps aside completely - no mod keys, no keyboard menus, no window redirects, no trade panes. Pure native Elin, the escape hatch when a mod window misbehaves. CapsLock is unused by the game. 'none' disables the toggle.");
+				"PAUSE toggle for the whole mod.\nWhile ON: no mod keys, no keyboard menus, no window redirects, no trade panes.\nPure native Elin, the escape hatch when a mod window misbehaves.\nCapsLock is unused by the game. 'none' disables the toggle.");
 			wheelStyle = Config.Bind("Menus", "WheelStyle", "radial",
-				new ConfigDescription("z action wheel style: radial (classic Elona circles) or list (window).",
+				new ConfigDescription("Shape of the z action wheel.\nradial = classic Elona circles.\nlist = a plain window.",
 					new AcceptableValueList<string>("radial", "list")));
 			wheelInfo = Config.Bind("Menus", "WheelInfo", "Help,Chara,Journal,Log,Equip,Inventory",
-				"Verbs on the Info ring (max 6; east/west are ring links). Available: Eat, Quaff, Read, Zap, Cast, Equip, Tool, Use, Blend, Throw, Ammo, Get, Drop, Open, Door, Bash, Dig, Search, Interact, Pray, Offer, Give, Party, Inventory, Help, Chara, Journal, Log, Fire.");
+				"Verbs on the Info ring, max 6 (the east/west slots are ring links).\nAvailable: Eat, Quaff, Read, Zap, Cast, Equip, Tool, Use, Blend, Throw,\nAmmo, Get, Drop, Open, Door, Bash, Dig, Search, Interact, Pray, Offer,\nGive, Party, Inventory, Help, Chara, Journal, Log, Fire.");
 			wheelAction = Config.Bind("Menus", "WheelAction", "Cast,Fire,Get,Search,Ammo,Use",
-				"Verbs on the Action ring (max 6, same verb list as WheelInfo).");
+				"Verbs on the Action ring, max 6.\nSame verb list as WheelInfo.");
 			wheelEtc = Config.Bind("Menus", "WheelEtc", "Pray,Interact,Dig,Bash,Offer,Give",
-				"Verbs on the Etc ring (max 6, same verb list as WheelInfo).");
+				"Verbs on the Etc ring, max 6.\nSame verb list as WheelInfo.");
 			wheelItems = Config.Bind("Menus", "WheelItems", "Eat,Quaff,Read,Zap,Drop,Throw",
-				"Verbs on the Items ring (max 6, same verb list as WheelInfo).");
+				"Verbs on the Items ring, max 6.\nSame verb list as WheelInfo.");
 			wheelMisc = Config.Bind("Menus", "WheelMisc", "Tool,Blend,Door,Open,Party",
-				"Verbs on the Misc ring (max 6, same verb list as WheelInfo). Leave empty to remove the ring.");
-			wheelPosX = Config.Bind("Menus", "WheelPosX", 0f, "Wheel widget offset from screen center (drag the center diamond to move; saved automatically).");
-			wheelPosY = Config.Bind("Menus", "WheelPosY", 0f, "Wheel widget offset from screen center (drag the center diamond to move; saved automatically).");
+				"Verbs on the Misc ring, max 6.\nSame verb list as WheelInfo.\nLeave empty to remove the ring.");
+			wheelPosX = Config.Bind("Menus", "WheelPosX", 0f,
+				"Horizontal offset of the wheel widget from screen center, in pixels.\nSaved automatically when you drag the center diamond.");
+			wheelPosY = Config.Bind("Menus", "WheelPosY", 0f,
+				"Vertical offset of the wheel widget from screen center, in pixels.\nSaved automatically when you drag the center diamond.");
 			activateHotkeys = Config.Bind("Hotkeys", "ActivateHotkeys", "shift",
-				"shift = shift+1..9 fires ElonaKeys quickbind slots (plain digits stay native quickslots). off = disable. Bind: select an item or spell in any mod menu and press 1-9. Bindings resolve dynamically: bind a rod of identify, ANY rod of identify in your inventory fires.");
+				"Modifier that fires the ElonaKeys quickbind slots.\nshift = shift+1..9 (plain digits stay native quickslots).\noff = no quickbinds.\nTo bind: select an item or spell in any mod menu and press 1-9.\nBinds resolve by kind, so a bound rod of identify fires ANY such rod you carry.");
 			quickbinds = Config.Bind("Hotkeys", "Quickbinds", "",
-				"ElonaKeys quickbind registry storage (slot:kind:id:name;...). Edited automatically; clear to reset all slots.");
+				"Quickbind storage (slot:kind:id:name;...).\nWritten automatically; clear it to reset every slot.");
 			pageSound = Config.Bind("Menus", "PageSound", "paper",
-				"Sound played when a menu page turns: any game SE id (paper, pop_paper, click...), or 'none' to silence. Broader menu theming (skins, text colors) is planned.");
+				"Sound played when a menu page turns.\nAny game SE id (paper, pop_paper, click...), or 'none' to silence it.");
 			lockHudX = Config.Bind("Overlay", "LockHudX", 0,
-				"Horizontal offset of the target-lock readout in pixels from screen center (negative = left).");
+				"Horizontal offset of the target-lock readout, in pixels from screen center.\nNegative moves it left.");
 			lockHudY = Config.Bind("Overlay", "LockHudY", 40,
-				"Distance of the target-lock readout from the TOP edge in pixels.");
+				"Distance of the target-lock readout from the TOP edge, in pixels.");
 			lockHudSize = Config.Bind("Overlay", "LockHudFontSize", 17,
-				"Font size of the target-lock readout (enemy/ally locks, Swap warning). 0 hides it entirely.");
+				"Font size of the target-lock readout: enemy/ally locks and the Swap warning.\n0 hides it entirely.");
 			aimLabelY = Config.Bind("Overlay", "AimLabelY", 130,
-				"Distance of the aim-mode label (target info + key hints) from the BOTTOM edge in pixels.");
+				"Distance of the aim-mode label from the BOTTOM edge, in pixels.\nThe label shows target info and the key hints.");
 			aimLabelSize = Config.Bind("Overlay", "AimLabelFontSize", 20,
-				"Font size of the aim-mode label. 0 hides it (the aim cursor itself stays).");
+				"Font size of the aim-mode label.\n0 hides it; the aim cursor itself stays.");
 			abilityColumns = Config.Bind("Menus", "AbilityColumns", "lv,attr,pow,hit,dmg,cost,left",
-				"Order of the spell/action list columns, comma-separated. Reorder or REMOVE entries (e.g. 'lv,dmg,cost,left'). Valid: lv, attr, pow, hit, dmg, cost, left.");
+				"Order of the spell/action list columns, comma-separated.\nReorder or REMOVE entries, e.g. 'lv,dmg,cost,left'.\nValid: lv, attr, pow, hit, dmg, cost, left.");
 			weightWidth = Config.Bind("Menus", "WeightWidth", 48,
-				"Width of the right-aligned weight column in pixels (about 4 digits). Longer weights scroll inside it.");
+				"Width of the right-aligned weight column, in pixels (48 fits about 4 digits).\nLonger weights scroll inside it.");
 			menuWidth = Config.Bind("Menus", "MenuWidth", 680,
-				"Width of the mod's menu windows in pixels.");
+				"Width of the mod's menu windows, in pixels.");
 			nameScrollSlack = Config.Bind("Menus", "NameScrollSlack", 20,
-				"Names overflowing their column by fewer pixels than this render as-is instead of scrolling.");
+				"Names that overflow their column by fewer pixels than this render as-is\ninstead of scrolling.");
 			shiftBarVisible = Config.Bind("Hotkeys", "ShiftBarVisible", true,
-				"Show the OTHER quickslot page (what shift+1..9 fires) as small corner icons on the real hotbar's slots.");
+				"Show the OTHER quickslot page as small corner icons on the real hotbar.\nThat page is what shift+1..9 fires.");
 			familyBarVisible = Config.Bind("Menus", "FamilyBarVisible", true,
-				"Whether the Elona-style window-family bar (diamond tabs shown while item/chara/spell windows are open; Tab cycles them) starts ENABLED the first time. Also a real Elin widget: manage it in the widget manager.");
+				"Whether the window-family bar starts enabled the first time.\nElona-style diamond tabs shown while item/chara/spell windows are open; Tab cycles them.\nIt is a real Elin widget, so the widget manager can toggle it later.");
 			familyBarScale = Config.Bind("Menus", "FamilyBarScale", 0.75f,
-				"Size of the family bar (0.4 - 1.5). Also adjustable from the bar's right-click menu.");
+				"Size of the family bar, 0.4 to 1.5.\nAlso adjustable from the bar's right-click menu.");
 			familyBarHint = Config.Bind("Menus", "FamilyBarHint", true,
 				"Show the 'Tab [change]' hint line under the family bar.");
 			keyboardContainers = Config.Bind("Menus", "KeyboardContainers", true,
-				"Opening an unlocked chest/container by ANY route (walking into it, space, mouse) uses the keyboard take/put menu instead of Elin's window. Also gates ally trading and every pick-an-item flow (offerings, dip/blend, effect scrolls, wizard services, bank deposit, tax box, quest chests, gacha, recycle, gene machine, mod kit, refuel). Locked chests and surprise packages stay native.");
+				"Chests and containers open the keyboard take/put menu instead of Elin's window,\nfrom any route: bumping into them, Space, or the mouse.\nAlso gates ally trading and every pick-an-item flow: offerings, dip/blend,\neffect scrolls, wizard services, bank deposit, tax box, quest chests, gacha,\nrecycle, gene machine, mod kit, refuel.\nLocked chests and surprise packages stay native.");
 			keyboardShops = Config.Bind("Menus", "KeyboardShops", true,
-				"Shopkeepers, vendors and dupe machines open the ElonaKeys shop window (keyboard buy/sell). Set false for the vanilla shop windows. CapsLock pause also bypasses this while paused.");
+				"Shopkeepers, vendors and dupe machines open the ElonaKeys shop window\n(keyboard buy/sell).\nfalse = the vanilla shop windows.\nThe CapsLock pause bypasses this too.");
 			craftingStyle = Config.Bind("Menus", "CraftingStyle", "native",
-				new ConfigDescription("native = the game's crafting window, fully keyboard-driven (arrows pick recipes with live preview, +/- count, m = materials, Enter crafts). menu = replace it with the mod's list-style menu.",
+				new ConfigDescription("Which crafting window you get.\nnative = the game's own window, driven by the keyboard (arrows pick recipes\nwith live preview, +/- count, m = materials, Enter crafts).\nmenu = the mod's list-style menu instead.",
 					new AcceptableValueList<string>("native", "menu")));
 			keyboardCrafters = Config.Bind("Menus", "KeyboardCrafters", true,
-				"Item processors (mill, seed maker, grindstone, cooking tools...) open a keyboard ingredient picker on top of the native window; picking ingredients starts the craft. Esc leaves the native window for the mouse.");
-			macro1 = Config.Bind("Macros", "Macro1", "", "Comma-separated ability aliases cast in sequence (self/party per spell; targeted spells hit your current enemy). Find aliases via the spell list names or the ability window.");
-			macro2 = Config.Bind("Macros", "Macro2", "", "Second macro sequence.");
-			macro3 = Config.Bind("Macros", "Macro3", "", "Third macro sequence.");
+				"Item processors (mill, seed maker, grindstone, cooking tools...) open a\nkeyboard ingredient picker over the native window.\nPicking ingredients starts the craft; Esc leaves the window to the mouse.");
+			macro1 = Config.Bind("Macros", "Macro1", "",
+				"Ability aliases cast in sequence, comma-separated.\nEach spell goes to its usual target (self/party per spell; targeted spells\nhit your current enemy).\nFind aliases in the spell list names or the ability window.");
+			macro2 = Config.Bind("Macros", "Macro2", "",
+				"Second macro sequence.\nSame format as Macro1.");
+			macro3 = Config.Bind("Macros", "Macro3", "",
+				"Third macro sequence.\nSame format as Macro1.");
 
 			// Defaults follow classic Elona (elona.fandom.com/wiki/Controls).
 			Def("GetAll", "keypad0", Handlers.GetAll, "Instantly pick up EVERYTHING on your tile, no menu."); // before Get: wins the shared key in old configs
-			Def("Get", "g", Handlers.Get, "Pick up: single item instantly, several = selection menu. HOLD to grab anything nearby (including furniture/dropped containers).");
-			Def("Drop", "d", Handlers.Drop, "Drop menu with count spinner: Enter on a stack, left/right adjusts, Enter drops. Menu stays open.");
+			Def("Get", "g", Handlers.Get, "Pick up: one item goes instantly, several open a selection menu.\nHOLD the key to grab anything nearby, furniture and dropped containers included.");
+			Def("Drop", "d", Handlers.Drop, "Drop menu with a count spinner.\nEnter on a stack, left/right adjusts the count, Enter drops.\nThe menu stays open.");
 			Def("Eat", "e", Handlers.Eat, "Eat something from your inventory.");
 			Def("Quaff", "q", Handlers.Quaff, "Drink a potion, or from an adjacent well/fountain.");
 			Def("Read", "r", Handlers.ReadItem, "Read a book, scroll or scrap.");
 			Def("Zap", "shift+z", Handlers.Zap, "Zap a rod, then pick a direction (wait key = yourself).");
-			Def("Cast", "v", Handlers.Cast, "Spell list (mana): favorites, type filters, digits hotkey the selection.");
-			Def("Action", "a", Handlers.ActionList, "Special actions list (stamina): favorites, type filters, digits hotkey the selection.");
-			Def("Wear", "w", Handlers.Wear, "Elona-style equipment window: body slot rows, pick a slot to equip or remove; DV/PV in the title.");
-			Def("Wide", "shift+w", Handlers.WideMenu, "Wide Skill: list every spell/action that can target your party; Enter casts it on ALL of them.");
+			Def("Cast", "v", Handlers.Cast, "Spell list, paid in mana.\nFavorites and type filters; digits hotkey the current selection.\nHOLD the key to aim the cast manually at anyone.");
+			Def("Action", "a", Handlers.ActionList, "Special actions list, paid in stamina.\nFavorites and type filters; digits hotkey the current selection.");
+			Def("Wear", "w", Handlers.Wear, "Elona-style equipment window: one row per body slot.\nPick a slot to equip or remove; DV/PV sit in the title.");
+			Def("Wide", "shift+w", Handlers.WideMenu, "Wide Skill: every spell or action that can target your party.\nEnter casts the pick on ALL of them at once.");
 			Def("Tool", "t", Handlers.HoldTool, "Pick a tool from your inventory and hold it in your hands.");
-			Def("EmptyHands", "shift+e", Handlers.EmptyHands, "Put away whatever is in your hands (held item, grabbed furniture, or a stuck hotbar selection).");
+			Def("EmptyHands", "shift+e", Handlers.EmptyHands, "Put away whatever is in your hands.\nCovers a held item, grabbed furniture, or a stuck hotbar selection.");
 			Def("Use", "u", Handlers.Use, "Use a usable item from your inventory.");
 			Def("Blend", "shift+b", Handlers.Blend, "Dip/blend: pick a potion or liquid, then mix items into it.");
-			Def("Throw", "shift+t", Handlers.Throw, "Throw: pick an item, then a target from the list or a direction.");
+			Def("Throw", "shift+t", Handlers.Throw, "Throw: pick an item, then a target.\nOne flies at your target lock instantly, or the aim cursor opens.\nImportant-starred items and filled containers never fly.");
 			Def("Bash", "b", Handlers.Bash, "Bash in a chosen direction.");
-			Def("Dig", "m", Handlers.Dig, "Mine: auto-holds your digging tool; one adjacent minable wall mines instantly (ores included), several ask for a direction. Walking into a wall with the tool held also mines. Do NOT bind this to shift+anything: shift is the dash modifier, and auto-repeat mods (AutoAct) treat shift as their chain-everything modifier.");
+			Def("Dig", "m", Handlers.Dig, "Mine. Auto-holds your digging tool.\nOne adjacent minable wall mines instantly, ore veins included;\nseveral walls ask for a direction.\nWalking into a wall with the tool held also mines.\nDo NOT bind this to shift+anything: shift is the dash modifier, and\nauto-repeat mods (AutoAct) read shift as their chain-everything key.");
 			Def("Open", "o", Handlers.Open, "Open containers and crafting kits in your inventory, or nearby ones.");
 			Def("Close", "shift+c", Handlers.DoorToggle, "Open or close a door in a chosen direction.");
 			Def("Pray", "p", Handlers.Pray, "Pray to your god.");
 			Def("Offer", "shift+o", Handlers.Offer, "Offer a sacrifice at an adjacent altar.");
 			Def("Give", "shift+g", Handlers.Give, "Give to an adjacent character; count spinner for stacks.");
 			Def("Interact", "i", Handlers.Interact, "Interaction menu for a direction (talk, give, trade...).");
-			Def("Search", "s", Handlers.SearchHere, "Do things on your own tile: search the ground, harvest, collect, dig treasure...");
+			Def("Search", "s", Handlers.SearchHere, "Do things on your own tile: search the ground, harvest, collect,\ndig treasure...\nHarvests instantly when something grows where you stand.");
 			Def("Chara", "c", Handlers.ShowChara, "Character sheet, classic Elona c.");
 			Def("LastMenu", "x", delegate
 			{
 				(MenuCycle.lastItemMenu ?? (Action)Handlers.ExamineInventory)();
-			}, "Reopen the last-used item menu (examine/drop/eat/read/quaff/zap/tool/open/blend/throw), classic Elona x.");
-			Def("Context", "space", Handlers.ContextAll, "Everything interactable on and around you; a single action fires instantly (Elona Space).");
+			}, "Reopen the last item menu you used, classic Elona x.\nCovers examine, drop, eat, read, quaff, zap, tool, open, blend and throw.");
+			Def("Context", "space", Handlers.ContextAll, "Everything interactable on and around you, Elona Space.\nWhen there is only one thing to do, it fires instantly.");
 			Def("Ammo", "shift+a", Handlers.Ammo, "Load a different ammo into your ranged weapon.");
 			Def("Party", "shift+q", Handlers.Party, "Party menu: character sheets, browse and take members' items.");
-			Def("Target", "keypadMultiply, quote", Handlers.PickTarget, "Classic *: set/change the remembered target (spells and throws then fire at it instantly). Enemies and allies lock separately; yourself counts as an ally. A neutral creature (a little sister for capture balls) locks as a target for throws and heals without exposing it to attack spells - the NeutralLock config picks other flavors. Also on the apostrophe key for keyboards without a numpad.");
-			Def("SwapTarget", "keypadDivide, semicolon", TargetMode.ToggleSwap, "Aim the NEXT cast at the opposite lock: a hostile spell at your locked ally, a buff/heal at your locked enemy. Tap to arm (tap again cancels), or hold it while casting.");
+			Def("Target", "keypadMultiply, quote", Handlers.PickTarget, "Classic *: set or change your remembered target.\nSpells and throws then fire at it instantly.\nEnemies and allies lock separately and hold at the same time;\nyourself and your faction count as ally.\nA neutral creature (a little sister for capture balls) locks as a target\nfor throws and heals without exposing her to attack spells.\nSee the NeutralLock config for the other flavors.\nAlso on the apostrophe key, for keyboards without a numpad.");
+			Def("SwapTarget", "keypadDivide, semicolon", TargetMode.ToggleSwap, "Aim the NEXT cast at the opposite lock:\na hostile spell at your locked ally, a buff or heal at your locked enemy.\nTap to arm it (tap again cancels), or hold it while casting.");
 			Def("Wheel", "z", Handlers.Wheel, "Action wheel: every verb of this mod in one menu, like classic Elona's z.");
 			Def("MacroKey1", "none", delegate { Handlers.RunMacro(Macro1); }, "Casts the Macro1 ability sequence.");
 			Def("MacroKey2", "none", delegate { Handlers.RunMacro(Macro2); }, "Casts the Macro2 ability sequence.");
 			Def("MacroKey3", "none", delegate { Handlers.RunMacro(Macro3); }, "Casts the Macro3 ability sequence.");
 			Def("ExamineInventory", "shift+x", Handlers.ExamineInventory, "Open/close your inventory.");
 			Def("Hold", "none", Handlers.Hold, "Hold any item in your hands (Elin-specific, unbound by default).");
-			Def("Fire", "f", Handlers.FireSmart, "Fire: ranged weapon at your target if equipped, otherwise repeat your LAST cast spell/action at its usual target.");
+			Def("Fire", "f", Handlers.FireSmart, "Fire at your target lock, or auto-acquire the nearest enemy.\nWith a ranged weapon equipped it shoots.\nHolding a throwable stack throws ONE per press.\nOtherwise it repeats your last ATTACK spell or action; buffs never ride f.");
 			Rebuild();
 			Config.SettingChanged += delegate { Rebuild(); };
 			try
@@ -315,12 +320,12 @@ namespace ElonaKeys
 
 		private void Def(string name, string def, Action run, string desc)
 		{
-			defs.Add((Config.Bind("Keys", name, def, desc + " Format: 'e', 'shift+t', 'period', comma-separated alternatives, 'none' to unbind."), name, run, EAction.None));
+			defs.Add((Config.Bind("Keys", name, def, desc + "\nFormat: 'e', 'shift+t', 'period', or several separated by commas.\n'none' unbinds the key."), name, run, EAction.None));
 		}
 
 		private void DefNative(string name, string def, EAction action, string desc)
 		{
-			defs.Add((Config.Bind("Keys", name, def, desc + " Format: 'e', 'shift+t', 'none' to unbind."), name, null, action));
+			defs.Add((Config.Bind("Keys", name, def, desc + "\nFormat: 'e', 'shift+t'. 'none' unbinds the key."), name, null, action));
 		}
 
 		private static void Rebuild()
