@@ -149,8 +149,13 @@ namespace ElonaKeys
 			// cancel it.
 			bool freshMove = EInput.axis != Vector2.zero && EInput.axis != prevInterruptAxis;
 			prevInterruptAxis = EInput.axis;
+			// Walking itself is not an action to interrupt. Keyboard walking is ONE
+			// GoalManualMove that reads the current direction every step, so a turn
+			// arrives here as a "fresh" axis. Cancelling it made every direction
+			// change kill the walk and restart it the next frame: a hitch per turn.
 			if (freshMove && !MenuSystem.Alive
-				&& EClass.pc.ai != null && EClass.pc.ai.IsRunning && !EClass.pc.HasNoGoal)
+				&& EClass.pc.ai != null && EClass.pc.ai.IsRunning && !EClass.pc.HasNoGoal
+				&& !(EClass.pc.ai is GoalManualMove))
 			{
 				EClass.pc.ai.TryCancel(EClass.pc);
 				taskKillUntil = Time.unscaledTime + 0.5f;

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.39.2 - 2026-09-29
+- Walking with the arrow keys no longer stutters when you change direction. Turning mid-walk used to stop and restart the walk on every turn. A fresh direction press still interrupts real actions (mining, chopping, hauling, cart rides) as before.
+- Less work every frame while a target or ally is locked, which could cause small periodic hitches.
+
 ## 1.39.1 - 2026-09-28
 - Config tooltips are readable. Every setting and keybind description was one long paragraph on a single line; they are now shorter and broken into lines, with each option on its own line (NeutralLock, NameDisplay, WheelStyle, CraftingStyle and friends). The key-format note moved to its own line at the end of every keybind. Applies to the in-game mod config screen and to the comments in elin.elonakeys.cfg, which BepInEx rewrites on the next launch.
 

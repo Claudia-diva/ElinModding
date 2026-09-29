@@ -113,37 +113,67 @@ namespace ElonaKeys
 		private static GameObject lockHud;
 		private static Text lockHudText;
 		private static string lockHudLast;
+		// what the readout was last built from. Building the string every frame
+		// made garbage every frame whenever a lock was held; now it is only
+		// rebuilt when one of these changes.
+		private static bool hudBuilt;
+		private static Chara hudFoe;
+		private static Chara hudPal;
+		private static Chara hudNat;
+		private static bool hudFoeIsFoe;
+		private static bool hudSwap;
 
 		public static void HideLockHud()
 		{
 			lockHudLast = null;
+			hudBuilt = false;
 			if ((bool)lockHud)
 			{
 				lockHud.SetActive(false);
 			}
 		}
 
-		// called every frame from InputRouter (cheap: bails on same string)
+		// called every frame from InputRouter: bails before building anything
+		// while the locks, their visibility and the swap flag are unchanged
 		public static void RefreshLockHud()
 		{
 			Chara foe = AliveOr(lastHostile);
 			Chara pal = AliveOr(lastFriendly);
+			bool foeIsFoe = foe != null && IsFoe(foe);
+			// a locked NEUTRAL (capture target) reads differently from a
+			// foe: throws fly at her, attacks still pick real enemies —
+			// and when the native target still holds a live foe, SAY so,
+			// because that is where those attacks will actually go
+			Chara nat = null;
+			if (foe != null && !foeIsFoe)
+			{
+				nat = AliveOr(EClass.player?.target);
+				if (nat != null && !IsFoe(nat))
+				{
+					nat = null;
+				}
+			}
+			if (hudBuilt && foe == hudFoe && pal == hudPal && nat == hudNat && foeIsFoe == hudFoeIsFoe && swapArmed == hudSwap)
+			{
+				return;
+			}
+			hudBuilt = true;
+			hudFoe = foe;
+			hudPal = pal;
+			hudNat = nat;
+			hudFoeIsFoe = foeIsFoe;
+			hudSwap = swapArmed;
 			string s = "";
 			if (foe != null)
 			{
-				// a locked NEUTRAL (capture target) reads differently from a
-				// foe: throws fly at her, attacks still pick real enemies —
-				// and when the native target still holds a live foe, SAY so,
-				// because that is where those attacks will actually go
-				if (IsFoe(foe))
+				if (foeIsFoe)
 				{
 					s += "<color=#ff9090>" + EKLang.T("Enemy: ") + foe.Name + "</color>   ";
 				}
 				else
 				{
 					s += "<color=#ffcf90>" + EKLang.T("Target: ") + foe.Name + "</color>   ";
-					Chara nat = AliveOr(EClass.player?.target);
-					if (nat != null && IsFoe(nat))
+					if (nat != null)
 					{
 						s += "<color=#ff9090>" + EKLang.T("Enemy: ") + nat.Name + "</color>   ";
 					}
