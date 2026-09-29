@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>ImmersionEnglish</AssemblyName>
+    <RootNamespace>ImmersionEnglish</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>1.0.0</Version>
+    <DebugType>none</DebugType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <!-- Game install; override with -p:ElinDir=... -->
+    <ElinDir Condition="'$(ElinDir)' == ''">G:\SteamLibrary\steamapps\common\Elin</ElinDir>
+    <Managed>$(ElinDir)\Elin_Data\Managed</Managed>
+    <BepCore>$(ElinDir)\BepInEx\core</BepCore>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Elin"><HintPath>$(Managed)\Elin.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Plugins.UI"><HintPath>$(Managed)\Plugins.UI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Plugins.BaseCore"><HintPath>$(Managed)\Plugins.BaseCore.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(Managed)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(Managed)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="BepInEx.Core"><HintPath>$(BepCore)\BepInEx.Core.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="BepInEx.Unity"><HintPath>$(BepCore)\BepInEx.Unity.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>

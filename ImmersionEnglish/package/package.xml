@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Meta>
+  <title>Immersion Enhancement English</title>
+  <id>elin.immersionenglish</id>
+  <author>Anon</author>
+  <tags>QoL</tags>
+  <builtin>false</builtin>
+  <loadPriority>50</loadPriority>
+  <version>1.0.0</version>
+  <description>English labels for the workshop mod 沉浸增强 (Immersion Enhancement by 戏三子). That mod writes its settings block in Chinese no matter what language the game runs in; this relabels the toggles, sliders, section headers and preset button in English.
+
+  It does not replace or fork the mod: keep your subscription, keep getting its updates. The labels are rewritten as they reach the UI, so nothing about the lighting itself changes. If the mod is not installed, this does nothing.
+
+  Config (General): Enabled turns the relabeling off, KeepChineseInChineseGame leaves the original text alone while the game itself runs in Chinese.</description>
+</Meta>
