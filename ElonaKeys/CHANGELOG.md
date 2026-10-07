@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.39.3 - 2026-10-06
+- Works with Elin EA 23.352. The object name lookup used by the examine and interaction menus failed after the game update; this build fixes it.
+
 ## 1.39.2 - 2026-09-29
 - Walking with the arrow keys no longer stutters when you change direction. Turning mid-walk used to stop and restart the walk on every turn. A fresh direction press still interrupts real actions (mining, chopping, hauling, cart rides) as before.
 - Less work every frame while a target or ally is locked, which could cause small periodic hitches.
